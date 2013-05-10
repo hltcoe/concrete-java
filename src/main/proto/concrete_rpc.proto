@@ -1,0 +1,595 @@
+/* 
+ * Copyright 2012-2013 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
+
+/**
+ * Concrete - Rebar ProtoBuf serialization definition
+ * 
+ * Remote procedure call (RPC) messages used to communicate with a
+ * Java process that provides access to the REBAR corpora.  These
+ * messages allow non-Java code to access corpora that are stored
+ * in Accumulo.
+ *
+ * In particular, a non-Java process can start a Java subprocess using
+ * the Java class "edu.jhu.hltcoe.rebar2.rpc.UnnamedPipeRPC", and then
+ * communicate with it via unnamed pipes (aka stdin and stdout).  See
+ * rebar/python/xxx.py for an example.
+ * 
+ * The communication protocol used by UnnamedPipeRPC uses "delimited
+ * messages", which are defined as a protobuf varint containing a
+ * size, followed by a message with the given size.  This allows for
+ * proper streaming.
+ *
+ * The communication protocol used by UnnamedPipeRPC is defined as
+ * follows:
+ * 
+ *    - The client sends an RPCRequest as a delmited message, and the
+ *      Java subprocess responds with a single RPCResponse message as
+ *      a delimited message.  I.e., the client & server take turns
+ *      sending messages.
+ */
+
+option java_package="edu.jhu.concrete.rpc";
+package concrete_rpc;
+
+import "concrete.proto";
+
+//======================================================================
+// RPC Request Messages
+//======================================================================
+
+message RPCRequest {
+
+  // Corpus Methods
+  optional MakeCorpus make_corpus = 1;
+  optional GetCorpus get_corpus = 2;
+  optional Corpus.Close corpus_close = 4;
+  optional Corpus.GetSize corpus_get_size = 80;
+  optional Corpus.GetStages corpus_get_stages = 5;
+  optional Corpus.MakeStage corpus_make_stage = 6;
+  optional Corpus.DeleteStage corpus_delete_stage = 72;
+  optional Corpus.MarkStagePublic corpus_mark_stage_public = 78;
+  optional Corpus.MakeInitializer corpus_make_initializer = 7;
+  optional Corpus.MakeReader corpus_make_reader = 8;
+  optional Corpus.MakeDiffWriter corpus_make_diff_writer = 9;
+  optional Corpus.ReadComIdSet corpus_read_com_id_set = 57;
+  optional Corpus.LookupComIdSet corpus_lookup_com_id_set = 58;
+  optional Corpus.RegisterComIdSet corpus_register_com_id_set = 59;
+  optional Corpus.GetComIdSetNames corpus_get_com_id_set_names = 60;
+  optional Corpus.GetNumCommunications corpus_get_num_communications = 82;
+  optional CorpusInitializer.Close corpus_initializer_close = 10;
+  optional CorpusInitializer.AddCommunication corpus_initializer_add_communication = 11;
+  optional CorpusReader.Close corpus_reader_close = 12;
+  optional CorpusReader.LoadCommunication corpus_reader_load_communication = 13;
+  optional CorpusReader.LoadCommunications corpus_reader_load_communications = 14;
+  optional CorpusDiffWriter.Close corpus_diff_writer_close = 15;
+  optional CorpusDiffWriter.Flush corpus_diff_writer_flush = 16;
+  optional CorpusDiffWriter.WriteCommunicationDiff corpus_diff_writer_write_communication_diff = 18;
+  optional CommunicationIterator.HasNext communication_iterator_has_next = 19;
+  optional CommunicationIterator.Next communication_iterator_next = 20;
+  optional ComIdSet.Enumerate com_id_set_enumerate = 69;
+  optional ListCorpora list_corpora = 74;
+  optional DeleteCorpus delete_corpus = 75;
+
+  // Graph Methods
+  optional MakeGraph make_graph = 22;
+  optional GetGraph get_graph = 23;
+  optional Graph.Close graph_close = 24;
+  optional Graph.GetSize graph_get_size = 84;
+  optional Graph.GetStages graph_get_stages = 25;
+  optional Graph.MakeStage graph_make_stage = 26;
+  optional Graph.DeleteStage graph_delete_stage = 73;
+  optional Graph.MarkStagePublic graph_mark_stage_public = 79;
+  optional Graph.MakeInitializer graph_make_initializer = 27;
+  optional Graph.MakeReader graph_make_reader = 28;
+  optional Graph.MakeDiffWriter graph_make_diff_writer = 29;
+  optional Graph.GetEdgesWithOneVertexIn graph_get_edges_with_one_vertex_in = 30;
+  optional Graph.GetEdgesWithBothVerticesIn graph_get_edges_with_both_vertices_in = 31;
+  optional Graph.ReadVertexIdSet read_vertex_id_set = 61;
+  optional Graph.LookupVertexIdSet lookup_vertex_id_set = 62;
+  optional Graph.RegisterVertexIdSet register_vertex_id_set = 63;
+  optional Graph.GetVertexIdSetNames get_vertex_id_set_names = 64;
+  optional Graph.ReadEdgeIdSet read_edge_id_set = 65;
+  optional Graph.LookupEdgeIdSet lookup_edge_id_set = 66;
+  optional Graph.RegisterEdgeIdSet register_edge_id_set = 67;
+  optional Graph.GetEdgeIdSetNames get_edge_id_set_names = 68;
+  optional Graph.GetNumVertices graph_get_num_vertices = 83;
+  optional GraphInitializer.Close graph_initializer_close = 40;
+  optional GraphInitializer.AddVertex graph_initializer_add_vertex = 41;
+  optional GraphReader.Close graph_reader_close = 42;
+  optional GraphReader.LoadVertex graph_reader_load_vertex = 43;
+  optional GraphReader.LoadVertices graph_reader_load_vertices = 44;
+  optional GraphReader.LoadEdge graph_reader_load_edge = 45;
+  optional GraphReader.LoadEdges graph_reader_load_edges = 46;
+  optional GraphDiffWriter.Close graph_diff_writer_close = 47;
+  optional GraphDiffWriter.Flush graph_diff_writer_flush = 48;
+  optional GraphDiffWriter.WriteVertexDiff graph_diff_writer_write_vertex_diff = 50;
+  optional GraphDiffWriter.WriteEdgeDiff graph_diff_writer_write_edge_diff = 52;
+  optional VertexIterator.HasNext vertex_iterator_has_next = 53;
+  optional VertexIterator.Next vertex_iterator_next = 54;
+  optional EdgeIterator.HasNext edge_iterator_has_next = 55;
+  optional EdgeIterator.Next edge_iterator_next = 56;
+  optional VertexIdSet.Enumerate vertex_id_set_enumerate = 70;
+  optional EdgeIdSet.Enumerate edge_id_set_enumerate = 71;
+  optional ListGraphs list_graphs = 76;
+  optional DeleteGraph delete_graph = 77;
+
+  // Connection control
+  optional bool close = 100 [default=false];
+}
+
+//======================================================================
+// RPC Responses
+//======================================================================
+
+message RPCResponse {
+  repeated concrete.Communication communication = 1;
+  optional CommunicationIterator communication_iterator = 2;
+  repeated concrete.Vertex vertex = 3;
+  optional VertexIterator vertex_iterator = 4;
+  repeated concrete.Edge edge = 5;
+  optional EdgeIterator edge_iterator = 6;
+  repeated Stage stage = 7;
+  optional bool has_next = 8;
+
+  optional Corpus corpus = 9;
+  optional CorpusReader corpus_reader = 10;
+  optional CorpusDiffWriter corpus_diff_writer = 11;
+  optional CorpusInitializer corpus_initializer = 12;
+
+  optional Graph graph = 13;
+  optional GraphReader graph_reader = 14;
+  optional GraphDiffWriter graph_diff_writer = 15;
+  optional GraphInitializer graph_initializer = 16;
+
+  repeated string com_id = 17;
+  repeated concrete.UUID vertex_id = 18;
+  repeated concrete.EdgeId edge_id = 19;
+
+  optional ComIdSet com_id_set = 20;
+  optional VertexIdSet vertex_id_set = 21;
+  optional EdgeIdSet edge_id_set = 22;
+
+  repeated string id_set_name = 23;
+  repeated string corpus_name = 24;
+  repeated string graph_name = 25;
+
+  optional int64 size = 26;
+
+  // Corresponds one-to-one with communications, vertices, or edges:
+  repeated StageOwnershipMap stage_ownership = 27;
+
+  optional string error = 100;
+}
+
+//======================================================================
+// Data Types
+//======================================================================
+
+message Stage {
+  // owner should be tracked on client side.
+  required int32 stage_id = 2;
+  required string stage_name = 3;
+  required string stage_version = 4;
+  repeated int32 dependency = 5;
+  required bool is_public = 6;
+  required string description = 7;
+}
+
+message ProtoDiff {
+  repeated Entry diff = 3;
+  message Entry {
+    optional concrete.UUID uuid = 1;
+    optional concrete.EdgeId edge_id = 2;
+    required bytes proto = 3;
+  }
+}
+
+message StageOwnershipMap {
+  repeated Entry entry = 1;
+  message Entry {
+    required int32 stage_id = 3;
+    repeated Segment path_segment = 1; // From root down to value
+  }
+  message Segment {
+    required int32 field_tag = 2;
+    required int32 index = 4;
+  }
+}
+
+//======================================================================
+// Corpus Messages
+//======================================================================
+
+message GetCorpus { // returns corpus
+  required string name = 1;
+}
+
+message MakeCorpus { // returns corpus
+  required string name = 1;
+}
+
+message ListCorpora { // returns corpus_name
+}
+
+message DeleteCorpus {
+  required string name = 1;
+}
+
+message Corpus {
+  required int64 id = 1;
+
+  message Close { // returns void
+    required Corpus self = 1; 
+  }
+  message GetSize { // returns size
+    required Corpus self = 1; 
+  }
+  message GetStages { // return stages
+    required Corpus self = 1; 
+  }
+  message MakeStage { // returns stage
+    required Corpus self = 1; 
+    required string stage_name = 2;
+    required string stage_version = 3;
+    repeated int32 dependency = 4; // stage id
+    required bool delete_if_exists = 5;
+    required string description = 6;
+  }
+  message DeleteStage { // returns void
+    required Corpus self = 1;
+    required int32 stage_id = 2;
+  }
+  message MarkStagePublic { // returns void
+    required Corpus self = 1;
+    required int32 stage_id = 2;
+  }
+  message MakeInitializer { // returns CorpusInitializer
+    required Corpus self = 1;
+  }
+  message MakeReader { // returns CorpusReader
+    required Corpus self = 1;
+    repeated int32 dependency = 2; // stage id
+    optional bool load_stage_ownership = 3 [default=false];
+  }
+  message MakeDiffWriter { // returns CorpusDiffWriter
+    required Corpus self = 1;
+    required int32 stage_id = 2;
+  }
+  message ReadComIdSet { // returns ComIdSet
+    required Corpus self = 1;
+    required string filename = 2;
+  }
+  message LookupComIdSet { // returns ComIdSet
+    required Corpus self = 1;
+    required string name = 2;
+  }
+  message RegisterComIdSet { // returns void
+    required Corpus self = 1;
+    required string name = 2;
+    required ComIdCollection com_ids = 3;
+  }
+  message GetComIdSetNames { // returns id_set_name
+    required Corpus self = 1;
+  }
+  message GetNumCommunications { // returns size
+    required Corpus self = 1;
+  }
+}
+  
+message CorpusInitializer {
+  //required Corpus owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required CorpusInitializer self = 1;
+  }
+  message AddCommunication { // returns void
+    required CorpusInitializer self = 1;
+    required concrete.Communication communication = 2;
+  }
+}
+
+message CorpusReader {
+  //required Corpus owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required CorpusReader self = 1;
+  }
+  message LoadCommunication { // returns Communication
+    required CorpusReader self = 1;
+    required string com_id = 2;
+  }
+  message LoadCommunications { // returns CommunicationIterator
+    required CorpusReader self = 1;
+    required ComIdCollection com_ids = 3;
+  }
+}
+
+message CorpusDiffWriter {
+  //required Corpus owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required CorpusDiffWriter self = 1;
+  }
+  message Flush { // returns void
+    required CorpusDiffWriter self = 1;
+  }
+  message WriteCommunicationDiff { // returns void
+    required CorpusDiffWriter self = 1;
+    required string com_id = 2;
+    required ProtoDiff diff = 3;
+  }
+}
+
+message CommunicationIterator {
+  //required CorpusReader owner = 1;
+  required int64 id = 2;
+
+  message HasNext { // returns bool
+    required CommunicationIterator self = 1;
+  }
+  // If there is no next, then this command just returns an empty list
+  // (it does *not* signal an error).
+  message Next { // returns Communication
+    required CommunicationIterator self = 1;
+    optional int32 max_values = 3 [default=1];
+  }
+}
+
+message ComIdSet {
+  required int64 id = 2;
+
+  message Enumerate { // returns list[com_id]
+    required ComIdSet self = 1;
+  }
+}
+
+/** A list of communication identifiers.  The different fields provide
+ * different ways to specify identifiers; exactly one field should be
+ * set.  Use com_id_set_name="all" to specify the set of all com ids
+ * in the corpus. */
+message ComIdCollection {
+  repeated string com_id = 1;            //!< explicit list of ids
+  optional int64 com_id_set = 2;         //!< id of ComIdSet
+  optional string com_id_set_name = 3;   //!< named ComIdSet
+}
+
+//======================================================================
+// Graph Messages
+//======================================================================
+
+message GetGraph { // returns graph
+  required string name = 1;
+}
+
+message MakeGraph { // returns graph
+  required string name = 1;
+}
+
+message ListGraphs { // returns graph_name
+}
+
+message DeleteGraph { // returns void
+  required string name = 1;
+}
+
+message Graph {
+  required int64 id = 1;
+
+  message Close { // returns void
+    required Graph self = 1; 
+  }
+  message GetSize { // returns size
+    required Graph self = 1; 
+  }
+  message GetStages { // return stages
+    required Graph self = 1; 
+  }
+  message MakeStage { // returns stage
+    required Graph self = 1; 
+    required string stage_name = 2;
+    required string stage_version = 3;
+    repeated int32 dependency = 4;
+    required bool delete_if_exists = 5;
+    required string description = 6;
+  }
+  message DeleteStage { // returns void
+    required Graph self = 1;
+    required int32 stage_id = 2;
+  }
+  message MarkStagePublic { // returns void
+    required Corpus self = 1;
+    required int32 stage_id = 2;
+  }
+  message MakeInitializer { // returns GraphInitializer
+    required Graph self = 1;
+  }
+  message MakeReader { // returns GraphReader
+    required Graph self = 1;
+    repeated int32 dependency = 2; // stage id
+    optional bool load_stage_ownership = 3 [default=false];
+  }
+  message MakeDiffWriter { // returns GraphDiffWriter
+    required Graph self = 1;
+    required int32 stage_id = 2;
+  }
+
+  message GetEdgesWithOneVertexIn { // returns EdgeIdSet
+    required Graph self = 1;
+    required VertexIdCollection vertex_ids = 2;
+  }
+  message GetEdgesWithBothVerticesIn { // returns EdgeIdSet
+    required Graph self = 1;
+    required VertexIdCollection vertex_ids = 2;
+  }
+
+  message ReadVertexIdSet { // returns VertexIdSet
+    required Graph self = 1;
+    required string filename = 2;
+  }
+  message LookupVertexIdSet { // returns VertexIdSet
+    required Graph self = 1;
+    required string name = 2;
+  }
+  message RegisterVertexIdSet { // returns void
+    required Graph self = 1;
+    required string name = 2;
+    required VertexIdCollection vertex_ids = 3;
+  }
+  message GetVertexIdSetNames { // returns id_set_name
+    required Graph self = 1;
+  }
+  message ReadEdgeIdSet { // returns EdgeIdSet
+    required Graph self = 1;
+    required string filename = 2;
+  }
+  message LookupEdgeIdSet { // returns EdgeIdSet
+    required Graph self = 1;
+    required string name = 2;
+  }
+  message RegisterEdgeIdSet { // returns void
+    required Graph self = 1;
+    required string name = 2;
+    required EdgeIdCollection edge_ids = 3;
+  }
+  message GetEdgeIdSetNames { // returns id_set_name
+    required Graph self = 1;
+  }
+  message GetNumVertices { // returns size
+    required Corpus self = 1;
+  }
+}
+
+message GraphInitializer {
+  //required Graph owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required GraphInitializer self = 1;
+  }
+  message AddVertex { // returns void
+    required GraphInitializer self = 1;
+    required concrete.Vertex vertex = 2;
+  }
+}
+
+message GraphReader {
+  //required Graph owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required GraphReader self = 1;
+  }
+  message LoadVertex { // returns Vertex
+    required GraphReader self = 1;
+    required concrete.UUID vertex_id = 2;
+  }
+  message LoadVertices { // returns VertexIterator
+    required GraphReader self = 1;
+    required VertexIdCollection vertex_ids = 2;
+  }
+  message LoadEdge { // returns Edge
+    required GraphReader self = 1;
+    required concrete.EdgeId edge_id = 2;
+  }
+  message LoadEdges { // returns EdgeIterator
+    required GraphReader self = 1;
+    required EdgeIdCollection edge_ids = 2;
+  }
+}
+
+message GraphDiffWriter {
+  //required Graph owner = 1;
+  required int64 id = 2;
+
+  message Close { // returns void
+    required GraphDiffWriter self = 1;
+  }
+  message Flush { // returns void
+    required GraphDiffWriter self = 1;
+  }
+  message WriteVertexDiff { // returns void
+    required GraphDiffWriter self = 1;
+    required concrete.UUID vertex_id = 2;
+    required ProtoDiff diff = 3;
+  }
+  message WriteEdgeDiff { // returns void
+    required GraphDiffWriter self = 1;
+    required concrete.EdgeId edge_id = 2;
+    required ProtoDiff diff = 3;
+  }
+}
+
+message VertexIterator {
+  //required GraphReader owner = 1;
+  required int64 id = 2;
+
+  message HasNext { // returns bool
+    required VertexIterator self = 1;
+  }
+  // If there is no next, then this command just returns an empty list
+  // (it does *not* signal an error).
+  message Next { // returns Vertex
+    required VertexIterator self = 1;
+    optional int32 max_values = 3 [default=1];
+  }
+}
+
+message EdgeIterator {
+  //required GraphReader owner = 1;
+  required int64 id = 2;
+
+  message HasNext { // returns bool
+    required EdgeIterator self = 1;
+  }
+  // If there is no next, then this command just returns an empty list
+  // (it does *not* signal an error).
+  message Next { // returns Edge
+    required EdgeIterator self = 1;
+    optional int32 max_values = 3 [default=1];
+  }
+}
+
+message VertexIdSet {
+  //required Graph owner = 1;
+  required int64 id = 2;
+
+  message Enumerate { // returns list[vertex_id]
+    required VertexIdSet self = 1;
+  }
+}
+
+message EdgeIdSet {
+  //required Graph owner = 1;
+  required int64 id = 2;
+
+  message Enumerate { // returns list[edge_id]
+    required EdgeIdSet self = 1;
+  }
+}
+
+/** A list of vertex identifiers.  The different fields provide
+ * different ways to specify identifiers; exactly one field should be
+ * set.  Use vertex_id_set_name="all" to specify the set of all vertex
+ * ids in the graph. */
+message VertexIdCollection {
+  repeated concrete.UUID vertex_id = 1;            //!< explicit list of ids
+  optional int64 vertex_id_set = 2;   //!< id of VertexIdSet
+  optional string vertex_id_set_name = 3;   //!< named VertexIdSet
+}
+
+/** A list of edge identifiers.  The different fields provide
+ * different ways to specify identifiers; exactly one field should be
+ * set.  Use edge_id_set_name="all" to specify the set of all edge
+ * ids in the graph. */
+message EdgeIdCollection {
+  repeated concrete.EdgeId edge_id = 1;            //!< explicit list of ids
+  optional int64 edge_id_set = 2;   //!< id of EdgeIdSet
+  optional string edge_id_set_name = 3;   //!< named EdgeIdSet
+}
+
