@@ -49,8 +49,14 @@ dependency to your project's pom.xml file, once installed or deployed:
 
     <dependency>
       <groupId>edu.jhu.concrete</groupId>
-      <artifactId>concrete</artifactId>
-      <version>1.0.0</version>
+      <artifactId>concrete-protobufs</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>edu.jhu.concrete</groupId>
+      <artifactId>concrete-java</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server. 
