@@ -1,1 +1,8 @@
-target/*
+*~
+*.diff
+*#
+.classpath
+.project
+.settings
+
+target
