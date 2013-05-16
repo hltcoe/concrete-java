@@ -62,5 +62,10 @@
       <artifactId>concrete-protobufs</artifactId>
       <version>1.0.1-microscale</version>
     </dependency>
+    <dependency> 
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.7</version>
+    </dependency>
   </dependencies>
 </project>
