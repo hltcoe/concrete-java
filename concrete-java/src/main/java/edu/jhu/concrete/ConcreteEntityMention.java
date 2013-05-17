@@ -35,7 +35,7 @@ public class ConcreteEntityMention {
     
     /**
      * Return a {@link List} of {@link Token} objects in the first {@link Tokenization} object in
-     * this {@link Communication} object. 
+     * this {@link Communication} object. If none exists, will throw an exception.
      * 
      * @return a List of Token objects
      */

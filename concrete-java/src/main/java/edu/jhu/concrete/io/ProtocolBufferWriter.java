@@ -1,7 +1,6 @@
 package edu.jhu.concrete.io;
 
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,7 +33,7 @@ public class ProtocolBufferWriter {
         outputStream = out;
     }
 
-    public void write(Message message) throws Exception {
+    public void write(Message message) throws IOException {
         byte[] messageBytes = message.toByteString().toByteArray();
         int size = messageBytes.length;
         final int INT_SIZE = 4;
