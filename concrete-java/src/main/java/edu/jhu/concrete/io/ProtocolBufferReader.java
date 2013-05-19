@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.zip.GZIPInputStream;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 
 import edu.jhu.concrete.ConcreteException;
