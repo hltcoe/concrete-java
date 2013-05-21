@@ -63,7 +63,7 @@
     <dependency>
       <groupId>edu.jhu.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.1-microscale</version>
+      <version>1.0.2-SNAPSHOT</version>
     </dependency>
     <dependency> 
       <groupId>ch.qos.logback</groupId>
