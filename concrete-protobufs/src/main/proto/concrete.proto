@@ -159,6 +159,12 @@ message Communication {
   /** Raw SERIF output for this communication. */
   repeated SerifXML serifxml = 18;
 
+  /**
+   * instances of PredicateArgumentLinking for which this
+   * communcation is the report
+   */
+  repeated PredicateArgumentLinking predicate_argument_linkings = 19;
+
   /*=================== Kind-Specific Fields ====================== */
 
   /** An enumeration used to indicate what type of communication this
@@ -191,6 +197,28 @@ message Communication {
 
   /** The knowledge graph for this communication. */
   required KnowledgeGraph knowledge_graph = 7;
+}
+
+/**
+ * Defines a theory about a predicate-argument linking
+ * between two documents (report and passage)
+ */
+message PredicateArgumentLinking {
+	required UUID id = 1;
+	required AnnotationMetadata metadata = 2;
+	required CommunicationGUID report = 3;
+	required CommunicationGUID passage = 4;
+	repeated PredicateArgumentLink links = 5;
+	message PredicateArgumentLink {
+		required TokenRefSequence report_mention = 1;
+		required TokenRefSequence passage_mention = 2;
+		required float confidence = 3;
+		required Kind kind = 4;
+		enum Kind {
+			PREDICATE = 0;
+			ARGUMENT = 1;
+		}
+	}
 }
 
 /** A theory about what languages are present in a given communication

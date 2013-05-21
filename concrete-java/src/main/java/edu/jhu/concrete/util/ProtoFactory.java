@@ -9,6 +9,8 @@ import edu.jhu.concrete.Concrete;
 import edu.jhu.concrete.Concrete.Communication;
 import edu.jhu.concrete.Concrete.CommunicationGUID;
 import edu.jhu.concrete.Concrete.KnowledgeGraph;
+import edu.jhu.concrete.Concrete.SectionSegmentation;
+import edu.jhu.concrete.Concrete.Tokenization;
 import edu.jhu.concrete.util.IdUtil;
 
 /**
@@ -107,5 +109,9 @@ public class ProtoFactory {
                 .setKnowledgeGraph(graph)
                 .setUuid(IdUtil.generateUUID())
                 .build();
+    }
+    
+    private static final Communication buildCommunication (Communication.Builder commBuilder) {
+        return commBuilder.build();
     }
 }
