@@ -71,4 +71,15 @@
       <version>1.0.7</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>concrete-mvn-repo</id>
+      <url>https://raw.github.com/hltcoe/concrete/mvn-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>
