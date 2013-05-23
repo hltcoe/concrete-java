@@ -65,17 +65,16 @@ public class ProtocolBufferReader {
      * @throws ConcreteException 
      */
     public Message next() throws ConcreteException {
-        // FIXME: Integer size assumption
-        // Python code has this problem as well
-        final int INT_SIZE = 4;
+        final int LONG_SIZE = 8;
         lastBytesRead = 0;
-        byte[] messageSizeBytes = new byte[INT_SIZE];
+        byte[] messageSizeBytes = new byte[LONG_SIZE];
         try {
-            if (inputStream.read(messageSizeBytes) < INT_SIZE) {
+            if (inputStream.read(messageSizeBytes) < LONG_SIZE) {
                 return null;
             }
             int messageSize = new BigInteger(messageSizeBytes).intValue();
-            lastBytesRead = INT_SIZE;
+			assert messageSize >= 0 : "overflow: " + messageSize;
+            lastBytesRead = LONG_SIZE;
             if (messageSize < 1)
                 return null;
             byte[] messageBytes = new byte[messageSize];
