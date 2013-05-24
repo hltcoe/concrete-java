@@ -14,23 +14,7 @@
   <packaging>jar</packaging>
 
   <name>Concrete - Java utility code</name>
-
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
-
-  <licenses>
-    <license>
-      <name>2-clause BSD license</name>
-      <url>http://http://opensource.org/licenses/BSD-2-Clause</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <repo.branch.name>concrete-java-mvn-repo</repo.branch.name>
-  </properties>
+  <description>Utility code for the Concrete protocol buffer classes.</description>
 
   <build>
     <plugins>
