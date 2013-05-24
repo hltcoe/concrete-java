@@ -46,7 +46,7 @@
       <version>2.4.1</version>
     </dependency>
     <dependency>
-      <groupId>edu.jhu.concrete</groupId>
+      <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
       <version>1.0.2</version>
     </dependency>
