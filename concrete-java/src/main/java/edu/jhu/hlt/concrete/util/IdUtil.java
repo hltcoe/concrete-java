@@ -3,7 +3,7 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
-import edu.jhu.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete;
 
 /**
  * @author max

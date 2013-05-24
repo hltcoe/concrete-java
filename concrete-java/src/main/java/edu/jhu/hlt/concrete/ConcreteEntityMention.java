@@ -3,16 +3,16 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.concrete;
+package edu.jhu.hlt.concrete;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.jhu.concrete.Concrete.Communication;
-import edu.jhu.concrete.Concrete.EntityMention;
-import edu.jhu.concrete.Concrete.Token;
-import edu.jhu.concrete.Concrete.TokenRefSequence;
-import edu.jhu.concrete.Concrete.Tokenization;
+import edu.jhu.hlt.concrete.Concrete.Communication;
+import edu.jhu.hlt.concrete.Concrete.EntityMention;
+import edu.jhu.hlt.concrete.Concrete.Token;
+import edu.jhu.hlt.concrete.Concrete.TokenRefSequence;
+import edu.jhu.hlt.concrete.Concrete.Tokenization;
 
 /**
  * Wrapper around {@link EntityMention} object. 

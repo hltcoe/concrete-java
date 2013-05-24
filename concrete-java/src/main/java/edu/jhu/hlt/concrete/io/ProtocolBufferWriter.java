@@ -1,4 +1,4 @@
-package edu.jhu.concrete.io;
+package edu.jhu.hlt.concrete.io;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;

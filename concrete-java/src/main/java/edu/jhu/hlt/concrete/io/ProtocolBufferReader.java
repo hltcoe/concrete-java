@@ -1,4 +1,4 @@
-package edu.jhu.concrete.io;
+package edu.jhu.hlt.concrete.io;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -11,7 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 import com.google.protobuf.Message;
 
-import edu.jhu.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.ConcreteException;
 
 /**
  * A generic protocol buffer reader class

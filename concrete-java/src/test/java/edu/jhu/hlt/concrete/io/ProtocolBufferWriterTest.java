@@ -1,4 +1,4 @@
-package edu.jhu.concrete.io;
+package edu.jhu.hlt.concrete.io;
 
 //import static org.junit.Assert.fail;
 
@@ -12,10 +12,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.jhu.concrete.Concrete.Communication;
-import edu.jhu.concrete.Concrete.CommunicationGUID;
-import edu.jhu.concrete.Concrete.UUID;
-import edu.jhu.concrete.util.ProtoFactory;
+import edu.jhu.hlt.concrete.Concrete.Communication;
+import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
+import edu.jhu.hlt.concrete.Concrete.UUID;
+import edu.jhu.hlt.concrete.util.ProtoFactory;
 
 public class ProtocolBufferWriterTest {
     

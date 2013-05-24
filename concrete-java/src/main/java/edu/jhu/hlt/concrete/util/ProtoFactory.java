@@ -1,17 +1,17 @@
 /**
  * 
  */
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.Random;
 
-import edu.jhu.concrete.Concrete;
-import edu.jhu.concrete.Concrete.Communication;
-import edu.jhu.concrete.Concrete.CommunicationGUID;
-import edu.jhu.concrete.Concrete.KnowledgeGraph;
-import edu.jhu.concrete.Concrete.SectionSegmentation;
-import edu.jhu.concrete.Concrete.Tokenization;
-import edu.jhu.concrete.util.IdUtil;
+import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete.Communication;
+import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
+import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
+import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
+import edu.jhu.hlt.concrete.Concrete.Tokenization;
+import edu.jhu.hlt.concrete.util.IdUtil;
 
 /**
  * Utility class for easily generating various protocol buffer objects in the
