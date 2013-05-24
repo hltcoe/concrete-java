@@ -179,6 +179,9 @@ message Communication {
     WIKIPEDIA = 3;
     TWEET = 4;
     PHONE_CALL = 5;
+    // JCM
+    USENET = 6;
+    BLOG = 7;
     // This list is intended to grow over time.
   };
 
@@ -811,6 +814,7 @@ message Entity {
     GPE_ITE = 21;
     ORGANIZATION_ITE = 22;
     JOB_TITLE = 23;
+    UNKNOWN = 24;
     // This list is expected to grow over time.
   }
 
@@ -1553,6 +1557,9 @@ message Vertex {
     PERSON = 1;
     COMMUNICATION = 2;
     COM_CHANNEL = 3;
+    ORGANIZATION = 4;
+    GPE = 5;
+    UNKNOWN = 6;
   }
 
   /** A theory about the name of the person or entity represented by
@@ -1571,6 +1578,8 @@ message Vertex {
   repeated BooleanAttribute is_male = 11;
 
   /** A theory about this person's age. 
+   *
+   * JCM: FIXME: The person's age when? Most people are both 6 years old and 17 years old at different times.
    *
    * @ingroup PERSON_VERTEX
    */
