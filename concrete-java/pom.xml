@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>edu.jhu.concrete</groupId>
+    <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
     <version>1.0.0</version>
   </parent>  
 
-  <groupId>edu.jhu.concrete</groupId>
+  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-java</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
@@ -29,6 +29,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <repo.branch.name>concrete-java-mvn-repo</repo.branch.name>
   </properties>
 
   <build>
@@ -63,7 +64,7 @@
     <dependency>
       <groupId>edu.jhu.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency> 
       <groupId>ch.qos.logback</groupId>
@@ -71,15 +72,4 @@
       <version>1.0.7</version>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>concrete-mvn-repo</id>
-      <url>https://raw.github.com/hltcoe/concrete/mvn-repo/</url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-    </repository>
-  </repositories>
 </project>

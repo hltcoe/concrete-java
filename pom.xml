@@ -2,7 +2,7 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.jhu.concrete</groupId>
+  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
@@ -26,7 +26,9 @@
   </licenses>
 
   <properties>
+    <github.global.server>github</github.global.server>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <repo.branch.name>concrete-parent-mvn-repo</repo.branch.name>
   </properties>
 
   <build>
@@ -72,7 +74,45 @@
             </execution>
           </executions>
 	</plugin>
+	<plugin>
+	  <artifactId>maven-deploy-plugin</artifactId>
+	  <version>2.7</version>
+	  <configuration>
+            <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/${repo.branch.name}</altDeploymentRepository>
+	  </configuration>
+	</plugin>
+	<plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.8</version>
+          <configuration>
+            <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+            <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+            <outputDirectory>${project.build.directory}/${repo.branch.name}</outputDirectory> <!-- matches distribution management repository url above -->
+            <branch>refs/heads/${repo.branch.name}</branch>                       <!-- remote branch name -->
+            <includes><include>**/*</include></includes>
+            <repositoryName>concrete</repositoryName>      <!-- github repo name -->
+            <repositoryOwner>hltcoe</repositoryOwner>    <!-- github username  -->
+          </configuration>
+          <executions>
+            <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+            <execution>
+              <goals>
+                <goal>site</goal>
+              </goals>
+              <phase>deploy</phase>
+            </execution>
+          </executions>
+	</plugin>
       </plugins>
     </pluginManagement>
   </build>
+
+<distributionManagement>
+    <repository>
+        <id>github</id>
+        <name>GitHub ${project.artifactId} Repository</name>
+        <url>https://raw.github.com/hltcoe/concrete/${repo.branch.name}</url>
+    </repository>
+</distributionManagement>
 </project>
