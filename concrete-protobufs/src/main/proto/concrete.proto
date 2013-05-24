@@ -9,7 +9,7 @@
  * 
  */
 
-option java_package="edu.jhu.concrete";
+option java_package="edu.jhu.hlt.concrete";
 package concrete;
 
 //===========================================================================
