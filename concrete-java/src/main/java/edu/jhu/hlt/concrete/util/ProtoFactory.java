@@ -3,9 +3,11 @@
  */
 package edu.jhu.hlt.concrete.util;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Random;
@@ -16,6 +18,7 @@ import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
 import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
 import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
+import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
 
 /**
  * Utility class for easily generating various protocol buffer objects in the
@@ -113,6 +116,20 @@ public class ProtoFactory {
                 .setKnowledgeGraph(graph)
                 .setUuid(IdUtil.generateUUID())
                 .build();
+    }
+    
+    public static void writeCommunication(Communication c, Path outputPath) 
+    		throws ConcreteException {
+    	try {
+			File commFile = outputPath.toFile();
+			FileOutputStream fos = new FileOutputStream(commFile);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ProtocolBufferWriter pbw = new ProtocolBufferWriter(bos);
+			pbw.write(c);
+			pbw.close();
+		} catch (IOException e) {
+			throw new ConcreteException(e);
+		}
     }
     
     public static Communication readCommunicationFromPath (Path pathToComm) 
