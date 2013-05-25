@@ -3,15 +3,19 @@
  */
 package edu.jhu.hlt.concrete.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Random;
 
 import edu.jhu.hlt.concrete.Concrete;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
 import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
-import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
-import edu.jhu.hlt.concrete.Concrete.Tokenization;
-import edu.jhu.hlt.concrete.util.IdUtil;
+import edu.jhu.hlt.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
 
 /**
  * Utility class for easily generating various protocol buffer objects in the
@@ -109,6 +113,23 @@ public class ProtoFactory {
                 .setKnowledgeGraph(graph)
                 .setUuid(IdUtil.generateUUID())
                 .build();
+    }
+    
+    public static Communication readCommunicationFromPath (Path pathToComm) 
+    		throws ConcreteException {
+    	try {
+			File commFile = pathToComm.toFile();
+			FileInputStream fis = new FileInputStream(commFile);
+			ProtocolBufferReader pbr = new ProtocolBufferReader(fis, Communication.class);
+			Communication c = (Communication) pbr.next();
+			
+			pbr.close();
+			fis.close();
+			
+			return c;
+		} catch (IOException e) {
+			throw new ConcreteException(e);
+		}
     }
     
     private static final Communication buildCommunication (Communication.Builder commBuilder) {
