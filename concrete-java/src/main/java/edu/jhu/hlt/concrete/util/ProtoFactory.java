@@ -6,7 +6,7 @@ package edu.jhu.hlt.concrete.util;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -118,35 +118,36 @@ public class ProtoFactory {
                 .build();
     }
     
-    public static void writeCommunication(Communication c, Path outputPath) 
-    		throws ConcreteException {
-    	try {
-			File commFile = outputPath.toFile();
-			FileOutputStream fos = new FileOutputStream(commFile);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			ProtocolBufferWriter pbw = new ProtocolBufferWriter(bos);
-			pbw.write(c);
-			pbw.close();
-		} catch (IOException e) {
-			throw new ConcreteException(e);
-		}
+    public static void writeCommunication(Communication c, Path outputPath)
+            throws ConcreteException {
+        try {
+            File commFile = outputPath.toFile();
+            FileOutputStream fos = new FileOutputStream(commFile);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ProtocolBufferWriter pbw = new ProtocolBufferWriter(bos);
+            pbw.write(c);
+            pbw.close();
+        } catch (IOException e) {
+            throw new ConcreteException(e);
+        }
     }
-    
-    public static Communication readCommunicationFromPath (Path pathToComm) 
-    		throws ConcreteException {
-    	try {
-			File commFile = pathToComm.toFile();
-			FileInputStream fis = new FileInputStream(commFile);
-			ProtocolBufferReader pbr = new ProtocolBufferReader(fis, Communication.class);
-			Communication c = (Communication) pbr.next();
-			
-			pbr.close();
-			fis.close();
-			
-			return c;
-		} catch (IOException e) {
-			throw new ConcreteException(e);
-		}
+
+    public static Communication readCommunicationFromPath(Path pathToComm)
+            throws ConcreteException {
+        try {
+            File commFile = pathToComm.toFile();
+            FileInputStream fis = new FileInputStream(commFile);
+            ProtocolBufferReader pbr = new ProtocolBufferReader(fis,
+                    Communication.class);
+            Communication c = (Communication) pbr.next();
+
+            pbr.close();
+            fis.close();
+
+            return c;
+        } catch (IOException e) {
+            throw new ConcreteException(e);
+        }
     }
     
     private static final Communication buildCommunication (Communication.Builder commBuilder) {
