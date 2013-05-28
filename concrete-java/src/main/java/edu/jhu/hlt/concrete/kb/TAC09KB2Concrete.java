@@ -3,21 +3,22 @@
  */
 package edu.jhu.hlt.concrete.kb;
 
-import java.io.InputStream;
 import java.io.FileInputStream;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.regex.Pattern;
 
-import java.util.Date;
-
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
-
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import edu.jhu.hlt.concrete.Concrete;
@@ -25,15 +26,16 @@ import edu.jhu.hlt.concrete.Concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Concrete.AttributeMetadata;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
-
+import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification.LanguageProb;
 import edu.jhu.hlt.concrete.Concrete.StringAttribute;
 import edu.jhu.hlt.concrete.Concrete.UUID;
 import edu.jhu.hlt.concrete.Concrete.Vertex;
 import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
-import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
-
+import edu.jhu.hlt.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
+import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
 
 /**
@@ -138,7 +140,29 @@ public class TAC09KB2Concrete {
     String fact_name = null;
     CommunicationGUID current_communication_guid = null;
     Vertex.Builder current_unbuilt_vertex = null;
+    private Path outputPath;
+    private Path commsPath;
+    private Path verticesPath;
 
+    public TAC09KB2Concrete(String pathToOutputFiles) throws ConcreteException {
+        this.outputPath = Paths.get(pathToOutputFiles);
+        this.commsPath = this.outputPath.resolve("comms");
+        this.verticesPath = this.outputPath.resolve("vertices");
+        
+        try {
+            if (!Files.exists(this.outputPath))
+                Files.createDirectories(this.outputPath);
+            if (!Files.exists(this.commsPath))
+                FileUtil.deleteFolderAndSubfolders(this.commsPath);
+            Files.createDirectories(this.commsPath);
+            if (!Files.exists(this.verticesPath))
+                FileUtil.deleteFolderAndSubfolders(this.verticesPath);
+            Files.createDirectories(this.verticesPath);
+        } catch (IOException e) {
+            throw new ConcreteException(e);
+        }
+    }
+    
     /**
      * Generate the unique {@link UUID} for a given TAC KBID. (This perhaps
      * belongs in IdUtil.java)
@@ -214,11 +238,15 @@ public class TAC09KB2Concrete {
                 else if (tac_kind.equals("GPE"))
                     v_kind = Vertex.Kind.GPE;
                 current_unbuilt_vertex.addKind(VertexKindAttribute.newBuilder()
-                        .setValue(v_kind).setMetadata(attribute_metadata)
+                        .setValue(v_kind)
+                        .setMetadata(attribute_metadata)
+                        .setUuid(IdUtil.generateUUID())
                         .build());
                 current_unbuilt_vertex.addName(StringAttribute.newBuilder()
                         .setValue(attributes.getValue("name"))
-                        .setMetadata(attribute_metadata).build());
+                        .setMetadata(attribute_metadata)
+                        .setUuid(IdUtil.generateUUID())
+                        .build());
                 // report("wiki_title", attributes.getValue("wiki_title"));
             } else if (qualifiedName.equals("fact")) {
                 collect_text("fact");
@@ -231,15 +259,29 @@ public class TAC09KB2Concrete {
         public void endElement(String uri, String localName,
                 String qualifiedName) {
             if (qualifiedName.equals("entity")) {
-                Vertex vertex = current_unbuilt_vertex.build();
+                Vertex vertex = current_unbuilt_vertex
+                        .setUuid(IdUtil.generateUUID())
+                        .build();
                 logger.info("Write vertex for " + current_id);
+                try {
+                    ProtocolBufferWriter pbw = 
+                            new ProtocolBufferWriter(
+                                    TAC09KB2Concrete.this.verticesPath
+                                        .resolve(IdUtil.uuidToString(vertex.getUuid()) + ".pb"));
+                    pbw.write(vertex);
+                    pbw.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 current_id = null;
                 current_communication_guid = null;
             } else if (qualifiedName.equals("fact")) {
                 if (fact_name.equals("fullname"))
                     current_unbuilt_vertex.addName(StringAttribute.newBuilder()
                             .setValue(retrieve_text("fact"))
-                            .setMetadata(attribute_metadata).build());
+                            .setMetadata(attribute_metadata)
+                            .setUuid(IdUtil.generateUUID())
+                            .build());
                 // report("fact:" + fact_name, retrieve_text("fact"));
                 // if (current_link != null)
                 // report("link:" + fact_name, current_link);
@@ -261,6 +303,16 @@ public class TAC09KB2Concrete {
                                         .setUuid(IdUtil.generateUUID()).build())
                         .build();
                 logger.info("Write conversation for " + current_id);
+                try {
+                    ProtocolBufferWriter pbw = 
+                            new ProtocolBufferWriter(
+                                    TAC09KB2Concrete.this.commsPath
+                                        .resolve(communication.getGuid().getCommunicationId() + ".pb"));
+                    pbw.write(communication);
+                    pbw.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -273,28 +325,24 @@ public class TAC09KB2Concrete {
         }
     }
 
-    public TAC09KB2Concrete() {
-    }
-
-    void runmain(String[] argv) {
-        if (argv.length == 1) {
-            try {
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                InputStream xmlInput = new FileInputStream(argv[0]);
-                SAXParser saxParser = factory.newSAXParser();
-                KBHandler kbhandler = new KBHandler();
-                saxParser.parse(xmlInput, kbhandler);
-            } catch (Exception exception) {
-                logger.error(exception.getMessage(), exception);
-            }
-        } else {
-            logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile>");
-        }
-    }
+    
 
     static public void main(String[] argv) {
-        TAC09KB2Concrete transducer = new TAC09KB2Concrete();
-        transducer.runmain(argv);
+        if (argv.length != 2) {
+            logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
+            System.exit(1);
+        }
+        
+        try {
+            TAC09KB2Concrete transducer = new TAC09KB2Concrete(argv[1]);
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            InputStream xmlInput = new FileInputStream(argv[0]);
+            SAXParser saxParser = factory.newSAXParser();
+            KBHandler kbhandler = transducer.new KBHandler();
+            saxParser.parse(xmlInput, kbhandler);
+        } catch (Exception exception) {
+            logger.error(exception.getMessage(), exception);
+        }
     }
 
 }
