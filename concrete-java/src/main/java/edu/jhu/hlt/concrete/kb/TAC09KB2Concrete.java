@@ -1,12 +1,45 @@
+/**
+ * 
+ */
 package edu.jhu.hlt.concrete.kb;
 
-import java.util.*;
-import java.io.*;
-import java.util.regex.*;
- 
-import javax.xml.parsers.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import java.io.InputStream;
+import java.io.FileInputStream;
+
+import java.util.regex.Pattern;
+
+import java.util.Date;
+
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.Attributes;
+
+import org.xml.sax.helpers.DefaultHandler;
+
+import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete.AnnotationMetadata;
+import edu.jhu.hlt.concrete.Concrete.AttributeMetadata;
+import edu.jhu.hlt.concrete.Concrete.Communication;
+import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
+
+import edu.jhu.hlt.concrete.Concrete.LanguageIdentification;
+import edu.jhu.hlt.concrete.Concrete.LanguageIdentification.LanguageProb;
+import edu.jhu.hlt.concrete.Concrete.StringAttribute;
+import edu.jhu.hlt.concrete.Concrete.UUID;
+import edu.jhu.hlt.concrete.Concrete.Vertex;
+import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
+import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
+
+import edu.jhu.hlt.concrete.util.IdUtil;
+
+/**
+ * @author mayfield
+ * @version 1.0
+ */
 
 /*
 
@@ -41,155 +74,227 @@ import org.xml.sax.helpers.*;
 #	fact:???		RawKeyValuePair
 #	fact:name		RawKeyValuePair->key
 #	fact->{TEXT}		RawKeyValuePair->value
+
+Vertex
+  UUID uuid
+  VertexKindAttribute kind => {PERSON, ORGANIZATION, GPE, UNKNOWN}
+  StringAttribute name*
+    UUID uuid
+    AttributeMetadata metadata
+      string tool
+      double timestamp
+      float confidence
+    string value
+  StringAttribute comment*
+  CommunicationGUIDAttribute communication_guid*
+    UUID uuid
+    AttributeMetadata metadata
+    CommunicationGUID value
+
+Communication
+  CommunicationGUID guid
+    string corpus_name      (TAC09KB)
+    string communication_id (E000008)
+  UUID uuid
+  string text
+  LanguageIdentification language_id
+    UUID uuid
+    AnnotationMetadata metadata?
+    LanguageProb language*
+      string language (ISO 639-3)
+      float probability
+
 */
 
 public class TAC09KB2Concrete {
 
-    static String concrete_protobuf_filename = "/home/hltcoe/jmayfield/code/Concrete/src/main/proto/concrete.proto";
-    //    static String kb_dir = "/export/common/data/corpora/LDC/LDC2009E58/data";
-    static String kb_dir = "/home/hltcoe/jmayfield/code/Slinky/samplekb";
-    static Pattern pattern = Pattern.compile("\\s+");
+    private static final Logger logger = LoggerFactory
+            .getLogger(TAC09KB2Concrete.class);
+
+    static final AttributeMetadata attribute_metadata;
+    static final AnnotationMetadata annotation_metadata;
+    static final LanguageProb language_prob;
+    static final LanguageIdentification language_id;
+    static final double timestamp = (double) ((new Date()).getTime());
+
+    static {
+        attribute_metadata = AttributeMetadata.newBuilder().setConfidence(1.0f)
+                .setTool("TAC09KB2Concrete.java").setTimestamp(timestamp)
+                .build();
+        annotation_metadata = AnnotationMetadata.newBuilder()
+                .setConfidence(1.0f).setTool("TAC09KB2Concrete.java")
+                .setTimestamp(timestamp).build();
+        language_prob = LanguageProb.newBuilder().setLanguage("eng")
+                .setProbability(1.0f).build();
+        language_id = LanguageIdentification.newBuilder()
+                .addLanguage(language_prob).setUuid(IdUtil.generateUUID())
+                .setMetadata(annotation_metadata).build();
+    }
+
+    static final Pattern whitespace_pattern = Pattern.compile("\\s+");
 
     String current_id = null;
     String current_link = null;
     String fact_name = null;
+    CommunicationGUID current_communication_guid = null;
+    Vertex.Builder current_unbuilt_vertex = null;
 
-    public class KBHandler extends DefaultHandler {
+    /**
+     * Generate the unique {@link UUID} for a given TAC KBID. (This perhaps
+     * belongs in IdUtil.java)
+     * 
+     * @param tac_id
+     *            the TAC09 KBID for the entity (such as E000042)
+     * @return a UUID guaranteed to be the same across different calls to this
+     *         routine
+     */
+    public static Concrete.UUID generateUUIDFromTACID(String tac_id) {
+        // Tack on a distinguishing salt string to avoid any possible
+        // conflicts with other namespaces
+        return edu.jhu.hlt.concrete.util.IdUtil.fromJavaUUID(java.util.UUID
+                .nameUUIDFromBytes(("Convert TAC ID to UUID: " + tac_id)
+                        .getBytes()));
+    }
 
-	StringBuilder text_buf = new StringBuilder(10000);
-	String text_type = null;
+    class KBHandler extends DefaultHandler {
 
-	void collect_text(String type) {
-	    if (text_type != null)
-		System.err.println("ERROR: Nested calls to collect_text");
-	    text_type = type;
-	    text_buf.setLength(0);
-	}
+        StringBuilder text_buf = new StringBuilder(10000);
+        String text_type = null;
 
-	String retrieve_text(String type) {
-	    String result = "";
-	    if (text_type == null)
-		System.err.println("ERROR: Attempt to collect text for " + type + " that wasn't collected");
-	    else if (!text_type.equals(type))
-		System.err.println("ERROR: Text collected for " + text_type + " but retrieved for " + type);
-	    else result = new String(text_buf);
-	    text_buf.setLength(0);
-	    text_type = null;
-	    return(result);
-	}
+        void collect_text(String type) {
+            if (text_type != null)
+                logger.error("ERROR: Nested calls to collect_text");
+            text_type = type;
+            text_buf.setLength(0);
+        }
 
+        String retrieve_text(String type) {
+            String result = "";
+            if (text_type == null)
+                logger.error("ERROR: Attempt to collect text for " + type
+                        + " that wasn't collected");
+            else if (!text_type.equals(type))
+                logger.error("ERROR: Text collected for " + text_type
+                        + " but retrieved for " + type);
+            else
+                result = new String(text_buf);
+            text_buf.setLength(0);
+            text_type = null;
+            return (result);
+        }
 
-	String normalize(String string) {
-	    return(pattern.matcher(string).replaceAll(" "));
-	}
+        String normalize(String string) {
+            return (whitespace_pattern.matcher(string).replaceAll(" "));
+        }
 
-	void report(String key, String value) {
-	    if (current_id == null) {
-		System.err.println("Attempt to report with no current ID");
-	    }
-	    else {
-		System.out.println(current_id + "\t" + key + "\t" + normalize(value));
-	    }
-	}
+        // void report(String key, String value) {
+        // if (current_id == null) {
+        // logger.error("Attempt to report with no current ID");
+        // }
+        // else {
+        // logger.info(current_id + "\t" + key + "\t" + normalize(value));
+        // }
+        // }
 
-	public void startDocument() throws SAXException {
-	}
+        public void startElement(String namespaceURI, String localName,
+                String qualifiedName, Attributes attributes)
+                throws SAXException {
+            if (qualifiedName.equals("entity")) {
+                current_id = attributes.getValue("id");
+                current_communication_guid = CommunicationGUID.newBuilder()
+                        .setCorpusName("TAC09KB")
+                        .setCommunicationId(current_id).build();
+                current_unbuilt_vertex = Vertex.newBuilder();
+                Vertex.Kind v_kind = Vertex.Kind.UNKNOWN;
+                String tac_kind = attributes.getValue("type");
+                if (tac_kind.equals("PER"))
+                    v_kind = Vertex.Kind.PERSON;
+                else if (tac_kind.equals("ORG"))
+                    v_kind = Vertex.Kind.ORGANIZATION;
+                else if (tac_kind.equals("GPE"))
+                    v_kind = Vertex.Kind.GPE;
+                current_unbuilt_vertex.addKind(VertexKindAttribute.newBuilder()
+                        .setValue(v_kind).setMetadata(attribute_metadata)
+                        .build());
+                current_unbuilt_vertex.addName(StringAttribute.newBuilder()
+                        .setValue(attributes.getValue("name"))
+                        .setMetadata(attribute_metadata).build());
+                // report("wiki_title", attributes.getValue("wiki_title"));
+            } else if (qualifiedName.equals("fact")) {
+                collect_text("fact");
+                fact_name = attributes.getValue("name");
+            } else if (qualifiedName.equals("link")) {
+                current_link = attributes.getValue("entity_id");
+            }
+        }
 
-	public void startElement(String namespaceURI,
-				 String localName,
-				 String qualifiedName, 
-				 Attributes attributes)
-	    throws SAXException {
-	    if (qualifiedName.equals("entity")) {
-		current_id = attributes.getValue("id");
-		report("type", attributes.getValue("type"));
-		report("wiki_title", attributes.getValue("wiki_title"));
-		report("wiki_name", attributes.getValue("name"));
-	    }
-	    else if (qualifiedName.equals("fact")) {
-		collect_text("fact");
-		fact_name = attributes.getValue("name");
-	    }
-	    else if (qualifiedName.equals("link")) {
-		current_link = attributes.getValue("entity_id");
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	}
+        public void endElement(String uri, String localName,
+                String qualifiedName) {
+            if (qualifiedName.equals("entity")) {
+                Vertex vertex = current_unbuilt_vertex.build();
+                logger.info("Write vertex for " + current_id);
+                current_id = null;
+                current_communication_guid = null;
+            } else if (qualifiedName.equals("fact")) {
+                if (fact_name.equals("fullname"))
+                    current_unbuilt_vertex.addName(StringAttribute.newBuilder()
+                            .setValue(retrieve_text("fact"))
+                            .setMetadata(attribute_metadata).build());
+                // report("fact:" + fact_name, retrieve_text("fact"));
+                // if (current_link != null)
+                // report("link:" + fact_name, current_link);
+            } else if (qualifiedName.equals("link")) {
+                current_link = null;
+            } else if (qualifiedName.equals("wiki_text")) {
+                // Contains the body of the Wikipedia article
+                String body_text = retrieve_text("wiki_text");
+                UUID uuid = IdUtil.generateUUID();
+                Communication communication = Communication
+                        .newBuilder()
+                        .setUuid(uuid)
+                        .setGuid(current_communication_guid)
+                        .setText(body_text)
+                        .addLanguageId(language_id)
+                        .setKind(Communication.Kind.WIKIPEDIA)
+                        .setKnowledgeGraph(
+                                KnowledgeGraph.newBuilder()
+                                        .setUuid(IdUtil.generateUUID()).build())
+                        .build();
+                logger.info("Write conversation for " + current_id);
+            }
+        }
 
-	public void endElement(String uri, String localName, String qualifiedName) {
-	    if (qualifiedName.equals("entity")) {
-		current_id = null;
-	    }
-	    else if (qualifiedName.equals("fact")) {
-		report("fact:" + fact_name, retrieve_text("fact"));
-		if (current_link != null)
-		    report("link:" + fact_name, current_link);
-	    }
-	    else if (qualifiedName.equals("link")) {
-		current_link = null;
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	    else if (qualifiedName.equals("")) {
-	    }
-	}
+        public void endDocument() throws SAXException {
+        }
 
-	public void endDocument() throws SAXException {
-	}
-
-	public void characters(char[] chars, int start, int length) {
-	    if (text_type != null)
-		text_buf.append(chars, start, length);
-	}
+        public void characters(char[] chars, int start, int length) {
+            if (text_type != null)
+                text_buf.append(chars, start, length);
+        }
     }
 
     public TAC09KB2Concrete() {
     }
 
     void runmain(String[] argv) {
-	if (argv.length == 1) {
-	    try {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		InputStream xmlInput = new FileInputStream(argv[0]);
-		SAXParser saxParser = factory.newSAXParser();
-		KBHandler kbhandler = new KBHandler();
-		saxParser.parse(xmlInput, kbhandler);
-	    }
-	    catch (Exception exception) {
-		System.err.println(exception);
-	    }
-	}
-	else {
-	    System.out.println("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile>");
-	}
+        if (argv.length == 1) {
+            try {
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                InputStream xmlInput = new FileInputStream(argv[0]);
+                SAXParser saxParser = factory.newSAXParser();
+                KBHandler kbhandler = new KBHandler();
+                saxParser.parse(xmlInput, kbhandler);
+            } catch (Exception exception) {
+                logger.error(exception.getMessage(), exception);
+            }
+        } else {
+            logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile>");
+        }
     }
 
     static public void main(String[] argv) {
-	TAC09KB2Concrete transducer = new TAC09KB2Concrete();
-	transducer.runmain(argv);
+        TAC09KB2Concrete transducer = new TAC09KB2Concrete();
+        transducer.runmain(argv);
     }
 
 }
