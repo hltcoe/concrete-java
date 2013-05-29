@@ -412,6 +412,7 @@ message Sentence {
 
   /** Theories about the parse structure of this sentence. */
   repeated Parse parse = 6;
+  repeated DependencyParse dependencyParse = 7;
 }
 
 //===========================================================================
@@ -680,6 +681,22 @@ message Parse {
       * <tt>c.children[c.head_child_index]</tt>.  A value of -1
       * indicates that no child head was identified. */
     optional sint32 head_child_index = 4 [default=-1];
+  }
+}
+
+/**
+ * represents a dependency parse with typed edges
+ */
+message DependencyParse {
+
+  required UUID uuid = 1;
+  optional AnnotationMetadata metadata = 2;
+  repeated Dependency dependency = 3;
+
+  message Dependency {
+  	optional TokenRef gov = 1;	// will be null for ROOT token (only)
+	required TokenRef dep = 2;
+	optional string edge_type = 3;
   }
 }
 
