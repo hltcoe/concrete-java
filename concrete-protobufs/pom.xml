@@ -3,34 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>edu.jhu.concrete</groupId>
+    <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
     <version>1.0.0</version>
   </parent>  
 
-  <groupId>edu.jhu.concrete</groupId>
+  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-protobufs</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Protocol Buffer definitions</name>
-
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
-
-  <licenses>
-    <license>
-      <name>2-clause BSD license</name>
-      <url>http://http://opensource.org/licenses/BSD-2-Clause</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <protoc.location>/path/to/your/protoc</protoc.location>
-  </properties>
+  <description>Concrete protocol buffer definitions.</description>
 
   <build>
     <plugins>

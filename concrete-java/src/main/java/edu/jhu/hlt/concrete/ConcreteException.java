@@ -3,7 +3,7 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.concrete;
+package edu.jhu.hlt.concrete;
 
 /**
  * @author max

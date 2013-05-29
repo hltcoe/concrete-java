@@ -31,7 +31,7 @@
  *      sending messages.
  */
 
-option java_package="edu.jhu.concrete.rpc";
+option java_package="edu.jhu.hlt.concrete.rpc";
 package concrete_rpc;
 
 import "concrete.proto";

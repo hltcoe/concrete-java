@@ -3,7 +3,7 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
-import edu.jhu.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete;
 
 /**
  * @author max
@@ -27,19 +27,19 @@ public class IdUtil {
     }
 
     /** 
-     * Generate and return a random new protobuf UUID 
+     * Generate and return a random new {@link UUID} 
      */
     public static Concrete.UUID generateUUID() {
         return fromJavaUUID(java.util.UUID.randomUUID());
     }
 
     /**
-     * Given a {@link java.util.UUID} object, return a {@link Concrete.UUID}
+     * Given a {@link java.util.UUID} object, return a {@link UUID}
      * object.
      * 
      * @param uuid
      *            - a {@link java.util.UUID} object
-     * @return a {@link Concrete.UUID} object
+     * @return a {@link UUID} object
      */
     public static Concrete.UUID fromJavaUUID(java.util.UUID uuid) {
         return Concrete.UUID.newBuilder()
@@ -49,11 +49,11 @@ public class IdUtil {
     }
 
     /**
-     * Given a UUID String, return a {@link Concrete.UUID} object.
+     * Given a UUID String, return a {@link UUID} object.
      * 
      * @param uuidString
      *            - valid UUID string
-     * @return a {@link Concrete.UUID} object
+     * @return a {@link UUID} object
      */
     public static Concrete.UUID fromUUIDString(String uuidString) {
         return fromJavaUUID(java.util.UUID.fromString(uuidString));

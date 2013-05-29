@@ -4,7 +4,7 @@
  * See LICENSE in the project root directory.
  */
 
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 
-import edu.jhu.concrete.Concrete;
-import edu.jhu.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.ConcreteException;
 
 public class AttribUtil {
 

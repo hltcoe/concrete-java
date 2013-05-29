@@ -1,4 +1,4 @@
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
 import org.junit.After;
 import org.junit.Before;

@@ -4,9 +4,9 @@
  * See LICENSE in the project root directory.
  */
 
-package edu.jhu.concrete.util;
+package edu.jhu.hlt.concrete.util;
 
-import edu.jhu.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete;
 
 /**
  * Utility class containing static methods to convert various types to and from

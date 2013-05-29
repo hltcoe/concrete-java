@@ -1,10 +1,11 @@
-package edu.jhu.concrete.io;
+package edu.jhu.hlt.concrete.io;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
 import com.google.protobuf.Message;
@@ -19,18 +20,18 @@ public class ProtocolBufferWriter {
     OutputStream outputStream = null;
 
     public ProtocolBufferWriter(OutputStream out) {
-        init(out);
+        this.outputStream = out;
     }
 
     public ProtocolBufferWriter(String outputShard) throws IOException {
         if (outputShard.endsWith(".gz"))
-            init(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outputShard))));
+            this.outputStream = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outputShard)));
         else
-            init(new BufferedOutputStream(new FileOutputStream(outputShard)));
+            this.outputStream = new BufferedOutputStream(new FileOutputStream(outputShard));
     }
-
-    private void init(OutputStream out) {
-        outputStream = out;
+    
+    public ProtocolBufferWriter(Path path) throws IOException {
+        this(path.toString());
     }
 
     public void write(Message message) throws IOException {

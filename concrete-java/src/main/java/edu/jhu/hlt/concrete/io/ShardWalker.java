@@ -1,4 +1,4 @@
-package edu.jhu.concrete.io;
+package edu.jhu.hlt.concrete.io;
 
 import com.google.protobuf.Message;
 
