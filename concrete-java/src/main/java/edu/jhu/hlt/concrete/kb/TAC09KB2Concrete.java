@@ -37,6 +37,7 @@ import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
 import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
+import edu.jhu.hlt.concrete.util.ProtoFactory;
 
 /**
  * @author mayfield
@@ -182,14 +183,19 @@ public class TAC09KB2Concrete {
 
     class KBHandler extends DefaultHandler {
 
-        StringBuilder text_buf = new StringBuilder(10000);
+        private TAC09KBEntity currentEntity = null;
+        private String factNameKey;
+        private String currentText;
+        
+        StringBuilder text_buf = new StringBuilder();
         String text_type = null;
 
         void collect_text(String type) {
-            if (text_type != null)
-                logger.error("ERROR: Nested calls to collect_text");
-            text_type = type;
-            text_buf.setLength(0);
+//            if (text_type != null)
+//                logger.error("ERROR: Nested calls to collect_text");
+//            text_type = type;
+//            text_buf.setLength(0);
+            text_buf.append(type);
         }
 
         String retrieve_text(String type) {
@@ -224,50 +230,52 @@ public class TAC09KB2Concrete {
                 String qualifiedName, Attributes attributes)
                 throws SAXException {
             if (qualifiedName.equals("entity")) {
-                current_id = attributes.getValue("id");
-                current_communication_guid = CommunicationGUID.newBuilder()
-                        .setCorpusName("TAC09KB")
-                        .setCommunicationId(current_id).build();
-                current_unbuilt_vertex = Vertex.newBuilder();
-                Vertex.Kind v_kind = Vertex.Kind.UNKNOWN;
+                this.currentEntity = new TAC09KBEntity(attributes.getValue("id"));
+                this.currentEntity.setKind(Vertex.Kind.UNKNOWN);
                 String tac_kind = attributes.getValue("type");
                 if (tac_kind.equals("PER"))
-                    v_kind = Vertex.Kind.PERSON;
+                    this.currentEntity.setKind(Vertex.Kind.PERSON);
                 else if (tac_kind.equals("ORG"))
-                    v_kind = Vertex.Kind.ORGANIZATION;
+                    this.currentEntity.setKind(Vertex.Kind.ORGANIZATION);
                 else if (tac_kind.equals("GPE"))
-                    v_kind = Vertex.Kind.GPE;
-                current_unbuilt_vertex.addKind(VertexKindAttribute.newBuilder()
-                        .setValue(v_kind)
-                        .setMetadata(attribute_metadata)
-                        .setUuid(IdUtil.generateUUID())
-                        .build());
-                current_unbuilt_vertex.addName(StringAttribute.newBuilder()
-                        .setValue(attributes.getValue("name"))
-                        .setMetadata(attribute_metadata)
-                        .setUuid(IdUtil.generateUUID())
-                        .build());
+                    this.currentEntity.setKind(Vertex.Kind.GPE);
+                this.currentEntity.setName(attributes.getValue("name"));
                 // report("wiki_title", attributes.getValue("wiki_title"));
             } else if (qualifiedName.equals("fact")) {
-                collect_text("fact");
-                fact_name = attributes.getValue("name");
-            } else if (qualifiedName.equals("link")) {
-                current_link = attributes.getValue("entity_id");
-            }
+//                collect_text("fact");
+//                fact_name = attributes.getValue("name");
+                String factName = attributes.getValue("name");
+                this.factNameKey = factName;
+            } 
+//            else if (qualifiedName.equals("link")) {
+                // ignore links for now.
+//                current_link = attributes.getValue("entity_id");
+//            }
         }
 
         public void endElement(String uri, String localName,
                 String qualifiedName) {
             if (qualifiedName.equals("entity")) {
-                Vertex vertex = current_unbuilt_vertex
+                Vertex.Builder vb = Vertex.newBuilder();
+                vb.addKind(VertexKindAttribute.newBuilder()
+                      .setValue(this.currentEntity.getKind())
+                      .setMetadata(attribute_metadata)
+                      .setUuid(IdUtil.generateUUID()));
+                vb.addName(StringAttribute.newBuilder()
+                      .setValue(this.currentEntity.getName())
+                      .setMetadata(attribute_metadata)
+                      .setUuid(IdUtil.generateUUID()));
+                
+                Vertex vertex = vb
                         .setUuid(IdUtil.generateUUID())
                         .build();
-                logger.info("Write vertex for " + current_id);
+                logger.info("Write vertex for " + this.currentEntity.getEntityId());
                 try {
+                    String fileName = IdUtil.uuidToString(vertex.getUuid()) + ".pb";
                     ProtocolBufferWriter pbw = 
                             new ProtocolBufferWriter(
                                     TAC09KB2Concrete.this.verticesPath
-                                        .resolve(IdUtil.uuidToString(vertex.getUuid()) + ".pb"));
+                                        .resolve(fileName));
                     pbw.write(vertex);
                     pbw.close();
                 } catch (IOException e) {
@@ -276,33 +284,36 @@ public class TAC09KB2Concrete {
                 current_id = null;
                 current_communication_guid = null;
             } else if (qualifiedName.equals("fact")) {
-                if (fact_name.equals("fullname"))
-                    current_unbuilt_vertex.addName(StringAttribute.newBuilder()
-                            .setValue(retrieve_text("fact"))
-                            .setMetadata(attribute_metadata)
-                            .setUuid(IdUtil.generateUUID())
-                            .build());
+                logger.debug("Current text: " + this.currentText);
+                if (this.factNameKey.equals("fullname"))
+                    this.currentEntity
+                        .setName(this.currentText);
                 // report("fact:" + fact_name, retrieve_text("fact"));
                 // if (current_link != null)
                 // report("link:" + fact_name, current_link);
             } else if (qualifiedName.equals("link")) {
-                current_link = null;
+//                current_link = null;
             } else if (qualifiedName.equals("wiki_text")) {
                 // Contains the body of the Wikipedia article
-                String body_text = retrieve_text("wiki_text");
+//                String body_text = retrieve_text("wiki_text");
+                String commText = 
+                        //this.currentEntity.getFactToTextMap().get("wiki_text");
+                        this.currentText;
                 UUID uuid = IdUtil.generateUUID();
+                CommunicationGUID guid = 
+                        ProtoFactory.generateCommGuid("TAC_KB_09", this.currentEntity.getEntityId());
                 Communication communication = Communication
                         .newBuilder()
                         .setUuid(uuid)
-                        .setGuid(current_communication_guid)
-                        .setText(body_text)
+                        .setGuid(guid)
+                        .setText(commText)
                         .addLanguageId(language_id)
                         .setKind(Communication.Kind.WIKIPEDIA)
                         .setKnowledgeGraph(
                                 KnowledgeGraph.newBuilder()
                                         .setUuid(IdUtil.generateUUID()).build())
                         .build();
-                logger.info("Write conversation for " + current_id);
+                logger.info("Write conversation for " + guid.getCommunicationId());
                 try {
                     ProtocolBufferWriter pbw = 
                             new ProtocolBufferWriter(
@@ -320,8 +331,7 @@ public class TAC09KB2Concrete {
         }
 
         public void characters(char[] chars, int start, int length) {
-            if (text_type != null)
-                text_buf.append(chars, start, length);
+            this.currentText = new String(chars, start, length);
         }
     }
 
