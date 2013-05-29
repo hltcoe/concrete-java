@@ -580,10 +580,10 @@ message Tokenization {
 
   /** Theories about various annotations of the tokens
    * in this tokenization. */
-  repeated TokenTagging posTags = 6;
-  repeated TokenTagging nerTags = 7;
+  repeated TokenTagging pos_tags = 6;
+  repeated TokenTagging ner_tags = 7;
   repeated TokenTagging lemmas = 8;
-  repeated TokenTagging langId = 9;
+  repeated TokenTagging lang_ids = 9;
 }
 
 /** A theory about some token-level annotation.
