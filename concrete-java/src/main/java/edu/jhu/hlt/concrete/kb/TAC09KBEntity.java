@@ -6,6 +6,7 @@ package edu.jhu.hlt.concrete.kb;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
 import edu.jhu.hlt.concrete.Concrete.Vertex;
 
 /**
@@ -18,6 +19,7 @@ public class TAC09KBEntity {
     private String name;
     private Vertex.Kind kind;
     private final Map<String, String> factToTextMap;
+    private CommunicationGUID commGuid;
     
     /**
      * 
@@ -71,6 +73,20 @@ public class TAC09KBEntity {
     
     public void addFactToTextEntry(String fact, String text) {
         this.factToTextMap.put(fact, text);
+    }
+
+    /**
+     * @return the comm
+     */
+    public CommunicationGUID getCommGuid() {
+        return commGuid;
+    }
+
+    /**
+     * @param commGuid the comm to set
+     */
+    public void setCommGuid(CommunicationGUID commGuid) {
+        this.commGuid = commGuid;
     }
 
 }

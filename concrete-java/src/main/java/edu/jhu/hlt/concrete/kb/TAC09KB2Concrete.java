@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.SAXParser;
@@ -26,6 +27,7 @@ import edu.jhu.hlt.concrete.Concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Concrete.AttributeMetadata;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
+import edu.jhu.hlt.concrete.Concrete.CommunicationGUIDAttribute;
 import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification.LanguageProb;
@@ -150,14 +152,11 @@ public class TAC09KB2Concrete {
         this.commsPath = this.outputPath.resolve("comms");
         this.verticesPath = this.outputPath.resolve("vertices");
         
+        FileUtil.deleteFolderAndSubfolders(this.commsPath);
+        
         try {
-            if (!Files.exists(this.outputPath))
-                Files.createDirectories(this.outputPath);
-            if (!Files.exists(this.commsPath))
-                FileUtil.deleteFolderAndSubfolders(this.commsPath);
+            Files.createDirectories(this.outputPath);
             Files.createDirectories(this.commsPath);
-            if (!Files.exists(this.verticesPath))
-                FileUtil.deleteFolderAndSubfolders(this.verticesPath);
             Files.createDirectories(this.verticesPath);
         } catch (IOException e) {
             throw new ConcreteException(e);
@@ -187,32 +186,6 @@ public class TAC09KB2Concrete {
         private String factNameKey;
         private String currentText;
         
-        StringBuilder text_buf = new StringBuilder();
-        String text_type = null;
-
-        void collect_text(String type) {
-//            if (text_type != null)
-//                logger.error("ERROR: Nested calls to collect_text");
-//            text_type = type;
-//            text_buf.setLength(0);
-            text_buf.append(type);
-        }
-
-        String retrieve_text(String type) {
-            String result = "";
-            if (text_type == null)
-                logger.error("ERROR: Attempt to collect text for " + type
-                        + " that wasn't collected");
-            else if (!text_type.equals(type))
-                logger.error("ERROR: Text collected for " + text_type
-                        + " but retrieved for " + type);
-            else
-                result = new String(text_buf);
-            text_buf.setLength(0);
-            text_type = null;
-            return (result);
-        }
-
         String normalize(String string) {
             return (whitespace_pattern.matcher(string).replaceAll(" "));
         }
@@ -255,7 +228,39 @@ public class TAC09KB2Concrete {
 
         public void endElement(String uri, String localName,
                 String qualifiedName) {
-            if (qualifiedName.equals("entity")) {
+            if (qualifiedName.equals("wiki_text")) {
+                // Contains the body of the Wikipedia article
+//                String body_text = retrieve_text("wiki_text");
+                String commText = 
+                        //this.currentEntity.getFactToTextMap().get("wiki_text");
+                        this.currentText;
+                UUID uuid = IdUtil.generateUUID();
+                CommunicationGUID guid = 
+                        ProtoFactory.generateCommGuid("TAC_KB_09", this.currentEntity.getEntityId());
+                Communication communication = Communication
+                        .newBuilder()
+                        .setUuid(uuid)
+                        .setGuid(guid)
+                        .setText(commText)
+                        .addLanguageId(language_id)
+                        .setKind(Communication.Kind.WIKIPEDIA)
+                        .setKnowledgeGraph(
+                                KnowledgeGraph.newBuilder()
+                                        .setUuid(IdUtil.generateUUID()).build())
+                        .build();
+                this.currentEntity.setCommGuid(guid);
+                logger.info("Write conversation for " + guid.getCommunicationId());
+                try {
+                    ProtocolBufferWriter pbw = 
+                            new ProtocolBufferWriter(
+                                    TAC09KB2Concrete.this.commsPath
+                                        .resolve(communication.getGuid().getCommunicationId() + ".pb"));
+                    pbw.write(communication);
+                    pbw.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (qualifiedName.equals("entity")) {
                 Vertex.Builder vb = Vertex.newBuilder();
                 vb.addKind(VertexKindAttribute.newBuilder()
                       .setValue(this.currentEntity.getKind())
@@ -265,6 +270,22 @@ public class TAC09KB2Concrete {
                       .setValue(this.currentEntity.getName())
                       .setMetadata(attribute_metadata)
                       .setUuid(IdUtil.generateUUID()));
+                for (Entry<String, String> entry : 
+                            this.currentEntity.getFactToTextMap().entrySet()) {
+                    // currently do nothing..
+                }
+                
+                // add the comm to the vertex if we have it.
+                CommunicationGUID guid = this.currentEntity.getCommGuid();
+                CommunicationGUIDAttribute attr = CommunicationGUIDAttribute
+                        .newBuilder()
+                        .setValue(guid)
+                        .setMetadata(attribute_metadata)
+                        .setUuid(IdUtil.generateUUID())
+                        .build();
+                if (guid != null) {
+                    vb.addCommunicationGuid(attr);
+                }
                 
                 Vertex vertex = vb
                         .setUuid(IdUtil.generateUUID())
@@ -293,37 +314,6 @@ public class TAC09KB2Concrete {
                 // report("link:" + fact_name, current_link);
             } else if (qualifiedName.equals("link")) {
 //                current_link = null;
-            } else if (qualifiedName.equals("wiki_text")) {
-                // Contains the body of the Wikipedia article
-//                String body_text = retrieve_text("wiki_text");
-                String commText = 
-                        //this.currentEntity.getFactToTextMap().get("wiki_text");
-                        this.currentText;
-                UUID uuid = IdUtil.generateUUID();
-                CommunicationGUID guid = 
-                        ProtoFactory.generateCommGuid("TAC_KB_09", this.currentEntity.getEntityId());
-                Communication communication = Communication
-                        .newBuilder()
-                        .setUuid(uuid)
-                        .setGuid(guid)
-                        .setText(commText)
-                        .addLanguageId(language_id)
-                        .setKind(Communication.Kind.WIKIPEDIA)
-                        .setKnowledgeGraph(
-                                KnowledgeGraph.newBuilder()
-                                        .setUuid(IdUtil.generateUUID()).build())
-                        .build();
-                logger.info("Write conversation for " + guid.getCommunicationId());
-                try {
-                    ProtocolBufferWriter pbw = 
-                            new ProtocolBufferWriter(
-                                    TAC09KB2Concrete.this.commsPath
-                                        .resolve(communication.getGuid().getCommunicationId() + ".pb"));
-                    pbw.write(communication);
-                    pbw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
 
