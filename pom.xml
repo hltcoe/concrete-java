@@ -11,6 +11,12 @@
     <module>concrete-java</module>
   </modules>
 
+  <parent>
+    <groupId>edu.jhu.parent</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
   <name>Concrete</name>
   <description>Concrete parent POM.</description>
 
@@ -53,7 +59,7 @@
   <build>
     <pluginManagement>
       <plugins>
-	<plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
@@ -61,39 +67,41 @@
             <target>1.7</target>
           </configuration>
           <version>3.0</version>
-	</plugin>
-	<plugin>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
           <executions>
             <execution>
-              <id>attach-sources</id>
-              <phase>verify</phase>
-              <goals>
-		<goal>jar-no-fork</goal>
-              </goals>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
             </execution>
           </executions>
-	</plugin>
-	<plugin>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.9</version>
           <configuration>
-	    <quiet/>
+            <quiet/>
           </configuration>
           <executions>
             <execution>
               <id>attach-javadoc</id>
               <phase>verify</phase>
               <goals>
-		<goal>jar</goal>
+                <goal>jar</goal>
               </goals>
             </execution>
           </executions>
-	</plugin>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
 </project>
+
+<!-- vim: set ts=2 sw=2 expandtab : -->
