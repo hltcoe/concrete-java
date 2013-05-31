@@ -11,12 +11,6 @@
     <module>concrete-java</module>
   </modules>
 
-  <parent>
-    <groupId>edu.jhu.parent</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0.0</version>
-  </parent>
-
   <name>Concrete</name>
   <description>Concrete parent POM.</description>
 

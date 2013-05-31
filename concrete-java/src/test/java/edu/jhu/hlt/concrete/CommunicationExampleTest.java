@@ -74,7 +74,7 @@ public class CommunicationExampleTest {
                         if (sent.hasTextSpan()) {
                             TextSpan ts = sent.getTextSpan();
                             int sentStart = ts.getStart();
-                            int sentEnd = ts.getStart();
+                            int sentEnd = ts.getEnd();
                         }
                         
                         List<Tokenization> tokenizationList = 
@@ -88,7 +88,7 @@ public class CommunicationExampleTest {
                                 if (tok.hasTextSpan()) {
                                     TextSpan ts = sent.getTextSpan();
                                     int tokenStart = ts.getStart();
-                                    int tokenEnd = ts.getStart();
+                                    int tokenEnd = ts.getEnd();
                                 }
                             }
                             
