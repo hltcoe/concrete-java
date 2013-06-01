@@ -1579,6 +1579,11 @@ message Vertex {
     UNKNOWN = 6;
   }
 
+  /**
+   * A string that represents a data set ID (e.g., TAC KB ID).
+   */
+  optional string data_set_id = 4;
+
   /** A theory about the name of the person or entity represented by
    * this vertex.  If an entity has by multiple names (e.g.,
    * nicknames), then the vertex should have multiple name attributes
