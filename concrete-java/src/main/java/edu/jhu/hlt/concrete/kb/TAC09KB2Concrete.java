@@ -262,6 +262,7 @@ public class TAC09KB2Concrete {
                 }
             } else if (qualifiedName.equals("entity")) {
                 Vertex.Builder vb = Vertex.newBuilder();
+                vb.setDataSetId(this.currentEntity.getEntityId());
                 vb.addKind(VertexKindAttribute.newBuilder()
                       .setValue(this.currentEntity.getKind())
                       .setMetadata(attribute_metadata)
@@ -292,7 +293,8 @@ public class TAC09KB2Concrete {
                         .build();
                 logger.info("Write vertex for " + this.currentEntity.getEntityId());
                 try {
-                    String fileName = IdUtil.uuidToString(vertex.getUuid()) + ".pb";
+                    //String fileName = IdUtil.uuidToString(vertex.getUuid()) + ".pb";
+                    String fileName = vertex.getDataSetId() + ".pb";
                     ProtocolBufferWriter pbw = 
                             new ProtocolBufferWriter(
                                     TAC09KB2Concrete.this.verticesPath
