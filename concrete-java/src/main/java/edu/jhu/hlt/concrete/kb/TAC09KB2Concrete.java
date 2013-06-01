@@ -149,7 +149,7 @@ public class TAC09KB2Concrete {
 
     public TAC09KB2Concrete(String pathToOutputFiles) throws ConcreteException {
         this.outputPath = Paths.get(pathToOutputFiles);
-        this.commsPath = this.outputPath.resolve("comms");
+        this.commsPath = this.outputPath.resolve("communications");
         this.verticesPath = this.outputPath.resolve("vertices");
         
         FileUtil.deleteFolderAndSubfolders(this.commsPath);
