@@ -4,8 +4,10 @@
 package edu.jhu.hlt.concrete.kb;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +38,6 @@ import edu.jhu.hlt.concrete.Concrete.UUID;
 import edu.jhu.hlt.concrete.Concrete.Vertex;
 import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
 import edu.jhu.hlt.concrete.ConcreteException;
-import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
 import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
 import edu.jhu.hlt.concrete.util.ProtoFactory;
@@ -138,29 +139,42 @@ public class TAC09KB2Concrete {
 
     static final Pattern whitespace_pattern = Pattern.compile("\\s+");
 
-    String current_id = null;
-    String current_link = null;
-    String fact_name = null;
-    CommunicationGUID current_communication_guid = null;
-    Vertex.Builder current_unbuilt_vertex = null;
     private Path outputPath;
     private Path commsPath;
     private Path verticesPath;
-
+    private FileOutputStream commPbw;
+    private FileOutputStream vertPbw;
+    
     public TAC09KB2Concrete(String pathToOutputFiles) throws ConcreteException {
         this.outputPath = Paths.get(pathToOutputFiles);
-        this.commsPath = this.outputPath.resolve("communications");
-        this.verticesPath = this.outputPath.resolve("vertices");
+        this.commsPath = this.outputPath.resolve("communications.pb");
+        this.verticesPath = this.outputPath.resolve("vertices.pb");
         
         FileUtil.deleteFolderAndSubfolders(this.commsPath);
         
         try {
             Files.createDirectories(this.outputPath);
-            Files.createDirectories(this.commsPath);
-            Files.createDirectories(this.verticesPath);
+            Files.createFile(this.commsPath);
+            Files.createFile(this.verticesPath);
+            
+            this.commPbw = new FileOutputStream(
+            				this.commsPath.toFile());
+            
+            this.vertPbw = new FileOutputStream(
+            				this.verticesPath.toFile());
+            
         } catch (IOException e) {
             throw new ConcreteException(e);
         }
+    }
+    
+    public void close() throws ConcreteException {
+    	try {
+			this.commPbw.close();
+			this.vertPbw.close();
+		} catch (IOException e) {
+			throw new ConcreteException(e);
+		}
     }
     
     /**
@@ -249,14 +263,9 @@ public class TAC09KB2Concrete {
                                         .setUuid(IdUtil.generateUUID()).build())
                         .build();
                 this.currentEntity.setCommGuid(guid);
-                logger.info("Write conversation for " + guid.getCommunicationId());
+                logger.debug("Write conversation for " + guid.getCommunicationId());
                 try {
-                    ProtocolBufferWriter pbw = 
-                            new ProtocolBufferWriter(
-                                    TAC09KB2Concrete.this.commsPath
-                                        .resolve(communication.getGuid().getCommunicationId() + ".pb"));
-                    pbw.write(communication);
-                    pbw.close();
+                	communication.writeDelimitedTo(commPbw);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -291,21 +300,12 @@ public class TAC09KB2Concrete {
                 Vertex vertex = vb
                         .setUuid(IdUtil.generateUUID())
                         .build();
-                logger.info("Write vertex for " + this.currentEntity.getEntityId());
+                logger.debug("Write vertex for " + this.currentEntity.getEntityId());
                 try {
-                    //String fileName = IdUtil.uuidToString(vertex.getUuid()) + ".pb";
-                    String fileName = vertex.getDataSetId() + ".pb";
-                    ProtocolBufferWriter pbw = 
-                            new ProtocolBufferWriter(
-                                    TAC09KB2Concrete.this.verticesPath
-                                        .resolve(fileName));
-                    pbw.write(vertex);
-                    pbw.close();
+                    vertex.writeDelimitedTo(vertPbw);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                current_id = null;
-                current_communication_guid = null;
             } else if (qualifiedName.equals("fact")) {
                 logger.debug("Current text: " + this.currentText);
                 if (this.factNameKey.equals("fullname"))
@@ -327,23 +327,37 @@ public class TAC09KB2Concrete {
         }
     }
 
-    
-
     static public void main(String[] argv) {
         if (argv.length != 2) {
-            logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
+            logger.error("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
             System.exit(1);
         }
         
+        Path kbPath = Paths.get(argv[0]);
         try {
-            TAC09KB2Concrete transducer = new TAC09KB2Concrete(argv[1]);
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            InputStream xmlInput = new FileInputStream(argv[0]);
-            SAXParser saxParser = factory.newSAXParser();
-            KBHandler kbhandler = transducer.new KBHandler();
-            saxParser.parse(xmlInput, kbhandler);
-        } catch (Exception exception) {
-            logger.error(exception.getMessage(), exception);
+        	SAXParserFactory factory = SAXParserFactory.newInstance();
+        	SAXParser saxParser = factory.newSAXParser();
+        	TAC09KB2Concrete transducer = new TAC09KB2Concrete(argv[1]);
+        	KBHandler kbhandler = transducer.new KBHandler();
+        	
+        	// if we're given a list of files (e.g., TAC KB 09 dir), recurse thru them all. 
+        	if (Files.isDirectory(Paths.get(argv[0]))) {
+            	DirectoryStream<Path> ds = Files.newDirectoryStream(kbPath);
+            	for (Path p : ds) {
+            		if (p.toString().endsWith(".xml")) {
+            			InputStream xmlInput = new FileInputStream(p.toFile());
+            			saxParser.parse(xmlInput, kbhandler);
+            			xmlInput.close();
+            		} else {
+            			throw new RuntimeException("Path " + p.toString() + " did not point to an xml file.");
+            		}
+            	}
+            }
+        	
+        	transducer.close();
+            
+        } catch (Exception e) {
+            logger.error("Caught exception while running ingest.", e);
         }
     }
 
