@@ -29,7 +29,7 @@ Installation
 
 First, checkout our latest tag:
 
-       git checkout p1.0.5_j1.0.3
+   git checkout p1.0.5_j1.0.3
 
 Once you have installed all required software, edit pom.xml and change the
 protoc.location property to point to the location where you have installed
