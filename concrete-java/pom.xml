@@ -16,6 +16,10 @@
   <name>Concrete - Java utility code</name>
   <description>Utility code for the Concrete protocol buffer classes.</description>
 
+  <properties>
+    <groovy.version>2.1.3</groovy.version>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
