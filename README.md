@@ -52,13 +52,13 @@ definitions. You can use these in your java code by adding the following
 dependency to your project's pom.xml file, once installed or deployed:
 
     <dependency>
-      <groupId>edu.jhu.concrete</groupId>
+      <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
       <version>1.0.5</version>
     </dependency>
 
     <dependency>
-      <groupId>edu.jhu.concrete</groupId>
+      <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-java</artifactId>
       <version>1.0.3</version>
     </dependency>
