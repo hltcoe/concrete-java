@@ -6,6 +6,7 @@ package edu.jhu.hlt.concrete.kb;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -327,23 +328,35 @@ public class TAC09KB2Concrete {
         }
     }
 
-    
-
     static public void main(String[] argv) {
         if (argv.length != 2) {
             logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
             System.exit(1);
         }
         
+        Path kbPath = Paths.get(argv[0]);
         try {
-            TAC09KB2Concrete transducer = new TAC09KB2Concrete(argv[1]);
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            InputStream xmlInput = new FileInputStream(argv[0]);
-            SAXParser saxParser = factory.newSAXParser();
-            KBHandler kbhandler = transducer.new KBHandler();
-            saxParser.parse(xmlInput, kbhandler);
-        } catch (Exception exception) {
-            logger.error(exception.getMessage(), exception);
+        	SAXParserFactory factory = SAXParserFactory.newInstance();
+        	SAXParser saxParser = factory.newSAXParser();
+        	TAC09KB2Concrete transducer = new TAC09KB2Concrete(argv[1]);
+        	KBHandler kbhandler = transducer.new KBHandler();
+        	
+        	// if we're given a list of files (e.g., TAC KB 09 dir), recurse thru them all. 
+        	if (Files.isDirectory(Paths.get(argv[0]))) {
+            	DirectoryStream<Path> ds = Files.newDirectoryStream(kbPath);
+            	for (Path p : ds) {
+            		if (p.toString().endsWith(".xml")) {
+            			InputStream xmlInput = new FileInputStream(p.toFile());
+            			saxParser.parse(xmlInput, kbhandler);
+            			xmlInput.close();
+            		} else {
+            			throw new RuntimeException("Path " + p.toString() + " did not point to an xml file.");
+            		}
+            	}
+            }
+            
+        } catch (Exception e) {
+            logger.error("Caught exception while running ingest.", e);
         }
     }
 
