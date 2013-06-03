@@ -13,4 +13,4 @@ appender("STDOUT", ConsoleAppender) {
   }
 }
 
-root(DEBUG, ["STDOUT"])
+root(INFO, ["STDOUT"])
