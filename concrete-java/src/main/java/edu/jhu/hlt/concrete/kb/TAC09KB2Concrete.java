@@ -4,6 +4,7 @@
 package edu.jhu.hlt.concrete.kb;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -37,7 +38,6 @@ import edu.jhu.hlt.concrete.Concrete.UUID;
 import edu.jhu.hlt.concrete.Concrete.Vertex;
 import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
 import edu.jhu.hlt.concrete.ConcreteException;
-import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
 import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
 import edu.jhu.hlt.concrete.util.ProtoFactory;
@@ -147,21 +147,39 @@ public class TAC09KB2Concrete {
     private Path outputPath;
     private Path commsPath;
     private Path verticesPath;
-
+    private FileOutputStream commPbw;
+    private FileOutputStream vertPbw;
+    
     public TAC09KB2Concrete(String pathToOutputFiles) throws ConcreteException {
         this.outputPath = Paths.get(pathToOutputFiles);
-        this.commsPath = this.outputPath.resolve("communications");
-        this.verticesPath = this.outputPath.resolve("vertices");
+        this.commsPath = this.outputPath.resolve("communications.pb");
+        this.verticesPath = this.outputPath.resolve("vertices.pb");
         
         FileUtil.deleteFolderAndSubfolders(this.commsPath);
         
         try {
             Files.createDirectories(this.outputPath);
-            Files.createDirectories(this.commsPath);
-            Files.createDirectories(this.verticesPath);
+            Files.createFile(this.commsPath);
+            Files.createFile(this.verticesPath);
+            
+            this.commPbw = new FileOutputStream(
+            				this.commsPath.toFile());
+            
+            this.vertPbw = new FileOutputStream(
+            				this.verticesPath.toFile());
+            
         } catch (IOException e) {
             throw new ConcreteException(e);
         }
+    }
+    
+    public void close() throws ConcreteException {
+    	try {
+			this.commPbw.close();
+			this.vertPbw.close();
+		} catch (IOException e) {
+			throw new ConcreteException(e);
+		}
     }
     
     /**
@@ -250,14 +268,9 @@ public class TAC09KB2Concrete {
                                         .setUuid(IdUtil.generateUUID()).build())
                         .build();
                 this.currentEntity.setCommGuid(guid);
-                logger.info("Write conversation for " + guid.getCommunicationId());
+                logger.debug("Write conversation for " + guid.getCommunicationId());
                 try {
-                    ProtocolBufferWriter pbw = 
-                            new ProtocolBufferWriter(
-                                    TAC09KB2Concrete.this.commsPath
-                                        .resolve(communication.getGuid().getCommunicationId() + ".pb"));
-                    pbw.write(communication);
-                    pbw.close();
+                	communication.writeDelimitedTo(commPbw);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -292,16 +305,9 @@ public class TAC09KB2Concrete {
                 Vertex vertex = vb
                         .setUuid(IdUtil.generateUUID())
                         .build();
-                logger.info("Write vertex for " + this.currentEntity.getEntityId());
+                logger.debug("Write vertex for " + this.currentEntity.getEntityId());
                 try {
-                    //String fileName = IdUtil.uuidToString(vertex.getUuid()) + ".pb";
-                    String fileName = vertex.getDataSetId() + ".pb";
-                    ProtocolBufferWriter pbw = 
-                            new ProtocolBufferWriter(
-                                    TAC09KB2Concrete.this.verticesPath
-                                        .resolve(fileName));
-                    pbw.write(vertex);
-                    pbw.close();
+                    vertex.writeDelimitedTo(vertPbw);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -330,7 +336,7 @@ public class TAC09KB2Concrete {
 
     static public void main(String[] argv) {
         if (argv.length != 2) {
-            logger.info("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
+            logger.error("Usage: java TAC09KB2Concrete <tac09-wp-xmlfile> <output-dir>");
             System.exit(1);
         }
         
