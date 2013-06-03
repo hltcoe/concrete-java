@@ -27,16 +27,20 @@ Concrete requires the following:
 Installation
 ------------
 
+First, checkout our latest tag:
+
+       git checkout p1.0.5_j1.0.3
+
 Once you have installed all required software, edit pom.xml and change the
 protoc.location property to point to the location where you have installed
 the protoc exectuable (e.g., /usr/lib/protoc). Alternatively, you can pass
 in the property on the command line when invoking mvn, e.g., 
 
-mvn install -Dprotoc.location=/usr/lib/protoc
+   mvn install -Dprotoc.location=/usr/lib/protoc
 
 In either case, running 
 
-mvn install
+   mvn install
 
 will install the plugin to your local repository.
 
