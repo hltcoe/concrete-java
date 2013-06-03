@@ -139,11 +139,6 @@ public class TAC09KB2Concrete {
 
     static final Pattern whitespace_pattern = Pattern.compile("\\s+");
 
-    String current_id = null;
-    String current_link = null;
-    String fact_name = null;
-    CommunicationGUID current_communication_guid = null;
-    Vertex.Builder current_unbuilt_vertex = null;
     private Path outputPath;
     private Path commsPath;
     private Path verticesPath;
@@ -311,8 +306,6 @@ public class TAC09KB2Concrete {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                current_id = null;
-                current_communication_guid = null;
             } else if (qualifiedName.equals("fact")) {
                 logger.debug("Current text: " + this.currentText);
                 if (this.factNameKey.equals("fullname"))
@@ -360,6 +353,8 @@ public class TAC09KB2Concrete {
             		}
             	}
             }
+        	
+        	transducer.close();
             
         } catch (Exception e) {
             logger.error("Caught exception while running ingest.", e);
