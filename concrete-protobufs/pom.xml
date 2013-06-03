@@ -10,7 +10,7 @@
 
   <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-protobufs</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Protocol Buffer definitions</name>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>2.4.1</version>
+      <version>2.5.0</version>
     </dependency>
   </dependencies>
 </project>

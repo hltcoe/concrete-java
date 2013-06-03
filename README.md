@@ -17,9 +17,9 @@ Requirements
 ------------
 
 Concrete requires the following:
-* Java, 1.6 or greater
+* Java, 1.7 or greater
 * Maven, 3.0.4 or greater
-* Google protocol buffers, v. 2.4.1
+* Google protocol buffers, v. 2.5.0
   https://code.google.com/p/protobuf/
 * Maven Protocol buffer plugin: 
   https://github.com/maxthomas/maven-protoc-plugin
@@ -50,13 +50,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>1.0.5</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.concrete</groupId>
       <artifactId>concrete-java</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.3</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server. 
