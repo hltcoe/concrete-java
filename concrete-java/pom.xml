@@ -73,5 +73,12 @@
       <artifactId>logback-classic</artifactId>
       <version>1.0.7</version>
     </dependency>
+    <!-- Runtime deps -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>${groovy.version}</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 </project>
