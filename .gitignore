@@ -7,3 +7,5 @@
 .settings
 .*.swp
 target
+.idea
+*.iml
