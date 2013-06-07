@@ -68,6 +68,6 @@ At this time, we do not have this hosted on a public maven server.
 Using the code in your project
 ------------------------------
 
-Compiled java classes end up in the edu.jhu.concrete package. The protocol
+Compiled java classes end up in the edu.jhu.hlt.concrete package. The protocol
 buffers generate many classes; additional technical documentation can be found
 in the comments of the protocol buffer definitions themselves.
