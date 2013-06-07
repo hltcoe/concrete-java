@@ -29,18 +29,18 @@ Installation
 
 First, checkout our latest tag:
 
-   git checkout p1.0.5_j1.0.3
+    git checkout p1.0.6_j1.0.4
 
 Once you have installed all required software, edit pom.xml and change the
 protoc.location property to point to the location where you have installed
 the protoc exectuable (e.g., /usr/lib/protoc). Alternatively, you can pass
 in the property on the command line when invoking mvn, e.g., 
 
-   mvn install -Dprotoc.location=/usr/lib/protoc
+    mvn install -Dprotoc.location=/usr/lib/protoc
 
 In either case, running 
 
-   mvn install
+    mvn install
 
 will install the plugin to your local repository.
 
@@ -54,13 +54,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.6</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-java</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server. 
@@ -68,6 +68,6 @@ At this time, we do not have this hosted on a public maven server.
 Using the code in your project
 ------------------------------
 
-Compiled java classes end up in the edu.jhu.concrete package. The protocol
+Compiled java classes end up in the edu.jhu.hlt.concrete package. The protocol
 buffers generate many classes; additional technical documentation can be found
 in the comments of the protocol buffer definitions themselves.
