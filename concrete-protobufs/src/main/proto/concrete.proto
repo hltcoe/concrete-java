@@ -1003,6 +1003,9 @@ message Situation {
 
   /** The state type for situations where situation_type=STATE */
   optional StateType state_type = 51;
+  
+  /** The temporal fact type for situations where situation_type=TEMPORAL_FACT */
+  optional TemporalFactType temporal_fact_type = 52;
 
   /** An "intensity" rating for this situation, typically ranging from
    * 0-1.  In the case of SENTIMENT situations, this is used to record
@@ -1025,6 +1028,7 @@ message Situation {
    *   * SITUATION
    *      * FACT
    *         * CAUSAL_FACT
+   *         * TEMPORAL_FACT
    *      * EVENT
    *      * STATE (includes ACE-style relations)
    *         * PRIVATE_STATE
@@ -1034,6 +1038,7 @@ message Situation {
     SITUATION = 0;
     FACT = 100;              //!< Subtype of SITUATION
     CAUSAL_FACT = 110;       //!< Subtype of FACT
+    TEMPORAL_FACT = 120;     //!< Subtype of FACT
     EVENT = 200;             //!< Subtype of SITUATION
     STATE = 300;             //!< Subtype of SITUATION
     PRIVATE_STATE = 310;     //!< Subtype of STATE
@@ -1236,6 +1241,17 @@ message Situation {
     PER_SOC_LASTING_PERSONAL_STATE = 73;
     //-----------------------------------------------------------------
     // This list is expected to grow over time.
+  }
+  
+  /** An enumerated type used to record event types for Situations
+   * and SituationMentions where situation_type=TEMPORAL_FACT. */
+  enum TemporalFactType {
+    BEFORE_TEMPORAL_FACT = 1;
+    AFTER_TEMPORAL_FACT = 2;
+    SIMULTANEOUS_TEMPORAL_FACT = 3;
+    INCLUDES_TEMPORAL_FACT = 4;
+    IS_INCLUDED_BY_TEMPORAL_FACT = 5;
+    VAGUE_TEMPORAL_FACT = 6;
   }
 
   /** An enumeration used to record the polarity of a situation.
