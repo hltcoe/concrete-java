@@ -41,6 +41,7 @@ public class LoadConcreteTACKBFilesTest {
 	private String dataPath = "target/test-inandout";
 	private Path commsPath = Paths.get(dataPath).resolve("communications.pb");
 	private Path vertPath = Paths.get(dataPath).resolve("vertices.pb");
+	private Path idPath = Paths.get(dataPath).resolve("ids.txt");
 	private String kbPath = "src/test/resources/test-kb-folder";
 	
 	
@@ -52,6 +53,7 @@ public class LoadConcreteTACKBFilesTest {
 		this.loader = new LoadConcreteTACKBFiles(dataPath);
 		Files.deleteIfExists(commsPath);
 		Files.deleteIfExists(vertPath);
+		Files.deleteIfExists(idPath);
 	}
 
 	/**
@@ -61,6 +63,7 @@ public class LoadConcreteTACKBFilesTest {
 	public void tearDown() throws Exception {
 		Files.delete(commsPath);
 		Files.delete(vertPath);
+		Files.delete(idPath);
 	}
 	
 	private void ingestDemoFiles() throws ConcreteException {
