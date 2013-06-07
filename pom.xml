@@ -12,7 +12,7 @@
   </modules>
 
   <name>Concrete</name>
-  <description>Concrete parent POM.</description>
+  <description>Concrete parent POM</description>
 
   <prerequisites>
     <maven>3.0.4</maven>
