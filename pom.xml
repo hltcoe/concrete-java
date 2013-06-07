@@ -9,6 +9,7 @@
   <modules>
     <module>concrete-protobufs</module>
     <module>concrete-java</module>
+    <module>concrete-scala</module>
   </modules>
 
   <name>Concrete</name>
