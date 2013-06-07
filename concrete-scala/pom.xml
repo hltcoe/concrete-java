@@ -17,14 +17,6 @@
   <description>Concrete scala code</description>
   <url>https://github.com/hltcoe/concrete/concrete-scala</url>
 
-  <developers>
-    <developer>
-      <name>Max Thomas</name>
-      <url>https://github.com/maxthomas</url>
-      <id>maxthomas</id>
-    </developer>
-  </developers>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scala.version>2.10.1</scala.version>
