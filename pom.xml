@@ -9,10 +9,11 @@
   <modules>
     <module>concrete-protobufs</module>
     <module>concrete-java</module>
+    <module>concrete-scala</module>
   </modules>
 
   <name>Concrete</name>
-  <description>Concrete parent POM.</description>
+  <description>Concrete parent POM</description>
 
   <prerequisites>
     <maven>3.0.4</maven>
