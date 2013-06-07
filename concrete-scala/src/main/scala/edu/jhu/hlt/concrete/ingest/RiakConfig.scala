@@ -39,4 +39,8 @@ object RiakConfig {
   def getVertexBucket() : String = {
     this.config.getString("vertex_bucket")
   }
+
+  def getTacIdBucket() : String = {
+    this.config.getString("tac_id_bucket")
+  }
 }
