@@ -1787,58 +1787,6 @@ message Vertex {
    * 
    */
   repeated StringAttribute political_orientation = 300;
-  
-  /**
-   * A series of hypotheses about named relations that exist between vertices
-   * (or between a vertex and a value).
-   */
-  repeated RelationSet relation_set_list = 301;
-
-  /**
-   * A set of named subject-object relations between vertices (or between a
-   * vertex and a value).
-   */
-  message RelationSet {
-    /** The UUID of the RelationSet. */
-    required UUID uuid = 1;
-
-    /** Information about where this set came from. */
-    optional AnnotationMetadata metadata = 2;
-
-    /** A list of labeled relations between vertices. */
-    repeated Relation relations = 3;
-  }
-
-  /**
-   * A relation between two vertices or between a vertex and a value.
-   */
-  message Relation {
-    /** The UUID of the relation. */
-    required UUID uuid = 1;
-
-    /** The name of the relation. */
-    required string name = 2;
-
-    /** Whether the relation is with another vertex or a value. */
-    required Kind kind = 3;
-
-    /** An enumeration between relating to vertices or values. */
-    enum Kind {
-      VERTEX = 1;
-      VALUE = 2;
-    }
-
-    /** The values of the objects of the relation. Should only be populated if
-     * kind = VALUE.
-     */
-    repeated string value = 4;
-
-    /** The UUIDs of the vertices that are the objects of the relation. Should
-     * only be populated if kind = VERTEX.
-     */
-    repeated UUID vertices = 5;
-  }
-
 }
 
 /** A unordered pair of vertex UUIDs, uniquely identifying an edge in
