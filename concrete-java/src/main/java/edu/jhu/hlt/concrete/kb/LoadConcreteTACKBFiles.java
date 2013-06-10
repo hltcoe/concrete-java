@@ -61,7 +61,7 @@ public class LoadConcreteTACKBFiles {
             bos.flush();
             ByteArrayInputStream byis = new ByteArrayInputStream(bos.toByteArray());
             while (byis.available() != 0) {
-            	Vertex v = Vertex.PARSER.parseDelimitedFrom(bis);
+            	Vertex v = Vertex.PARSER.parseDelimitedFrom(byis);
             	vertexSet.add(v);
             	logger.debug("Got vertex: " + v.getDataSetId());
                 logger.debug("Got name: " + v.getNameList().get(0).getValue());
@@ -90,7 +90,7 @@ public class LoadConcreteTACKBFiles {
             ByteArrayInputStream byis = new ByteArrayInputStream(bos.toByteArray());
 
             while (byis.available() != 0) {
-            	Communication c = Communication.PARSER.parseDelimitedFrom(bis);
+            	Communication c = Communication.PARSER.parseDelimitedFrom(byis);
             	commSet.add(c);
             	logger.debug("Got vertex: " + c.getGuid().getCommunicationId());
             }
