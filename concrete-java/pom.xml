@@ -10,7 +10,7 @@
 
   <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-java</artifactId>
-  <version>1.0.7-SNAPSHOT</version>
+  <version>1.0.7</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Java utility code</name>
