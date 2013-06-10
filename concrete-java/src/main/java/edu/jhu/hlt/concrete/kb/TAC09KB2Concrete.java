@@ -207,7 +207,8 @@ public class TAC09KB2Concrete {
         private TAC09KBEntity currentEntity = null;
         private String factNameKey;
         private String currentText;
-        
+        private java.util.Map<String,String> otherAttributes = new java.util.HashMap<String,String>();
+ 
         String normalize(String string) {
             return (whitespace_pattern.matcher(string).replaceAll(" "));
         }
@@ -225,6 +226,7 @@ public class TAC09KB2Concrete {
 				 String qualifiedName, Attributes attributes)
 	    throws SAXException {
             if (qualifiedName.equals("entity")) {
+		otherAttributes = new java.util.HashMap<String,String>();
 		String idStr = attributes.getValue("id");
 		try { 
 		    idWriter.write(idStr + "\n");
@@ -297,7 +299,9 @@ public class TAC09KB2Concrete {
 			 this.currentEntity.getFactToTextMap().entrySet()) {
                     // currently do nothing..
                 }
-                
+                for (String key: this.otherAttributes.keySet())
+                        vb.addOtherAttributes( Concrete.LabeledStringAttribute.newBuilder().setUuid(IdUtil.generateUUID()).setMetadata(attribute_metadata).setLabel(key).setValue(this.otherAttributes.get(key)).build());
+ 
                 // add the comm to the vertex if we have it.
                 CommunicationGUID guid = this.currentEntity.getCommGuid();
                 CommunicationGUIDAttribute attr = CommunicationGUIDAttribute
@@ -325,6 +329,8 @@ public class TAC09KB2Concrete {
                 if (this.factNameKey.equals("fullname"))
                     this.currentEntity
                         .setName(this.currentText);
+		else this.otherAttributes.put(this.factNameKey,this.currentText);
+
             } else if (qualifiedName.equals("link")) {
 		//                current_link = null;
             }
@@ -364,7 +370,12 @@ public class TAC09KB2Concrete {
 		    }
             	}
             }
-        	
+            else
+	    {
+	        InputStream xmlInput = new FileInputStream(argv[0]);
+		saxParser.parse(xmlInput,kbhandler);
+		xmlInput.close();
+	    }	
 	    transducer.close();
             
         } catch (Exception e) {
