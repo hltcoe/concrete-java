@@ -4,8 +4,6 @@
 package edu.jhu.hlt.concrete.kb;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -51,17 +49,8 @@ public class LoadConcreteTACKBFiles {
             Set<Vertex> vertexSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.verticesPath.toFile());
             BufferedInputStream bis = new BufferedInputStream(fis);
-            byte[] buffer = new byte[8 * 1024]; // what should this value be?
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            int read = 0;
-            while( ( read = bis.read( buffer ) ) > 0 )
-                //md.update( buffer, 0, read );
-                bos.write(buffer);
-            bis.close();
-            bos.flush();
-            ByteArrayInputStream byis = new ByteArrayInputStream(bos.toByteArray());
-            while (byis.available() != 0) {
-            	Vertex v = Vertex.PARSER.parseDelimitedFrom(byis);
+            while (bis.available() != 0) {
+            	Vertex v = Vertex.PARSER.parseDelimitedFrom(bis);
             	vertexSet.add(v);
             	logger.debug("Got vertex: " + v.getDataSetId());
                 logger.debug("Got name: " + v.getNameList().get(0).getValue());
@@ -79,18 +68,8 @@ public class LoadConcreteTACKBFiles {
             Set<Communication> commSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.commsPath.toFile());
             BufferedInputStream bis = new BufferedInputStream(fis);
-            byte[] buffer = new byte[8 * 1024]; // what should this value be?
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            int read = 0;
-            while( ( read = bis.read( buffer ) ) > 0 )
-                //md.update( buffer, 0, read );
-                bos.write(buffer);
-            bis.close();
-            bos.flush();
-            ByteArrayInputStream byis = new ByteArrayInputStream(bos.toByteArray());
-
-            while (byis.available() != 0) {
-            	Communication c = Communication.PARSER.parseDelimitedFrom(byis);
+            while (bis.available() != 0) {
+            	Communication c = Communication.PARSER.parseDelimitedFrom(bis);
             	commSet.add(c);
             	logger.debug("Got vertex: " + c.getGuid().getCommunicationId());
             }
