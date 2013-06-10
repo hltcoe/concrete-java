@@ -89,9 +89,13 @@ public class LoadConcreteTACKBFiles {
     	}
     	
     	LoadConcreteTACKBFiles loader = new LoadConcreteTACKBFiles(args[0]);
+    	long millis = System.currentTimeMillis();
     	Set<Communication> commSet = loader.loadCommunications();
     	logger.info("Got " + commSet.size() + " communications.");
+    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the comms.");
+    	millis = System.currentTimeMillis();
     	Set<Vertex> vertSet = loader.loadVertices();
     	logger.info("Got " + vertSet.size() + " vertices.");
+    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the vertices.");
     }
 }
