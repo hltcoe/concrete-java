@@ -1787,6 +1787,13 @@ message Vertex {
    * 
    */
   repeated StringAttribute political_orientation = 300;
+
+  /**
+   * A series of theories about arbitrary attributes of this vertex. Specific
+   * attributes are to be preferred.
+   */
+  repeated LabeledStringAttribute other_attributes = 302 [deprecated=true];
+
 }
 
 /** A unordered pair of vertex UUIDs, uniquely identifying an edge in
@@ -1850,6 +1857,10 @@ message UndirectedAttributes {
   repeated StringFloatMapAttribute lda_topics = 12;
   repeated Int32Attribute text_communication_counts = 13;
   repeated Int32Attribute audio_communication_counts = 14;
+
+  /** A container for arbitrary edge labels, structured data is to be preferred
+   * to this representation */
+  repeated EdgeLabelAttribute other_attributes = 15 [deprecated = true];
 }
 
 /** The directed attributes for a single edge in a single direction.
@@ -1906,6 +1917,10 @@ message DirectedAttributes {
    * @param target COM_CHANNEL
    */
   repeated Int32Attribute num_coms_received = 22;
+
+  /** A container for arbitrary edge labels, structured data is to be preferred
+   * to this representation */
+  repeated EdgeLabelAttribute other_attributes = 23 [deprecated = true];
 }
 
 /** A pointer to a vertex in a knowlede graph.  This data structure is
@@ -1998,6 +2013,23 @@ message StringFloatMapAttribute {
     required string key = 1;
     required double value = 2;
   }
+  optional Digest digest = 4;
+}
+
+/** A theory about an arbitrary string attribute of a vertex */
+message LabeledStringAttribute {
+  required UUID uuid = 1;
+  required AttributeMetadata metadata = 2;
+  required string label = 3;
+  required string value = 4;
+  optional Digest digest = 5;
+}
+
+/** A theory about an arbitrary label on an edge between two vertices */
+message EdgeLabelAttribute {
+  required UUID uuid = 1;
+  required AttributeMetadata metadata = 2;
+  required string label = 3;
   optional Digest digest = 4;
 }
 
