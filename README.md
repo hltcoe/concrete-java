@@ -21,24 +21,15 @@ Concrete requires the following:
 * Maven, 3.0.4 or greater
 * Google protocol buffers, v. 2.5.0
   https://code.google.com/p/protobuf/
-* Maven Protocol buffer plugin: 
-  https://github.com/maxthomas/maven-protoc-plugin
 
 Installation
 ------------
 
 First, checkout our latest tag:
 
-    git checkout p1.0.6_j1.0.4
+    git checkout p1.0.8_j1.0.7
 
-Once you have installed all required software, edit pom.xml and change the
-protoc.location property to point to the location where you have installed
-the protoc exectuable (e.g., /usr/lib/protoc). Alternatively, you can pass
-in the property on the command line when invoking mvn, e.g., 
-
-    mvn install -Dprotoc.location=/usr/lib/protoc
-
-In either case, running 
+Running 
 
     mvn install
 
@@ -54,13 +45,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.8</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-java</artifactId>
-      <version>1.0.4</version>
+      <version>1.0.7</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server. 

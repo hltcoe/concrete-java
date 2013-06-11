@@ -3,6 +3,7 @@
  */
 package edu.jhu.hlt.concrete.kb;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -47,8 +48,9 @@ public class LoadConcreteTACKBFiles {
         try {
             Set<Vertex> vertexSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.verticesPath.toFile());
-            while (fis.available() != 0) {
-            	Vertex v = Vertex.parseDelimitedFrom(fis);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            while (bis.available() != 0) {
+            	Vertex v = Vertex.PARSER.parseDelimitedFrom(bis);
             	vertexSet.add(v);
             	logger.debug("Got vertex: " + v.getDataSetId());
                 logger.debug("Got name: " + v.getNameList().get(0).getValue());
@@ -65,8 +67,9 @@ public class LoadConcreteTACKBFiles {
         try {
             Set<Communication> commSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.commsPath.toFile());
-            while (fis.available() != 0) {
-            	Communication c = Communication.parseDelimitedFrom(fis);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            while (bis.available() != 0) {
+            	Communication c = Communication.PARSER.parseDelimitedFrom(bis);
             	commSet.add(c);
             	logger.debug("Got vertex: " + c.getGuid().getCommunicationId());
             }
@@ -85,9 +88,13 @@ public class LoadConcreteTACKBFiles {
     	}
     	
     	LoadConcreteTACKBFiles loader = new LoadConcreteTACKBFiles(args[0]);
+    	long millis = System.currentTimeMillis();
     	Set<Communication> commSet = loader.loadCommunications();
     	logger.info("Got " + commSet.size() + " communications.");
+    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the comms.");
+    	millis = System.currentTimeMillis();
     	Set<Vertex> vertSet = loader.loadVertices();
     	logger.info("Got " + vertSet.size() + " vertices.");
+    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the vertices.");
     }
 }

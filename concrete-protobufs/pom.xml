@@ -10,7 +10,7 @@
 
   <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-protobufs</artifactId>
-  <version>1.0.7-SNAPSHOT</version>
+  <version>1.0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Protocol Buffer definitions</name>
@@ -27,18 +27,18 @@
         <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>com.google.protobuf.tools</groupId>
-        <artifactId>protoc-plugin</artifactId>
-        <version>0.1.11</version>
+        <groupId>com.github.igor-petruk.protobuf</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>0.6.3</version>
         <configuration>
-          <protocExecutable>${protoc.location}</protocExecutable>
-	  <checkStaleness>true</checkStaleness>
-	  <staleMillis>10000</staleMillis>
-        </configuration>
+          <inputDirectories>
+            <directory>${project.basedir}/src/main/proto</directory>
+          </inputDirectories>
+        </configuration> 
         <executions>
           <execution>
             <goals>
-              <goal>compile</goal>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
@@ -51,11 +51,6 @@
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
       <version>2.5.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.protobuf.tools</groupId>
-      <artifactId>protoc-plugin</artifactId>
-      <version>0.1.11</version>
     </dependency>
   </dependencies>
 </project>

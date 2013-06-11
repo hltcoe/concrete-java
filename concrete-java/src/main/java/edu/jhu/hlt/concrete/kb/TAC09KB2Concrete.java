@@ -140,7 +140,9 @@ public class TAC09KB2Concrete {
     private Path commsPath;
     private Path verticesPath;
     private Path idPath;
+    private Path namePath;
     private FileWriter idWriter;
+    private FileWriter nameWriter;
     private FileOutputStream commPbw;
     private FileOutputStream vertPbw;
     
@@ -149,6 +151,7 @@ public class TAC09KB2Concrete {
 	this.commsPath = this.outputPath.resolve("communications.pb");
         this.verticesPath = this.outputPath.resolve("vertices.pb");
 	this.idPath = this.outputPath.resolve("ids.txt");
+	this.namePath = this.outputPath.resolve("names.txt");
 
         FileUtil.deleteFolderAndSubfolders(this.commsPath);
         
@@ -157,6 +160,7 @@ public class TAC09KB2Concrete {
             Files.createFile(this.commsPath);
             Files.createFile(this.verticesPath);
 	    Files.createFile(this.idPath);
+	    Files.createFile(this.namePath);
             
             this.commPbw = new FileOutputStream(
 						this.commsPath.toFile());
@@ -164,6 +168,7 @@ public class TAC09KB2Concrete {
             this.vertPbw = new FileOutputStream(
 						this.verticesPath.toFile());
 	    this.idWriter = new FileWriter(this.idPath.toFile(), true);
+	    this.nameWriter = new FileWriter(this.namePath.toFile(), true);
         } catch (IOException e) {
             throw new ConcreteException(e);
         }
@@ -174,6 +179,7 @@ public class TAC09KB2Concrete {
 	    this.commPbw.close();
 	    this.vertPbw.close();
 	    this.idWriter.close();
+	    this.nameWriter.close();
 	} catch (IOException e) {
 	    throw new ConcreteException(e);
 	}
@@ -282,8 +288,9 @@ public class TAC09KB2Concrete {
 			   .setValue(this.currentEntity.getKind())
 			   .setMetadata(attribute_metadata)
 			   .setUuid(IdUtil.generateUUID()));
+		String name = this.currentEntity.getName();
                 vb.addName(StringAttribute.newBuilder()
-			   .setValue(this.currentEntity.getName())
+			   .setValue(name)
 			   .setMetadata(attribute_metadata)
 			   .setUuid(IdUtil.generateUUID()));
                 for (Entry<String, String> entry : 
@@ -309,6 +316,7 @@ public class TAC09KB2Concrete {
                 logger.debug("Write vertex for " + this.currentEntity.getEntityId());
                 try {
                     vertex.writeDelimitedTo(vertPbw);
+		    nameWriter.write(name + "\n");
                 } catch (IOException e) {
 		   throw new RuntimeException(e);
 		}
