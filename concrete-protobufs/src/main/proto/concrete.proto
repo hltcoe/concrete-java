@@ -987,6 +987,8 @@ message Situation {
   /** The core type of this situation (eg EVENT or SENTIMENT) */
   optional Type situation_type = 2;
 
+
+
   /** The arguments for this situation.  Each argument consists of a
    * role and a value.  It is possible for an situation to have
    * multiple arguments with the same role.  Arguments are
@@ -999,13 +1001,22 @@ message Situation {
   repeated Justification justification = 4;
 
   /** The event type for situations where situation_type=EVENT */
-  optional EventType event_type = 50;
+  optional EventType event_type = 50; 
 
   /** The state type for situations where situation_type=STATE */
   optional StateType state_type = 51;
   
   /** The temporal fact type for situations where situation_type=TEMPORAL_FACT */
   optional TemporalFactType temporal_fact_type = 52;
+  
+  /** This lemma represents a canonical lemma for the situation kind 
+   * when the situation kind cannot be specified by a situation type subtype
+   * (ex, when using arbitrary verbs or nominalizations as events which do 
+   * not appear in the event_type enumeration).
+   * If this kind is grounded in a token sequence from the original text, the
+   * appropriate SituationMention should have a reference to the token sequence.
+   */
+  optional string situation_kind_lemma = 53;
 
   /** An "intensity" rating for this situation, typically ranging from
    * 0-1.  In the case of SENTIMENT situations, this is used to record
