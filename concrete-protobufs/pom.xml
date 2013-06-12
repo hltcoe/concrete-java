@@ -5,12 +5,10 @@
   <parent>
     <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.9-SNAPSHOT</version>
   </parent>  
 
-  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-protobufs</artifactId>
-  <version>1.0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Protocol Buffer definitions</name>

@@ -5,12 +5,10 @@
   <parent>
     <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.9-SNAPSHOT</version>
   </parent>  
 
-  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-java</artifactId>
-  <version>1.0.8-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Concrete - Java utility code</name>
@@ -70,12 +68,18 @@
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.8</version>
+      <version>1.0.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
     </dependency>
     <dependency> 
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Runtime deps -->
