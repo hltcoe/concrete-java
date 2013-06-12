@@ -11,12 +11,18 @@
     <module>concrete-java</module>
   </modules>
 
-  <name>Concrete</name>
-  <description>Concrete parent POM</description>
+  <name>HLTCOE Concrete</name>
+  <description>Parent for HLTCOE Concrete system.</description>
+  <url>https://github.com/hltcoe/concrete</url>
 
   <prerequisites>
     <maven>3.0.4</maven>
   </prerequisites>
+
+  <organization>
+    <name>Johns Hopkins University HLTCOE</name>
+    <url>http://hltcoe.jhu.edu</url>
+  </organization>
 
   <licenses>
     <license>
@@ -68,11 +74,11 @@
           <version>2.2.1</version>
           <executions>
             <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
+              <id>attach-sources</id>
+              <phase>verify</phase>
+              <goals>
+		<goal>jar-no-fork</goal>
+              </goals>
             </execution>
           </executions>
         </plugin>
@@ -96,5 +102,77 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>edu.jhu.hlt.concrete</groupId>
+        <artifactId>concrete-protobufs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt.concrete</groupId>
+        <artifactId>concrete-java</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.11</version>
+	<scope>test</scope>
+      </dependency>
+
+      <dependency>
+	<groupId>com.google.protobuf</groupId>
+	<artifactId>protobuf-java</artifactId>
+	<version>2.5.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Nexus Release Repository</name>
+      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- NOTE: source and javadoc jars automatically generated on release (http://maven.apache.org/pom.html#The_Super_POM) -->
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
 
