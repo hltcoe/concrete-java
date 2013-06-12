@@ -5,15 +5,13 @@
   <parent>
     <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.9-SNAPSHOT</version>
   </parent>  
 
-  <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete-java</artifactId>
-  <version>1.0.8-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Concrete - Java utility code</name>
+  <name>Concrete :: Java utility code</name>
   <description>Utility code for the Concrete protocol buffer classes.</description>
 
   <properties>
@@ -57,27 +55,21 @@
   
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
-      <version>2.5.0</version>
-    </dependency>
-    <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.8</version>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency> 
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
     </dependency>
-
+      
     <!-- Runtime deps -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
