@@ -205,21 +205,37 @@ message Communication {
 /**
  * Defines a theory about a predicate-argument linking
  * between two documents (report and passage)
+ *
+ * If embedded in a Communication, this_doc_id should
+ * match the UUID of the owning Communication.
+ *
+ * Null-alignments should be represented explictly as links.
+ * This ensures that the set of mentions (TokenRefSequences)
+ * considered for alignment can be determined. This is useful
+ * for evaluation and training a pred-arg linking system.
  */
 message PredicateArgumentLinking {
+
 	required UUID id = 1;
 	required AnnotationMetadata metadata = 2;
-	required CommunicationGUID report = 3;
-	required CommunicationGUID passage = 4;
-	repeated PredicateArgumentLink links = 5;
+	required UUID this_doc_id = 3;
+	required UUID that_doc_id = 4;
+	repeated PredicateArgumentLink link = 5;
+
 	message PredicateArgumentLink {
-		required TokenRefSequence report_mention = 1;
-		required TokenRefSequence passage_mention = 2;
-		required float confidence = 3;
-		required Kind kind = 4;
+
+		required TokenRefSequence this_mention = 1;	// put "canonical" mention here
+		repeated TokenRefSequence this_coref_mention = 2;
+
+		required TokenRefSequence that_mention = 3;	// put "canonical" mention here
+		repeated TokenRefSequence that_coref_mention = 4;
+
+		required float confidence = 5;	// for annotations: 1f = sure, 0.5f = possible, 0f = none
+		required Kind kind = 6;
+
 		enum Kind {
-			PREDICATE = 0;
-			ARGUMENT = 1;
+			PREDICATE = 0;	// equality, i.e. "same event"
+			ARGUMENT = 1;	// equality, i.e. "coreferent entities"
 		}
 	}
 }
