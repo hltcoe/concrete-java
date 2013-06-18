@@ -202,6 +202,68 @@ message Communication {
   required KnowledgeGraph knowledge_graph = 7;
 }
 
+
+/**
+ * a container for cross-communication annotations
+ */
+message Discourse {
+
+	required UUID id = 1;
+
+	/**
+	 * why are these communications are related?
+	 * note that this is not the same as the annotation-level
+	 * metadata, which describes the tool used
+	 */
+	required AnnotationMetadata metadata = 2;
+
+	/**
+	 * list of communications involved in this discourse
+	 */
+	repeated UUID communication = 3;
+
+	/**
+	 * cross-communication grouping annotations
+	 */
+	repeated DiscourseAnnotation annotation = 4;
+
+	// TODO: add fields for linking decisions that are not equality
+	message DiscourseAnnotation {	// come in gold and synthetic varieties
+
+		required UUID id = 1;
+
+		/**
+		 * specifies the tool that produced this annotation.
+		 * for instance, you might specify that this is a gold
+		 * coref chain of entities in here.
+		 */
+		required AnnotationMetadata metadata = 2;
+
+		repeated DiscourseEntity entity = 3;
+		repeated DiscourseSituation situation = 4;
+	}
+}
+
+/**
+ * represents an entity at the cross-communication coreference level
+ */
+message DiscourseEntity {
+	// indices in these two lists correspond
+	repeated UUID entity = 1;		// pointer to instane of type Entity
+	repeated UUID communication = 2;
+}
+
+/**
+ * represents a situation at the cross-communication coreference level
+ */
+message DiscourseSituation {
+	// indices in these two lists correspond
+	repeated UUID situation = 1;	// pointer to instance of type Situation
+	repeated UUID communication = 2;
+}
+
+
+
 /**
  * Defines a theory about a predicate-argument linking
  * between two documents (report and passage)
@@ -795,7 +857,8 @@ message Digest {
 // Entities
 //===========================================================================
 
-/** A single referent (or "entity") that is referred to at least once
+/**
+ * A single referent (or "entity") that is referred to at least once
  * in a given communication, along with pointers to all of the
  * references to that referent.  The referent's type (e.g., is it a
  * person, or a location, or an organization, etc) is also recorded.
@@ -821,7 +884,7 @@ message Entity {
    * In the future, we may add support for encoding entity subtypes as
    * well.  This would most likely be accomplished by adding a second
    * field with a new enumerated type whose values correspond to fully
-   * specified sbutypes (eg "PERSON_INDIVIDUAL" vs "PERSON_GROUP").
+   * specified subtypes (eg "PERSON_INDIVIDUAL" vs "PERSON_GROUP").
    */
   enum Type { // Renamed from "TYPE"
     PERSON = 1;
@@ -956,8 +1019,13 @@ message EntityMention {
   optional int32 head_index = 14;
 }
 
-/** A theory about the set of entity mentions that are present in a
- * message.  See also: EntityMention*/
+/**
+ * WARNING: this message may be redundant with Entity
+ * and is marked for removal; see Travis or Ben
+ *
+ * A theory about the set of entity mentions that are present in a
+ * message.  See also: EntityMention
+ */
 message EntityMentionSet {
   /** Unique identifier for this set. */
   required UUID uuid = 1;
