@@ -204,103 +204,68 @@ message Communication {
 
 
 /**
- * a container for cross-communication annotations
+ * a meaniningful set of Communications, possibly
+ * with some coreference annotations.
  */
-message Discourse {
+message Discourse {	
 
 	required UUID id = 1;
 
 	/**
-	 * why are these communications are related?
-	 * note that this is not the same as the annotation-level
-	 * metadata, which describes the tool used
+	 * the tool that identified this set of Communications
+	 * (not the tool that determined any coreference assesments)
 	 */
 	required AnnotationMetadata metadata = 2;
 
 	/**
-	 * list of communications involved in this discourse
+	 * theories about the coreference relationships between
+	 * Entity or Situtation discussed in this set of Communications.
 	 */
-	repeated UUID communication = 3;
+	repeated DiscourseAnnotation annotation = 3;
 
 	/**
-	 * cross-communication grouping annotations
+	 * a theory of cross-doc Entity/Situtation coreference
 	 */
-	repeated DiscourseAnnotation annotation = 4;
-
-	// TODO: add fields for linking decisions that are not equality
 	message DiscourseAnnotation {	// come in gold and synthetic varieties
-
 		required UUID id = 1;
-
-		/**
-		 * specifies the tool that produced this annotation.
-		 * for instance, you might specify that this is a gold
-		 * coref chain of entities in here.
-		 */
 		required AnnotationMetadata metadata = 2;
-
-		repeated DiscourseEntity entity = 3;
-		repeated DiscourseSituation situation = 4;
+		repeated DiscourseEntity entity = 3;			// all entities mentioned in this Discourse
+		repeated DiscourseSituation situation = 4;		// all situtations mentioned in this Discourse
 	}
 }
 
 /**
- * represents an entity at the cross-communication coreference level
+ * represents one Entity in a cross-doc situation coref/alignment
  */
 message DiscourseEntity {
-	// indices in these two lists correspond
-	repeated UUID entity = 1;		// pointer to instane of type Entity
-	repeated UUID communication = 2;
+	required UUID id = 1;
+	repeated EntityRef entity = 2;			// all mentions of this entity
 }
 
 /**
- * represents a situation at the cross-communication coreference level
+ * represents one Situation in a cross-doc situation coref/alignment
  */
 message DiscourseSituation {
-	// indices in these two lists correspond
-	repeated UUID situation = 1;	// pointer to instance of type Situation
-	repeated UUID communication = 2;
+	required UUID id = 1;
+	repeated SituationRef situation = 2;	// all mentions of this situation
 }
-
-
 
 /**
- * Defines a theory about a predicate-argument linking
- * between two documents (report and passage)
- *
- * If embedded in a Communication, this_doc_id should
- * match the UUID of the owning Communication.
- *
- * Null-alignments should be represented explictly as links.
- * This ensures that the set of mentions (TokenRefSequences)
- * considered for alignment can be determined. This is useful
- * for evaluation and training a pred-arg linking system.
+ * A reference to an Entity in a Communication.
  */
-message PredicateArgumentLinking {
-
-	required UUID id = 1;
-	required AnnotationMetadata metadata = 2;
-	required UUID this_doc_id = 3;
-	required UUID that_doc_id = 4;
-	repeated PredicateArgumentLink link = 5;
-
-	message PredicateArgumentLink {
-
-		required TokenRefSequence this_mention = 1;	// put "canonical" mention here
-		repeated TokenRefSequence this_coref_mention = 2;
-
-		required TokenRefSequence that_mention = 3;	// put "canonical" mention here
-		repeated TokenRefSequence that_coref_mention = 4;
-
-		required float confidence = 5;	// for annotations: 1f = sure, 0.5f = possible, 0f = none
-		required Kind kind = 6;
-
-		enum Kind {
-			PREDICATE = 0;	// equality, i.e. "same event"
-			ARGUMENT = 1;	// equality, i.e. "coreferent entities"
-		}
-	}
+message EntityRef {
+	required UUID entity = 1;			// type=Entity
+	required UUID communication = 2;	// type=Communication
 }
+
+/**
+ * A reference to a Situation in a Communication.
+ */
+message SituationRef {
+	required UUID situation = 1;		// type=Situation
+	required UUID communication = 2;	// type=Communication
+}
+
 
 /** A theory about what languages are present in a given communication
  * or piece of communication.  Note that it is possible to have more
@@ -1020,11 +985,12 @@ message EntityMention {
 }
 
 /**
- * WARNING: this message may be redundant with Entity
- * and is marked for removal; see Travis or Ben
- *
  * A theory about the set of entity mentions that are present in a
  * message.  See also: EntityMention
+ *
+ * This type does not represent a coreference relationship, which is handled by Entity.
+ * This type is meant to represent the output of a entity-mention-identifier,
+ * which is often a part of an in-doc coreference system.
  */
 message EntityMentionSet {
   /** Unique identifier for this set. */
@@ -1042,13 +1008,16 @@ message EntityMentionSet {
  * outside the communication (e.g., from a knowledge graph vertex). */
 message EntityMentionRef {
 
-  /** The UUID of the entity mention that is being pointed at. */
+  /** The UUID of the entity mention that is being pointed at. (type=EntityMention) */
   optional UUID entity_mention_id = 1;
 
   /** The corpus-relative communication identifier for the
    * communication that contains the mention that is being pointed at.
    *
-   * \see CommunicationsGUID.communication_id. */
+   * \see CommunicationsGUID.communication_id.
+   *
+   * TODO: change to Communication UUID if no one objects
+   */
   optional string communication_id = 3;
 }
 
