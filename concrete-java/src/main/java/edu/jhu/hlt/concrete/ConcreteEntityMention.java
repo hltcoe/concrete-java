@@ -52,7 +52,7 @@ public class ConcreteEntityMention {
                                 .getSentenceSegmentation(0)
                                 .getSentence(0)
                                 .getTokenization(0);
-        TokenRefSequence trs = this.mention.getTokenSequence();
+        TokenRefSequence trs = this.mention.getTokens();
         List<Integer> tokenIdList = trs.getTokenIdList();
         tokenList = new ArrayList<>(tokenIdList.size());
         for (Integer i : tokenIdList)
