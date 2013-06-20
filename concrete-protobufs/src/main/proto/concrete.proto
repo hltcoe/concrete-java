@@ -45,8 +45,8 @@ package concrete;
   * @see http://en.wikipedia.org/wiki/Universally_unique_identifier 
   */
 message UUID {
-  optional fixed64 high = 1; //!< The 8 most significant bytes
-  optional fixed64 low = 2;  //!< The 8 least significant bytes
+  required fixed64 high = 1; //!< The 8 most significant bytes
+  required fixed64 low = 2;  //!< The 8 least significant bytes
 }
 
 
@@ -159,12 +159,6 @@ message Communication {
   /** Raw SERIF output for this communication. */
   repeated SerifXML serifxml = 18;
 
-  /**
-   * instances of PredicateArgumentLinking for which this
-   * communcation is the report
-   */
-  repeated PredicateArgumentLinking predicate_argument_linkings = 19;
-
   /*=================== Kind-Specific Fields ====================== */
 
   /** An enumeration used to indicate what type of communication this
@@ -239,7 +233,8 @@ message Discourse {
  */
 message DiscourseEntity {
 	required UUID id = 1;
-	repeated EntityRef entity = 2;			// all mentions of this entity
+	repeated EntityRef mention = 2;			// all mentions of this entity
+	optional float confidence = 3;
 }
 
 /**
@@ -247,23 +242,24 @@ message DiscourseEntity {
  */
 message DiscourseSituation {
 	required UUID id = 1;
-	repeated SituationRef situation = 2;	// all mentions of this situation
+	repeated SituationRef mention = 2;		// all mentions of this situation
+	optional float confidence = 3;
 }
 
 /**
  * A reference to an Entity in a Communication.
  */
 message EntityRef {
-	required UUID entity = 1;			// type=Entity
-	required UUID communication = 2;	// type=Communication
+	required UUID entity_id = 1;		// type=Entity
+	required UUID communication_id = 2;	// type=Communication
 }
 
 /**
  * A reference to a Situation in a Communication.
  */
 message SituationRef {
-	required UUID situation = 1;		// type=Situation
-	required UUID communication = 2;	// type=Communication
+	required UUID situation_id = 1;		// type=Situation
+	required UUID communication_id = 2;	// type=Communication
 }
 
 
@@ -497,25 +493,30 @@ message Token {
 message TokenRef {
   /** The tokenization-relative identifier for the token that is
     * pointed at. */
-  optional int32 token_id = 1;
+  required int32 token_id = 1;
 
-  /** The UUID of the tokenization that contains the token.  This
-    * field should only be left empty if the containing tokenization
-    * is obvious from context. */
-  optional UUID tokenization = 2;
+  /** The UUID of the tokenization that contains the token. */
+  required UUID tokenization_id = 2;
 }
 
 /** A list of pointers to tokens that all belong to the same
   * tokenization.  */
 message TokenRefSequence {
+
   /** The tokenization-relative identifiers for each token that is
     * included in this sequence. */
   repeated int32 token_id = 1;
 
-  /** The UUID of the tokenization that contains the tokens.  This
-    * field should only be left empty if the containing tokenization
-    * is obvious from context. */
-  optional UUID tokenization = 2;
+  /** An optional field that can be used to describe
+   * the root of a sentence (if this sequence is a full sentence),
+   * the head of a constituent (if this sequence is a constituent),
+   * or some other form of "canonical" token in this sequence if,
+   * for instance, it is not easy to map this sequence to a another
+   * annotation that has a head */
+  optional int32 anchor_token_id = 2 [default=-1];
+
+  /** The UUID of the tokenization that contains the tokens. */
+  required UUID tokenization_id = 3;
 }
 
 /** A theory (or set of alternative theories) about the sequence of
@@ -838,7 +839,7 @@ message Entity {
 
   /** An list of pointers to all of the mentions of this Entity's
    * referent.  (type=EntityMention) */
-  repeated UUID mention = 4;
+  repeated UUID mention_id = 4;
 
   /** The basic type of this entity's referent. */
   optional Type entity_type = 3;
@@ -931,7 +932,7 @@ message EntityMention {
   required UUID uuid = 1;
 
   /** The set of tokens that constitute this mention. */
-  optional TokenRefSequence token_sequence = 6;
+  optional TokenRefSequence tokens = 6;
 
   /** The type of referent that is referred to by this mention. */
   optional Entity.Type entity_type = 4;
@@ -1040,18 +1041,19 @@ message Situation {
   /** The core type of this situation (eg EVENT or SENTIMENT) */
   optional Type situation_type = 2;
 
-
-
   /** The arguments for this situation.  Each argument consists of a
    * role and a value.  It is possible for an situation to have
    * multiple arguments with the same role.  Arguments are
    * unordered. */
   repeated Argument argument = 3;
 
+  /** Mentions of this situation in a communication */
+  repeated SituationMention mention = 4;
+
   /** An list of pointers to SituationMentions that provide
    * justification for this situation.  These mentions may be either
    * direct mentions of the situation, or indirect evidence. */
-  repeated Justification justification = 4;
+  repeated Justification justification = 5;
 
   /** The event type for situations where situation_type=EVENT */
   optional EventType event_type = 50; 
@@ -1380,26 +1382,26 @@ message SituationMention {
    * sentiment. */
   optional Situation.Polarity polarity = 101;
 
-  /** An optional list of pointers to tokens that are (especially)
+  /** An optional pointer to tokens that are (especially)
    * relevant to this situation mention.  It is left up to individual
    * analytics to decide what tokens (if any) they wish to include in
    * this field.  In particular, it is not specified whether the
    * arguments' tokens should be included. */
-  repeated TokenRefSequence tokens = 150;
+  optional TokenRefSequence tokens = 150;
 
-  /** An optional list of text spans that are (especially) relevant to
+  /** An optional text span that are (especially) relevant to
    * this situation mention.  It is left up to individual analytics to
    * decide what tokens (if any) they wish to include in this
    * field.  Note that this field may be redundant with the 'tokens'
    * field in cases where they are both generated. */
-  repeated TextSpan text_span = 151;
+  optional TextSpan text_span = 151;
 
-  /** An optional list of audio spans that are (especially) relevant to
+  /** An optional audio span that are (especially) relevant to
    * this situation mention.  It is left up to individual analytics to
    * decide what tokens (if any) they wish to include in this
    * field.  Note that this field may be redundant with the 'tokens'
    * field in cases where they are both generated. */
-  repeated AudioSpan audio_span = 152;
+  optional AudioSpan audio_span = 152;
 
   /** A confidence score for this individual situation mention.  You
    * can also set a confidence score for an entire SituationMentionSet
