@@ -2087,17 +2087,8 @@ message LabeledAttribute {
   required UUID uuid = 1;
   required AttributeMetadata metadata = 2;
   required string label = 3;
-  required LabelType type = 4;
-  optional string string_value = 5;
-  optional int32  int_value = 6;
-  optional double double_value = 7;
-  optional Digest digest = 8;
 
-  enum LabelType {
-    STRING = 0;
-    INT = 1;
-    DOUBLE = 2;
-  }
+  optional string value = 5;
 }
 
 
