@@ -59,6 +59,12 @@
       <url>https://github.com/maxthomas</url>
       <id>maxthomas</id>
     </developer>
+    <developer>
+      <email>twolfe18@gmail.com</email>
+      <name>Travis Wolfe</name>
+      <url>https://github.com/twolfe18</url>
+      <id>twolfe18</id>
+    </developer>
   </developers>
 
   <build>
@@ -135,19 +141,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Nexus Release Repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
 
   <profiles>
     <profile>
