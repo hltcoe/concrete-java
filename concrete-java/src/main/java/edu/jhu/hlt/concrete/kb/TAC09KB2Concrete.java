@@ -235,7 +235,7 @@ public class TAC09KB2Concrete {
                     // currently do nothing..
                 }
                 for (String key : this.otherAttributes.keySet())
-                    vb.addOtherAttributes(Concrete.LabeledStringAttribute.newBuilder().setUuid(IdUtil.generateUUID())
+                    vb.addOtherAttributes(Concrete.LabeledAttribute.newBuilder().setUuid(IdUtil.generateUUID())
                             .setMetadata(attribute_metadata).setLabel(key).setValue(this.otherAttributes.get(key)).build());
 
                 // add the comm to the vertex if we have it.
