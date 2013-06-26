@@ -876,7 +876,9 @@ message Entity {
     GPE_ITE = 21;
     ORGANIZATION_ITE = 22;
     JOB_TITLE = 23;
-    UNKNOWN = 24;
+    SET = 24; 				// From TimeML Timex
+    DURATION = 25; 			// From TimeML Timex 
+    UNKNOWN = 26;
     // This list is expected to grow over time.
   }
 
@@ -1064,6 +1066,15 @@ message Situation {
   /** The temporal fact type for situations where situation_type=TEMPORAL_FACT */
   optional TemporalFactType temporal_fact_type = 52;
   
+  /** The TimeML class for situations representing TimeML events */
+  optional TimeMLClass timeml_class = 53;
+  
+  /** The TimeML tense for situations representing TimeML events */
+  optional TimeMLTense timeml_tense = 54;
+  
+  /** The TimeML aspect for situations representing TimeML events */
+  optional TimeMLAspect timeml_aspect = 55;
+  
   /** This lemma represents a canonical lemma for the situation kind 
    * when the situation kind cannot be specified by a situation type subtype
    * (ex, when using arbitrary verbs or nominalizations as events which do 
@@ -1071,7 +1082,7 @@ message Situation {
    * If this kind is grounded in a token sequence from the original text, the
    * appropriate SituationMention should have a reference to the token sequence.
    */
-  optional string situation_kind_lemma = 53;
+  optional string situation_kind_lemma = 56;
 
   /** An "intensity" rating for this situation, typically ranging from
    * 0-1.  In the case of SENTIMENT situations, this is used to record
@@ -1318,6 +1329,36 @@ message Situation {
     INCLUDES_TEMPORAL_FACT = 4;
     IS_INCLUDED_BY_TEMPORAL_FACT = 5;
     VAGUE_TEMPORAL_FACT = 6;
+  }
+
+  /** An enumeration used to record the TimeML class of a situation */
+  enum TimeMLClass {
+    OCCURRENCE = 1;
+    PERCEPTION = 2;
+    REPORTING = 3;
+    ASPECTUAL = 4;
+    STATE = 5;
+    I_STATE = 6;
+    I_ACTION = 7;
+  }
+  
+  /** An enumeration used to record the TimeML tense of a situation */
+  enum TimeMLTense {
+    FUTURE = 1;
+    INFINITIVE = 2;
+    PAST = 3;
+    PASTPART = 4;
+    PRESENT = 5;
+    PRESPART = 6;
+    NONE = 7;
+  }
+  
+  /** An enumeration used to record the TimeML aspect of a situation */
+  enum TimeMLAspect {
+    PROGRESSIVE = 1;
+    PERFECTIVE = 2;
+    PERFECTIVE_PROGRESSIVE = 3;
+    NONE = 4;
   }
 
   /** An enumeration used to record the polarity of a situation.
