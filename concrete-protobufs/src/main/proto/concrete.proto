@@ -451,7 +451,7 @@ message Sentence {
 
   /** Theories about the parse structure of this sentence. */
   repeated Parse parse = 6;
-  repeated DependencyParse dependencyParse = 7;
+  repeated DependencyParse dependency_parse = 7;
 }
 
 //===========================================================================
@@ -1047,8 +1047,9 @@ message Situation {
    * unordered. */
   repeated Argument argument = 3;
 
-  /** Mentions of this situation in a communication */
-  repeated SituationMention mention = 4;
+  /** Ids of the mentions of this situation in a communication
+   * (type=SituationMention) */
+  repeated UUID mention_id = 4;
 
   /** An list of pointers to SituationMentions that provide
    * justification for this situation.  These mentions may be either
