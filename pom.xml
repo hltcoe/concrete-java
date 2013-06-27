@@ -1,9 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>edu.jhu.parent</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
   <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>1.0.11-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>concrete-protobufs</module>
@@ -52,6 +58,12 @@
       <name>Max Thomas</name>
       <url>https://github.com/maxthomas</url>
       <id>maxthomas</id>
+    </developer>
+    <developer>
+      <email>twolfe18@gmail.com</email>
+      <name>Travis Wolfe</name>
+      <url>https://github.com/twolfe18</url>
+      <id>twolfe18</id>
     </developer>
   </developers>
 
@@ -129,19 +141,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Nexus Release Repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
 
   <profiles>
     <profile>

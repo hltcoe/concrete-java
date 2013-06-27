@@ -20,17 +20,16 @@ import edu.jhu.hlt.concrete.ConcreteException;
 
 /**
  * @author max
- *
+ * 
  */
 public class LoadConcreteTACKBFiles {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(LoadConcreteTACKBFiles.class);
-    
+    private static final Logger logger = LoggerFactory.getLogger(LoadConcreteTACKBFiles.class);
+
     private final Path pathOnDisk;
     private final Path commsPath;
     private final Path verticesPath;
-    
+
     /**
      * 
      */
@@ -39,21 +38,21 @@ public class LoadConcreteTACKBFiles {
         this.commsPath = this.pathOnDisk.resolve("communications.pb");
         this.verticesPath = this.pathOnDisk.resolve("vertices.pb");
     }
-    
+
     public LoadConcreteTACKBFiles(String pathOnDisk) {
         this(Paths.get(pathOnDisk));
     }
-    
+
     public Set<Vertex> loadVertices() throws ConcreteException {
         try {
             Set<Vertex> vertexSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.verticesPath.toFile());
             BufferedInputStream bis = new BufferedInputStream(fis);
             while (bis.available() != 0) {
-            	Vertex v = Vertex.PARSER.parseDelimitedFrom(bis);
-            	vertexSet.add(v);
-            	logger.debug("Got vertex: " + v.getDataSetId());
-                logger.debug("Got name: " + v.getNameList().get(0).getValue());
+                Vertex v = Vertex.PARSER.parseDelimitedFrom(bis);
+                vertexSet.add(v);
+                logger.debug("Got vertex: {}", v.getDataSetId());
+                logger.debug("Got name: {}", v.getNameList().get(0).getValue());
             }
 
             fis.close();
@@ -62,16 +61,16 @@ public class LoadConcreteTACKBFiles {
             throw new ConcreteException(e);
         }
     }
-    
+
     public Set<Communication> loadCommunications() throws ConcreteException {
         try {
             Set<Communication> commSet = new HashSet<>();
             FileInputStream fis = new FileInputStream(this.commsPath.toFile());
             BufferedInputStream bis = new BufferedInputStream(fis);
             while (bis.available() != 0) {
-            	Communication c = Communication.PARSER.parseDelimitedFrom(bis);
-            	commSet.add(c);
-            	logger.debug("Got vertex: " + c.getGuid().getCommunicationId());
+                Communication c = Communication.PARSER.parseDelimitedFrom(bis);
+                commSet.add(c);
+                logger.debug("Got vertex: {}", c.getGuid().getCommunicationId());
             }
 
             fis.close();
@@ -80,21 +79,21 @@ public class LoadConcreteTACKBFiles {
             throw new ConcreteException(e);
         }
     }
-    
+
     public static void main(String... args) throws ConcreteException {
-    	if (args.length != 1) {
-    		logger.error("Usage: LoadConcreteTACKBFiles <path/to/root/data/dir>");
-    		System.exit(1);
-    	}
-    	
-    	LoadConcreteTACKBFiles loader = new LoadConcreteTACKBFiles(args[0]);
-    	long millis = System.currentTimeMillis();
-    	Set<Communication> commSet = loader.loadCommunications();
-    	logger.info("Got " + commSet.size() + " communications.");
-    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the comms.");
-    	millis = System.currentTimeMillis();
-    	Set<Vertex> vertSet = loader.loadVertices();
-    	logger.info("Got " + vertSet.size() + " vertices.");
-    	logger.info("Took: " + (System.currentTimeMillis() - millis) + " ms to load the vertices.");
+        if (args.length != 1) {
+            logger.error("Usage: LoadConcreteTACKBFiles <path/to/root/data/dir>");
+            System.exit(1);
+        }
+
+        LoadConcreteTACKBFiles loader = new LoadConcreteTACKBFiles(args[0]);
+        long millis = System.currentTimeMillis();
+        Set<Communication> commSet = loader.loadCommunications();
+        logger.info("Got {} communications.", commSet.size());
+        logger.info("Took {} ms to load the comms. ", (System.currentTimeMillis() - millis));
+        millis = System.currentTimeMillis();
+        Set<Vertex> vertSet = loader.loadVertices();
+        logger.info("Got {} vertices.", vertSet.size());
+        logger.info("Took {} ms to load the vertices.", (System.currentTimeMillis() - millis));
     }
 }
