@@ -11,3 +11,6 @@ before_install:
   - make
   - make check
   - sudo make install
+  - cd ..
+
+script: mvn verify
