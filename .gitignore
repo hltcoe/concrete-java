@@ -8,3 +8,4 @@
 .*.swp
 target
 application.conf
+*.iml

@@ -1,0 +1,16 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+
+before_install:
+  - wget https://protobuf.googlecode.com/files/protobuf-2.5.0.tar.gz
+  - tar -xzvf protobuf-2.5.0.tar.gz
+  - cd protobuf-2.5.0
+  - ./configure --prefix=/usr
+  - make
+  - make check
+  - sudo make install
+  - cd ..
+
+script: mvn verify
