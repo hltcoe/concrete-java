@@ -4,7 +4,7 @@
   <parent>
     <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
-    <version>1.0.11-SNAPSHOT</version>
+    <version>1.0.12-SNAPSHOT</version>
   </parent>  
 
   <artifactId>concrete-protobufs</artifactId>
