@@ -160,7 +160,7 @@ message Communication {
   repeated SerifXML serifxml = 18;
   
   /** key/value metadata field.*/
-  repeated KeyValues metadata = 19
+  repeated KeyValues metadata = 19;
 
 
   /*=================== Kind-Specific Fields ====================== */
