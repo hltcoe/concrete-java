@@ -158,6 +158,10 @@ message Communication {
 
   /** Raw SERIF output for this communication. */
   repeated SerifXML serifxml = 18;
+  
+ /** A primitive, even-length list of additional metadata fields. Should be used only when other explicit fields are not present, and cannot for some reason be added **/
+
+  repeated string meta_data = 19;
 
   /*=================== Kind-Specific Fields ====================== */
 
