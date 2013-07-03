@@ -158,6 +158,10 @@ message Communication {
 
   /** Raw SERIF output for this communication. */
   repeated SerifXML serifxml = 18;
+  
+  /** key/value metadata field.*/
+  repeated KeyValues metadata = 19;
+
 
   /*=================== Kind-Specific Fields ====================== */
 
@@ -365,6 +369,14 @@ message AudioSpan {
 
   // NOTE: we reserve the right to add a "channel" field or something
   // analogous, for multi-channel audio (left/right, etc).
+}
+
+//==========================================================================
+//Key/Value Metadata
+//==========================================================================
+message KeyValues {
+    required string key = 1;
+    repeated string values = 2;
 }
 
 //===========================================================================
