@@ -4,7 +4,6 @@ See LICENSE in the project root directory.
 
 Concrete
 ========
-[![Build Status](https://travis-ci.org/hltcoe/concrete.png)](https://travis-ci.org/hltcoe/concrete)
 
 Introduction
 ------------
