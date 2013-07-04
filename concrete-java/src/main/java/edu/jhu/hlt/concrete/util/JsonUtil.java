@@ -9,8 +9,10 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -19,7 +21,9 @@ import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.Communication.Builder;
 import edu.jhu.hlt.concrete.Concrete.EmailAddress;
 import edu.jhu.hlt.concrete.Concrete.EmailCommunicationInfo;
+import edu.jhu.hlt.concrete.Concrete.KeyValues;
 import edu.jhu.hlt.concrete.Concrete.Section;
+import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
 
@@ -27,6 +31,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.ExtensionRegistry;
@@ -50,7 +57,7 @@ public class JsonUtil {
 		 * A JSON wrapper for concrete communication.
 		 * 
 		 */
-		
+
 		/*
 		 * Subclasses
 		 */
@@ -79,11 +86,26 @@ public class JsonUtil {
 			//Paragraph in the intuitive sense as a sequence
 			//of sentences
 			//private List<Sentence> sentences;
+			//Paragraph is the rough equivalent of Section in Concrete
 			private String paraRawText;
+			private String kind;
 			
-			public Paragraph(String s){
-				this.paraRawText = s;
+			public Paragraph(String t, String k){
+				this.paraRawText = t;
+				this.kind = k;
 			}
+			
+			public Paragraph(String substring, Kind kind2) {
+				this.paraRawText = substring;
+				this.kind = kind2.name();
+			}
+
+			public void setKind(String kind){
+				this.kind = kind;
+			}
+			
+			public String getKind(){return kind;}
+			
 			/*
 			public void setAllSentences(List<Sentence> sents){
 				this.sentences = sents;
@@ -110,6 +132,14 @@ public class JsonUtil {
 			}
 		}*/		
 		
+		private class JsonKeyValues{
+			public JsonKeyValues(String key, List<String> valuesList) {
+				this.key = key;
+				this.values = valuesList;
+			}
+			private String key;
+			private List<String> values;
+		}
 		/*
 		 * Generic meta-information for communication
 		 */
@@ -132,7 +162,31 @@ public class JsonUtil {
 		private String rawText;//The raw byte->String of the email
 		private String bodyText;//The byte->String->Mime message->getText(Mime message)
 		private List<Body> bodyChain = new ArrayList<Body>();//A list of the email messages contained in emailBodyText	
+		private List<JsonKeyValues> metadata = new ArrayList<JsonKeyValues>();
+
 		
+		public List<String> getAcceptedKeys(){
+			List<String> acceptedKeys = new ArrayList <String>();
+			acceptedKeys.add("rawText");
+			acceptedKeys.add("bodyText");
+			acceptedKeys.add("bodyChain");
+			return acceptedKeys;
+		}
+		
+		
+		public List<JsonKeyValues> getMetadata() {
+			return metadata;
+		}
+
+		public void addJKVMetadata(JsonKeyValues jkv){
+			this.metadata.add(jkv);
+		}
+
+		public void addMetadata(KeyValues kvs) {
+			this.metadata.add(new JsonKeyValues(kvs.getKey(),kvs.getValuesList()));
+		}
+
+
 		/*
 		 * Manipulation methods
 		 */
@@ -158,10 +212,19 @@ public class JsonUtil {
 			List<Paragraph> paras = new ArrayList<Paragraph>();			
 			for(Section sec: sections){
 				TextSpan ts = sec.getTextSpan();
-				paras.add(new Paragraph(rawText.substring(ts.getStart(),ts.getEnd())));
+				paras.add(new Paragraph(rawText.substring(ts.getStart(),ts.getEnd()),sec.getKind()));
 			}
 			return new Body(paras);
 		}
+		
+		/*
+		private Body listToBody(List<String> list){
+			List<Paragraph> paras = new ArrayList<Paragraph>();
+			for (String s: list){
+				paras.add(new Paragraph(s));
+			}
+			return new Body(paras);
+		}*/
 		
 	
 		/*
@@ -259,7 +322,10 @@ public class JsonUtil {
 	 */
 	public static JsonObject toJson(Communication commIn) {
 		JsonCommunication jcomm = toJsonCommunication(commIn);
-		return jcomm.toJsonObject();
+		Gson gson = new Gson();
+		JsonParser parser = new JsonParser();
+		JsonObject jo = (JsonObject)parser.parse(gson.toJson(jcomm));
+		return jo;
 	}
 	
 	/**
@@ -270,7 +336,7 @@ public class JsonUtil {
 	 *
 	 *@return a JsonObject of the JsonCommunication
 	 */
-	public static JsonObject toJson(String json) {
+	public static JsonObject toJsonObjectFromJsonString(String json) {
 		Gson gson = new Gson();
 		JsonCommunication jc = gson.fromJson(json,JsonCommunication.class);
 		return jc.toJsonObject();
@@ -284,17 +350,21 @@ public class JsonUtil {
 	 * @return the json String representation of the JsonCommunication
 	 */
 	public static String toJsonString(Communication commIn){
-		JsonCommunication jcomm = toJsonCommunication(commIn);
 		Gson gson = new Gson();
+		JsonCommunication jcomm = toJsonCommunication(commIn);
 		return gson.toJson(jcomm);
 	}
 	
 	/**
+	 * If the Json string is already in perfect JsonCommunication form,
+	 * return the JsonCommunication. If it is just a json string, not yet
+	 * in JsonCommunication form, use toJsonCommunicationFromUnknown.
+	 * 
 	 *@param json a string representation of a JsonCommunication Object
 	 *
 	 *@return : a JsonCommunication given the json string
 	 */
-	public static JsonCommunication toJsonCommunication(String json) {
+	public static JsonCommunication toJsonCommunicationFromWellFormed(String json) {
 		Gson gson = new Gson();
 		return gson.fromJson(json,JsonCommunication.class);		
 	}
@@ -314,6 +384,11 @@ public class JsonUtil {
 		SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
 		EmailCommunicationInfo info = commIn.getEmailInfo();
 		
+		List<KeyValues> metadata = commIn.getMetadataList();
+		for(KeyValues kvs : metadata){
+			jcomm.addMetadata(kvs);
+		}
+		
 		//Set data members
 		jcomm.setRawText(rawText);		
 		jcomm.setAuthor(info.getSenderAddress());
@@ -322,6 +397,51 @@ public class JsonUtil {
 			jcomm.addBodyToChain(seg,rawText);
 		}
 		return jcomm;		
+	}
+	
+	/**
+	 * This needs to be changed such that we look at all the entries of the json
+	 * object, find the ones that aren't included and add them as 
+	 * 
+	 * @param json
+	 * @return
+	 */
+	public static JsonCommunication toJsonCommunicationFromUnknown(String json){
+		Gson gson = new Gson();
+		JsonParser jp = new JsonParser();
+		JsonObject jo = (JsonObject)jp.parse(json);
+		/*If we knew this was a well formed JsonCommunication:*/		
+		JsonCommunication jcomm = gson.fromJson(jo, JsonCommunication.class);
+		jcomm.getStartTime();
+		return jcomm;
+		
+		
+		//But we don't know that it's well formed, so we iterate through the fields
+		/*
+		Set<Entry<String, JsonElement>> es = jo.entrySet();
+		String key; List<String> values;
+		List<String> acceptedKeys = jcomm.getAcceptedKeys();
+		
+		for(Entry e: es){
+			key = (String)e.getKey();
+			values = (List<String>)e.getValue();
+			if (acceptedKeys.contains(key)){
+				if(key.contentEquals("rawText")){
+					jcomm.setRawText(values.get(0));
+				}
+				else if(key.contentEquals("bodyText")){
+					jcomm.setBodyText(values.get(0));
+				}
+				else if(key.contentEquals("bodyChain")){
+					jcomm.setBodyChain(values);
+				}
+			
+			}
+			
+		}
+		*/
+
+
 	}
 	
 	/**
@@ -370,9 +490,9 @@ public class JsonUtil {
 	 * Get a list of communications as JsonObjects from
 	 * a file of zipped communications.
 	 * 
-	 * @param filename: the filename of the gzipped communications
+	 * @param filename the filename of the gzipped communications
 	 * 
-	 * @return jcomms: the list of JsonObjects that represents the communications
+	 * @return jcomms the list of JsonObjects that represents the communications
 	 */
 	public List<JsonObject> getJsonCommunications(String filename) throws FileNotFoundException, IOException{
 		InputStream in = new GZIPInputStream(new FileInputStream(filename));
@@ -418,6 +538,7 @@ public class JsonUtil {
 	 */
 	public Communication toCommunication(JsonCommunication jcomm){
 		Communication cb = new ProtoFactory().generateMockCommunication();
+		
 		Communication comm = cb.toBuilder()
 				.setText(jcomm.getRawText())
 				.setStartTime(jcomm.getStartTime())
@@ -435,7 +556,7 @@ public class JsonUtil {
 	 * @return the Communication object
 	 */
 	public Communication toCommunication(String json){
-		JsonCommunication jcomm = toJsonCommunication(json);
+		JsonCommunication jcomm = toJsonCommunicationFromWellFormed(json);
 		return toCommunication(jcomm);
 	}
 	
@@ -478,8 +599,43 @@ public class JsonUtil {
 			
 			//To get TO a communication object FROM a json string
 			for(String jcomm : jcommstrings){
-				JsonCommunication jc = toJsonCommunication(jcomm);
+				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
 				comm = ju.toCommunication(jc);
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		try {
+			//To get FROM a communication file TO jsonObject
+			JsonUtil ju = new JsonUtil();		
+			List<JsonObject> jcomms = ju.getJsonCommunicationsFromGzip(args[0]);
+
+			//To get FROM a communication file TO json string
+			List<String> jcommstrings = ju.getJsonStringsFromGzip(args[0]);
+			
+			//To get TO a communication object FROM a json object
+			Communication comm;
+			Gson gson = new Gson();			
+			for(JsonObject jcomm : jcomms){
+				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
+
+				comm = ju.toCommunication(jc);
+			}
+			
+			//To get TO a communication object FROM a json string
+			for(String jcomm : jcommstrings){
+				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
+				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm);
+				comm = ju.toCommunication(jc);
+				System.out.println(comm.getStartTime());
 			}
 			
 		} catch (FileNotFoundException e) {
