@@ -413,13 +413,35 @@ message Section {
   repeated SentenceSegmentation sentence_segmentation = 4;
 
   /** The type of this section. */
-  optional Kind kind = 5 [default=OTHER];
+  required Kind kind = 5 [default=OTHER];
   enum Kind {
     OTHER = 0;
-    PARAGRAPH = 1;
-    TABLE = 2;
+    // E.g., one or more paragraphs, or the full text of a tweet
+    PASSAGE = 1;
+    // E.g., the header text of an email from Enron
+    METADATA = 2;
+   // a bulleted list that is formatted such that we expect NLP tools to choke
+    LIST = 3;
+    // an embedded table that will almost certainly cause NLP tools to choke
+    TABLE = 4;
+    // TODO, include embedded image support when actually needed
+    IMAGE = 5;
     // etc..
   }
+
+ /**The name of the section **/
+ optional string label;
+
+ /**Position within the communication with respect to other Sections: 
+ The section number, E.g., 3, or 3.1, or 3.1.2, etc.  Aimed at
+ Communications with content organized in a hierarchy, such as a Book
+ with multiple chapters, then sections, then paragraphs. Or even a
+ dense Wikipedia page with subsections.  Sections should still be
+ arranged linearly, where reading these numbers should not be required
+ to get a start-to-finish enumeration of the Communication's content.
+ **/
+ repeated int32 number;
+
 }
 
 //===========================================================================
