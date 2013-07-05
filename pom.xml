@@ -3,7 +3,7 @@
 
   <groupId>edu.jhu.hlt.concrete</groupId>
   <artifactId>concrete</artifactId>
-  <version>1.0.14-SNAPSHOT</version>
+  <version>1.0.14</version>
   <packaging>pom</packaging>
   <modules>
     <module>concrete-protobufs</module>
