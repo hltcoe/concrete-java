@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import edu.jhu.hlt.concrete.Concrete.Section;
 import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
+import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 //import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import com.google.gson.Gson;
@@ -35,6 +37,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
+//import com.google.gson.reflect.Type;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.ExtensionRegistry;
@@ -86,16 +89,16 @@ public class JsonUtil {
 		private class BodySection{
 			//Section in the intuitive sense as a sequence
 			//of sentences
-			private String paraRawText;
+			private String sectionRawText;
 			private String kind;
 			
 			public BodySection(String t, String k){
-				this.paraRawText = t;
+				this.sectionRawText = t;
 				this.kind = k;
 			}
 			
 			public BodySection(String substring, Kind kind2) {
-				this.paraRawText = substring;
+				this.sectionRawText = substring;
 				this.kind = kind2.name();
 			}
 
@@ -138,9 +141,9 @@ public class JsonUtil {
 		 */
 		private String messageId;
 		private String senderEmail;
-		private List<String> recipientsTo;
-		private List<String> recipientsCc;
-		private List<String> recipientsBcc;
+		private List<String> recipientsTo = new ArrayList<String>();
+		private List<String> recipientsCc = new ArrayList<String>();
+		private List<String> recipientsBcc = new ArrayList<String>();
 		
 		/*
 		 * Content
@@ -156,7 +159,13 @@ public class JsonUtil {
 			acceptedKeys.add("rawText");
 			acceptedKeys.add("bodyText");
 			acceptedKeys.add("bodyChain");
-			//?acceptedKeys.add("metadataChain");
+			acceptedKeys.add("author");
+			acceptedKeys.add("title");
+			acceptedKeys.add("startTime");
+			acceptedKeys.add("metadata");
+			acceptedKeys.add("recipientsTo");
+			acceptedKeys.add("recipientsCc");
+			acceptedKeys.add("recipientsBcc");
 			return acceptedKeys;
 		}
 		
@@ -227,6 +236,10 @@ public class JsonUtil {
 			this.startTime = startTime;
 		}
 		
+		public void setStartTime(String string) {
+			this.startTime = Double.parseDouble(string);
+		}
+		
 		private void setAuthor(EmailAddress senderAddress) {
 			this.author = senderAddress.getAddress();			
 		}
@@ -250,18 +263,41 @@ public class JsonUtil {
 		public List<String> getRecipientsTo() {
 			return recipientsTo;
 		}
-		public void setRecipientsTo(List<String> recipientsTo) {
-			this.recipientsTo = recipientsTo;
+		public void addRecipientsTo(List<EmailAddress> list) {
+			for(EmailAddress ea: list){
+				if(ea.hasAddress()){
+					this.recipientsTo.add(ea.getAddress());
+				}
+			}
+		}
+		
+		public void addRecipientsBcc(List<EmailAddress> list) {
+			for(EmailAddress ea: list){
+				if(ea.hasAddress()){
+					this.recipientsBcc.add(ea.getAddress());
+				}
+			}
+		}
+		
+		public void addRecipientsCc(List<EmailAddress> list) {
+			for(EmailAddress ea: list){
+				if(ea.hasAddress()){
+					this.recipientsTo.add(ea.getAddress());
+				}
+			}
 		}
 		public List<String> getRecipientsCc() {
 			return recipientsCc;
 		}
+		
 		public void setRecipientsCc(List<String> recipientsCc) {
 			this.recipientsCc = recipientsCc;
 		}
+		
 		public List<String> getRecipientsBcc() {
 			return recipientsBcc;
 		}
+		
 		public void setRecipientsBcc(List<String> recipientsBcc) {
 			this.recipientsBcc = recipientsBcc;
 		}
@@ -299,6 +335,42 @@ public class JsonUtil {
 			JsonKeyValues jkv = new JsonKeyValues(key,values);
 			this.metadata.add(jkv);			
 		}
+
+		public void setMetadata(List<JsonKeyValues> metadata) {
+			this.metadata = metadata;
+		}	
+		
+		public void setAuthor(String string) {
+			this.author = string;			
+		}
+
+
+		public List<Body> getListOfSectionsAsBodyChain(
+				Object value) {
+			Type listType = new TypeToken<List<Body>>(){}.getType();
+			JsonArray ja = (JsonArray)value;
+			
+			Gson gson = new Gson();
+			return gson.fromJson(ja, listType);			
+		}
+		
+		public List<JsonKeyValues> getPriorMetadataAsKeyValuePairs(
+				Object value) {
+			Type listType = new TypeToken<List<JsonKeyValues>>(){}.getType();
+			JsonArray ja = (JsonArray)value;			
+			Gson gson = new Gson();
+			return gson.fromJson(ja, listType);			
+		}
+
+
+		public void addMetadata(List<JsonKeyValues> metadataList) {
+			for(JsonKeyValues jkv: metadataList){
+				this.metadata.add(jkv);
+			}			
+		}
+
+
+
 	}
 	/*
 	 * Handler Methods
@@ -375,6 +447,7 @@ public class JsonUtil {
 		SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
 		EmailCommunicationInfo info = commIn.getEmailInfo();
 		
+		
 		List<KeyValues> metadata = commIn.getMetadataList();
 		for(KeyValues kvs : metadata){
 			jcomm.addMetadata(kvs);
@@ -384,6 +457,9 @@ public class JsonUtil {
 		jcomm.setRawText(rawText);		
 		jcomm.setAuthor(info.getSenderAddress());
 		jcomm.setTitle(info.getMessageId());
+		jcomm.addRecipientsTo(info.getToAddressList());
+		jcomm.addRecipientsBcc(info.getBccAddressList());
+		jcomm.addRecipientsCc(info.getCcAddressList());
 		for(SectionSegmentation seg : segs.subList(1,segs.size())){
 			jcomm.addBodyToChain(seg,rawText);
 		}
@@ -391,8 +467,8 @@ public class JsonUtil {
 	}
 	
 	/**
-	 * This needs to be changed such that we look at all the entries of the json
-	 * object, find the ones that aren't included and add them as 
+	 * Evaluate the key and value fields of the json
+	 * object, find the ones that aren't included and add them as metadata
 	 * 
 	 * @param json
 	 * @return
@@ -416,40 +492,105 @@ public class JsonUtil {
 		List<String> acceptedKeys = jcomm.getAcceptedKeys();
 		List<String> validKeys = new ArrayList<String>();
 		List<String> invalidKeys = new ArrayList<String>();
-		List<JsonKeyValues> metadata = jcomm.getMetadata();
+		JsonArray ja;
+		//List<JsonKeyValues> metadata = jcomm.getMetadata();
 		
 		for(Entry e: es){
 			key = (String)e.getKey();
-			values = (List<String>)e.getValue();
 			if (acceptedKeys.contains(key)){
-				if(key.contentEquals("rawText")){
-					jcomm.setRawText(values.get(0));
-					if(validate){ validKeys.add(key);}
+				if(key.contentEquals("bodyChain")){
+					//handle an array of arrays
+					if(validate){validKeys.add(key);}
+					ja = (JsonArray)e.getValue();
+					jcomm.setBodyChain(jcomm.getListOfSectionsAsBodyChain(e.getValue()));
 				}
-				else if(key.contentEquals("bodyText")){
-					jcomm.setBodyText(values.get(0));
-					if(validate){ validKeys.add(key);};
-				}
-				else if(key.contentEquals("bodyChain")){
-					if(validate){ validKeys.add(key);}
+				else if(key.contentEquals("metadata")){
+					jcomm.addMetadata(jcomm.getPriorMetadataAsKeyValuePairs(e.getValue()));
 				}
 				else{
-					if(validate){invalidKeys.add(key);}
-					jcomm.addMetadata(key,values);
-					
+					//Else extract the values
+					values = fromJsonStringToValueStringList(e.getValue());//(List<String>)e.getValue();
+					if(key.contentEquals("rawText")){
+						jcomm.setRawText(values.get(0));
+						if(validate){ validKeys.add(key);}
+					}
+					else if(key.contentEquals("startTime")){
+						jcomm.setStartTime(values.get(0));
+						if(validate){ validKeys.add(key);};
+					}
+					else if(key.contentEquals("author")){
+						jcomm.setAuthor(values.get(0));
+						if(validate){ validKeys.add(key);};
+					}
+					else if(key.contentEquals("title")){
+						jcomm.setTitle(values.get(0));
+						if(validate){ validKeys.add(key);};
+					}
+					else if(key.contentEquals("bodyText")){
+						jcomm.setBodyText(values.get(0));
+						if(validate){ validKeys.add(key);};
+					}
 				}
-					//bodyChain needs to have a list of text 
-					//and corresponding type to be converted into
-					//Sections and their types
-					//jcomm.setBodyChain(values);
-				
-			
 			}
-			
+			else{
+				//Key not in valid key list
+				values = fromJsonStringToValueStringList(e.getValue());//(List<String>)e.getValue();
+				if(validate){invalidKeys.add(key);}
+				jcomm.addMetadata(key,values);	
+			}			
+		}
+		if (validate){
+			System.out.println("Valid Keys:");
+			for(String s: validKeys){
+				System.out.println("\t"+s);
+			}
+			System.out.println("Would be successfully ingested into Concrete");
+			System.out.println("InValid Keys:");
+			for(String s: invalidKeys){
+				System.out.println("\t"+s);
+			}
+			System.out.println("Would be added to the concrete object as Metadata");
 		}
 		return jcomm;
 	}
 	
+	
+	/**
+	 * Takes a value of unknown type, sets the type and returns the appropriate
+	 * String list
+	 * 
+	 * @param value An unknown value of some Json type
+	 * @param object 
+	 * 
+	 * @return returns a string list so it can be handled as a set of values
+	 */
+	private static List<String> fromJsonStringToValueStringList(Object value) {
+		Class cl = value.getClass();
+		JsonPrimitive jp;
+		Gson gson = new Gson();
+		Type listType = new TypeToken<List<String>>(){}.getType();
+		List<String> result = new ArrayList<String>();
+
+		if (cl.equals(JsonPrimitive.class)){
+			jp = (JsonPrimitive)value;
+			result.add(jp.getAsString());
+		}
+		//else if(cl.equals(JsonArray.class)){
+		else if(cl.equals(JsonArray.class)){
+			//Json array support not currently implemented
+			//result = gson.fromJson(list, listType);
+			String s = gson.toJson(value);
+			try{
+				result = gson.fromJson(s, listType);
+			}
+			catch (Exception e){
+				System.err.println("Unable to parse:"+value+
+						". Make sure you are using flat lists, embedded arrays not supported.");
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Get a list of communications as JsonObjects from
 	 * a file of zipped communications.
@@ -621,27 +762,29 @@ public class JsonUtil {
 	public static void main(String[] args) {
 		try {
 			//To get FROM a communication file TO jsonObject
-			JsonUtil ju = new JsonUtil();		
-			List<JsonObject> jcomms = ju.getJsonCommunicationsFromGzip(args[0]);
+			JsonUtil ju = new JsonUtil();	
+			String filename = args[0];
+			boolean validate = false;
+			
+			List<JsonObject> jcomms = ju.getJsonCommunicationsFromGzip(filename);
 
 			//To get FROM a communication file TO json string
-			List<String> jcommstrings = ju.getJsonStringsFromGzip(args[0]);
+			List<String> jcommstrings = ju.getJsonStringsFromGzip(filename);
 			
 			//To get TO a communication object FROM a json object
 			Communication comm;
 			Gson gson = new Gson();			
 			for(JsonObject jcomm : jcomms){
 				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
-
 				comm = ju.toCommunication(jc);
 			}
 			
 			//To get TO a communication object FROM a json string
 			for(String jcomm : jcommstrings){
 				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
-				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm);
+				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
 				comm = ju.toCommunication(jc);
-				System.out.println(comm.getStartTime());
+				//System.out.println(comm.getStartTime());
 			}
 			
 		} catch (FileNotFoundException e) {
