@@ -26,6 +26,7 @@ import edu.jhu.hlt.concrete.Concrete.Section;
 import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
+//import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -63,39 +64,37 @@ public class JsonUtil {
 		 */
 		private class Body{
 			//Body in the intuitive sense as a sequence
-			//of paragraphs
-			private List<Paragraph> paragraphs;
+			//of sections
+			private List<BodySection> sections;
 			
-			public Body(List<Paragraph> paras){
-				this.paragraphs = paras;
+			public Body(List<BodySection> sects){
+				this.sections = sects;
 			}
-			public void setAllParagraphs(List<Paragraph> paras){
-				this.paragraphs = paras;
+			public void setAllParagraphs(List<BodySection> sects){
+				this.sections = sects;
 			}
-			public void addAllParagraphs(List<Paragraph> paras){
-				for(Paragraph para: paras){
-					this.paragraphs.add(para);
+			public void addAllParagraphs(List<BodySection> sects){
+				for(BodySection sect: sects){
+					this.sections.add(sect);
 				}
 			}
-			public void addParagraph(Paragraph para){
-				this.paragraphs.add(para);
+			public void addParagraph(BodySection sect){
+				this.sections.add(sect);
 			}
 		}
 		
-		private class Paragraph{
-			//Paragraph in the intuitive sense as a sequence
+		private class BodySection{
+			//Section in the intuitive sense as a sequence
 			//of sentences
-			//private List<Sentence> sentences;
-			//Paragraph is the rough equivalent of Section in Concrete
 			private String paraRawText;
 			private String kind;
 			
-			public Paragraph(String t, String k){
+			public BodySection(String t, String k){
 				this.paraRawText = t;
 				this.kind = k;
 			}
 			
-			public Paragraph(String substring, Kind kind2) {
+			public BodySection(String substring, Kind kind2) {
 				this.paraRawText = substring;
 				this.kind = kind2.name();
 			}
@@ -105,20 +104,6 @@ public class JsonUtil {
 			}
 			
 			public String getKind(){return kind;}
-			
-			/*
-			public void setAllSentences(List<Sentence> sents){
-				this.sentences = sents;
-			}
-			public void addAllSentences(List<Sentence> sents){
-				for(Sentence sent: sents){
-					this.sentences.add(sent);
-				}
-			}
-			public void addSentence(Sentence sent){
-				this.sentences.add(sent);
-			}
-			*/
 		}
 		
 		/*
@@ -132,13 +117,14 @@ public class JsonUtil {
 			}
 		}*/		
 		
-		private class JsonKeyValues{
+		public class JsonKeyValues{
+			private String key;
+			private List<String> values;
+			
 			public JsonKeyValues(String key, List<String> valuesList) {
 				this.key = key;
 				this.values = valuesList;
 			}
-			private String key;
-			private List<String> values;
 		}
 		/*
 		 * Generic meta-information for communication
@@ -165,11 +151,12 @@ public class JsonUtil {
 		private List<JsonKeyValues> metadata = new ArrayList<JsonKeyValues>();
 
 		
-		public List<String> getAcceptedKeys(){
+		public static List<String> getAcceptedKeys(){
 			List<String> acceptedKeys = new ArrayList <String>();
 			acceptedKeys.add("rawText");
 			acceptedKeys.add("bodyText");
 			acceptedKeys.add("bodyChain");
+			//?acceptedKeys.add("metadataChain");
 			return acceptedKeys;
 		}
 		
@@ -209,12 +196,12 @@ public class JsonUtil {
 		 */
 		private Body segmentToBody(SectionSegmentation seg,String rawText) {
 			List<Section> sections = seg.getSectionList();
-			List<Paragraph> paras = new ArrayList<Paragraph>();			
+			List<BodySection> bodySections = new ArrayList<BodySection>();			
 			for(Section sec: sections){
 				TextSpan ts = sec.getTextSpan();
-				paras.add(new Paragraph(rawText.substring(ts.getStart(),ts.getEnd()),sec.getKind()));
+				bodySections.add(new BodySection(rawText.substring(ts.getStart(),ts.getEnd()),sec.getKind()));
 			}
-			return new Body(paras);
+			return new Body(bodySections);
 		}
 		
 		/*
@@ -307,6 +294,10 @@ public class JsonUtil {
 		public JsonElement toJsonElement(){
 			Gson gson = new Gson();
 			return gson.toJsonTree(this).getAsJsonObject();
+		}
+		public void addMetadata(String key, List<String> values) {
+			JsonKeyValues jkv = new JsonKeyValues(key,values);
+			this.metadata.add(jkv);			
 		}
 	}
 	/*
@@ -406,21 +397,26 @@ public class JsonUtil {
 	 * @param json
 	 * @return
 	 */
-	public static JsonCommunication toJsonCommunicationFromUnknown(String json){
+	public static JsonCommunication toJsonCommunicationFromUnknown(String json,
+			boolean validate){
 		Gson gson = new Gson();
 		JsonParser jp = new JsonParser();
 		JsonObject jo = (JsonObject)jp.parse(json);
 		/*If we knew this was a well formed JsonCommunication:*/		
-		JsonCommunication jcomm = gson.fromJson(jo, JsonCommunication.class);
-		jcomm.getStartTime();
-		return jcomm;
+		//JsonCommunication jcomm = gson.fromJson(jo, JsonCommunication.class);
+		//jcomm.getStartTime();
+		//return jcomm;
 		
 		
 		//But we don't know that it's well formed, so we iterate through the fields
-		/*
+		
 		Set<Entry<String, JsonElement>> es = jo.entrySet();
 		String key; List<String> values;
+		JsonCommunication jcomm = new JsonCommunication();
 		List<String> acceptedKeys = jcomm.getAcceptedKeys();
+		List<String> validKeys = new ArrayList<String>();
+		List<String> invalidKeys = new ArrayList<String>();
+		List<JsonKeyValues> metadata = jcomm.getMetadata();
 		
 		for(Entry e: es){
 			key = (String)e.getKey();
@@ -428,20 +424,30 @@ public class JsonUtil {
 			if (acceptedKeys.contains(key)){
 				if(key.contentEquals("rawText")){
 					jcomm.setRawText(values.get(0));
+					if(validate){ validKeys.add(key);}
 				}
 				else if(key.contentEquals("bodyText")){
 					jcomm.setBodyText(values.get(0));
+					if(validate){ validKeys.add(key);};
 				}
 				else if(key.contentEquals("bodyChain")){
-					jcomm.setBodyChain(values);
+					if(validate){ validKeys.add(key);}
 				}
+				else{
+					if(validate){invalidKeys.add(key);}
+					jcomm.addMetadata(key,values);
+					
+				}
+					//bodyChain needs to have a list of text 
+					//and corresponding type to be converted into
+					//Sections and their types
+					//jcomm.setBodyChain(values);
+				
 			
 			}
 			
 		}
-		*/
-
-
+		return jcomm;
 	}
 	
 	/**
