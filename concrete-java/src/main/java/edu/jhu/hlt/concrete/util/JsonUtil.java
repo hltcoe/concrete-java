@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import edu.jhu.hlt.concrete.Concrete;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.Communication.Builder;
 import edu.jhu.hlt.concrete.Concrete.EmailAddress;
@@ -53,6 +54,8 @@ import com.google.protobuf.Message;
  * Set test(String[] args) for an example of deserializing and serializing
  * Concrete Communication objects to and form the JsonCommunication wrapper class.
  * 
+ * @author Tad, taylor.turpen@gmail.com
+ * 
  */
 public class JsonUtil {
 
@@ -70,6 +73,12 @@ public class JsonUtil {
 			//of sections
 			private List<BodySection> sections;
 			
+			public List<BodySection> getSections() {
+				return sections;
+			}
+			public void setSections(List<BodySection> sections) {
+				this.sections = sections;
+			}
 			public Body(List<BodySection> sects){
 				this.sections = sects;
 			}
@@ -107,6 +116,16 @@ public class JsonUtil {
 			}
 			
 			public String getKind(){return kind;}
+
+			public TextSpan getTextSpan(String rawText) {
+				int start = rawText.indexOf(this.sectionRawText);
+				int end = start + sectionRawText.length();
+				TextSpan ts = TextSpan.newBuilder()
+						.setStart(start)
+						.setEnd(end)
+						.build();
+				return ts;
+			}
 		}
 		
 		/*
@@ -135,7 +154,18 @@ public class JsonUtil {
 		private double startTime;
 		private String author;
 		private String title;
+		private String kind;
 		
+		public String getKind() {
+			return kind;
+		}
+
+
+		public void setKind(String kind) {
+			this.kind = kind;
+		}
+
+
 		/*
 		 * Email Headers
 		 */
@@ -182,7 +212,6 @@ public class JsonUtil {
 			this.metadata.add(new JsonKeyValues(kvs.getKey(),kvs.getValuesList()));
 		}
 
-
 		/*
 		 * Manipulation methods
 		 */
@@ -212,6 +241,28 @@ public class JsonUtil {
 			}
 			return new Body(bodySections);
 		}
+		
+		/**
+		 * Convert a SectionSegmentation to a Body object
+		 * @param seg
+		 * @param rawText
+		 * @return the Body object that represents the rawText
+		 */
+		private SectionSegmentation bodyToSegment(Body body,String rawText) {
+			//List<Section> sections = seg.getSectionList();
+			List<BodySection> bodySections = body.getSections();
+			
+			List<Section> sections = new ArrayList<Section>();			
+			for(BodySection bodySec: bodySections){
+				TextSpan ts = bodySec.getTextSpan(rawText);
+				sections.add(Concrete.Section.newBuilder()
+						.setTextSpan(ts)
+						.build());
+				//bodySections.add(new BodySection(rawText.substring(ts.getStart(),ts.getEnd()),bodySec.getKind()));
+			}
+			return SectionSegmentation.newBuilder().addAllSection(sections).build();
+		}
+		
 		
 		/*
 		private Body listToBody(List<String> list){
@@ -286,8 +337,37 @@ public class JsonUtil {
 				}
 			}
 		}
-		public List<String> getRecipientsCc() {
+		
+		public List<String> setRecipientsCc() {
 			return recipientsCc;
+		}
+		
+		public List<EmailAddress> getConcreteRecipientsCc() {
+			List<EmailAddress> list = new ArrayList<EmailAddress>();
+			for(String s: recipientsCc){
+				list.add(EmailAddress.newBuilder().setAddress(s).build());
+			}
+			return list;
+		}
+		
+		public List<EmailAddress> getConcreteRecipientsBcc() {
+			List<EmailAddress> list = new ArrayList<EmailAddress>();
+			for(String s: recipientsBcc){
+				list.add(EmailAddress.newBuilder().setAddress(s).build());
+			}
+			return list;
+		}
+		
+		public List<EmailAddress> getConcreteRecipientsTo() {
+			List<EmailAddress> list = new ArrayList<EmailAddress>();
+			for(String s: recipientsTo){
+				list.add(EmailAddress.newBuilder().setAddress(s).build());
+			}
+			return list;
+		}
+		
+		public EmailAddress getConcreteAuthor() {
+			return EmailAddress.newBuilder().setAddress(this.author).build();			
 		}
 		
 		public void setRecipientsCc(List<String> recipientsCc) {
@@ -370,7 +450,13 @@ public class JsonUtil {
 		}
 
 
-
+		public Iterable<? extends SectionSegmentation> getConcreteSectionSegmentation() {
+			List<SectionSegmentation> sectSeg = new ArrayList<SectionSegmentation>();
+			for(Body b: bodyChain){
+				sectSeg.add(bodyToSegment(b,this.rawText));
+			}
+			return sectSeg;
+		}
 	}
 	/*
 	 * Handler Methods
@@ -445,8 +531,6 @@ public class JsonUtil {
 		String rawText = commIn.getText();
 		List<SectionSegmentation> segs = commIn.getSectionSegmentationList();
 		SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
-		EmailCommunicationInfo info = commIn.getEmailInfo();
-		
 		
 		List<KeyValues> metadata = commIn.getMetadataList();
 		for(KeyValues kvs : metadata){
@@ -454,12 +538,16 @@ public class JsonUtil {
 		}
 		
 		//Set data members
-		jcomm.setRawText(rawText);		
-		jcomm.setAuthor(info.getSenderAddress());
-		jcomm.setTitle(info.getMessageId());
-		jcomm.addRecipientsTo(info.getToAddressList());
-		jcomm.addRecipientsBcc(info.getBccAddressList());
-		jcomm.addRecipientsCc(info.getCcAddressList());
+		jcomm.setRawText(rawText);
+		jcomm.setKind(commIn.getKind().toString());
+		if(commIn.getKind().toString().contentEquals("EMAIL")){
+			EmailCommunicationInfo info = commIn.getEmailInfo();
+			jcomm.setAuthor(info.getSenderAddress());
+			jcomm.setTitle(info.getMessageId());
+			jcomm.addRecipientsTo(info.getToAddressList());
+			jcomm.addRecipientsBcc(info.getBccAddressList());
+			jcomm.addRecipientsCc(info.getCcAddressList());
+		}
 		for(SectionSegmentation seg : segs.subList(1,segs.size())){
 			jcomm.addBodyToChain(seg,rawText);
 		}
@@ -575,10 +663,8 @@ public class JsonUtil {
 			jp = (JsonPrimitive)value;
 			result.add(jp.getAsString());
 		}
-		//else if(cl.equals(JsonArray.class)){
 		else if(cl.equals(JsonArray.class)){
 			//Json array support not currently implemented
-			//result = gson.fromJson(list, listType);
 			String s = gson.toJson(value);
 			try{
 				result = gson.fromJson(s, listType);
@@ -685,10 +771,47 @@ public class JsonUtil {
 	 */
 	public Communication toCommunication(JsonCommunication jcomm){
 		Communication cb = new ProtoFactory().generateMockCommunication();
-		
 		Communication comm = cb.toBuilder()
 				.setText(jcomm.getRawText())
+				.setStartTime(jcomm.getStartTime())				
+				.build();
+		return comm;		
+	}
+	
+	/**
+	 * Convert the JsonCommunication object to a protobuf Communication object
+	 * 
+	 * @param jcomm the JsonCommunication object
+	 * @return the Communication object
+	 */
+	public Communication toConcreteEmail(JsonCommunication jcomm){
+		Communication cb = new ProtoFactory().generateMockCommunication();
+		/*
+		 * 		jcomm.setRawText(rawText);		
+		jcomm.setAuthor(info.getSenderAddress());
+		jcomm.setTitle(info.getMessageId());
+		jcomm.addRecipientsTo(info.getToAddressList());
+		jcomm.addRecipientsBcc(info.getBccAddressList());
+		jcomm.addRecipientsCc(info.getCcAddressList());
+		for(SectionSegmentation seg : segs.subList(1,segs.size())){
+			jcomm.addBodyToChain(seg,rawText);
+		}
+		return jcomm;	
+		 */
+
+		Communication comm = cb.toBuilder()
+				.setText(jcomm.getRawText())				
 				.setStartTime(jcomm.getStartTime())
+				.setEmailInfo(EmailCommunicationInfo.newBuilder()
+					.setSenderAddress(jcomm.getConcreteAuthor())
+					.setMessageId(jcomm.getMessageId())
+					.addAllToAddress(jcomm.getConcreteRecipientsTo())
+					.addAllBccAddress(jcomm.getConcreteRecipientsBcc())
+					.addAllCcAddress(jcomm.getConcreteRecipientsCc())
+					.build()
+					)
+				.addAllSectionSegmentation(jcomm.getConcreteSectionSegmentation())
+				.setKind(Communication.Kind.EMAIL)
 				.build();
 		return comm;		
 	}
@@ -773,6 +896,7 @@ public class JsonUtil {
 			
 			//To get TO a communication object FROM a json object
 			Communication comm;
+			Communication concreteEmail;
 			Gson gson = new Gson();			
 			for(JsonObject jcomm : jcomms){
 				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
@@ -784,7 +908,8 @@ public class JsonUtil {
 				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
 				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
 				comm = ju.toCommunication(jc);
-				//System.out.println(comm.getStartTime());
+				concreteEmail = ju.toConcreteEmail(jc);
+				System.out.println(comm.getStartTime());
 			}
 			
 		} catch (FileNotFoundException e) {
