@@ -149,6 +149,11 @@ public class JsonUtil {
 			}
 		}
 		/*
+		 * Constants
+		 */
+		String NO_MESSAGE_ID = "NO_MESSAGE_ID";
+		
+		/*
 		 * Generic meta-information for communication
 		 */
 		private double startTime;
@@ -248,7 +253,7 @@ public class JsonUtil {
 		 * @param rawText
 		 * @return the Body object that represents the rawText
 		 */
-		private SectionSegmentation bodyToSegment(Body body,String rawText) {
+		private SectionSegmentation emailBodyToSegment(Body body,String rawText) {
 			//List<Section> sections = seg.getSectionList();
 			List<BodySection> bodySections = body.getSections();
 			
@@ -257,21 +262,16 @@ public class JsonUtil {
 				TextSpan ts = bodySec.getTextSpan(rawText);
 				sections.add(Concrete.Section.newBuilder()
 						.setTextSpan(ts)
+						.setKind(Concrete.Section.Kind.PASSAGE)
+						.setUuid(IdUtil.generateUUID())
 						.build());
 				//bodySections.add(new BodySection(rawText.substring(ts.getStart(),ts.getEnd()),bodySec.getKind()));
 			}
-			return SectionSegmentation.newBuilder().addAllSection(sections).build();
+			return SectionSegmentation.newBuilder()
+					.addAllSection(sections)
+					.setUuid(IdUtil.generateUUID())
+					.build();
 		}
-		
-		
-		/*
-		private Body listToBody(List<String> list){
-			List<Paragraph> paras = new ArrayList<Paragraph>();
-			for (String s: list){
-				paras.add(new Paragraph(s));
-			}
-			return new Body(paras);
-		}*/
 		
 	
 		/*
@@ -300,7 +300,8 @@ public class JsonUtil {
 		}
 		
 		public String getMessageId() {
-			return messageId;
+			if(messageId != null){return messageId;}
+			return NO_MESSAGE_ID;
 		}
 		public void setMessageId(String messageId) {
 			this.messageId = messageId;
@@ -367,7 +368,10 @@ public class JsonUtil {
 		}
 		
 		public EmailAddress getConcreteAuthor() {
-			return EmailAddress.newBuilder().setAddress(this.author).build();			
+			if(this.author != null){
+				return EmailAddress.newBuilder().setAddress(this.author).build();
+			}
+			return EmailAddress.newBuilder().setAddress("").build();
 		}
 		
 		public void setRecipientsCc(List<String> recipientsCc) {
@@ -450,10 +454,10 @@ public class JsonUtil {
 		}
 
 
-		public Iterable<? extends SectionSegmentation> getConcreteSectionSegmentation() {
+		public Iterable<? extends SectionSegmentation> getConcreteEmailSectionSegmentation() {
 			List<SectionSegmentation> sectSeg = new ArrayList<SectionSegmentation>();
 			for(Body b: bodyChain){
-				sectSeg.add(bodyToSegment(b,this.rawText));
+				sectSeg.add(emailBodyToSegment(b,this.rawText));
 			}
 			return sectSeg;
 		}
@@ -810,7 +814,7 @@ public class JsonUtil {
 					.addAllCcAddress(jcomm.getConcreteRecipientsCc())
 					.build()
 					)
-				.addAllSectionSegmentation(jcomm.getConcreteSectionSegmentation())
+				.addAllSectionSegmentation(jcomm.getConcreteEmailSectionSegmentation())
 				.setKind(Communication.Kind.EMAIL)
 				.build();
 		return comm;		
@@ -897,7 +901,8 @@ public class JsonUtil {
 			//To get TO a communication object FROM a json object
 			Communication comm;
 			Communication concreteEmail;
-			Gson gson = new Gson();			
+			Gson gson = new Gson();
+			
 			for(JsonObject jcomm : jcomms){
 				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
 				comm = ju.toCommunication(jc);
@@ -905,6 +910,7 @@ public class JsonUtil {
 			
 			//To get TO a communication object FROM a json string
 			for(String jcomm : jcommstrings){
+				//Changing string values improperly, may be my static handling, double check Monday
 				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
 				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
 				comm = ju.toCommunication(jc);
