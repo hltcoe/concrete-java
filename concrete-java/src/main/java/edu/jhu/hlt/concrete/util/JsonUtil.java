@@ -151,7 +151,7 @@ public class JsonUtil {
 		/*
 		 * Constants
 		 */
-		String NO_MESSAGE_ID = "NO_MESSAGE_ID";
+		String NO_MESSAGE_ID_FLAG = "NO_MESSAGE_ID";
 		
 		/*
 		 * Generic meta-information for communication
@@ -301,7 +301,7 @@ public class JsonUtil {
 		
 		public String getMessageId() {
 			if(messageId != null){return messageId;}
-			return NO_MESSAGE_ID;
+			return NO_MESSAGE_ID_FLAG;
 		}
 		public void setMessageId(String messageId) {
 			this.messageId = messageId;
@@ -546,6 +546,7 @@ public class JsonUtil {
 		jcomm.setKind(commIn.getKind().toString());
 		if(commIn.getKind().toString().contentEquals("EMAIL")){
 			EmailCommunicationInfo info = commIn.getEmailInfo();
+			jcomm.setMessageId(info.getMessageId());
 			jcomm.setAuthor(info.getSenderAddress());
 			jcomm.setTitle(info.getMessageId());
 			jcomm.addRecipientsTo(info.getToAddressList());
@@ -574,10 +575,8 @@ public class JsonUtil {
 		//JsonCommunication jcomm = gson.fromJson(jo, JsonCommunication.class);
 		//jcomm.getStartTime();
 		//return jcomm;
-		
-		
-		//But we don't know that it's well formed, so we iterate through the fields
-		
+				
+		//But we don't know that it's well formed, so we iterate through the fields	
 		Set<Entry<String, JsonElement>> es = jo.entrySet();
 		String key; List<String> values;
 		JsonCommunication jcomm = new JsonCommunication();
@@ -790,19 +789,6 @@ public class JsonUtil {
 	 */
 	public Communication toConcreteEmail(JsonCommunication jcomm){
 		Communication cb = new ProtoFactory().generateMockCommunication();
-		/*
-		 * 		jcomm.setRawText(rawText);		
-		jcomm.setAuthor(info.getSenderAddress());
-		jcomm.setTitle(info.getMessageId());
-		jcomm.addRecipientsTo(info.getToAddressList());
-		jcomm.addRecipientsBcc(info.getBccAddressList());
-		jcomm.addRecipientsCc(info.getCcAddressList());
-		for(SectionSegmentation seg : segs.subList(1,segs.size())){
-			jcomm.addBodyToChain(seg,rawText);
-		}
-		return jcomm;	
-		 */
-
 		Communication comm = cb.toBuilder()
 				.setText(jcomm.getRawText())				
 				.setStartTime(jcomm.getStartTime())
@@ -901,6 +887,7 @@ public class JsonUtil {
 			//To get TO a communication object FROM a json object
 			Communication comm;
 			Communication concreteEmail;
+			Communication concreteEmailExtended;
 			Gson gson = new Gson();
 			
 			for(JsonObject jcomm : jcomms){
@@ -915,6 +902,7 @@ public class JsonUtil {
 				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
 				comm = ju.toCommunication(jc);
 				concreteEmail = ju.toConcreteEmail(jc);
+				concreteEmailExtended = ju.toConcreteEmail(jcs);
 				System.out.println(comm.getStartTime());
 			}
 			
