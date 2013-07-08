@@ -29,6 +29,9 @@ import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
 import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
+
+import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
+import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
 //import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import com.google.gson.Gson;
@@ -201,6 +204,7 @@ public class JsonUtil {
 			acceptedKeys.add("recipientsTo");
 			acceptedKeys.add("recipientsCc");
 			acceptedKeys.add("recipientsBcc");
+			acceptedKeys.add("messageId");
 			return acceptedKeys;
 		}
 		
@@ -231,14 +235,31 @@ public class JsonUtil {
 			this.startTime = date.getTime();
 		}
 		
+		/*
 		/**
 		 * Convert a SectionSegmentation to a Body object
 		 * @param seg
 		 * @param rawText
 		 * @return the Body object that represents the rawText
-		 */
+		 *
 		private Body segmentToBody(SectionSegmentation seg,String rawText) {
 			List<Section> sections = seg.getSectionList();
+			List<BodySection> bodySections = new ArrayList<BodySection>();			
+			for(Section sec: sections){
+				TextSpan ts = sec.getTextSpan();
+				bodySections.add(new BodySection(rawText.substring(ts.getStart(),ts.getEnd()),sec.getKind()));
+			}
+			return new Body(bodySections);
+		}*/
+		
+		/**
+		 * Convert a Section to a Body object
+		 * @param seg
+		 * @param rawText
+		 * @return the Body object that represents the rawText
+		 */
+		private Body sectionsToBody(List<Section> sections,String rawText) {
+			//List<Section> sections = seg.getSectionList();
 			List<BodySection> bodySections = new ArrayList<BodySection>();			
 			for(Section sec: sections){
 				TextSpan ts = sec.getTextSpan();
@@ -272,7 +293,6 @@ public class JsonUtil {
 					.setUuid(IdUtil.generateUUID())
 					.build();
 		}
-		
 	
 		/*
 		 * Accessor methods
@@ -397,14 +417,19 @@ public class JsonUtil {
 		public void setBodyText(String emailBodyText) {
 			this.bodyText = emailBodyText;
 		}
+		
 		public List<Body> getBodyChain() {
 			return bodyChain;
 		}
 		public void setBodyChain(List<Body> emailChain) {
 			this.bodyChain = emailChain;
 		}
-		public void addBodyToChain(SectionSegmentation seg, String rawText){
-			Body body = segmentToBody(seg,rawText);
+		public void setBodyChain(Body body) {
+			this.bodyChain = new ArrayList<Body>();
+			this.bodyChain.add(body);
+		}
+		public void addSectionToChain(List<Section> sec, String rawText){
+			Body body = sectionsToBody(sec,rawText);
 			this.bodyChain.add(body);
 		}
 		public JsonObject toJsonObject(){
@@ -534,7 +559,8 @@ public class JsonUtil {
 		//Get data members
 		String rawText = commIn.getText();
 		List<SectionSegmentation> segs = commIn.getSectionSegmentationList();
-		SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
+		List<Section> sections = segs.get(0).getSectionList();
+		//SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
 		
 		List<KeyValues> metadata = commIn.getMetadataList();
 		for(KeyValues kvs : metadata){
@@ -553,9 +579,7 @@ public class JsonUtil {
 			jcomm.addRecipientsBcc(info.getBccAddressList());
 			jcomm.addRecipientsCc(info.getCcAddressList());
 		}
-		for(SectionSegmentation seg : segs.subList(1,segs.size())){
-			jcomm.addBodyToChain(seg,rawText);
-		}
+		jcomm.setBodyChain(jcomm.sectionsToBody(sections,rawText));
 		return jcomm;		
 	}
 	
@@ -619,6 +643,10 @@ public class JsonUtil {
 					}
 					else if(key.contentEquals("bodyText")){
 						jcomm.setBodyText(values.get(0));
+						if(validate){ validKeys.add(key);};
+					}
+					else if(key.contentEquals("messageId")){
+						jcomm.setMessageId(values.get(0));
 						if(validate){ validKeys.add(key);};
 					}
 				}
@@ -687,13 +715,16 @@ public class JsonUtil {
 	 * @input filename the filename of the gzipped communications
 	 * 
 	 * @return the list of JsonObjects that represents the communications
+	 * @throws Exception 
 	 */
-	public List<JsonObject> getJsonCommunicationsFromGzip(String filename) throws FileNotFoundException, IOException{
-		InputStream in = new GZIPInputStream(new FileInputStream(filename));
+	public List<JsonObject> getJsonCommunicationsFromGzip(String filename) throws Exception{
+		//InputStream in = new GZIPInputStream(new FileInputStream(filename));
+		ProtocolBufferReader in = new ProtocolBufferReader(filename, Communication.class);
 		List<JsonObject> jcomms = new ArrayList<JsonObject>();
 		Communication commIn;
 		
-		while((commIn = Communication.parseDelimitedFrom(in)) != null){
+		//while((commIn = Communication.parseDelimitedFrom(in)) != null){
+		while((commIn = (Communication)in.next()) != null){
 			jcomms.add(toJson(commIn));
 		}			
 		in.close();
@@ -707,15 +738,15 @@ public class JsonUtil {
 	 * @param filename the filename of the gzipped zerialized Concrete Communication objects
 	 * 
 	 * @return the String list of the json JsonCommunication objects
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public List<String> getJsonStringsFromGzip(String filename) throws FileNotFoundException, IOException{
-		InputStream in = new GZIPInputStream(new FileInputStream(filename));
+	public List<String> getJsonStringsFromGzip(String filename) throws Exception{
+		//InputStream in = new GZIPInputStream(new FileInputStream(filename));
+		ProtocolBufferReader in = new ProtocolBufferReader(filename, Communication.class);
 		List<String> jcomms = new ArrayList<String>();
 		Communication commIn;		
-		while((commIn = Communication.parseDelimitedFrom(in)) != null){
+		//while((commIn = Communication.parseDelimitedFrom(in)) != null){
+		while((commIn = (Communication)in.next()) != null){
 			jcomms.add(toJsonString(commIn));
 		}			
 		in.close();
@@ -843,46 +874,18 @@ public class JsonUtil {
 	public static void test(String[] args) {
 		try {
 			//To get FROM a communication file TO jsonObject
-			JsonUtil ju = new JsonUtil();		
-			List<JsonObject> jcomms = ju.getJsonCommunicationsFromGzip(args[0]);
-
-			//To get FROM a communication file TO json string
-			List<String> jcommstrings = ju.getJsonStringsFromGzip(args[0]);
-			
-			//To get TO a communication object FROM a json object
-			Communication comm;
-			Gson gson = new Gson();			
-			for(JsonObject jcomm : jcomms){
-				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
-				comm = ju.toCommunication(jc);
-			}
-			
-			//To get TO a communication object FROM a json string
-			for(String jcomm : jcommstrings){
-				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
-				comm = ju.toCommunication(jc);
-			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void main(String[] args) {
-		try {
-			//To get FROM a communication file TO jsonObject
 			JsonUtil ju = new JsonUtil();	
 			String filename = args[0];
 			boolean validate = false;
 			
-			List<JsonObject> jcomms = ju.getJsonCommunicationsFromGzip(filename);
+			List<JsonObject> jcomms = null;
+			List<String> jcommstrings = null;
+			jcomms = ju.getJsonCommunicationsFromGzip(filename);
+			jcommstrings = ju.getJsonStringsFromGzip(filename);
+
 
 			//To get FROM a communication file TO json string
-			List<String> jcommstrings = ju.getJsonStringsFromGzip(filename);
+
 			
 			//To get TO a communication object FROM a json object
 			Communication comm;
@@ -910,6 +913,59 @@ public class JsonUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			//To get FROM a communication file TO jsonObject
+			JsonUtil ju = new JsonUtil();	
+			String filename = args[0];
+			boolean validate = false;
+			
+			List<JsonObject> jcomms = null;
+			List<String> jcommstrings = null;
+			jcomms = ju.getJsonCommunicationsFromGzip(filename);
+			jcommstrings = ju.getJsonStringsFromGzip(filename);
+
+
+			//To get FROM a communication file TO json string
+
+			
+			//To get TO a communication object FROM a json object
+			Communication comm;
+			Communication concreteEmail;
+			Communication concreteEmailExtended;
+			Gson gson = new Gson();
+			
+			for(JsonObject jcomm : jcomms){
+				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
+				comm = ju.toCommunication(jc);
+			}
+			
+			//To get TO a communication object FROM a json string
+			for(String jcomm : jcommstrings){
+				//Changing string values improperly, may be my static handling, double check Monday
+				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
+				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
+				comm = ju.toCommunication(jc);
+				concreteEmail = ju.toConcreteEmail(jc);
+				concreteEmailExtended = ju.toConcreteEmail(jcs);
+				System.out.println(comm.getStartTime());
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
