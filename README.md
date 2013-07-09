@@ -27,7 +27,8 @@ Installation
 
 First, checkout our latest tag:
 
-    git checkout p1.0.8_j1.0.7
+    git fetch --tags
+    git checkout 1.0.14
 
 Running 
 
@@ -45,13 +46,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.0.8</version>
+      <version>1.0.14</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-java</artifactId>
-      <version>1.0.7</version>
+      <version>1.0.14</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server. 

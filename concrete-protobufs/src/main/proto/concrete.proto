@@ -430,7 +430,7 @@ message Section {
   }
 
  /**The name of the section **/
- optional string label;
+ optional string label = 10;
 
  /**Position within the communication with respect to other Sections: 
  The section number, E.g., 3, or 3.1, or 3.1.2, etc.  Aimed at
@@ -440,7 +440,7 @@ message Section {
  arranged linearly, where reading these numbers should not be required
  to get a start-to-finish enumeration of the Communication's content.
  **/
- repeated int32 number;
+ repeated int32 number = 11;
 
 }
 

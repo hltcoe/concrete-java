@@ -1,3 +1,8 @@
+/**
+ * Copyright 2012-2013 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.concrete.io;
 
 import java.io.BufferedOutputStream;
@@ -13,7 +18,7 @@ import com.google.protobuf.Message;
 /**
  * A generic protocol buffer writer
  * 
- * @author Delip Rao
+ * @author Delip Rao and Mark Dredze
  * 
  */
 public class ProtocolBufferWriter {
