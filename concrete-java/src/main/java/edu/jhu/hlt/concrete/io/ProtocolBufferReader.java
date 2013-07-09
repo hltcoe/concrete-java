@@ -6,6 +6,7 @@
 package edu.jhu.hlt.concrete.io;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,15 +22,16 @@ import edu.jhu.hlt.concrete.ConcreteException;
 /**
  * A generic protocol buffer reader class
  * 
- * @author Delip Rao
+ * @author Delip Rao and Mark Dredze
  * 
  */
-public class ProtocolBufferReader {
+public class ProtocolBufferReader implements Closeable {
     InputStream inputStream = null;
     Object messageObject = null;
     Class<?> messageClass = null;
     int lastBytesRead = 0;
     int totalBytesRead = 0;
+    protected Message nextMessage = null;
 
     /**
      * 
@@ -57,11 +59,12 @@ public class ProtocolBufferReader {
     }
 
     protected void init(InputStream in, Class<?> messageClass) throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+            IllegalArgumentException, InvocationTargetException, ConcreteException {
         inputStream = in;
         Method messageClassLoader = messageClass.getMethod("getDefaultInstance", (Class[]) null);
         messageObject = messageClassLoader.invoke(null, (Object[]) null);
         this.messageClass = messageClass;
+        this.nextMessage = this.getNextMessage();
     }
 
     /**
@@ -70,6 +73,17 @@ public class ProtocolBufferReader {
      * @throws ConcreteException 
      */
     public Message next() throws ConcreteException {
+    	Message nextMessage = this.nextMessage;
+    	this.nextMessage = this.getNextMessage();
+    	
+    	return nextMessage;
+    }
+    
+    public boolean hasNext() {
+    	return this.nextMessage == null;
+    }
+    
+    protected Message getNextMessage() throws ConcreteException {
         final int LONG_SIZE = 8;
         lastBytesRead = 0;
         byte[] messageSizeBytes = new byte[LONG_SIZE];

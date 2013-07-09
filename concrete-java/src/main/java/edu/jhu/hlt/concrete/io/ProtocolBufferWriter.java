@@ -18,7 +18,7 @@ import com.google.protobuf.Message;
 /**
  * A generic protocol buffer writer
  * 
- * @author Delip Rao
+ * @author Delip Rao and Mark Dredze
  * 
  */
 public class ProtocolBufferWriter {
