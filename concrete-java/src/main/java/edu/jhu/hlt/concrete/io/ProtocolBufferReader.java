@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.zip.GZIPInputStream;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.google.protobuf.Message;
 
@@ -22,10 +24,10 @@ import edu.jhu.hlt.concrete.ConcreteException;
 /**
  * A generic protocol buffer reader class
  * 
- * @author Delip Rao and Mark Dredze
+ * @author Delip Rao, Mark Dredze and John Sullivan
  * 
  */
-public class ProtocolBufferReader implements Closeable {
+public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
     InputStream inputStream = null;
     Object messageObject = null;
     Class<?> messageClass = null;
@@ -70,15 +72,23 @@ public class ProtocolBufferReader implements Closeable {
     /**
      * 
      * @return the next message in the protocol buffer
-     * @throws ConcreteException 
+     * @throws NoSuchElementException
      */
-    public Message next() throws ConcreteException {
-    	Message nextMessage = this.nextMessage;
-    	this.nextMessage = this.getNextMessage();
+    public Message next() throws NoSuchElementException {
+        try {
+    	    Message nextMessage = this.nextMessage;
+    	    this.nextMessage = this.getNextMessage();
     	
-    	return nextMessage;
+    	    return nextMessage;
+        } catch (ConcreteException cE) {
+            throw new NoSuchElementException(cE.getMessage());
+        }
     }
-    
+
+    public void remove() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
     public boolean hasNext() {
     	return this.nextMessage == null;
     }
