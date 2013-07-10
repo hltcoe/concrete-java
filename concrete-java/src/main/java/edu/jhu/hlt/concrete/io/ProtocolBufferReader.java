@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import com.google.protobuf.Message;
 
 import edu.jhu.hlt.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.Concrete.Communication;
 
 /**
  * A generic protocol buffer reader class
@@ -27,13 +28,13 @@ import edu.jhu.hlt.concrete.ConcreteException;
  * @author Delip Rao, Mark Dredze and John Sullivan
  * 
  */
-public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
+public class ProtocolBufferReader<M extends Message> implements Closeable, Iterator<M>  {
     InputStream inputStream = null;
     Object messageObject = null;
-    Class<?> messageClass = null;
+    Class<M> messageClass = null;
     int lastBytesRead = 0;
     int totalBytesRead = 0;
-    protected Message nextMessage = null;
+    protected M nextMessage = null;
 
     /**
      * 
@@ -42,10 +43,10 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
      *            (network/disk/memory etc)
      * @param messageClass
      *            - The protocol buffer consists of one or more instances of
-     *            this class
+     *            this class. It must match the parameterized type of the reader.
      * @throws ConcreteException
      */
-    public ProtocolBufferReader(InputStream in, Class<?> messageClass) throws ConcreteException {
+    public ProtocolBufferReader(InputStream in, Class<M> messageClass) throws ConcreteException {
         try {
             init(in, messageClass);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -53,14 +54,14 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
         }
     }
 
-    public ProtocolBufferReader(String in, Class<?> messageClass) throws Exception {
+    public ProtocolBufferReader(String in, Class<M> messageClass) throws Exception {
         if (in.endsWith(".gz"))
             init(new BufferedInputStream(new GZIPInputStream(new FileInputStream(in))), messageClass);
         else
             init(new BufferedInputStream(new FileInputStream(in)), messageClass);
     }
 
-    protected void init(InputStream in, Class<?> messageClass) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+    protected void init(InputStream in, Class<M> messageClass) throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, ConcreteException {
         inputStream = in;
         Method messageClassLoader = messageClass.getMethod("getDefaultInstance", (Class[]) null);
@@ -74,9 +75,9 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
      * @return the next message in the protocol buffer
      * @throws NoSuchElementException
      */
-    public Message next() throws NoSuchElementException {
+    public M next() throws NoSuchElementException {
         try {
-    	    Message nextMessage = this.nextMessage;
+    	    M nextMessage = this.nextMessage;
     	    this.nextMessage = this.getNextMessage();
     	
     	    return nextMessage;
@@ -93,7 +94,7 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
     	return this.nextMessage == null;
     }
     
-    protected Message getNextMessage() throws ConcreteException {
+    protected M getNextMessage() throws ConcreteException {
         final int LONG_SIZE = 8;
         lastBytesRead = 0;
         byte[] messageSizeBytes = new byte[LONG_SIZE];
@@ -116,7 +117,7 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
             Method newBuilderMethod = messageClass.getMethod("newBuilder", (Class[]) null);
             Message.Builder builder = (Message.Builder) newBuilderMethod.invoke(null, (Object[]) null);
 
-            return builder.mergeFrom(messageBytes).build();
+            return (M) builder.mergeFrom(messageBytes).build();
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | 
                 IllegalArgumentException | InvocationTargetException
                 | IOException e) {
@@ -151,7 +152,7 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
      * @return message at the specified byte offset if there exists one or null
      * @throws Exception
      */
-    public Message messageAtOffset(long byteOffset) throws Exception {
+    public M messageAtOffset(long byteOffset) throws Exception {
         inputStream.skip(byteOffset);
         return next();
     }
