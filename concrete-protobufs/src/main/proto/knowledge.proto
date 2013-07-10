@@ -1,7 +1,6 @@
 option java_package="edu.jhu.hlt.concrete";
 package concrete;
 
-import "uuid.proto";
 import "concrete.proto";
 
 //===========================================================================

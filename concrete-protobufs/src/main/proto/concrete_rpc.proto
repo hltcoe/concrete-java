@@ -34,7 +34,6 @@
 option java_package="edu.jhu.hlt.concrete.rpc";
 package concrete_rpc;
 
-import "uuid.proto";
 import "concrete.proto";
 import "knowledge.proto";
 

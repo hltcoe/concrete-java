@@ -12,8 +12,21 @@
 option java_package="edu.jhu.hlt.concrete";
 package concrete;
 
-import "uuid.proto";
 import "twitter.proto";
+
+//===========================================================================
+// Universally Unique Identifiers
+//===========================================================================
+
+//
+// A 16-byte UUID identifier.
+//
+// @see http://en.wikipedia.org/wiki/Universally_unique_identifier 
+//
+message UUID {
+  required fixed64 high = 1; //!< The 8 most significant bytes
+  required fixed64 low = 2;  //!< The 8 least significant bytes
+}
 
 //===========================================================================
 // Conventions
