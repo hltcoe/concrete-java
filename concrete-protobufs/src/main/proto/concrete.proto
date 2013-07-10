@@ -668,26 +668,26 @@ message Parse {
     /** A parse-relative identifier for this consistuent.  Together
     * with the UUID for a Parse, this can be used to define
     * pointers to specific constituents. */
-    optional int32 index = 5;
+    required int32 id = 1;
 
-    optional string tag = 1;
+    optional string tag = 2;
 
     /** The list of parse constituents that are directly dominated by
       * this constituent. */
-    repeated Constituent child = 2;
+    repeated Constituent child = 3;
 
     /** The list of pointers to the tokens dominated by this
       * constituent.  Typically, this field will only be defined for
       * leaf constituents (i.e., constituents with no children).  For
       * many parsers, len(tokens) will always be either 1 (for leaf
       * constituents) or 0 (for non-leaf constituents). */
-    optional TokenRefSequence token_sequence = 3;
+    optional TokenRefSequence token_sequence = 4;
 
     /** The index of the head child of this constituent.  I.e., the
       * head child of constituent <tt>c</tt> is
       * <tt>c.children[c.head_child_index]</tt>.  A value of -1
       * indicates that no child head was identified. */
-    optional sint32 head_child_index = 4 [default=-1];
+    optional sint32 head_child_index = 5 [default=-1];
   }
 }
 
