@@ -86,7 +86,7 @@ public class ProtocolBufferReader implements Closeable, Iterator<Message>  {
     }
 
     public void remove() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("You cannot remove with this iterator.");
     }
 
     public boolean hasNext() {
