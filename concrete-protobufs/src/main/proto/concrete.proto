@@ -402,9 +402,6 @@ message Sentence {
     * systems. */
   repeated Tokenization tokenization = 5;
 
-  /** Theories about the parse structure of this sentence. */
-  repeated Parse parse = 6;
-  repeated DependencyParse dependency_parse = 7;
 }
 
 //===========================================================================
@@ -431,6 +428,17 @@ message Token {
   // Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
   //   and as a result, we want to maintain this field. 
   required string text = 2;
+
+  /** Location of this token in the original text.  In cases where
+   * this token does not correspond directly with any text span in
+   * the original text (such as word insertion during MT), this field
+   * may be given a value indicating "approximately" where the token
+   * comes from.  A span covering the entire sentence may be used if
+   * no more precise value seems appropriate. */
+  optional TextSpan text_span = 4;
+
+  /** Location of this token in the original audio. */
+  optional AudioSpan audio_span = 5;
 }
 
 /** A pointer to a token. */
@@ -580,6 +588,10 @@ message Tokenization {
   repeated TokenTagging ner_tags = 7;
   repeated TokenTagging lemmas = 8;
   repeated TokenTagging lang_ids = 9;
+
+  /** Theories about the parse structure of this Tokenization. */
+  repeated Parse parse = 10;
+  repeated DependencyParse dependency_parse = 11;
 }
 
 /** A theory about some token-level annotation.
