@@ -35,6 +35,7 @@ option java_package="edu.jhu.hlt.concrete.rpc";
 package concrete_rpc;
 
 import "concrete.proto";
+import "graph.proto";
 
 //======================================================================
 // RPC Request Messages

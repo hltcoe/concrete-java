@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
-import edu.jhu.hlt.concrete.Concrete.Vertex;
+import edu.jhu.hlt.concrete.Graph.Vertex;
 
 /**
  * @author max

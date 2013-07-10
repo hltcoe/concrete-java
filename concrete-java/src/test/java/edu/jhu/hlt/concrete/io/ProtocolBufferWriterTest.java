@@ -52,6 +52,8 @@ public class ProtocolBufferWriterTest {
         CommunicationGUID readGuid = readComm.getGuid();
         assertEquals(id, readId);
         assertEquals(guid, readGuid);
+        
+        pbr.close();
     }
 
 }

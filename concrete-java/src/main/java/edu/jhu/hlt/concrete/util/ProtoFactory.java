@@ -6,7 +6,6 @@ package edu.jhu.hlt.concrete.util;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,7 +14,6 @@ import java.util.Random;
 import edu.jhu.hlt.concrete.Concrete;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
-import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
 import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
 import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
@@ -57,21 +55,12 @@ public class ProtoFactory {
     }
     
     /**
-     * Generate a "mock" {@link KnowledgeGraph}, suitable for testing.
-     * 
-     * @return a {@link KnowledgeGraph} object with random data
-     */
-    public KnowledgeGraph generateMockKnowledgeGraph() {
-        return generateKnowledgeGraph();
-    }
-    
-    /**
      * Generate a "mock" {@link Communication}, suitable for testing.
      * 
      * @return a {@link Communication} object with random data
      */
     public Communication generateMockCommunication() {
-        return generateCommunication(generateMockCommGuid(), generateMockKnowledgeGraph());
+        return generateCommunication(generateMockCommGuid());
     }
     
     /////////////////////////////////////////////
@@ -93,27 +82,15 @@ public class ProtoFactory {
     }
     
     /**
-     * Generate a {@link KnowledgeGraph} object.
-     * 
-     * @return a {@link KnowledgeGraph} object
-     */
-    public static KnowledgeGraph generateKnowledgeGraph() {
-        return KnowledgeGraph.newBuilder()
-                .setUuid(IdUtil.generateUUID())
-                .build();
-    }
-    
-    /**
      * Generate a {@link Communication} object. 
      * 
      * @param guid - the {@link CommunicationGUID} object to use for this {@link Communication}
      * @param graph - the {@link KnowledgeGraph} object to use for this {@link Communication}
      * @return a {@link Communication} object
      */
-    public static Communication generateCommunication(CommunicationGUID guid, KnowledgeGraph graph) {
+    public static Communication generateCommunication(CommunicationGUID guid) {
         return Communication.newBuilder()
                 .setGuid(guid)
-                .setKnowledgeGraph(graph)
                 .setUuid(IdUtil.generateUUID())
                 .build();
     }

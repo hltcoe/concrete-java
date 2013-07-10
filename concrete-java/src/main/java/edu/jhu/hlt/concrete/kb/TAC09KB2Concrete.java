@@ -23,17 +23,16 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import edu.jhu.hlt.concrete.Concrete;
 import edu.jhu.hlt.concrete.Concrete.AnnotationMetadata;
-import edu.jhu.hlt.concrete.Concrete.AttributeMetadata;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.CommunicationGUID;
-import edu.jhu.hlt.concrete.Concrete.CommunicationGUIDAttribute;
-import edu.jhu.hlt.concrete.Concrete.KnowledgeGraph;
+import edu.jhu.hlt.concrete.Graph;
+import edu.jhu.hlt.concrete.Graph.CommunicationGUIDAttribute;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification;
 import edu.jhu.hlt.concrete.Concrete.LanguageIdentification.LanguageProb;
-import edu.jhu.hlt.concrete.Concrete.StringAttribute;
+import edu.jhu.hlt.concrete.Graph.StringAttribute;
 import edu.jhu.hlt.concrete.Concrete.UUID;
-import edu.jhu.hlt.concrete.Concrete.Vertex;
-import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
+import edu.jhu.hlt.concrete.Graph.Vertex;
+import edu.jhu.hlt.concrete.Graph.VertexKindAttribute;
 import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
@@ -75,15 +74,12 @@ public class TAC09KB2Concrete {
 
     private static final Logger logger = LoggerFactory.getLogger(TAC09KB2Concrete.class);
 
-    static final AttributeMetadata attribute_metadata;
     static final AnnotationMetadata annotation_metadata;
     static final LanguageProb language_prob;
     static final LanguageIdentification language_id;
-    static final double timestamp = (double) ((new Date()).getTime());
+    static final long timestamp = ((new Date()).getTime());
 
     static {
-        attribute_metadata = AttributeMetadata.newBuilder().setConfidence(1.0f).setTool("TAC09KB2Concrete.java").setTimestamp(timestamp)
-                .build();
         annotation_metadata = AnnotationMetadata.newBuilder().setConfidence(1.0f).setTool("TAC09KB2Concrete.java").setTimestamp(timestamp)
                 .build();
         language_prob = LanguageProb.newBuilder().setLanguage("eng").setProbability(1.0f).build();
@@ -216,7 +212,7 @@ public class TAC09KB2Concrete {
                 CommunicationGUID guid = ProtoFactory.generateCommGuid("TAC_KB_09", this.currentEntity.getEntityId());
                 Communication communication = Communication.newBuilder().setUuid(uuid).setGuid(guid).setText(commText)
                         .addLanguageId(language_id).setKind(Communication.Kind.WIKIPEDIA)
-                        .setKnowledgeGraph(KnowledgeGraph.newBuilder().setUuid(IdUtil.generateUUID()).build()).build();
+                        .build();
                 this.currentEntity.setCommGuid(guid);
                 logger.debug("Write conversation for {}", guid.getCommunicationId());
                 try {
@@ -227,20 +223,20 @@ public class TAC09KB2Concrete {
             } else if (qualifiedName.equals("entity")) {
                 Vertex.Builder vb = Vertex.newBuilder();
                 vb.setDataSetId(this.currentEntity.getEntityId());
-                vb.addKind(VertexKindAttribute.newBuilder().setValue(this.currentEntity.getKind()).setMetadata(attribute_metadata)
+                vb.addKind(VertexKindAttribute.newBuilder().setValue(this.currentEntity.getKind()).setMetadata(annotation_metadata)
                         .setUuid(IdUtil.generateUUID()));
                 String name = this.currentEntity.getName();
-                vb.addName(StringAttribute.newBuilder().setValue(name).setMetadata(attribute_metadata).setUuid(IdUtil.generateUUID()));
+                vb.addName(StringAttribute.newBuilder().setValue(name).setMetadata(annotation_metadata).setUuid(IdUtil.generateUUID()));
                 for (Entry<String, String> entry : this.currentEntity.getFactToTextMap().entrySet()) {
                     // currently do nothing..
                 }
                 for (String key : this.otherAttributes.keySet())
-                    vb.addOtherAttributes(Concrete.LabeledAttribute.newBuilder().setUuid(IdUtil.generateUUID())
-                            .setMetadata(attribute_metadata).setLabel(key).setValue(this.otherAttributes.get(key)).build());
+                    vb.addOtherAttributes(Graph.LabeledAttribute.newBuilder().setUuid(IdUtil.generateUUID())
+                            .setMetadata(annotation_metadata).setLabel(key).setValue(this.otherAttributes.get(key)).build());
 
                 // add the comm to the vertex if we have it.
                 CommunicationGUID guid = this.currentEntity.getCommGuid();
-                CommunicationGUIDAttribute attr = CommunicationGUIDAttribute.newBuilder().setValue(guid).setMetadata(attribute_metadata)
+                CommunicationGUIDAttribute attr = CommunicationGUIDAttribute.newBuilder().setValue(guid).setMetadata(annotation_metadata)
                         .setUuid(IdUtil.generateUUID()).build();
                 if (guid != null) {
                     vb.addCommunicationGuid(attr);

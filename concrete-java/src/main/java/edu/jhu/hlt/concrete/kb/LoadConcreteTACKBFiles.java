@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Concrete.Communication;
-import edu.jhu.hlt.concrete.Concrete.Vertex;
+import edu.jhu.hlt.concrete.Graph.Vertex;
 import edu.jhu.hlt.concrete.ConcreteException;
 
 /**

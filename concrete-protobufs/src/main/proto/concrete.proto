@@ -12,6 +12,22 @@
 option java_package="edu.jhu.hlt.concrete";
 package concrete;
 
+import "twitter.proto";
+
+//===========================================================================
+// Universally Unique Identifiers
+//===========================================================================
+
+//
+// A 16-byte UUID identifier.
+//
+// @see http://en.wikipedia.org/wiki/Universally_unique_identifier 
+//
+message UUID {
+  required fixed64 high = 1; //!< The 8 most significant bytes
+  required fixed64 low = 2;  //!< The 8 least significant bytes
+}
+
 //===========================================================================
 // Conventions
 //===========================================================================
@@ -19,7 +35,7 @@ package concrete;
 /**______________________________________________________________________
   * TIMES
   *     Times and dates are encoded as unix time UTC (i.e., seconds
-  *     since January 1, 1970), stored in a double field.
+  *     since January 1, 1970), stored in an int64 field.
   *______________________________________________________________________
   * LANGUAGES
   *     Languages are encoded using ISO 639-3 three-letter codes.
@@ -35,20 +51,6 @@ package concrete;
   *     </ul>
   *______________________________________________________________________
   */ 
-
-//===========================================================================
-// Universally Unique Identifiers
-//===========================================================================
-
-/** A 16-byte UUID identifier.
-  *
-  * @see http://en.wikipedia.org/wiki/Universally_unique_identifier 
-  */
-message UUID {
-  required fixed64 high = 1; //!< The 8 most significant bytes
-  required fixed64 low = 2;  //!< The 8 least significant bytes
-}
-
 
 //===========================================================================
 // Communications
@@ -116,11 +118,11 @@ message Communication {
   
   /** The time when this communication started (in unix time UTC --
    * i.e., seconds since January 1, 1970).  */
-  optional double start_time = 5;
+  optional int64 start_time = 5;
 
   /** The time when this communication ended (in unix time UTC --
    * i.e., seconds since January 1, 1970). */
-  optional double end_time = 6;
+  optional int64 end_time = 6;
 
   /*=================== Annotation Fields ====================== */
 
@@ -130,11 +132,6 @@ message Communication {
   /** Theories about the languages that are present in this
    * communication. */
   repeated LanguageIdentification language_id = 14;
-
-  /** Theories about the gender of the speaker or author of this
-   * communication. */
-  // Mark this in the knowledge graph instead??
-  //repeated GenderIdentification sender_gender_id = 16;
 
   /** Theories about which spans of text are used to mention entities
    * in this communication. */
@@ -151,10 +148,6 @@ message Communication {
   /** Theories about what situations are asserted in this
    * communication. */
   repeated SituationSet situation_set = 21;
-
-  /** Theories about what concepts are mentioned or discussed in this
-   * communication. */
-  repeated ConceptSet related_concept_set = 17;
 
   /** Raw SERIF output for this communication. */
   repeated SerifXML serifxml = 18;
@@ -193,79 +186,7 @@ message Communication {
    * API.  For information about the Twitter API, see:
    * <https://dev.twitter.com/docs/platform-objects> */
   optional TweetInfo tweet_info = 1004;
-
-  /*=================== Knowledge Graph ====================== */
-
-  /** The knowledge graph for this communication. */
-  required KnowledgeGraph knowledge_graph = 7;
 }
-
-
-/**
- * a meaniningful set of Communications, possibly
- * with some coreference annotations.
- */
-message Discourse {	
-
-	required UUID id = 1;
-
-	/**
-	 * the tool that identified this set of Communications
-	 * (not the tool that determined any coreference assesments)
-	 */
-	required AnnotationMetadata metadata = 2;
-
-	/**
-	 * theories about the coreference relationships between
-	 * Entity or Situtation discussed in this set of Communications.
-	 */
-	repeated DiscourseAnnotation annotation = 3;
-
-	/**
-	 * a theory of cross-doc Entity/Situtation coreference
-	 */
-	message DiscourseAnnotation {	// come in gold and synthetic varieties
-		required UUID id = 1;
-		required AnnotationMetadata metadata = 2;
-		repeated DiscourseEntity entity = 3;			// all entities mentioned in this Discourse
-		repeated DiscourseSituation situation = 4;		// all situtations mentioned in this Discourse
-	}
-}
-
-/**
- * represents one Entity in a cross-doc situation coref/alignment
- */
-message DiscourseEntity {
-	required UUID id = 1;
-	repeated EntityRef mention = 2;			// all mentions of this entity
-	optional float confidence = 3;
-}
-
-/**
- * represents one Situation in a cross-doc situation coref/alignment
- */
-message DiscourseSituation {
-	required UUID id = 1;
-	repeated SituationRef mention = 2;		// all mentions of this situation
-	optional float confidence = 3;
-}
-
-/**
- * A reference to an Entity in a Communication.
- */
-message EntityRef {
-	required UUID entity_id = 1;		// type=Entity
-	required UUID communication_id = 2;	// type=Communication
-}
-
-/**
- * A reference to a Situation in a Communication.
- */
-message SituationRef {
-	required UUID situation_id = 1;		// type=Situation
-	required UUID communication_id = 2;	// type=Communication
-}
-
 
 /** A theory about what languages are present in a given communication
  * or piece of communication.  Note that it is possible to have more
@@ -358,14 +279,12 @@ message TextSpan {
 }
 
 /** A span of audio within a single communication, identified by a
- * pair of time offests.  In this context, a "time offset" is a float
- * containing the number of seconds since the beginning of the
- * message.  Time offsets are zero-based.*/
+ * pair of time offests. Time offsets are zero-based.*/
 message AudioSpan {
   /** Start time (in seconds)*/
-  optional float start = 1;
+  optional uint64 start = 1;
   /** End time (in seconds)*/
-  optional float end = 2;
+  optional uint64 end = 2;
 
   // NOTE: we reserve the right to add a "channel" field or something
   // analogous, for multi-channel audio (left/right, etc).
@@ -505,29 +424,20 @@ message Token {
     * multiple Token objects with the same id (e.g., in different
     * n-best lists), then all of their other fields *must* be
     * identical as well. */
-  optional int32 token_id = 1;
+  // A 0-based index that represents the order that this token appears in the sentence. 
+  required int32 token_index = 1;
 
-  /** Text contents of this token. */
-  optional string text = 2;
-
-
-  /** Location of this token in the original text.  In cases where
-    * this token does not correspond directly with any text span in
-    * the original text (such as word insertion during MT), this field
-    * may be given a value indicating "approximately" where the token
-    * comes from.  A span covering the entire sentence may be used if
-    * no more precise value seems appropriate. */
-  optional TextSpan text_span = 4;
-
-  /** Location of this token in the original audio. */
-  optional AudioSpan audio_span = 5;
+  // The text associated with this token. 
+  // Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
+  //   and as a result, we want to maintain this field. 
+  required string text = 2;
 }
 
 /** A pointer to a token. */
 message TokenRef {
   /** The tokenization-relative identifier for the token that is
     * pointed at. */
-  required int32 token_id = 1;
+  required int32 token_index = 1;
 
   /** The UUID of the tokenization that contains the token. */
   required UUID tokenization_id = 2;
@@ -539,7 +449,7 @@ message TokenRefSequence {
 
   /** The tokenization-relative identifiers for each token that is
     * included in this sequence. */
-  repeated int32 token_id = 1;
+  repeated int32 token_index = 1;
 
   /** An optional field that can be used to describe
    * the root of a sentence (if this sequence is a full sentence),
@@ -547,10 +457,17 @@ message TokenRefSequence {
    * or some other form of "canonical" token in this sequence if,
    * for instance, it is not easy to map this sequence to a another
    * annotation that has a head */
-  optional int32 anchor_token_id = 2 [default=-1];
+  optional int32 anchor_token_index = 2 [default=-1];
 
   /** The UUID of the tokenization that contains the tokens. */
   required UUID tokenization_id = 3;
+
+  // The text span associated with this TokenRefSequence.
+  optional TextSpan text_span = 4;
+
+  // The audio span associated with this TokenRefSequence.
+  optional AudioSpan audio_span = 5;
+  
 }
 
 /** A theory (or set of alternative theories) about the sequence of
@@ -698,7 +615,7 @@ message TokenTagging {
 
   message TaggedToken {
     /** A pointer to the token being tagged. */
-    optional int32 token_id = 1;
+    optional int32 token_index = 1;
 
     /** A string containing the annotation.
 	 *  If the tag set you are using is not case sensitive,
@@ -739,7 +656,7 @@ message Parse {
     /** A parse-relative identifier for this consistuent.  Together
     * with the UUID for a Parse, this can be used to define
     * pointers to specific constituents. */
-    optional int32 id = 5;
+    optional int32 index = 5;
 
     optional string tag = 1;
 
@@ -805,7 +722,6 @@ message Sound {
 //===========================================================================
 // Metadata
 //===========================================================================
-// [xx] should we merge these into a single "Metadata" type?
 
 /** Metadata associated with an annotation or a set of annotations,
   * that identifies where those annotations came from. */
@@ -815,23 +731,14 @@ message AnnotationMetadata {
 
   /** The time at which this annotation was generated (in unix time
    * UTC -- i.e., seconds since January 1, 1970). */
-  optional double timestamp = 2;
+  optional int64 timestamp = 2;
 
   /** Confidence score.  To do: define what this means!!! */
   optional float confidence = 3;
-}
 
-/** Metadata associated with an attribute or edge. */
-message AttributeMetadata {
-  /** The name of the tool that generated this attribute. */
-  optional string tool = 1;
-
-  /** The time at which this annotation was generated (in unix time
-   * UTC -- i.e., seconds since January 1, 1970). */
-  optional double timestamp = 2;
-
-  /** Confidence score.  To do: define what this means!!! */
-  optional float confidence = 3;
+  // A Digest, carrying over any information the annotation metadata
+  // wishes to carry over. 
+  optional Digest digest = 4;
 }
 
 /** Analytic-specific information about an attribute or edge.  Digests
@@ -968,7 +875,7 @@ message EntityMention {
   required UUID uuid = 1;
 
   /** The set of tokens that constitute this mention. */
-  optional TokenRefSequence tokens = 6;
+  required TokenRefSequence tokens = 6;
 
   /** The type of referent that is referred to by this mention. */
   optional Entity.Type entity_type = 4;
@@ -993,32 +900,6 @@ message EntityMention {
    * typically redundant with the 'token_sequence' field, and may not
    * be generated by all analytics. */
   optional string text = 2;
-
-  /** Location of this entity mention in the original text.  This
-   *  field is typically redundant with the 'token_sequence' field,
-   *  and may not be generated by all analytics. */
-  optional TextSpan text_span = 7;
-
-  /** Location of this token in the original audio. This field is
-   *  typically redundant with the 'token_sequence' field, and may not
-   *  be generated by all analytics. */
-  optional AudioSpan audio_span = 8;
-
-  /**
-   * A Coref ID for this mention (e.g., "gold", "hypothesis 1")
-   * 
-   */
-  optional UUID coref_id = 12;
-
-  /**
-   * The index pointing to the sentence where this mention was found.
-   */
-  optional int32 sentence_index = 13;
-  
-  /**
-   * The pointer to the head token.
-   */
-  optional int32 head_index = 14;
 }
 
 /**
@@ -1052,17 +933,14 @@ message EntityMentionRef {
    * communication that contains the mention that is being pointed at.
    *
    * \see CommunicationsGUID.communication_id.
-   *
-   * TODO: change to Communication UUID if no one objects
    */
-  optional string communication_id = 3;
+  optional UUID communication_id = 3;
 }
 
 
 //===========================================================================
 // Situations
 //===========================================================================
-// [!!] WARNING: THE NAME OF THIS CLASS MAY CHANGE [!!]
 
 /** A single situation, along with pointers to situation mentions that
  * provide evidence for the situation.  "Situations" include events,
@@ -1168,24 +1046,10 @@ message Situation {
 
     /** A pointer to the value of this argument, if it is explicitly
      * encoded as an Entity or a Situation. */
-    optional UUID value = 2;
+    optional UUID entity_id = 2;
 
-    /** The type of this argument's value.  This type must match the
-     * type of the protobuf object pointed to by 'value,' when it is
-     * defined.  */
-    optional ValueType value_type = 3;
-
-    /** Enumerated type used to record the type of the argument's
-     * value.  The "SENDER_ARG" value type is a subtype of the
-     * "ENTITY_ARG" value type, and should be used when the argument's
-     * value is the sender (whether the 'value' pointer is defined or
-     * not). */
-    enum ValueType {
-      UNKNOWN_ARG = 0;
-      ENTITY_ARG = 100;
-      SENDER_ARG = 110;          //!< Subtype of ENTITY
-      SITUATION_ARG = 200;
-    }
+    // A pointer to the value of this argument, if it is a situation.
+    optional UUID situation_id = 3;
 
     /** Enumerated type used to record the relationship between an
      * argument and the situation that owns it. */
@@ -1433,6 +1297,12 @@ message SituationMention {
   /** Unique identifier for this situation. */
   required UUID uuid = 1;
 
+  /** The text content of this situation mention.  This field is
+   * often redundant with the 'tokens' field, and may not
+   * be generated by all analytics. */
+
+  optional string text = 2;
+
   /** The core type of this situation (eg EVENT or SENTIMENT) */
   optional Situation.Type situation_type = 3;
 
@@ -1463,21 +1333,7 @@ message SituationMention {
    * analytics to decide what tokens (if any) they wish to include in
    * this field.  In particular, it is not specified whether the
    * arguments' tokens should be included. */
-  optional TokenRefSequence tokens = 150;
-
-  /** An optional text span that are (especially) relevant to
-   * this situation mention.  It is left up to individual analytics to
-   * decide what tokens (if any) they wish to include in this
-   * field.  Note that this field may be redundant with the 'tokens'
-   * field in cases where they are both generated. */
-  optional TextSpan text_span = 151;
-
-  /** An optional audio span that are (especially) relevant to
-   * this situation mention.  It is left up to individual analytics to
-   * decide what tokens (if any) they wish to include in this
-   * field.  Note that this field may be redundant with the 'tokens'
-   * field in cases where they are both generated. */
-  optional AudioSpan audio_span = 152;
+  required TokenRefSequence tokens = 150;
 
   /** A confidence score for this individual situation mention.  You
    * can also set a confidence score for an entire SituationMentionSet
@@ -1492,14 +1348,17 @@ message SituationMention {
      * mention that owns it. */
     optional Situation.Argument.Role role = 1;
 
-    /** A pointer to the value of this argument, if it is explicitly
-     * encoded as an EntityMention or a SituationMention. */
-    optional UUID value = 2;
+    // A pointer to the value of this argument, if it is explicitly encoded as an EntityMention.
+    optional UUID entity_mention_id = 2;
+    
+    // A pointer to the value of this argument, if it is explicitly encoded as an SituationMention. 
+    optional UUID situation_mention_id = 3;
 
-    /** The type of this argument's value.  This type must match the
-     * type of the protobuf object pointed to by 'value,' when it is
-     * defined.  */
-    optional Situation.Argument.ValueType value_type = 3;
+    /** New roles should usually be added to the enum, but for use
+     cases with many varied and possibly dynamic role names, this can be
+     used.  Presumably this would only be used in a prototype stage of an
+     analytic, with roles eventually "hardening" and moving to the enum. */
+    optional string role_label = 4;
   }
 }
 
@@ -1516,680 +1375,102 @@ message SituationMentionSet {
   repeated SituationMention mention = 3;
 }
 
-//===========================================================================
-// Concepts
-//===========================================================================
 
-/** A set of concepts associated with some target, such as a message
- * or vertex. */
-message ConceptSet {
-  /** Unique identifier for this concept set. */
-  required UUID uuid = 1;
-
-  /** Information about where this concept set came from. */
-  optional AnnotationMetadata metadata = 2;
-
-  /** The set of concepts contained in this set */
-  repeated Concept concept = 3;
-}
-
-/** A named concept, with an optional weight */
-message Concept {
-  optional string name = 1;
-  optional float weight = 2;
-  optional string short_name = 3;
-}
-
-//===========================================================================
-// Twitter Metadata
-//===========================================================================
-/* Twitter Metadata
- *
- * This section defines protobuf entries that can be used to store all
- * of the information that is provided by the Twitter API.  This set
- * of definitions is meant to map one-to-one with the Twitter API data
- * structures; do not add any new fields that do not have
- * corresponding fields in the Twitter API. 
- *
- * https://dev.twitter.com/docs/platform-objects/
- * */
-
-/** Information about a twitter user. */
-message TwitterUser {
-  optional int64 id = 1;
-  optional string name = 3;
-  optional string screen_name = 4;
-  optional string lang = 5;
-  optional bool geo_enabled = 6;
-  optional string created_at = 7;
-  optional int32 friends_count = 8;
-  optional int32 statuses_count = 9;
-  optional bool verified = 10;
-  optional int32 listed_count = 11;
-  optional int32 favourites_count = 12; // note british spelling; derived from Twitter schema
-  optional int32 followers_count = 13;
-                    
-  optional string location = 14; // may be empty
-  optional string time_zone = 15; // may be empty
-  optional string description = 16; // may be empty
-  optional sint32 utc_offset = 18; // may be empty
-  optional string url = 19; // may be empty
-
-  //======================================================================
-  /** \deprecated -- Use `id` instead. */    
-  optional string id_str = 2 [deprecated=true];
-}
-
-/** Information about a tweet. */
-message TweetInfo {
-  optional int64 id = 1;
-  optional string text = 3;
-  optional string created_at = 4; // may be empty; use Message.start_time instead if you are processing a Message.
-  optional TwitterUser user = 5; // may just contain TwitterUser.id and TwitterUser.screen_name.
-  optional bool truncated = 6;
-  optional TwitterEntities entities = 7;
-  optional string source = 8;
-    
-  optional TwitterCoordinates coordinates = 9; // may be empty
-  optional TwitterPlace place = 11; // may be empty
-
-  optional bool favorited = 12;
-  optional bool retweeted = 13;
-  optional int32 retweet_count = 14; // may be empty; in rare cases, might be a string
-
-  optional string in_reply_to_screen_name = 15; // may be empty
-  optional int64 in_reply_to_status_id = 16; // may be empty
-  optional int64 in_reply_to_user_id = 18; // may be empty
-
-  //======================================================================
-  // Deprecated fields: for details on why these are deprecated, see 
-  // https://dev.twitter.com/docs/platform-objects/tweets
-  //======================================================================
-  /** \deprecated -- Use `coordinates` instead. */
-  optional TwitterGeo geo = 10 [deprecated=true];
-  /** \deprecated -- Use `id` instead. */    
-  optional string id_str = 2 [deprecated=true];
-  /** \deprecated -- Use `in_reply_to_status_id` instead. */    
-  optional string in_reply_to_status_id_str = 17 [deprecated=true];
-  /** \deprecated -- Use `in_reply_to_user_id` instead. */    
-  optional string in_reply_to_user_id_str = 19 [deprecated=true];
-}
-
-/** A twitter geocoordinate */
-message TwitterLatLong {
-  optional double latitude = 1;
-  optional double longitude = 2;
-}
-
-/** A twitter location */
-message TwitterPlace {
-  optional string place_type = 1;
-  optional string country_code = 2;
-  optional string country = 3;
-  optional string full_name = 4;
-  optional string name = 5;
-  optional string id = 6;
-  optional string url = 7;
-    
-  message BoundingBox {
-    optional string type = 1;
-    repeated TwitterLatLong coordinates = 2;
-  }
-    
-  optional BoundingBox bounding_box = 8; // may be empty
-    
-  message PlaceAttributes {
-    optional string street_address = 1; // may be empty
-    optional string region = 2; // may be empty
-    optional string locality = 3; // may be empty
-  }
-    
-  optional PlaceAttributes attributes = 9; // may be empty
-}
-
-/** \deprecated -- Use TwitterCoordinates instead */
-message TwitterGeo {
-  optional string type = 1;
-  optional TwitterLatLong coordinates = 2;
-}
-
-message TwitterCoordinates {
-  optional string type = 1; 
-  optional TwitterLatLong coordinates = 2;
-}
-
-
-message TwitterEntities { 
-  message UserMention {
-    optional int32 start_offset = 1;
-    optional int32 end_offset = 2;
-    optional string screen_name = 4;
-    optional string name = 5;
-    optional int64 id = 6;
-    /** \deprecated -- Use `id` instead. */    
-    optional string id_str = 3 [deprecated=true];
-  }
-
-  message URL {
-    optional int32 start_offset = 1;
-    optional int32 end_offset = 2;
-    optional string expanded_url = 3; // may be empty
-    optional string url = 4;
-    optional string display_url = 5; // may be empty
-  }
-
-  message HashTag {
-    optional string text = 1;
-    optional int32 start_offset = 2;
-    optional int32 end_offset = 3;
-  }
-
-  repeated HashTag hashtags = 1;
-  repeated URL urls = 2;
-  repeated UserMention user_mentions = 3;
-}
-
-//===========================================================================
-// Knowledge Graph
-//===========================================================================
-
-/** A knowledge graph, consisting of a set of vertices, along with
- * edges connecting those vertices.  This message type is only used
- * when storing the knowledge graph for an individual communication;
- * for corpus-wide knowledge graphs, the vertices and edges are stored
- * as top-level objects.
+/**
+ * a meaniningful set of Communications, possibly
+ * with some coreference annotations.
  */
-message KnowledgeGraph {
-  /** Unique identifier for this knowledge graph. */
-  required UUID uuid = 1;
+message Discourse {	
 
-  /** The set of vertices in this knowledge graph. */
-  repeated Vertex vertex = 2;
+	// the ID associated with this Discourse object. 
+	required UUID id = 1;
 
-  /** The set of edges in this knowledge graph.  There should be at
-   * most one edge between any given pair of vertices. */
-  repeated Edge edge = 3;
+	/**
+	 * the tool that identified this set of Communications
+	 * (not the tool that determined any coreference assessments)
+	 */
+	required AnnotationMetadata metadata = 2;
+
+	/**
+	 * theories about the coreference relationships between
+	 * Entity or Situtation discussed in this set of Communications.
+	 */
+	repeated DiscourseAnnotation annotation = 3;
+
+	/**
+	 * a theory of cross-doc Entity/Situtation coreference
+	 */
+	message DiscourseAnnotation {	// come in gold and synthetic varieties
+		// The ID associated with this DiscourseAnnotation.
+		required UUID id = 1;
+
+		// The metadata associated with the tool responsible for suggesting this DiscourseAnnotation. 
+		required AnnotationMetadata metadata = 2;
+
+		// A set of DiscourseEntities suggested by this DiscourseAnnotation object.
+		optional DiscourseEntitySet entity_set = 3;			// all entities mentioned in this Discourse
+		
+		// A set of DiscourseSituations suggested by this DiscourseAnnotation object. 
+		optional DiscourseSituationSet situation_set = 4;		// all situations mentioned in this Discourse
+	}
 }
 
-/** A vertex in the knowledge graph. */
-message Vertex {
-  /** A unique identifier for this vertex. */
-  required UUID uuid = 1;
+// A collection of DiscourseEntities, with an ID and metadata referring to the tool
+// that generated this DiscourseEntitySet. 
+message DiscourseEntitySet {
+    // the ID associated with this DiscourseEntitySet.
+    required UUID id = 1;
 
-  /** UUIDs of vertices that are connected to this vertex by an edge */
-  repeated UUID neighbor = 2;
+    // the AnnotationMetadata associated with this DiscourseEntitySet.
+    required AnnotationMetadata metadata = 2;
 
-  /** A theory about what kind of Vertex this is.  This determines
-   * which of the attribute fields are appropriate for this vertex.
-   * (E.g., it is not appropriate to add a communication_guid
-   * attribute to a PERSON vertex.)  Note that it is possible to have
-   * multiple theories about the kind of a vertex.  For example, we
-   * might not be able to tell whether a given vertex corresponds to a
-   * person or an organization. */
-  repeated VertexKindAttribute kind = 3;
-  enum Kind {
-    NONE = 0;
-    PERSON = 1;
-    COMMUNICATION = 2;
-    COM_CHANNEL = 3;
-    ORGANIZATION = 4;
-    GPE = 5;
-    UNKNOWN = 6;
-  }
-
-  /**
-   * A string that represents a data set ID (e.g., TAC KB ID).
-   */
-  optional string data_set_id = 4;
-
-  /** A theory about the name of the person or entity represented by
-   * this vertex.  If an entity has by multiple names (e.g.,
-   * nicknames), then the vertex should have multiple name attributes
-   * associated with it. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringAttribute name = 10;
-
-  /** A theory about this person's gender. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated BooleanAttribute is_male = 11;
-
-  /** A theory about this person's age. 
-   *
-   * JCM: FIXME: The person's age when? Most people are both 6 years old and 17 years old at different times.
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated FloatAttribute age = 12;
-
-  /** A theory about this person's nationality.  The value of this
-   * attribute should be a string name of a country, preferably
-   * normalized. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringAttribute nationality = 13;
-
-  /** A theory about whether this person is married. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated BooleanAttribute is_married = 14;
-
-  /** A theory about whether this person is a parent (i.e., about
-   * whether they have any children). 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated BooleanAttribute is_parent = 15;
-
-  /** A theory about whether this person is a grandparent (i.e.,
-   * about whether they have any grandchildren). 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated BooleanAttribute is_grandparent = 16;
-
-  /** A string comment about this vertex. 
-   *
-   * @ingroup ANY_VERTEX
-   */
-  repeated StringAttribute comment = 17;
-
-  /** A theory about the distribution of languages that a person uses
-   * in their communications.  This attribute records how often a
-   * person speaks in each language; it does not necessarily indicate
-   * how fluent they are in that language.  (E.g., a person might be
-   * fluent in French but only speak it rarely.)  The string keys of
-   * this map should contain ISO 639-3 langauge codes, and the values
-   * should be nonnegative floats that sum to one. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute communication_language_distribution = 18;
-
-  /** A theory about an interesting set of words that were used this
-   * person's communications. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute communication_bag_of_words = 19;
-
-  /** A theory about what concepts have been mentioned or discussed in
-   * this person's communications. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute communication_concepts = 20;
-
-  /** A theory about what person names have been mentioned in this
-   * person's communications.  Keys should be name strings, and values
-   * should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute person_names_mentioned_in_communications = 21;
-
-  /** A theory about what organization names have been mentioned in
-   * this person's communications.  Keys should be name strings, and
-   * values should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute organization_names_mentioned_in_communications = 22;
-
-  /** A theory about what location names have been mentioned in this
-   * person's communications.  Keys should be name strings, and values
-   * should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute location_names_mentioned_in_communications = 23;
-
-  /** A theory about an interesting set of words that were used in 
-   * articles about this person. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute report_bag_of_words = 24;
-
-  /** A theory about what concepts have been mentioned or discussed in
-   * articles about this person. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute report_concepts = 25;
-
-  /** A theory about what person names have been mentioned in articles
-   * about this person.  Keys should be name strings, and values
-   * should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute person_names_mentioned_in_reports = 26;
-
-  /** A theory about what organization names have been mentioned in
-   * articles about this person.  Keys should be name strings, and
-   * values should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute organization_names_mentioned_in_reports = 27;
-
-  /** A theory about what location names have been mentioned in
-   * articles about this person.  Keys should be name strings, and
-   * values should be counts. 
-   *
-   * @ingroup PERSON_VERTEX
-   */
-  repeated StringFloatMapAttribute location_names_mentioned_in_reports = 28;
-
-  /** A theory that this communication corresponds with the
-   * communication that has a given commmunication GUID.  Note that in
-   * the case of duplicates, it is possible for one vertex to
-   * correspond to multiple GUIDs. 
-   *
-   * @ingroup COMMUNICATION_VERTEX
-   */
-  repeated CommunicationGUIDAttribute communication_guid = 101;
-
-  /** A theory that this communication channel uses a given twitter id.
-   *
-   * @ingroup COM_CHANNEL_VERTEX TWITTER_VERTEX */
-  repeated Int64Attribute twitter_id = 201;
-
-  /** A theory that this communication channel uses a given twitter handle.
-   *
-   * @ingroup COM_CHANNEL_VERTEX TWITTER_VERTEX */
-  repeated StringAttribute twitter_handle = 202;
-
-  /** A theory that this communication channel uses a given email address
-   *
-   * @ingroup COM_CHANNEL_VERTEX EMAIL_VERTEX */
-  repeated StringAttribute email_address = 203;
-
-  /** A theory that this communication channel uses a given email 
-   * display name.
-   *
-   * @ingroup COM_CHANNEL_VERTEX EMAIL_VERTEX */
-  repeated StringAttribute email_display_name = 204;
-
-  /** A theory that this communication channel uses a given phone
-   * number.
-   *
-   * @ingroup COM_CHANNEL_VERTEX PHONE_VERTEX */
-  repeated StringAttribute phone_number = 205;
-  
-  /**
-   * Svitlana's political orientation - possible values:
-   * DEMOCRATIC, REPUBLICAN
-   * 
-   */
-  repeated StringAttribute political_orientation = 300;
-
-  /**
-   * A series of theories about arbitrary attributes of this vertex. Specific
-   * attributes are to be preferred.
-   */
-  repeated LabeledAttribute other_attributes = 302 [deprecated=true];
-
+    // any number of DiscourseEntities associated with this DiscourseEntitySet.
+    repeated DiscourseEntity discourse_entity = 3;
 }
 
-/** A unordered pair of vertex UUIDs, uniquely identifying an edge in
- * a graph.  */
-message EdgeId {
-  /** The UUID of the vertex of the edge whose UUID is lesser. */
-  required UUID v1 = 1;
-  /** The UUID of the vertex of the edge whose UUID is greater. */
-  required UUID v2 = 2;
+// A collection of DiscourseSituations, with an ID and metadata referring to the tool
+// that generated this DiscourseSituationSet.
+message DiscourseSituationSet {
+    // the ID associated with this DiscourseSituationSet.
+    required UUID id = 1;
+
+    // the AnnotationMetadata associated with this DiscourseSituationSet.
+    required AnnotationMetadata metadata = 2;
+
+    // any number of DiscourseSituations associated with this DiscourseSituationSet.
+    repeated DiscourseEntity discourse_situation = 3;
 }
 
-/** An ordered pair of vertex UUIDs, identifying an edge and an
- * associated direction (source->destination).  There are two possible
- * DirectedEdgeId values corresponding to any given EdgeId: in the
- * "v1-to-v2" directed edge id, src=v1 and dst=v2; and in the
- * "v2-to-v1" directed edge id, src=v2 and dst=v1. */
-message DirectedEdgeId {
-  /** The UUID of the source vertex */
-  required UUID src = 1;
-  /** The UUID of the destination vertex */
-  required UUID dst = 2;
-
-  /** An enumerated type that can be used to store edge directions */
-  enum Direction {
-    V1_TO_V2 = 1;
-    V2_TO_V1 = 2;
-  }
+/**
+ * represents one Entity in a cross-doc situation coref/alignment
+ */
+message DiscourseEntity {
+	required UUID id = 1;
+	repeated EntityRef entity_ref = 2;			// all mentions of this entity
+	optional float confidence = 3;
 }
 
-/* An edge between two vertices in the knowledge graph, containing a
- * set of undirected attributes between v1 and v2, a set of directed
- * attributes from v1->v2, and a set of directed attributes from
- * v2->v1.
- *
- * Each graph contains exactly one Edge for each unordered pair of
- * vertices.  When an edge is stored in a database table, the sorted
- * pair of vertex UUIDs (e.v1, e.v2) can be used as the row
- * identifier. */
-message Edge {
-  /** The unique identifier for this edge */
-  required EdgeId edge_id = 1;
-
-  /** The set of undirected attributes between the two vertices */
-  optional UndirectedAttributes undirected = 6;
-
-  /** The set of directed attributes from v1->v2 */
-  optional DirectedAttributes v1_to_v2 = 7;
-
-  /** The set of directed attributes from v2->v1 */
-  optional DirectedAttributes v2_to_v1 = 8;
+/**
+ * represents one Situation in a cross-doc situation coref/alignment
+ */
+message DiscourseSituation {
+	required UUID id = 1;
+	repeated SituationRef entity_mention = 2;		// all mentions of this situation
+	optional float confidence = 3;
 }
 
-/** The undirected attributes for a single edge. */
-message UndirectedAttributes {
-  repeated StringFloatMapAttribute communication_language_distribution = 6;
-  repeated StringFloatMapAttribute communication_bag_of_words = 7;
-  repeated StringFloatMapAttribute person_names_mentioned_in_communications = 8;
-  repeated StringFloatMapAttribute organization_names_mentioned_in_communications = 9;
-  repeated StringFloatMapAttribute location_names_mentioned_in_communications = 10;
-  repeated StringFloatMapAttribute communication_concepts = 11;
-  repeated StringFloatMapAttribute lda_topics = 12;
-  repeated Int32Attribute text_communication_counts = 13;
-  repeated Int32Attribute audio_communication_counts = 14;
-
-  /** A container for arbitrary edge labels, structured data is to be preferred
-   * to this representation */
-  repeated LabeledAttribute other_attributes = 15 [deprecated = true];
+/**
+ * A reference to an Entity in a Communication.
+ */
+message EntityRef {
+	required UUID entity_id = 1;		// type=Entity
+	required UUID communication_id = 2;	// type=Communication
 }
 
-/** The directed attributes for a single edge in a single direction.
- * Each directed attribute has a source vertex and a target vertex. */
-message DirectedAttributes {
-  /** What relationship does the source have to the target? 
-   *
-   * @param source PERSON
-   * @param target PERSON 
-   */
-  repeated InterpersonalRelationshipAttribute interpersonal_relationship = 15;
-
-  /** Did the source vertex send the target vertex?
-   *
-   * @param source PERSON or COM_CHANNEL
-   * @param target COMMUNICATION 
-   */
-  repeated BooleanAttribute is_sender = 17;
-
-  /** Is the source vertex a recipient of the target vertex?
-   *
-   * @param source PERSON or COM_CHANNEL
-   * @param target COMMUNICATION 
-   */
-  repeated BooleanAttribute is_recipient = 18;
-
-  /** Is the source vertex mentioned in the target vertex?
-   *
-   * @param source PERSON or COM_CHANNEL
-   * @param target COMMUNICATION 
-   */
-  repeated MentionAttribute is_mentioned = 19;
-
-  /** Does the source vertex use the target vertex?  Note that
-   * multiple people may use the same communication channel.
-   *
-   * @param source PERSON
-   * @param target COM_CHANNEL
-   */
-  repeated BooleanAttribute uses = 20;
-
-  /** How many communications has the source vertex sent using the
-   * target vertex?
-   *
-   * @param source PERSON
-   * @param target COM_CHANNEL
-   */
-  repeated Int32Attribute num_coms_sent = 21;
-
-  /** How many communications has the source vertex received using the
-   * target vertex?
-   *
-   * @param source PERSON
-   * @param target COM_CHANNEL
-   */
-  repeated Int32Attribute num_coms_received = 22;
-
-  /** A container for arbitrary edge labels, structured data is to be preferred
-   * to this representation */
-  repeated LabeledAttribute other_attributes = 23 [deprecated = true];
+/**
+ * A reference to a Situation in a Communication.
+ */
+message SituationRef {
+	required UUID situation_id = 1;		// type=Situation
+	required UUID communication_id = 2;	// type=Communication
 }
-
-/** A pointer to a vertex in a knowlede graph.  This data structure is
- * used when pointing from one data collection to another. */
-message VertexRef {
-  required UUID vertex_uuid = 1;
-  /** The GUID of this communication that holds this vertex (if it is 
-   * part of a communication-local knowledge graph) */
-  optional CommunicationGUID communication_guid = 2;
-  /** The name of the graph that holds this vertex (if it is part of a
-   * distributed graph) */
-  optional string graph_name = 3;
-}
-
-message EdgeRef {
-  required EdgeId edge_id = 1;
-  /** The GUID of this communication that holds this edge (if it is 
-   * part of a communication-local knowledge graph) */
-  optional CommunicationGUID communication_guid = 2;
-  /** The name of the graph that holds this edge (if it is part of a
-   * distributed graph) */
-  optional string graph_name = 3;
-}
-
-//===========================================================================
-// Knowledge Graph Attributes
-//===========================================================================
-
-message VertexKindAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required Vertex.Kind value = 3;
-  optional Digest digest = 4;
-}
-
-message MentionAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required EntityMentionRef value = 3;
-  optional Digest digest = 4;
-}
-
-message BooleanAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required bool value = 3;
-  optional Digest digest = 4;
-}
-
-message StringAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required string value = 3;
-  optional Digest digest = 4;
-}
-
-message FloatAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required float value = 3;
-  optional Digest digest = 4;
-}
-
-message Int32Attribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required int32 value = 3;
-  optional Digest digest = 4;
-}
-
-message Int64Attribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required int64 value = 3;
-  optional Digest digest = 4;
-}
-
-message CommunicationGUIDAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required CommunicationGUID value = 3;
-  optional Digest digest = 4;
-}
-
-message StringFloatMapAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  repeated Entry value = 3;
-  message Entry {
-    required string key = 1;
-    required double value = 2;
-  }
-  optional Digest digest = 4;
-}
-
-/** A theory about an arbitrary typed attribute of a vertex or edge */
-message LabeledAttribute {
-  required UUID uuid = 1;
-  required AttributeMetadata metadata = 2;
-  required string label = 3;
-
-  optional string value = 5;
-}
-
-
-/** A theory about the relationship between two people */
-message InterpersonalRelationshipAttribute {
-  required UUID uuid = 1;
-  /** Information about how this attribute was generated */
-  required AttributeMetadata metadata = 2;
-
-  /** The nature of the relationship of between the src vertex and the
-   * dst vertex.  For example, if the edge from v1 to v2 is labeled
-   * with "IS_CHILD_OF", then v1 is the child of v2. */
-  required RelationshipType value = 3;
-  enum RelationshipType {
-    NONE = 0;
-    IS_PARENT_OF = 1;
-    IS_CHILD_OF = 2;
-    IS_OTHER_FAMILY_OF = 3;
-    IS_FRIEND_OF = 4;
-    IS_BUSINESS_ACQUAINTANCE_OF = 5;
-    IS_ROMANTIC_ACQUAINTANCE_OF = 6;
-    IS_OTHER_ACQUAINTANCE_OF = 7;
-    // This list is expected to grow over time.
-  }
-
-  optional Digest digest = 4;
-}
-
