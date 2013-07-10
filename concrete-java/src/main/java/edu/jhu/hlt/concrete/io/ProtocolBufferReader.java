@@ -20,7 +20,6 @@ import java.util.NoSuchElementException;
 import com.google.protobuf.Message;
 
 import edu.jhu.hlt.concrete.ConcreteException;
-import edu.jhu.hlt.concrete.Concrete.Communication;
 
 /**
  * A generic protocol buffer reader class
@@ -91,7 +90,7 @@ public class ProtocolBufferReader<M extends Message> implements Closeable, Itera
     }
 
     public boolean hasNext() {
-    	return this.nextMessage == null;
+    	return this.nextMessage != null;
     }
     
     protected M getNextMessage() throws ConcreteException {
