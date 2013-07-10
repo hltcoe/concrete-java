@@ -1,0 +1,491 @@
+option java_package="edu.jhu.hlt.concrete";
+package concrete;
+
+import "uuid.proto";
+import "concrete.proto";
+
+//===========================================================================
+// Knowledge Elements
+//===========================================================================
+
+/** A vertex in the knowledge graph. */
+message Vertex {
+  /** A unique identifier for this vertex. */
+  required UUID uuid = 1;
+
+  /** UUIDs of vertices that are connected to this vertex by an edge */
+  repeated UUID neighbor = 2;
+
+  /** A theory about what kind of Vertex this is.  This determines
+   * which of the attribute fields are appropriate for this vertex.
+   * (E.g., it is not appropriate to add a communication_guid
+   * attribute to a PERSON vertex.)  Note that it is possible to have
+   * multiple theories about the kind of a vertex.  For example, we
+   * might not be able to tell whether a given vertex corresponds to a
+   * person or an organization. */
+  repeated VertexKindAttribute kind = 3;
+  enum Kind {
+    NONE = 0;
+    PERSON = 1;
+    COMMUNICATION = 2;
+    COM_CHANNEL = 3;
+    ORGANIZATION = 4;
+    GPE = 5;
+    UNKNOWN = 6;
+  }
+
+  /**
+   * A string that represents a data set ID (e.g., TAC KB ID).
+   */
+  optional string data_set_id = 4;
+
+  /** A theory about the name of the person or entity represented by
+   * this vertex.  If an entity has by multiple names (e.g.,
+   * nicknames), then the vertex should have multiple name attributes
+   * associated with it. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringAttribute name = 10;
+
+  /** A theory about this person's gender. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated BooleanAttribute is_male = 11;
+
+  /** A theory about this person's age. 
+   *
+   * JCM: FIXME: The person's age when? Most people are both 6 years old and 17 years old at different times.
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated FloatAttribute age = 12;
+
+  /** A theory about this person's nationality.  The value of this
+   * attribute should be a string name of a country, preferably
+   * normalized. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringAttribute nationality = 13;
+
+  /** A theory about whether this person is married. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated BooleanAttribute is_married = 14;
+
+  /** A theory about whether this person is a parent (i.e., about
+   * whether they have any children). 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated BooleanAttribute is_parent = 15;
+
+  /** A theory about whether this person is a grandparent (i.e.,
+   * about whether they have any grandchildren). 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated BooleanAttribute is_grandparent = 16;
+
+  /** A string comment about this vertex. 
+   *
+   * @ingroup ANY_VERTEX
+   */
+  repeated StringAttribute comment = 17;
+
+  /** A theory about the distribution of languages that a person uses
+   * in their communications.  This attribute records how often a
+   * person speaks in each language; it does not necessarily indicate
+   * how fluent they are in that language.  (E.g., a person might be
+   * fluent in French but only speak it rarely.)  The string keys of
+   * this map should contain ISO 639-3 langauge codes, and the values
+   * should be nonnegative floats that sum to one. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute communication_language_distribution = 18;
+
+  /** A theory about an interesting set of words that were used this
+   * person's communications. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute communication_bag_of_words = 19;
+
+  /** A theory about what concepts have been mentioned or discussed in
+   * this person's communications. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute communication_concepts = 20;
+
+  /** A theory about what person names have been mentioned in this
+   * person's communications.  Keys should be name strings, and values
+   * should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute person_names_mentioned_in_communications = 21;
+
+  /** A theory about what organization names have been mentioned in
+   * this person's communications.  Keys should be name strings, and
+   * values should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute organization_names_mentioned_in_communications = 22;
+
+  /** A theory about what location names have been mentioned in this
+   * person's communications.  Keys should be name strings, and values
+   * should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute location_names_mentioned_in_communications = 23;
+
+  /** A theory about an interesting set of words that were used in 
+   * articles about this person. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute report_bag_of_words = 24;
+
+  /** A theory about what concepts have been mentioned or discussed in
+   * articles about this person. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute report_concepts = 25;
+
+  /** A theory about what person names have been mentioned in articles
+   * about this person.  Keys should be name strings, and values
+   * should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute person_names_mentioned_in_reports = 26;
+
+  /** A theory about what organization names have been mentioned in
+   * articles about this person.  Keys should be name strings, and
+   * values should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute organization_names_mentioned_in_reports = 27;
+
+  /** A theory about what location names have been mentioned in
+   * articles about this person.  Keys should be name strings, and
+   * values should be counts. 
+   *
+   * @ingroup PERSON_VERTEX
+   */
+  repeated StringFloatMapAttribute location_names_mentioned_in_reports = 28;
+
+  /** A theory that this communication corresponds with the
+   * communication that has a given commmunication GUID.  Note that in
+   * the case of duplicates, it is possible for one vertex to
+   * correspond to multiple GUIDs. 
+   *
+   * @ingroup COMMUNICATION_VERTEX
+   */
+  repeated CommunicationGUIDAttribute communication_guid = 101;
+
+  /** A theory that this communication channel uses a given twitter id.
+   *
+   * @ingroup COM_CHANNEL_VERTEX TWITTER_VERTEX */
+  repeated Int64Attribute twitter_id = 201;
+
+  /** A theory that this communication channel uses a given twitter handle.
+   *
+   * @ingroup COM_CHANNEL_VERTEX TWITTER_VERTEX */
+  repeated StringAttribute twitter_handle = 202;
+
+  /** A theory that this communication channel uses a given email address
+   *
+   * @ingroup COM_CHANNEL_VERTEX EMAIL_VERTEX */
+  repeated StringAttribute email_address = 203;
+
+  /** A theory that this communication channel uses a given email 
+   * display name.
+   *
+   * @ingroup COM_CHANNEL_VERTEX EMAIL_VERTEX */
+  repeated StringAttribute email_display_name = 204;
+
+  /** A theory that this communication channel uses a given phone
+   * number.
+   *
+   * @ingroup COM_CHANNEL_VERTEX PHONE_VERTEX */
+  repeated StringAttribute phone_number = 205;
+  
+  /**
+   * Svitlana's political orientation - possible values:
+   * DEMOCRATIC, REPUBLICAN
+   * 
+   */
+  repeated StringAttribute political_orientation = 300;
+
+  /**
+   * A series of theories about arbitrary attributes of this vertex. Specific
+   * attributes are to be preferred.
+   */
+  repeated LabeledAttribute other_attributes = 302 [deprecated=true];
+
+}
+
+/** A unordered pair of vertex UUIDs, uniquely identifying an edge in
+ * a graph.  */
+message EdgeId {
+  /** The UUID of the vertex of the edge whose UUID is lesser. */
+  required UUID v1 = 1;
+  /** The UUID of the vertex of the edge whose UUID is greater. */
+  required UUID v2 = 2;
+}
+
+/** An ordered pair of vertex UUIDs, identifying an edge and an
+ * associated direction (source->destination).  There are two possible
+ * DirectedEdgeId values corresponding to any given EdgeId: in the
+ * "v1-to-v2" directed edge id, src=v1 and dst=v2; and in the
+ * "v2-to-v1" directed edge id, src=v2 and dst=v1. */
+message DirectedEdgeId {
+  /** The UUID of the source vertex */
+  required UUID src = 1;
+  /** The UUID of the destination vertex */
+  required UUID dst = 2;
+
+  /** An enumerated type that can be used to store edge directions */
+  enum Direction {
+    V1_TO_V2 = 1;
+    V2_TO_V1 = 2;
+  }
+}
+
+/* An edge between two vertices in the knowledge graph, containing a
+ * set of undirected attributes between v1 and v2, a set of directed
+ * attributes from v1->v2, and a set of directed attributes from
+ * v2->v1.
+ *
+ * Each graph contains exactly one Edge for each unordered pair of
+ * vertices.  When an edge is stored in a database table, the sorted
+ * pair of vertex UUIDs (e.v1, e.v2) can be used as the row
+ * identifier. */
+message Edge {
+  /** The unique identifier for this edge */
+  required EdgeId edge_id = 1;
+
+  /** The set of undirected attributes between the two vertices */
+  optional UndirectedAttributes undirected = 6;
+
+  /** The set of directed attributes from v1->v2 */
+  optional DirectedAttributes v1_to_v2 = 7;
+
+  /** The set of directed attributes from v2->v1 */
+  optional DirectedAttributes v2_to_v1 = 8;
+}
+
+/** The undirected attributes for a single edge. */
+message UndirectedAttributes {
+  repeated StringFloatMapAttribute communication_language_distribution = 6;
+  repeated StringFloatMapAttribute communication_bag_of_words = 7;
+  repeated StringFloatMapAttribute person_names_mentioned_in_communications = 8;
+  repeated StringFloatMapAttribute organization_names_mentioned_in_communications = 9;
+  repeated StringFloatMapAttribute location_names_mentioned_in_communications = 10;
+  repeated StringFloatMapAttribute communication_concepts = 11;
+  repeated StringFloatMapAttribute lda_topics = 12;
+  repeated Int32Attribute text_communication_counts = 13;
+  repeated Int32Attribute audio_communication_counts = 14;
+
+  /** A container for arbitrary edge labels, structured data is to be preferred
+   * to this representation */
+  repeated LabeledAttribute other_attributes = 15 [deprecated = true];
+}
+
+/** The directed attributes for a single edge in a single direction.
+ * Each directed attribute has a source vertex and a target vertex. */
+message DirectedAttributes {
+  /** What relationship does the source have to the target? 
+   *
+   * @param source PERSON
+   * @param target PERSON 
+   */
+  repeated InterpersonalRelationshipAttribute interpersonal_relationship = 15;
+
+  /** Did the source vertex send the target vertex?
+   *
+   * @param source PERSON or COM_CHANNEL
+   * @param target COMMUNICATION 
+   */
+  repeated BooleanAttribute is_sender = 17;
+
+  /** Is the source vertex a recipient of the target vertex?
+   *
+   * @param source PERSON or COM_CHANNEL
+   * @param target COMMUNICATION 
+   */
+  repeated BooleanAttribute is_recipient = 18;
+
+  /** Is the source vertex mentioned in the target vertex?
+   *
+   * @param source PERSON or COM_CHANNEL
+   * @param target COMMUNICATION 
+   */
+  repeated MentionAttribute is_mentioned = 19;
+
+  /** Does the source vertex use the target vertex?  Note that
+   * multiple people may use the same communication channel.
+   *
+   * @param source PERSON
+   * @param target COM_CHANNEL
+   */
+  repeated BooleanAttribute uses = 20;
+
+  /** How many communications has the source vertex sent using the
+   * target vertex?
+   *
+   * @param source PERSON
+   * @param target COM_CHANNEL
+   */
+  repeated Int32Attribute num_coms_sent = 21;
+
+  /** How many communications has the source vertex received using the
+   * target vertex?
+   *
+   * @param source PERSON
+   * @param target COM_CHANNEL
+   */
+  repeated Int32Attribute num_coms_received = 22;
+
+  /** A container for arbitrary edge labels, structured data is to be preferred
+   * to this representation */
+  repeated LabeledAttribute other_attributes = 23 [deprecated = true];
+}
+
+/** A pointer to a vertex in a knowlede graph.  This data structure is
+ * used when pointing from one data collection to another. */
+message VertexRef {
+  required UUID vertex_uuid = 1;
+  /** The GUID of this communication that holds this vertex (if it is 
+   * part of a communication-local knowledge graph) */
+  optional CommunicationGUID communication_guid = 2;
+  /** The name of the graph that holds this vertex (if it is part of a
+   * distributed graph) */
+  optional string graph_name = 3;
+}
+
+message EdgeRef {
+  required EdgeId edge_id = 1;
+  /** The GUID of this communication that holds this edge (if it is 
+   * part of a communication-local knowledge graph) */
+  optional CommunicationGUID communication_guid = 2;
+  /** The name of the graph that holds this edge (if it is part of a
+   * distributed graph) */
+  optional string graph_name = 3;
+}
+
+//===========================================================================
+// Knowledge Graph Attributes
+//===========================================================================
+
+message VertexKindAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required Vertex.Kind value = 3;
+  optional Digest digest = 4;
+}
+
+message MentionAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required EntityMentionRef value = 3;
+  optional Digest digest = 4;
+}
+
+message BooleanAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required bool value = 3;
+  optional Digest digest = 4;
+}
+
+message StringAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required string value = 3;
+  optional Digest digest = 4;
+}
+
+message FloatAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required float value = 3;
+  optional Digest digest = 4;
+}
+
+message Int32Attribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required int32 value = 3;
+  optional Digest digest = 4;
+}
+
+message Int64Attribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required int64 value = 3;
+  optional Digest digest = 4;
+}
+
+message CommunicationGUIDAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required CommunicationGUID value = 3;
+  optional Digest digest = 4;
+}
+
+message StringFloatMapAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  repeated Entry value = 3;
+  message Entry {
+    required string key = 1;
+    required double value = 2;
+  }
+  optional Digest digest = 4;
+}
+
+/** A theory about an arbitrary typed attribute of a vertex or edge */
+message LabeledAttribute {
+  required UUID uuid = 1;
+  required AnnotationMetadata metadata = 2;
+  required string label = 3;
+
+  optional string value = 5;
+}
+
+
+/** A theory about the relationship between two people */
+message InterpersonalRelationshipAttribute {
+  required UUID uuid = 1;
+  /** Information about how this attribute was generated */
+  required AnnotationMetadata metadata = 2;
+
+  /** The nature of the relationship of between the src vertex and the
+   * dst vertex.  For example, if the edge from v1 to v2 is labeled
+   * with "IS_CHILD_OF", then v1 is the child of v2. */
+  required RelationshipType value = 3;
+  enum RelationshipType {
+    NONE = 0;
+    IS_PARENT_OF = 1;
+    IS_CHILD_OF = 2;
+    IS_OTHER_FAMILY_OF = 3;
+    IS_FRIEND_OF = 4;
+    IS_BUSINESS_ACQUAINTANCE_OF = 5;
+    IS_ROMANTIC_ACQUAINTANCE_OF = 6;
+    IS_OTHER_ACQUAINTANCE_OF = 7;
+    // This list is expected to grow over time.
+  }
+
+  optional Digest digest = 4;
+}

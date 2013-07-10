@@ -1,0 +1,153 @@
+
+option java_package="edu.jhu.hlt.concrete";
+package concrete;
+
+//===========================================================================
+// Twitter Metadata
+//===========================================================================
+/* Twitter Metadata
+ *
+ * This section defines protobuf entries that can be used to store all
+ * of the information that is provided by the Twitter API.  This set
+ * of definitions is meant to map one-to-one with the Twitter API data
+ * structures; do not add any new fields that do not have
+ * corresponding fields in the Twitter API. 
+ *
+ * https://dev.twitter.com/docs/platform-objects/
+ * */
+
+/** Information about a twitter user. */
+message TwitterUser {
+  optional int64 id = 1;
+  optional string name = 3;
+  optional string screen_name = 4;
+  optional string lang = 5;
+  optional bool geo_enabled = 6;
+  optional string created_at = 7;
+  optional int32 friends_count = 8;
+  optional int32 statuses_count = 9;
+  optional bool verified = 10;
+  optional int32 listed_count = 11;
+  optional int32 favourites_count = 12; // note british spelling; derived from Twitter schema
+  optional int32 followers_count = 13;
+                    
+  optional string location = 14; // may be empty
+  optional string time_zone = 15; // may be empty
+  optional string description = 16; // may be empty
+  optional sint32 utc_offset = 18; // may be empty
+  optional string url = 19; // may be empty
+
+  //======================================================================
+  /** \deprecated -- Use `id` instead. */    
+  optional string id_str = 2 [deprecated=true];
+}
+
+/** Information about a tweet. */
+message TweetInfo {
+  optional int64 id = 1;
+  optional string text = 3;
+  optional string created_at = 4; // may be empty; use Message.start_time instead if you are processing a Message.
+  optional TwitterUser user = 5; // may just contain TwitterUser.id and TwitterUser.screen_name.
+  optional bool truncated = 6;
+  optional TwitterEntities entities = 7;
+  optional string source = 8;
+    
+  optional TwitterCoordinates coordinates = 9; // may be empty
+  optional TwitterPlace place = 11; // may be empty
+
+  optional bool favorited = 12;
+  optional bool retweeted = 13;
+  optional int32 retweet_count = 14; // may be empty; in rare cases, might be a string
+
+  optional string in_reply_to_screen_name = 15; // may be empty
+  optional int64 in_reply_to_status_id = 16; // may be empty
+  optional int64 in_reply_to_user_id = 18; // may be empty
+
+  //======================================================================
+  // Deprecated fields: for details on why these are deprecated, see 
+  // https://dev.twitter.com/docs/platform-objects/tweets
+  //======================================================================
+  /** \deprecated -- Use `coordinates` instead. */
+  optional TwitterGeo geo = 10 [deprecated=true];
+  /** \deprecated -- Use `id` instead. */    
+  optional string id_str = 2 [deprecated=true];
+  /** \deprecated -- Use `in_reply_to_status_id` instead. */    
+  optional string in_reply_to_status_id_str = 17 [deprecated=true];
+  /** \deprecated -- Use `in_reply_to_user_id` instead. */    
+  optional string in_reply_to_user_id_str = 19 [deprecated=true];
+}
+
+// A twitter geocoordinate
+message TwitterLatLong {
+  optional double latitude = 1;
+  optional double longitude = 2;
+}
+
+// A twitter location
+message TwitterPlace {
+  optional string place_type = 1;
+  optional string country_code = 2;
+  optional string country = 3;
+  optional string full_name = 4;
+  optional string name = 5;
+  optional string id = 6;
+  optional string url = 7;
+    
+  message BoundingBox {
+    optional string type = 1;
+    repeated TwitterLatLong coordinates = 2;
+  }
+    
+  optional BoundingBox bounding_box = 8; // may be empty
+    
+  message PlaceAttributes {
+    optional string street_address = 1; // may be empty
+    optional string region = 2; // may be empty
+    optional string locality = 3; // may be empty
+  }
+    
+  optional PlaceAttributes attributes = 9; // may be empty
+}
+
+// deprecated -- Use TwitterCoordinates instead
+message TwitterGeo {
+  optional string type = 1;
+  optional TwitterLatLong coordinates = 2;
+}
+
+message TwitterCoordinates {
+  optional string type = 1; 
+  optional TwitterLatLong coordinates = 2;
+}
+
+
+message TwitterEntities { 
+  message UserMention {
+    optional int32 start_offset = 1;
+    optional int32 end_offset = 2;
+    optional string screen_name = 4;
+    optional string name = 5;
+    optional int64 id = 6;
+    /** \deprecated -- Use `id` instead. */    
+    optional string id_str = 3 [deprecated=true];
+  }
+
+  message URL {
+    optional int32 start_offset = 1;
+    optional int32 end_offset = 2;
+    optional string expanded_url = 3; // may be empty
+    optional string url = 4;
+    optional string display_url = 5; // may be empty
+  }
+
+  message HashTag {
+    optional string text = 1;
+    optional int32 start_offset = 2;
+    optional int32 end_offset = 3;
+  }
+
+  repeated HashTag hashtags = 1;
+  repeated URL urls = 2;
+  repeated UserMention user_mentions = 3;
+}
+
