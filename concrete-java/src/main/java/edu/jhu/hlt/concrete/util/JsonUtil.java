@@ -803,7 +803,7 @@ public class JsonUtil {
 	 * @param jcomm the JsonCommunication object
 	 * @return the Communication object
 	 */
-	public Communication toCommunication(JsonCommunication jcomm){
+	public static Communication toCommunication(JsonCommunication jcomm){
 		Communication cb = new ProtoFactory().generateMockCommunication();
 		Communication comm = cb.toBuilder()
 				.setText(jcomm.getRawText())
@@ -857,17 +857,27 @@ public class JsonUtil {
 	 * @param outFilename
 	 * @throws IOException
 	 */
-	public void saveConcrete(JsonCommunication jcomm, String outFilename) throws IOException{
-		File outputFile = new File(outFilename);
+	public static void saveConcrete(JsonCommunication jcomm, String outFilename) throws IOException{
+		//File outputFile = new File(outFilename);
+		ProtocolBufferWriter pbf = new ProtocolBufferWriter(outFilename);
 		Communication comm = toCommunication(jcomm);
+		/*
 		if(!outputFile.exists()) {
 		    outputFile.getParentFile().mkdirs();
 			outputFile.createNewFile();
-		}
+		}*/
 		
-		FileOutputStream output = new FileOutputStream(outputFile,false);
-		comm.writeTo(output);
-		output.close();
+		//FileOutputStream output = new FileOutputStream(outputFile,false);
+		pbf.write(comm);
+		//comm.writeTo(output);
+		//output.close();
+		pbf.close();
+	}
+	
+	public static void saveConcreteFromJson(String json, String outFilename) throws IOException{
+		JsonUtil ju = new JsonUtil();
+		JsonCommunication jcs = toJsonCommunicationFromUnknown(json,false);//Do not validate
+		saveConcrete(jcs,outFilename);
 	}
 
 	
@@ -922,6 +932,7 @@ public class JsonUtil {
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("Testing JsonUtil");
 		try {
 			//To get FROM a communication file TO jsonObject
 			JsonUtil ju = new JsonUtil();	
@@ -956,6 +967,7 @@ public class JsonUtil {
 				comm = ju.toCommunication(jc);
 				concreteEmail = ju.toConcreteEmail(jc);
 				concreteEmailExtended = ju.toConcreteEmail(jcs);
+				saveConcreteFromJson(jcomm,"testSaveConcrete.out");
 				System.out.println(comm.getStartTime());
 			}
 			
