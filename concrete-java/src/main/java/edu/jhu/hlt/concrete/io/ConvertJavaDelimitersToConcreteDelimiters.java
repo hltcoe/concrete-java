@@ -17,7 +17,7 @@ import com.google.protobuf.Message;
 import edu.jhu.hlt.concrete.Concrete.Discourse;
 import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.Concrete.Communication;
-import edu.jhu.hlt.concrete.Concrete.Vertex;
+import edu.jhu.hlt.concrete.Graph.Vertex;
 import edu.jhu.hlt.concrete.kb.LoadConcreteTACKBFiles;
 
 /**

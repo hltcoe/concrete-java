@@ -12,6 +12,8 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.Graph;
+
 
 /**
  * @author max
@@ -73,16 +75,16 @@ public class IdUtil {
      * that identifies an edge and an associated direction, then use
      * buildDirectedEdgeId instead.
      */
-    public static Concrete.EdgeId buildEdgeId(Concrete.UUID v1, Concrete.UUID v2) {
+    public static Graph.EdgeId buildEdgeId(Concrete.UUID v1, Concrete.UUID v2) {
         if (uuidsAreOrdered(v1, v2)) {
-            return Concrete.EdgeId.newBuilder().setV1(v1).setV2(v2).build();
+            return Graph.EdgeId.newBuilder().setV1(v1).setV2(v2).build();
         } else {
-            return Concrete.EdgeId.newBuilder().setV1(v2).setV2(v1).build();
+            return Graph.EdgeId.newBuilder().setV1(v2).setV2(v1).build();
         }
     }
 
     /** @see RebarIdUtil#buildEdgeId(Concrete.UUID, Concrete.UUID) */
-    public static Concrete.EdgeId buildEdgeId(Concrete.Vertex v1, Concrete.Vertex v2) {
+    public static Graph.EdgeId buildEdgeId(Graph.Vertex v1, Graph.Vertex v2) {
         return buildEdgeId(v1.getUuid(), v2.getUuid());
     }
 
@@ -96,7 +98,7 @@ public class IdUtil {
      * directed edge id. This essentially "strips off" the direction
      * information, by storing the two edge vertex UUIDs in a canonical order.
      */
-    public static Concrete.EdgeId buildEdgeId(Concrete.DirectedEdgeId edgeId) {
+    public static Graph.EdgeId buildEdgeId(Graph.DirectedEdgeId edgeId) {
         return buildEdgeId(edgeId.getSrc(), edgeId.getDst());
     }
 
@@ -104,7 +106,7 @@ public class IdUtil {
      * Return true if the given edgeId is valid. An edgeId is invalid if v2 is
      * lesser than v1.
      */
-    public static boolean edgeIdIsValid(Concrete.EdgeId edgeId) {
+    public static boolean edgeIdIsValid(Graph.EdgeId edgeId) {
         return uuidsAreOrdered(edgeId.getV1(), edgeId.getV2());
     }
 
@@ -113,12 +115,12 @@ public class IdUtil {
      * vertices. Note: if you wish to create an identifier that identifies an
      * edge *without* an associated direction, then use buildEdgeId instead.
      */
-    public static Concrete.DirectedEdgeId buildDirectedEdgeId(Concrete.UUID src, Concrete.UUID dst) {
-        return Concrete.DirectedEdgeId.newBuilder().setSrc(src).setDst(dst).build();
+    public static Graph.DirectedEdgeId buildDirectedEdgeId(Concrete.UUID src, Concrete.UUID dst) {
+        return Graph.DirectedEdgeId.newBuilder().setSrc(src).setDst(dst).build();
     }
 
     /** @see RebarIdUtil#buildDirectedEdgeId(Concrete.UUID, Concrete.UUID) */
-    public static Concrete.DirectedEdgeId buildDirectedEdgeId(Concrete.Vertex src, Concrete.Vertex dst) {
+    public static Graph.DirectedEdgeId buildDirectedEdgeId(Graph.Vertex src, Graph.Vertex dst) {
         return buildDirectedEdgeId(src.getUuid(), dst.getUuid());
     }
 
@@ -134,18 +136,18 @@ public class IdUtil {
      * V2_TO_V1, then edgeId.v2 will be used as the source and edgeId.v1 will be
      * used as the destination.
      */
-    public static Concrete.DirectedEdgeId buildDirectedEdgeId(Concrete.EdgeId edgeId,
-            Concrete.DirectedEdgeId.Direction direction) {
-        if (direction == Concrete.DirectedEdgeId.Direction.V1_TO_V2) {
-            return Concrete.DirectedEdgeId.newBuilder().setSrc(edgeId.getV1()).setDst(edgeId.getV2()).build();
+    public static Graph.DirectedEdgeId buildDirectedEdgeId(Graph.EdgeId edgeId,
+            Graph.DirectedEdgeId.Direction direction) {
+        if (direction == Graph.DirectedEdgeId.Direction.V1_TO_V2) {
+            return Graph.DirectedEdgeId.newBuilder().setSrc(edgeId.getV1()).setDst(edgeId.getV2()).build();
         } else {
-            return Concrete.DirectedEdgeId.newBuilder().setSrc(edgeId.getV2()).setDst(edgeId.getV1()).build();
+            return Graph.DirectedEdgeId.newBuilder().setSrc(edgeId.getV2()).setDst(edgeId.getV1()).build();
         }
     }
 
-    public static Concrete.DirectedEdgeId.Direction getEdgeDirection(Concrete.DirectedEdgeId edgeId) {
-        return ((uuidsAreOrdered(edgeId.getSrc(), edgeId.getDst())) ? Concrete.DirectedEdgeId.Direction.V1_TO_V2
-                : Concrete.DirectedEdgeId.Direction.V2_TO_V1);
+    public static Graph.DirectedEdgeId.Direction getEdgeDirection(Graph.DirectedEdgeId edgeId) {
+        return ((uuidsAreOrdered(edgeId.getSrc(), edgeId.getDst())) ? Graph.DirectedEdgeId.Direction.V1_TO_V2
+                : Graph.DirectedEdgeId.Direction.V2_TO_V1);
     }
 
     /**

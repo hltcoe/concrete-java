@@ -159,7 +159,7 @@ public class JsonUtil {
 		/*
 		 * Generic meta-information for communication
 		 */
-		private double startTime;
+		private long startTime;
 		private String author;
 		private String title;
 		private String kind;
@@ -299,16 +299,16 @@ public class JsonUtil {
 		 * 
 		 */
 		
-		public double getStartTime() {
+		public long getStartTime() {
 			return startTime;
 		}
 
-		public void setStartTime(double startTime) {
+		public void setStartTime(long startTime) {
 			this.startTime = startTime;
 		}
 		
 		public void setStartTime(String string) {
-			this.startTime = Double.parseDouble(string);
+			this.startTime = Long.parseLong(string);
 		}
 		
 		private void setAuthor(EmailAddress senderAddress) {

@@ -4,7 +4,7 @@ package concrete;
 import "concrete.proto";
 
 //===========================================================================
-// Knowledge Elements
+// Graph Elements
 //===========================================================================
 
 /** A vertex in the knowledge graph. */

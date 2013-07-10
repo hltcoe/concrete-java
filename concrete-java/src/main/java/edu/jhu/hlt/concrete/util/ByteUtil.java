@@ -7,6 +7,7 @@
 package edu.jhu.hlt.concrete.util;
 
 import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.Graph;
 
 /**
  * Utility class containing static methods to convert various types to and from
@@ -92,7 +93,7 @@ public class ByteUtil {
 		};
 	}
 
-	public static Concrete.EdgeId toEdgeId(byte[] bytes) {
+	public static Graph.EdgeId toEdgeId(byte[] bytes) {
 		assert(bytes.length>=32);
 		Concrete.UUID v1 = toUUID(bytes);
 		Concrete.UUID v2 = Concrete.UUID.newBuilder()
@@ -113,11 +114,11 @@ public class ByteUtil {
 					(0xffL & bytes[30]) << 8  |
 					(0xffL & bytes[31]) << 0)
 			.build();
-		return Concrete.EdgeId.newBuilder()
+		return Graph.EdgeId.newBuilder()
 			.setV1(v1).setV2(v2).build();
 	}
 
-	public static byte[] fromEdgeId(Concrete.EdgeId edgeId) {
+	public static byte[] fromEdgeId(Graph.EdgeId edgeId) {
 		long msb1 = edgeId.getV1().getHigh();
 		long lsb1 = edgeId.getV1().getLow();
 		long msb2 = edgeId.getV2().getHigh();

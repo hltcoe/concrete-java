@@ -83,13 +83,9 @@ public class CommunicationExampleTest {
                         for (Tokenization tokenization : tokenizationList) {
                             List<Token> tokens = tokenization.getTokenList();
                             for (Token tok : tokens) {
-                                int tokenId = tok.getTokenId();
+                                int tokenId = tok.getTokenIndex();
                                 String tokenText = tok.getText();
-                                if (tok.hasTextSpan()) {
-                                    TextSpan ts = sent.getTextSpan();
-                                    int tokenStart = ts.getStart();
-                                    int tokenEnd = ts.getEnd();
-                                }
+                                
                             }
                             
                             List<TokenTagging> posTags = 
@@ -98,7 +94,7 @@ public class CommunicationExampleTest {
                                 List<TaggedToken> tagTokenList = 
                                         tt.getTaggedTokenList();
                                 for (TaggedToken tagTok : tagTokenList) {
-                                    int taggedTokenId = tagTok.getTokenId();
+                                    int taggedTokenId = tagTok.getTokenIndex();
                                     String tag = tagTok.getTag();
                                 }
                             }

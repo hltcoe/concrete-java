@@ -3,13 +3,12 @@
  */
 package edu.jhu.hlt.concrete.kb;
 
-import edu.jhu.hlt.concrete.Concrete.AttributeMetadata;
-import edu.jhu.hlt.concrete.Concrete.FloatAttribute;
-import edu.jhu.hlt.concrete.Concrete.StringAttribute;
-import edu.jhu.hlt.concrete.Concrete.UUID;
-import edu.jhu.hlt.concrete.Concrete.Vertex;
-
-import edu.jhu.hlt.concrete.Concrete.VertexKindAttribute;
+import edu.jhu.hlt.concrete.Concrete;
+import edu.jhu.hlt.concrete.Concrete.AnnotationMetadata;
+import edu.jhu.hlt.concrete.Graph.FloatAttribute;
+import edu.jhu.hlt.concrete.Graph.StringAttribute;
+import edu.jhu.hlt.concrete.Graph.Vertex;
+import edu.jhu.hlt.concrete.Graph.VertexKindAttribute;
 import edu.jhu.hlt.concrete.util.IdUtil;
 
 /**
@@ -18,12 +17,12 @@ import edu.jhu.hlt.concrete.util.IdUtil;
  */
 public class ConcreteKBEntityFactory {
 
-	private static final AttributeMetadata tacKBMetadata;
+	private static final AnnotationMetadata tacKBMetadata;
 	
 	static {
 		// This is our ground truth, so 1.0 confidence.
 		// Tool name arbitrary.
-		tacKBMetadata = AttributeMetadata.newBuilder()
+		tacKBMetadata = AnnotationMetadata.newBuilder()
 				.setConfidence(1.0f)
 				.setTool("KB Ground Truth")
 				.build();
@@ -34,7 +33,7 @@ public class ConcreteKBEntityFactory {
 	}
 	
 	public static Vertex generateBareVertex() {
-		UUID id = IdUtil.generateUUID();
+		Concrete.UUID id = IdUtil.generateUUID();
 		return Vertex.newBuilder().setUuid(id).build();
 	}
 	
@@ -47,7 +46,7 @@ public class ConcreteKBEntityFactory {
 	public static Vertex generatePersonVertex(String name, String nationality, 
 			float age) {
 		// Generate a UUID.
-		UUID id = IdUtil.generateUUID();
+	        Concrete.UUID id = IdUtil.generateUUID();
 		
 		// Generate a Builder object. 
 		Vertex.Builder vBuilder = Vertex.newBuilder();
