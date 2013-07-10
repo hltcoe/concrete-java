@@ -559,7 +559,11 @@ public class JsonUtil {
 		//Get data members
 		String rawText = commIn.getText();
 		List<SectionSegmentation> segs = commIn.getSectionSegmentationList();
-		List<Section> sections = segs.get(0).getSectionList();
+		if (segs.size() > 0){
+			//Get first sectionsegmentation hypothesis
+			List<Section> sections = segs.get(0).getSectionList();
+			jcomm.setBodyChain(jcomm.sectionsToBody(sections,rawText));
+		}
 		//SectionSegmentation headers = segs.get(0);//Header text is written as first secseg
 		
 		List<KeyValues> metadata = commIn.getMetadataList();
@@ -579,7 +583,6 @@ public class JsonUtil {
 			jcomm.addRecipientsBcc(info.getBccAddressList());
 			jcomm.addRecipientsCc(info.getCcAddressList());
 		}
-		jcomm.setBodyChain(jcomm.sectionsToBody(sections,rawText));
 		return jcomm;		
 	}
 	
@@ -818,7 +821,7 @@ public class JsonUtil {
 	 * @param jcomm the JsonCommunication object
 	 * @return the Communication object
 	 */
-	public Communication toConcreteEmail(JsonCommunication jcomm){
+	public static Communication toConcreteEmail(JsonCommunication jcomm){
 		Communication cb = new ProtoFactory().generateMockCommunication();
 		Communication comm = cb.toBuilder()
 				.setText(jcomm.getRawText())				
@@ -860,7 +863,7 @@ public class JsonUtil {
 	public static void saveConcrete(JsonCommunication jcomm, String outFilename) throws IOException{
 		//File outputFile = new File(outFilename);
 		ProtocolBufferWriter pbf = new ProtocolBufferWriter(outFilename);
-		Communication comm = toCommunication(jcomm);
+		Communication comm = toConcreteEmail(jcomm);
 		/*
 		if(!outputFile.exists()) {
 		    outputFile.getParentFile().mkdirs();
@@ -875,7 +878,6 @@ public class JsonUtil {
 	}
 	
 	public static void saveConcreteFromJson(String json, String outFilename) throws IOException{
-		JsonUtil ju = new JsonUtil();
 		JsonCommunication jcs = toJsonCommunicationFromUnknown(json,false);//Do not validate
 		saveConcrete(jcs,outFilename);
 	}
@@ -967,7 +969,8 @@ public class JsonUtil {
 				comm = ju.toCommunication(jc);
 				concreteEmail = ju.toConcreteEmail(jc);
 				concreteEmailExtended = ju.toConcreteEmail(jcs);
-				saveConcreteFromJson(jcomm,"testSaveConcrete.out");
+				saveConcreteFromJson(jcomm,"testSaveConcrete.out.gz");
+				List<String> jsonstrings = ju.getJsonStringsFromGzip("testSaveConcrete.out.gz");
 				System.out.println(comm.getStartTime());
 			}
 			
