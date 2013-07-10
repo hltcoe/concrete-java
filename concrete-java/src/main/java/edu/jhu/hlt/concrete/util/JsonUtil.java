@@ -795,6 +795,13 @@ public class JsonUtil {
 			}
 		}
 		
+		
+		for (SituationMentionSet situationMentionSet : commIn.getSituationMentionSetList()){
+			for (SituationMention situationMention : situationMentionSet.getMentionList()){
+				jcomm.addEventSpans(situationMention, commIn);
+			}
+		}
+		
 		return jcomm;		
 	}
 	
