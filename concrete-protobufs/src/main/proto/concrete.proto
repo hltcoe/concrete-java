@@ -1420,37 +1420,11 @@ message Discourse {
 		required AnnotationMetadata metadata = 2;
 
 		// A set of DiscourseEntities suggested by this DiscourseAnnotation object.
-		optional DiscourseEntitySet entity_set = 3;			// all entities mentioned in this Discourse
+		repeated DiscourseEntity discourse_entity = 3;			// all entities mentioned in this Discourse
 		
 		// A set of DiscourseSituations suggested by this DiscourseAnnotation object. 
-		optional DiscourseSituationSet situation_set = 4;		// all situations mentioned in this Discourse
+		repeated DiscourseSituation discourse_situation = 4;		// all situations mentioned in this Discourse
 	}
-}
-
-// A collection of DiscourseEntities, with an ID and metadata referring to the tool
-// that generated this DiscourseEntitySet. 
-message DiscourseEntitySet {
-    // the ID associated with this DiscourseEntitySet.
-    required UUID id = 1;
-
-    // the AnnotationMetadata associated with this DiscourseEntitySet.
-    required AnnotationMetadata metadata = 2;
-
-    // any number of DiscourseEntities associated with this DiscourseEntitySet.
-    repeated DiscourseEntity discourse_entity = 3;
-}
-
-// A collection of DiscourseSituations, with an ID and metadata referring to the tool
-// that generated this DiscourseSituationSet.
-message DiscourseSituationSet {
-    // the ID associated with this DiscourseSituationSet.
-    required UUID id = 1;
-
-    // the AnnotationMetadata associated with this DiscourseSituationSet.
-    required AnnotationMetadata metadata = 2;
-
-    // any number of DiscourseSituations associated with this DiscourseSituationSet.
-    repeated DiscourseEntity discourse_situation = 3;
 }
 
 /**
