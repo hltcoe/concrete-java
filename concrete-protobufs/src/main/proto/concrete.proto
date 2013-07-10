@@ -701,8 +701,8 @@ message DependencyParse {
   repeated Dependency dependency = 3;
 
   message Dependency {
-  	optional TokenRef gov = 1;	// will be null for ROOT token (only)
-	required TokenRef dep = 2;
+  	optional int32 gov = 1;	// will be null for ROOT token (only)
+	required int32 dep = 2;
 	optional string edge_type = 3;
   }
 }
@@ -1486,3 +1486,4 @@ message SituationRef {
 	required UUID situation_id = 1;		// type=Situation
 	required UUID communication_id = 2;	// type=Communication
 }
+
