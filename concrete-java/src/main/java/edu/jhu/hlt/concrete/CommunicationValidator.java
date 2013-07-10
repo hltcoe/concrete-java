@@ -117,10 +117,10 @@ public class CommunicationValidator {
 		//Now traverse the communication and verify!
 		for (EntityMentionSet entityMentionSet : communication.getEntityMentionSetList()){
 			for (EntityMention mention : entityMentionSet.getMentionList()){
-				if (mention.hasTokenSequence() && mention.getTokenSequence().hasTokenization()){
+				if (mention.hasTokens() && mention.getTokens().hasTokenizationId()){
 					valid &= check(
 							tokenizationIds, 
-							mention.getTokenSequence().getTokenization(), 
+							mention.getTokens().getTokenizationId(), 
 							"Tokenization", errorWriter);
 				}
 			}
@@ -128,7 +128,7 @@ public class CommunicationValidator {
 				
 		for (EntitySet entitySet : communication.getEntitySetList()){
 			for (Entity entity : entitySet.getEntityList()){
-				for (UUID entityMention : entity.getMentionList()){
+				for (UUID entityMention : entity.getMentionIdList()){
 					valid &= check(
 							entityMentionIds, 
 							entityMention, 
@@ -140,26 +140,21 @@ public class CommunicationValidator {
 		//Read in SituationMention UUIDs
 		for (SituationMentionSet situationMentionSet : communication.getSituationMentionSetList()){
 			for (SituationMention mention : situationMentionSet.getMentionList()){
-				for (TokenRefSequence tokens : mention.getTokensList()){
-					valid &= check(
-							tokenizationIds, 
-							tokens.getTokenization(), 
-							"Tokenization", errorWriter);
-				}
+				valid &= check(
+						tokenizationIds, 
+						mention.getTokens().getTokenizationId(), 
+						"Tokenization", errorWriter);
 				for (SituationMention.Argument arg : mention.getArgumentList()){
-					if (arg.hasValueType()){
-						if (arg.getValueType().equals(Situation.Argument.ValueType.ENTITY_ARG)||
-							arg.getValueType().equals(Situation.Argument.ValueType.SENDER_ARG)){
-							valid &= check(
-									entityMentionIds, 
-									arg.getValue(), 
-									"EntityMention", errorWriter);
-						}else if (arg.getValueType().equals(Situation.Argument.ValueType.SITUATION_ARG)){
-							valid &= check(
-									situationMentionIds, 
-									arg.getValue(), 
-									"SituationMention", errorWriter);
-						}
+					if (arg.hasEntityMentionId()){
+						valid &= check(
+								entityMentionIds, 
+								arg.getEntityMentionId(), 
+								"EntityMention", errorWriter);
+					}else if (arg.hasSituationMentionId()){
+						valid &= check(
+								situationMentionIds, 
+								arg.getSituationMentionId(), 
+								"SituationMention", errorWriter);
 					}
 				}
 			}
@@ -169,19 +164,16 @@ public class CommunicationValidator {
 		for (SituationSet situationSet : communication.getSituationSetList()){
 			for (Situation situation : situationSet.getSituationList()){
 				for (Situation.Argument arg : situation.getArgumentList()){
-					if (arg.hasValueType()){
-						if (arg.getValueType().equals(Situation.Argument.ValueType.ENTITY_ARG)||
-							arg.getValueType().equals(Situation.Argument.ValueType.SENDER_ARG)){
-							valid &= check(
-									entityIds, 
-									arg.getValue(), 
-									"Entity", errorWriter);
-						}else if (arg.getValueType().equals(Situation.Argument.ValueType.SITUATION_ARG)){
-							valid &= check(
-									situationIds, 
-									arg.getValue(), 
-									"Situation", errorWriter);
-						}
+					if (arg.hasEntityId()){
+						valid &= check(
+								entityIds, 
+								arg.getEntityId(), 
+								"Entity", errorWriter);
+					}else if (arg.hasSituationId()){
+						valid &= check(
+								situationIds, 
+								arg.getSituationId(), 
+								"Situation", errorWriter);
 					}
 				}
 				for (Justification just : situation.getJustificationList()){
