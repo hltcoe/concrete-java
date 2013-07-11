@@ -146,6 +146,12 @@ public class JsonUtil {
 			public List<BodySectionSentence> getSentences() {
 				return this.sentences;
 			}
+
+			public Kind getSectionKind() {
+				if(this.kind.contentEquals("METADATA")){return Concrete.Section.Kind.METADATA;}
+				else if(this.kind.contentEquals("PASSAGE")){return Concrete.Section.Kind.PASSAGE;}
+				else {return Concrete.Section.Kind.OTHER;}
+			}
 		}
 		
 		private class BodySectionSentence{
@@ -300,7 +306,7 @@ public class JsonUtil {
 				TextSpan ts = bodySec.getTextSpan(rawText);
 				sections.add(Concrete.Section.newBuilder()
 						.setTextSpan(ts)
-						.setKind(Concrete.Section.Kind.PASSAGE)
+						.setKind(bodySec.getSectionKind())
 						.setUuid(IdUtil.generateUUID())
 						.build());
 				//bodySections.add(new BodySection(rawText.substring(ts.getStart(),ts.getEnd()),bodySec.getKind()));
