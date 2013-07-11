@@ -1,13 +1,17 @@
 package edu.jhu.hlt.concrete.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.text.ParseException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+//import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +36,13 @@ import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
 import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
+import groovyjarjarcommonscli.CommandLine;
+import groovyjarjarcommonscli.CommandLineParser;
+import groovyjarjarcommonscli.HelpFormatter;
+import groovyjarjarcommonscli.Option;
+import groovyjarjarcommonscli.Options;
+import groovyjarjarcommonscli.PosixParser;
+import groovyjarjarcommonscli.ParseException;
 //import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import com.google.gson.Gson;
@@ -61,7 +72,8 @@ import com.google.protobuf.Message;
  * 
  */
 public class JsonUtil {
-
+	final static String NO_MESSAGE_ID_FLAG = "NO_MESSAGE_ID";
+	
 	public static class JsonCommunication {
 		/*
 		 * A JSON wrapper for concrete communication.
@@ -103,6 +115,7 @@ public class JsonUtil {
 			//of sentences
 			private String sectionRawText;
 			private String kind;
+			private List<BodySectionSentence> sentences;			
 			
 			public BodySection(String t, String k){
 				this.sectionRawText = t;
@@ -129,10 +142,13 @@ public class JsonUtil {
 						.build();
 				return ts;
 			}
+
+			public List<BodySectionSentence> getSentences() {
+				return this.sentences;
+			}
 		}
 		
-		/*
-		private class Sentence{
+		private class BodySectionSentence{
 			//Sentence as the atomic unit of the JsonCommunication
 			//Not currently supported
 			//Class
@@ -140,7 +156,7 @@ public class JsonUtil {
 			public void setText(String text){
 				this.text = text;
 			}
-		}*/		
+		}	
 		
 		public class JsonKeyValues{
 			private String key;
@@ -154,7 +170,7 @@ public class JsonUtil {
 		/*
 		 * Constants
 		 */
-		String NO_MESSAGE_ID_FLAG = "NO_MESSAGE_ID";
+
 		
 		/*
 		 * Generic meta-information for communication
@@ -229,11 +245,12 @@ public class JsonUtil {
 		}
 				
 				
+		/*
 		public JsonCommunication(String startTime, String rawText) throws ParseException{
 			this.rawText = rawText;
-			Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
+			//Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
 			this.startTime = date.getTime();
-		}
+		}*/
 		
 		/*
 		/**
@@ -321,7 +338,7 @@ public class JsonUtil {
 		
 		public String getMessageId() {
 			if(messageId != null){return messageId;}
-			return NO_MESSAGE_ID_FLAG;
+			return JsonUtil.NO_MESSAGE_ID_FLAG;
 		}
 		public void setMessageId(String messageId) {
 			this.messageId = messageId;
@@ -418,6 +435,16 @@ public class JsonUtil {
 			this.bodyText = emailBodyText;
 		}
 		
+		public void setBodyText() {
+			String text = "";
+			for(Body b: this.bodyChain){
+				for(BodySection bs: b.sections){
+					text += bs.sectionRawText+"\n";
+				}
+			}
+			this.bodyText = text;
+		}
+		
 		public List<Body> getBodyChain() {
 			return bodyChain;
 		}
@@ -485,6 +512,21 @@ public class JsonUtil {
 				sectSeg.add(emailBodyToSegment(b,this.rawText));
 			}
 			return sectSeg;
+		}
+
+
+		public List<String> getSents() {
+			List<String> sents = new ArrayList<String>();
+			for(Body b: this.bodyChain){
+				for(BodySection bs: b.sections){
+					if(bs.getKind().contentEquals("PASSAGE")){
+						for(BodySectionSentence bss: bs.getSentences()){
+							sents.add(bss.text);
+						}
+					}
+				}
+			}
+			return sents;
 		}
 	}
 	/*
@@ -583,6 +625,7 @@ public class JsonUtil {
 			jcomm.addRecipientsBcc(info.getBccAddressList());
 			jcomm.addRecipientsCc(info.getCcAddressList());
 		}
+		jcomm.setBodyText();
 		return jcomm;		
 	}
 	
@@ -749,8 +792,11 @@ public class JsonUtil {
 		List<String> jcomms = new ArrayList<String>();
 		Communication commIn;		
 		//while((commIn = Communication.parseDelimitedFrom(in)) != null){
-		while((commIn = (Communication)in.next()) != null){
-			jcomms.add(toJsonString(commIn));
+		while(in.hasNext()){
+			commIn = (Communication)in.next();
+			if (commIn != null){
+				jcomms.add(toJsonString(commIn));
+			}
 		}			
 		in.close();
 		return jcomms;
@@ -864,17 +910,13 @@ public class JsonUtil {
 		//File outputFile = new File(outFilename);
 		ProtocolBufferWriter pbf = new ProtocolBufferWriter(outFilename);
 		Communication comm = toConcreteEmail(jcomm);
-		/*
-		if(!outputFile.exists()) {
-		    outputFile.getParentFile().mkdirs();
-			outputFile.createNewFile();
-		}*/
-		
-		//FileOutputStream output = new FileOutputStream(outputFile,false);
-		pbf.write(comm);
-		//comm.writeTo(output);
-		//output.close();
-		pbf.close();
+		try{
+			pbf.write(comm);
+			pbf.close();
+		}catch(IOException e){
+			System.err.println("Could not write protobuf to "+ outFilename);
+			e.printStackTrace();
+		}
 	}
 	
 	public static void saveConcreteFromJson(String json, String outFilename) throws IOException{
@@ -884,56 +926,6 @@ public class JsonUtil {
 
 	
 	public static void test(String[] args) {
-		try {
-			//To get FROM a communication file TO jsonObject
-			JsonUtil ju = new JsonUtil();	
-			String filename = args[0];
-			boolean validate = false;
-			
-			List<JsonObject> jcomms = null;
-			List<String> jcommstrings = null;
-			jcomms = ju.getJsonCommunicationsFromGzip(filename);
-			jcommstrings = ju.getJsonStringsFromGzip(filename);
-
-
-			//To get FROM a communication file TO json string
-
-			
-			//To get TO a communication object FROM a json object
-			Communication comm;
-			Communication concreteEmail;
-			Communication concreteEmailExtended;
-			Gson gson = new Gson();
-			
-			for(JsonObject jcomm : jcomms){
-				JsonCommunication jc = gson.fromJson(jcomm, JsonCommunication.class);
-				comm = ju.toCommunication(jc);
-			}
-			
-			//To get TO a communication object FROM a json string
-			for(String jcomm : jcommstrings){
-				//Changing string values improperly, may be my static handling, double check Monday
-				JsonCommunication jc = toJsonCommunicationFromWellFormed(jcomm);
-				JsonCommunication jcs = toJsonCommunicationFromUnknown(jcomm,validate);
-				comm = ju.toCommunication(jc);
-				concreteEmail = ju.toConcreteEmail(jc);
-				concreteEmailExtended = ju.toConcreteEmail(jcs);
-				System.out.println(comm.getStartTime());
-			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void main(String[] args) {
 		System.out.println("Testing JsonUtil");
 		try {
 			//To get FROM a communication file TO jsonObject
@@ -984,6 +976,117 @@ public class JsonUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		CommandLineParser parser = new PosixParser();
+		// Set up command line arguments
+		Options options = new Options();
+		options.addOption(new Option("h", "help", false, "dislay this help and exit"));
+		options.addOption(new Option("fc", "from-concrete", false,
+				"Given a concrete file, print the json representation." ));
+		options.addOption(new Option("tc", "to-concrete", false,
+				"Given a json file (A file that contains a json string on the first line), save the concrete object equivalent." ));
+		options.addOption(new Option("v", "validate", false,
+				"If to-concrete then check the key/value pairs." ));
+		options.addOption(new Option("js", "just-sentences", false,
+				"Given a concrete file, return just the sentences in json format.(not yet implemented)" ));
+		options.addOption(new Option("jp", "just-passages", false,
+				"Given a concrete file, return just the sections marked as PASSAGE.(not yet implemented)" ));
+		options.addOption(new Option("uuid", "uuid", false,
+				"Specify the exact uuid of the Concrete object.(not yet implemented)" ));
+
+		
+		String usage = "JsonUtil Json utility for concrete.\n";
+		HelpFormatter formatter = new HelpFormatter();
+		String helpFooter = "JsonUtil handles concrete objects and converts them to and from json.\n"+ 
+				"Specify the functions you would like to perform.\n" +
+				"If going to Concrete, include a json filename and desired concrete filename for output.\n"+
+				"If going from Concrete, include a concrete filename alone.\n";
+		CommandLine line = null;
+		String[] otherArgs = null;
+		JsonUtil ju = new JsonUtil();
+		
+		boolean fromConcrete = true;
+		boolean toConcrete = false;
+		boolean justSentences = false;
+		boolean justPassages = false;
+		boolean validate = false;
+		
+		try{
+			line = parser.parse(options, args);
+			otherArgs = line.getArgs();
+			// Handle help
+			if (line.hasOption("help")) {
+				formatter.printHelp(usage, "", options, helpFooter);
+				System.exit(0);
+			}
+			if (line.hasOption("to-concrete")){
+				toConcrete = true;
+				fromConcrete = false;
+			}
+			if (line.hasOption("from-concrete")){
+				if (toConcrete){ 
+					System.err.println("Cannot convert from and also to Concrete");
+					System.exit(0);					
+				}
+				fromConcrete = true;
+			}
+			if (line.hasOption("just-sentences")){
+				justSentences = true;
+			}
+			if (line.hasOption("just-passages")){
+				justPassages = true;
+			}
+			if (line.hasOption("validate")){
+				validate = true;
+			}		
+		}catch(ParseException exp) {
+			System.out.println(exp.getMessage());
+			formatter.printHelp(usage, "", options, helpFooter);
+			System.exit(64);
+		}
+		
+		if (otherArgs.length < 1 || otherArgs.length > 2) {
+			formatter.printHelp(usage, "", options, helpFooter);
+			throw new ParseException("Incorrect number of required arguments specified");
+		}
+		
+		final String in = otherArgs[0];
+		
+		if (toConcrete){
+			if (otherArgs.length < 2){
+				System.err.println("If going to Concrete, you must include a file containing "+
+							"the desired json string and also a file to write to.");
+				System.exit(0);
+			}
+			final String out = otherArgs[1];
+			final Path outPath = Paths.get(out).toAbsolutePath();
+			if (!outPath.toString().endsWith(".gz")){
+				System.err.println("The concrete object name must contain .gz at the end for storage purposes.");
+				System.exit(0);				
+			}
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+			String jsonString = br.readLine();
+			saveConcreteFromJson(jsonString,outPath.toString());			
+		}
+		else if (fromConcrete){
+			final Path inPath = Paths.get(in).toAbsolutePath();
+			List<String> jcommstrings = ju.getJsonStringsFromGzip(inPath.toString());
+			JsonCommunication jcomm = null;
+			if (justSentences){
+				for(String s: jcommstrings){
+					jcomm = toJsonCommunicationFromUnknown(s,validate);
+					//System.out.print(jcomm.getSents());
+					System.out.println(jcomm.bodyText);
+				}
+			}
+			else{
+				for(String s: jcommstrings){
+					System.out.println(s);
+				}
+			}
+		}	
 	}
 }
 /*
