@@ -1441,7 +1441,7 @@ message DiscourseEntity {
  */
 message DiscourseSituation {
 	required UUID id = 1;
-	repeated SituationRef situtation_ref = 2;		// all mentions of this situation
+	repeated SituationRef situation_ref = 2;		// all mentions of this situation
 	optional float confidence = 3;
 }
 
