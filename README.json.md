@@ -39,3 +39,29 @@ saveConcreteFromJson(jsonString,fileOut):
 	Given a json string in the JsonCommunication format, save the Concrete
 	equivalent to fileOut where fileOut is a string of the filename you
 	wish to save to.
+
+Commandline Usage
+================
+JsonUtil handles concrete objects and converts them to and from json.
+Specify the functions you would like to perform.
+If going to Concrete, include a json filename and desired concrete
+filename for output.
+If going from Concrete, include a concrete filename alone.
+
+Commandline arguments
+---------------------
+-fc,--from-concrete Given a concrete file, print the json
+representation.
+-h,--help dislay this help and exit
+-jp,--just-passages Given a concrete file, return just the sections
+marked as PASSAGE.(not yet implemented)
+-js,--just-sentences Given a concrete file, return just the sentences
+in json format.(not yet implemented)
+-tc,--to-concrete Given a json file (A file that contains a json
+string on the first line), save the concrete
+object equivalent.
+-uuid,--uuid Specify the exact uuid of the Concrete object.(not
+yet implemented)
+-v,--validate If to-concrete then check the key/value pairs.
+
+
