@@ -68,7 +68,6 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>${groovy.version}</version>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
