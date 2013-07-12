@@ -32,7 +32,7 @@ import edu.jhu.hlt.concrete.Concrete.Section;
 import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
-import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
+//import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
 import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
@@ -171,6 +171,12 @@ public class JsonUtil {
 			public JsonKeyValues(String key, List<String> valuesList) {
 				this.key = key;
 				this.values = valuesList;
+			}
+			public KeyValues getConcreteKeyValues(){
+				return KeyValues.newBuilder()
+						.setKey(this.key)
+						.addAllValues(this.values)
+						.build();
 			}
 		}
 		/*
@@ -534,6 +540,14 @@ public class JsonUtil {
 			}
 			return sents;
 		}
+
+		public List<KeyValues> getConcreteMetadata() {
+			List<KeyValues> kvs = new ArrayList<KeyValues>();
+			for(JsonKeyValues jkv : this.metadata){
+				kvs.add(jkv.getConcreteKeyValues());
+			}
+			return kvs;
+		}
 	}
 	/*
 	 * Handler Methods
@@ -886,6 +900,7 @@ public class JsonUtil {
 					.addAllCcAddress(jcomm.getConcreteRecipientsCc())
 					.build()
 					)
+				.addAllMetadata(jcomm.getConcreteMetadata())
 				.addAllSectionSegmentation(jcomm.getConcreteEmailSectionSegmentation())
 				.setKind(Communication.Kind.EMAIL)
 				.build();
