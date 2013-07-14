@@ -42,9 +42,9 @@ public class ProtocolBufferWriter {
     public void write(Message message) throws IOException {
         byte[] messageBytes = message.toByteString().toByteArray();
         int size = messageBytes.length;
-		final int LONG_SIZE = 8;
-        ByteBuffer buffer = ByteBuffer.allocate(LONG_SIZE);
-        byte[] messageBytesSize = buffer.putLong(size).array();
+	final int INT_SIZE = 4;
+        ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
+        byte[] messageBytesSize = buffer.putInt(size).array();
         outputStream.write(messageBytesSize);
         outputStream.write(messageBytes);
     }

@@ -94,16 +94,16 @@ public class ProtocolBufferReader<M extends Message> implements Closeable, Itera
     }
     
     protected M getNextMessage() throws ConcreteException {
-        final int LONG_SIZE = 8;
+        final int INT_SIZE = 4;
         lastBytesRead = 0;
-        byte[] messageSizeBytes = new byte[LONG_SIZE];
+        byte[] messageSizeBytes = new byte[INT_SIZE];
         try {
-            if (inputStream.read(messageSizeBytes) < LONG_SIZE) {
+            if (inputStream.read(messageSizeBytes) < INT_SIZE) {
                 return null;
             }
             int messageSize = new BigInteger(messageSizeBytes).intValue();
 			assert messageSize >= 0 : "overflow: " + messageSize;
-            lastBytesRead = LONG_SIZE;
+            lastBytesRead = INT_SIZE;
             if (messageSize < 1)
                 return null;
             byte[] messageBytes = new byte[messageSize];
