@@ -37,6 +37,8 @@ import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.util.FileUtil;
 import edu.jhu.hlt.concrete.util.IdUtil;
 import edu.jhu.hlt.concrete.util.ProtoFactory;
+import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
+
 
 /**
  * @author mayfield
@@ -96,8 +98,8 @@ public class TAC09KB2Concrete {
     private Path namePath;
     private FileWriter idWriter;
     private FileWriter nameWriter;
-    private FileOutputStream commPbw;
-    private FileOutputStream vertPbw;
+    private ProtocolBufferWriter commPbw;
+    private ProtocolBufferWriter vertPbw;
 
     public TAC09KB2Concrete(String pathToOutputFiles) throws ConcreteException {
         this.outputPath = Paths.get(pathToOutputFiles);
@@ -115,9 +117,9 @@ public class TAC09KB2Concrete {
             Files.createFile(this.idPath);
             Files.createFile(this.namePath);
 
-            this.commPbw = new FileOutputStream(this.commsPath.toFile());
+            this.commPbw = new ProtocolBufferWriter(new FileOutputStream(this.commsPath.toFile()));
 
-            this.vertPbw = new FileOutputStream(this.verticesPath.toFile());
+            this.vertPbw = new ProtocolBufferWriter(new FileOutputStream(this.verticesPath.toFile()));
             this.idWriter = new FileWriter(this.idPath.toFile(), true);
             this.nameWriter = new FileWriter(this.namePath.toFile(), true);
         } catch (IOException e) {
@@ -148,8 +150,9 @@ public class TAC09KB2Concrete {
     public static Concrete.UUID generateUUIDFromTACID(String tac_id) {
         // Tack on a distinguishing salt string to avoid any possible
         // conflicts with other namespaces
-        return edu.jhu.hlt.concrete.util.IdUtil.fromJavaUUID(java.util.UUID.nameUUIDFromBytes(("Convert TAC ID to UUID: " + tac_id)
-                .getBytes()));
+//        return edu.jhu.hlt.concrete.util.IdUtil.fromJavaUUID(java.util.UUID.nameUUIDFromBytes(("Convert TAC ID to UUID: " + tac_id)
+//                .getBytes()));
+	    return edu.jhu.hlt.concrete.util.IdUtil.generateUUID();
     }
 
     class KBHandler extends DefaultHandler {
@@ -216,7 +219,7 @@ public class TAC09KB2Concrete {
                 this.currentEntity.setCommGuid(guid);
                 logger.debug("Write conversation for {}", guid.getCommunicationId());
                 try {
-                    communication.writeDelimitedTo(commPbw);
+                    commPbw.write(communication);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -245,7 +248,8 @@ public class TAC09KB2Concrete {
                 Vertex vertex = vb.setUuid(IdUtil.generateUUID()).build();
                 logger.debug("Write vertex for {}", this.currentEntity.getEntityId());
                 try {
-                    vertex.writeDelimitedTo(vertPbw);
+                    vertPbw.write(vertex);
+
                     nameWriter.write(name + "\n");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
