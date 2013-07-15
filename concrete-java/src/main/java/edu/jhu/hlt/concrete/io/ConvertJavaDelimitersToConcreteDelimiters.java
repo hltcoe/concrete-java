@@ -18,8 +18,6 @@ import edu.jhu.hlt.concrete.Concrete.Discourse;
 import edu.jhu.hlt.concrete.ConcreteException;
 import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Graph.Vertex;
-import edu.jhu.hlt.concrete.kb.LoadConcreteTACKBFiles;
-
 /**
  * ProtoBuffers provide a method for storing multiple protobufs in the same file.
  * However, this method only works in Java.
@@ -30,7 +28,7 @@ import edu.jhu.hlt.concrete.kb.LoadConcreteTACKBFiles;
  */
 public class ConvertJavaDelimitersToConcreteDelimiters {
 
-	private static final Logger logger = LoggerFactory.getLogger(LoadConcreteTACKBFiles.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConvertJavaDelimitersToConcreteDelimiters.class);
 	 
     public static void main(String... args) throws ConcreteException, com.google.protobuf.InvalidProtocolBufferException, IOException {
         if (args.length != 3) {
