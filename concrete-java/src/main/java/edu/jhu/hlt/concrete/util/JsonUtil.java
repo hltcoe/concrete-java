@@ -197,8 +197,8 @@ public class JsonUtil {
 			}
 		}
 		
-		/*
-		private class Sentence{
+		
+		private class BodySectionSentence{
 			//Sentence as the atomic unit of the JsonCommunication
 			//Not currently supported
 			//Class
