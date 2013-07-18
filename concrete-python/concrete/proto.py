@@ -7,7 +7,7 @@ import sys, os, stat, time
 def _add_to_python_path(p):
     if p not in sys.path: sys.path.append(p)
 
-# Add the path for the rebar protoc bindings:
+# Add the path for the concrete protoc bindings:
 _here = os.path.abspath(os.path.split(__file__)[0])
 _proto_py_path = os.path.join(_here, 'proto')
 _add_to_python_path(_proto_py_path)
@@ -29,7 +29,6 @@ files.  To do so, please run:
 """
 
 _proto_src_path = os.path.join(_here, '..', '..', 'concrete-protobufs', 'src', 'main', 'proto')
-# _proto_jar_path = os.path.join(_here, '..', '..', '..', '..', 'target')
 def _get_mtime(directory, extension, combine):
     mtime = None
     for f in os.listdir(directory):
@@ -39,7 +38,7 @@ def _get_mtime(directory, extension, combine):
                 mtime = os.stat(p)[stat.ST_MTIME]
             else:
                 mtime = combine(mtime, os.stat(p)[stat.ST_MTIME])
-            #print mtime, p
+            # print mtime, p
     return mtime
 
 def _check_proto_defs():
@@ -47,7 +46,7 @@ def _check_proto_defs():
     if not os.path.exists(_proto_py_path):
         raise ValueError(_NEED_TO_RECOMPILE_PROTOBUF %
                          (time.ctime(src_mtime),
-                          '(not built yet'))
+                          '(not built yet)'))
     py_mtime = _get_mtime(_proto_py_path, '.py', min)
     # jar_mtime = _get_mtime(_proto_jar_path, 'rebar.jar', min)
     # if src_mtime >= py_mtime or src_mtime >= jar_mtime:
@@ -65,13 +64,17 @@ _check_proto_defs()
 # Use binary implementations, when possible.
 
 ### MAX - this is causing weird errors, I think
+### turns out we need to install CPP support - uncomment when available
 
 # os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'cpp'
-# try: import _fast_rebar_proto
-# except: pass # C++ protobufs not available; use pure python ones
+# try: import _fast_concrete_proto
+# except ImportError as e: 
+#     print "Error: {0}".format(e)
+#     print "WARNING - C++ Protobufs unavailable; defaulting to slow python ones"
+#     pass # C++ protobufs not available; use pure python ones
 
 from concrete_pb2 import *
-import concrete_rpc_pb2 as rpc
+from graph_pb2 import *
 
 ######################################################################
 # Utility Function
