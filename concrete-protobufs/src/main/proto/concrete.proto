@@ -1106,6 +1106,12 @@ message Situation {
       RELATION_SOURCE_ROLE = 38;
       RELATION_TARGET_ROLE = 39;
     }
+    
+    /** New roles should usually be added to the enum, but for use
+     cases with many varied and possibly dynamic role names, this can be
+     used.  Presumably this would only be used in a prototype stage of an
+     analytic, with roles eventually "hardening" and moving to the enum. */
+    optional string role_label = 4;
   }
 
   /** A pointer to a SituationMention that provides supporting
@@ -1329,6 +1335,15 @@ message SituationMention {
 
   /** The state type for situations where situation_type=STATE */
   optional Situation.StateType state_type = 51;
+  
+  /** This lemma represents a canonical lemma for the situation kind 
+   * when the situation kind cannot be specified by a situation type subtype
+   * (ex, when using arbitrary verbs or nominalizations as events which do 
+   * not appear in the event_type enumeration).
+   * If this kind is grounded in a token sequence from the original text, the
+   * SituationMention should have a reference to the token sequence.
+   */
+  optional string situation_kind_lemma = 53;
 
   /** An "intensity" rating for the situation, typically ranging from
    * 0-1.  In the case of SENTIMENT situations, this is used to record

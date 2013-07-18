@@ -27,12 +27,23 @@ import edu.jhu.hlt.concrete.Concrete.Communication;
 import edu.jhu.hlt.concrete.Concrete.Communication.Builder;
 import edu.jhu.hlt.concrete.Concrete.EmailAddress;
 import edu.jhu.hlt.concrete.Concrete.EmailCommunicationInfo;
+import edu.jhu.hlt.concrete.Concrete.EntityMention;
+import edu.jhu.hlt.concrete.Concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.Concrete.KeyValues;
 import edu.jhu.hlt.concrete.Concrete.Section;
 import edu.jhu.hlt.concrete.Concrete.Section.Kind;
 import edu.jhu.hlt.concrete.Concrete.SectionSegmentation;
+import edu.jhu.hlt.concrete.Concrete.Sentence;
+import edu.jhu.hlt.concrete.Concrete.SentenceSegmentation;
+import edu.jhu.hlt.concrete.Concrete.Situation;
+import edu.jhu.hlt.concrete.Concrete.SituationMention;
+import edu.jhu.hlt.concrete.Concrete.SituationMentionSet;
 import edu.jhu.hlt.concrete.Concrete.TextSpan;
-//import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
+import edu.jhu.hlt.concrete.Concrete.Token;
+import edu.jhu.hlt.concrete.Concrete.TokenRefSequence;
+import edu.jhu.hlt.concrete.Concrete.Tokenization;
+import edu.jhu.hlt.concrete.Concrete.UUID;
+import edu.jhu.hlt.concrete.util.JsonUtil.JsonCommunication.JsonKeyValues;
 
 import edu.jhu.hlt.concrete.io.ProtocolBufferReader;
 import edu.jhu.hlt.concrete.io.ProtocolBufferWriter;
@@ -154,6 +165,39 @@ public class JsonUtil {
 			}
 		}
 		
+		private class EventSpan{
+			
+			//A string for the type of event
+			private String eventType;
+			
+			private List<ArgumentSpan> arguments;
+			
+			public EventSpan(String eventType){
+				this.eventType = eventType;
+				arguments = new ArrayList<ArgumentSpan>();
+			}
+		}
+		
+		private class ArgumentSpan{
+			private String role;
+			private List<Span> spans;
+			
+			public ArgumentSpan(String role){
+				this.role = role;
+				spans = new ArrayList<Span>();
+			}
+		}
+		
+		private class Span{
+			private int start;
+			private int end;
+			public Span(int start, int end){
+				this.start = start; 
+				this.end = end;
+			}
+		}
+		
+		
 		private class BodySectionSentence{
 			//Sentence as the atomic unit of the JsonCommunication
 			//Not currently supported
@@ -219,6 +263,7 @@ public class JsonUtil {
 		private List<Body> bodyChain = new ArrayList<Body>();//A list of the email messages contained in emailBodyText	
 		private List<JsonKeyValues> metadata = new ArrayList<JsonKeyValues>();
 
+		private List<EventSpan> eventSpans = new ArrayList<EventSpan>(); // A list of the events in the text, grounded in character spans 
 		
 		public static List<String> getAcceptedKeys(){
 			List<String> acceptedKeys = new ArrayList <String>();
@@ -484,6 +529,103 @@ public class JsonUtil {
 			this.metadata.add(jkv);			
 		}
 
+
+
+		/**
+		 * Take a given SituationMention, and add an EventSpan to the JsonCommunication 
+		 * that represents it.
+		 * 
+		 * @param situationMention
+		 * @param communication 
+		 */
+		public void addEventSpans(SituationMention situationMention, Communication communication) {
+			if (Situation.Type.EVENT.equals(situationMention.getSituationType())){
+				EventSpan eventSpan = new EventSpan("SitKindLemma"+(Math.random()*10));
+				for (SituationMention.Argument argument : situationMention.getArgumentList()){
+					ArgumentSpan argumentSpan = new ArgumentSpan(argument.getRoleLabel());
+					
+					//Only handle entity mention arguments
+					if (argument.hasEntityMentionId()){
+						EntityMention entityMention = findEntityMention(argument.getEntityMentionId(), communication);
+						TokenRefSequence tokenRefSequence = entityMention.getTokens();
+						Tokenization tokenization = findTokenization(tokenRefSequence.getTokenizationId(), communication);
+						for (int tokenIndex : tokenRefSequence.getTokenIndexList()){
+							Token token = findToken(tokenization, tokenIndex);
+							Span span = new Span(token.getTextSpan().getStart(), token.getTextSpan().getEnd());
+							argumentSpan.spans.add(span);
+						}
+					}
+					eventSpan.arguments.add(argumentSpan);
+				}
+				eventSpans.add(eventSpan);
+			}
+		}
+		
+		/**
+		 * Given an entity mention UUID, find the entity mention on the communication
+		 * with the matching id.
+		 * 
+		 * @param value
+		 * @param communication
+		 * @return
+		 */
+		private EntityMention findEntityMention(UUID value,
+				Communication communication) {
+			for (EntityMentionSet entityMentionSet : communication.getEntityMentionSetList()){
+				for (EntityMention entityMention : entityMentionSet.getMentionList()){
+					if (entityMention.getUuid().equals(value)){
+						return entityMention;
+					}
+				}
+			}
+			return null;
+		}
+
+
+		/**
+		 * Within a communication, find a tokenization that has the given tokenization UUID
+		 * 
+		 * @param tokenizationId
+		 * @param communication
+		 * @return
+		 */
+		private Tokenization findTokenization(UUID tokenizationId,
+				Communication communication) {
+			for (SectionSegmentation sectionSegmentation : communication.getSectionSegmentationList()){
+				for (Section section : sectionSegmentation.getSectionList()){
+					for (SentenceSegmentation sentenceSegmentation : section.getSentenceSegmentationList()){
+						for (Sentence sentence : sentenceSegmentation.getSentenceList()){
+							for (Tokenization tokenization : sentence.getTokenizationList()){
+								if (tokenization.getUuid().equals(tokenizationId)){
+									return tokenization;
+								}
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+
+		/**
+		 * Take a tokenization and a token id, and return the token withtin the tokenization
+		 * that has the specified id 
+		 * 
+		 * @param tokenization
+		 * @param tokenIndex
+		 * @return
+		 */
+		private Token findToken(Tokenization tokenization, int tokenIndex) {
+			for (Token token : tokenization.getTokenList()){
+				if (token.getTokenIndex() == tokenIndex){
+					return token;
+				}
+			}
+			return null;
+		}
+
+
 		public void setMetadata(List<JsonKeyValues> metadata) {
 			this.metadata = metadata;
 		}	
@@ -646,6 +788,20 @@ public class JsonUtil {
 			jcomm.addRecipientsCc(info.getCcAddressList());
 		}
 		jcomm.setBodyText();
+		
+		for (SituationMentionSet situationMentionSet : commIn.getSituationMentionSetList()){
+			for (SituationMention situationMention : situationMentionSet.getMentionList()){
+				jcomm.addEventSpans(situationMention, commIn);
+			}
+		}
+		
+		
+		for (SituationMentionSet situationMentionSet : commIn.getSituationMentionSetList()){
+			for (SituationMention situationMention : situationMentionSet.getMentionList()){
+				jcomm.addEventSpans(situationMention, commIn);
+			}
+		}
+		
 		return jcomm;		
 	}
 	
