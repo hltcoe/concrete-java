@@ -90,7 +90,14 @@ public class ProtocolBufferReader<M extends Message> implements Closeable, Itera
     }
 
     public boolean hasNext() {
-    	return this.nextMessage != null;
+        boolean hasNextp = this.nextMessage != null;
+        // if there are no more messages we can close the file
+        if(!hasNextp) try {
+            this.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return hasNextp;
     }
     
     protected M getNextMessage() throws ConcreteException {
