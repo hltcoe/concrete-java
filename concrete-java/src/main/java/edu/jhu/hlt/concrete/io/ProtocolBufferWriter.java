@@ -21,7 +21,7 @@ import com.google.protobuf.Message;
  * @author Delip Rao and Mark Dredze
  * 
  */
-public class ProtocolBufferWriter {
+public class ProtocolBufferWriter extends OutputStream {
     OutputStream outputStream = null;
 
     public ProtocolBufferWriter(OutputStream out) {
@@ -47,6 +47,11 @@ public class ProtocolBufferWriter {
         byte[] messageBytesSize = buffer.putInt(size).array();
         outputStream.write(messageBytesSize);
         outputStream.write(messageBytes);
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        outputStream.write(b);
     }
 
     public void close() throws IOException {
