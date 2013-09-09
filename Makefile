@@ -23,4 +23,5 @@ clean:
 	$(RM) -rf concrete-python/concrete/proto/
 	$(RM) -rf concrete-python/build
 	$(RM) -rf concrete-protobufs/src/main/proto/.up_to_date
+	$(RM) concrete-python/concrete/_fast_concrete_proto.so
 
