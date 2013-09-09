@@ -1,4 +1,3 @@
-
 import sys, os, stat, time
 
 ######################################################################
@@ -20,7 +19,9 @@ _NEED_TO_RECOMPILE_PROTOBUF = """Python protobuf interface out-of-date.
 You need to recompile the python probobuf interface from the *.proto
 files.  To do so, please run:
 
-   %% make all
+   %% make protoc
+
+from the project's root directory, where the Makefile exists.
 
 ---------------------------------------------------------------------------
     protobuf *.proto files last modified.... %s

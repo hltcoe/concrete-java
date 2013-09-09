@@ -9,10 +9,8 @@ those data structures.
 # The Concrete protobuf data structures (Communication, Tokenization,
 # Vertex, Edge, etc.)
 import concrete.proto
-# from concrete.proto import *
 
 # Utility functions & classes
 from concrete.id_util import *
-
-
+from concrete.proto_io import *
 
