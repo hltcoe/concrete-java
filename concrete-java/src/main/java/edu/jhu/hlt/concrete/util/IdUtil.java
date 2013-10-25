@@ -146,7 +146,7 @@ public class IdUtil {
   }
 
   /**
-   * Return a java UUID extracted from the "uuid" field of the given protobuf object. Throw RebarException if the given protobuf object has no "uuid" field.
+   * Return a java UUID extracted from the "uuid" field of the given protobuf object. Throw ConcreteException if the given protobuf object has no "uuid" field.
    */
   public static Concrete.UUID getUUID(com.google.protobuf.Message m) {
     Concrete.UUID result = getUUIDOrNull(m);
