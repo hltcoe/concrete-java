@@ -18,42 +18,43 @@ import edu.jhu.hlt.concrete.Concrete.UUID;
 import edu.jhu.hlt.concrete.util.ProtoFactory;
 
 public class ProtocolBufferWriterTest {
-    
-    @Before
-    public void setUp() throws Exception {
-        File outputFolder = new File("target");
-        if (!outputFolder.exists())
-            outputFolder.mkdir();
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        File output = new File("target/test-out.pb");
-        if (output.exists())
-            output.delete();
-    }
+  @Before
+  public void setUp() throws Exception {
+    File outputFolder = new File("target");
+    if (!outputFolder.exists())
+      outputFolder.mkdir();
+  }
 
-    @Test
-    public void testWrite() throws Exception {
-        File output = new File("target/test-out.pb");
-        FileOutputStream fos = new FileOutputStream(output);
-        Communication comm = new ProtoFactory().generateMockCommunication();
-        
-        UUID id = comm.getUuid();
-        CommunicationGUID guid = comm.getGuid();
-        ProtocolBufferWriter pbw = new ProtocolBufferWriter(fos);
-        pbw.write(comm);
-        
-        FileInputStream fis = new FileInputStream(output);
-        ProtocolBufferReader pbr = new ProtocolBufferReader(fis, Communication.class);
-        Communication readComm = (Communication) pbr.next();
-        
-        UUID readId = readComm.getUuid();
-        CommunicationGUID readGuid = readComm.getGuid();
-        assertEquals(id, readId);
-        assertEquals(guid, readGuid);
-        
-        pbr.close();
-    }
+  @After
+  public void tearDown() throws Exception {
+    File output = new File("target/test-out.pb");
+    if (output.exists())
+      output.delete();
+  }
+
+  @Test
+  public void testWrite() throws Exception {
+    File output = new File("target/test-out.pb");
+    FileOutputStream fos = new FileOutputStream(output);
+    Communication comm = new ProtoFactory().generateMockCommunication();
+
+    UUID id = comm.getUuid();
+    CommunicationGUID guid = comm.getGuid();
+    ProtocolBufferWriter pbw = new ProtocolBufferWriter(fos);
+    pbw.write(comm);
+    pbw.close();
+
+    FileInputStream fis = new FileInputStream(output);
+    ProtocolBufferReader<Communication> pbr = new ProtocolBufferReader<Communication>(fis, Communication.class);
+    Communication readComm = pbr.next();
+
+    UUID readId = readComm.getUuid();
+    CommunicationGUID readGuid = readComm.getGuid();
+    assertEquals(id, readId);
+    assertEquals(guid, readGuid);
+
+    pbr.close();
+  }
 
 }
