@@ -28,6 +28,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import edu.jhu.hlt.concrete.Concrete;
 import edu.jhu.hlt.concrete.ConcreteException;
+import edu.jhu.hlt.concrete.Concrete.Communication;
 
 /**
  * A wrapper for a Communication that tracks modifications and provides automatically built indices.
@@ -48,6 +49,14 @@ public class IndexedCommunication extends IndexedProto<Concrete.Communication> {
       // System.err.println("root="+index.getRoot());
       throw new ConcreteException("Expected index root to be comm");
     }
+  }
+  
+  public IndexedCommunication(Concrete.Communication comm) throws ConcreteException {
+    this(comm, new ProtoIndex(comm));
+  }
+  
+  public String generateRowId() {
+    return this.getProto().getKind().toString() + "_" + this.getProto().getGuid().getCommunicationId();
   }
 
   // ======================================================================
@@ -147,6 +156,10 @@ public class IndexedCommunication extends IndexedProto<Concrete.Communication> {
 
   public String getCorpusName() {
     return protoObj.getGuid().getCorpusName();
+  }
+  
+  public Communication.Kind getKind() {
+    return protoObj.getKind();
   }
 
   // ======================================================================
