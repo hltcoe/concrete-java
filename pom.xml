@@ -115,11 +115,6 @@
         <artifactId>concrete-protobufs</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>edu.jhu.hlt.concrete</groupId>
-        <artifactId>concrete-java</artifactId>
-        <version>${project.version}</version>
-      </dependency>
 
       <dependency>
 	<groupId>junit</groupId>
