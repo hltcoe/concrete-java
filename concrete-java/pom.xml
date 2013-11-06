@@ -4,7 +4,7 @@
   <parent>
     <groupId>edu.jhu.hlt.concrete</groupId>
     <artifactId>concrete</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>concrete-java</artifactId>
@@ -80,6 +80,14 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
+    </dependency>
+    
+    <!-- Test deps -->
+    <dependency>
+      <groupId>edu.jhu.hlt.tift</groupId>
+      <artifactId>tift</artifactId>
+      <version>1.0.4</version>
+      <scope>test</scope>
     </dependency>
     
     <!-- Runtime deps -->

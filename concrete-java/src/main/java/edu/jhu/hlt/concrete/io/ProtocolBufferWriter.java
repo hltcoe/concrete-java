@@ -22,39 +22,39 @@ import com.google.protobuf.Message;
  * 
  */
 public class ProtocolBufferWriter extends OutputStream {
-    OutputStream outputStream = null;
+  OutputStream outputStream = null;
 
-    public ProtocolBufferWriter(OutputStream out) {
-        this.outputStream = out;
-    }
+  public ProtocolBufferWriter(OutputStream out) {
+    this.outputStream = out;
+  }
 
-    public ProtocolBufferWriter(String outputShard) throws IOException {
-        if (outputShard.endsWith(".gz"))
-            this.outputStream = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outputShard)));
-        else
-            this.outputStream = new BufferedOutputStream(new FileOutputStream(outputShard));
-    }
-    
-    public ProtocolBufferWriter(Path path) throws IOException {
-        this(path.toString());
-    }
+  public ProtocolBufferWriter(String outputShard) throws IOException {
+    if (outputShard.endsWith(".gz"))
+      this.outputStream = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outputShard)));
+    else
+      this.outputStream = new BufferedOutputStream(new FileOutputStream(outputShard));
+  }
 
-    public void write(Message message) throws IOException {
-        byte[] messageBytes = message.toByteString().toByteArray();
-        int size = messageBytes.length;
-	final int INT_SIZE = 4;
-        ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
-        byte[] messageBytesSize = buffer.putInt(size).array();
-        outputStream.write(messageBytesSize);
-        outputStream.write(messageBytes);
-    }
+  public ProtocolBufferWriter(Path path) throws IOException {
+    this(path.toString());
+  }
 
-    @Override
-    public void write(int b) throws IOException {
-        outputStream.write(b);
-    }
+  public void write(Message message) throws IOException {
+    byte[] messageBytes = message.toByteString().toByteArray();
+    int size = messageBytes.length;
+    final int INT_SIZE = 4;
+    ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
+    byte[] messageBytesSize = buffer.putInt(size).array();
+    outputStream.write(messageBytesSize);
+    outputStream.write(messageBytes);
+  }
 
-    public void close() throws IOException {
-        outputStream.close();
-    }
+  @Override
+  public void write(int b) throws IOException {
+    outputStream.write(b);
+  }
+
+  public void close() throws IOException {
+    outputStream.close();
+  }
 }
