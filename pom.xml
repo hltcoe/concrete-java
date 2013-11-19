@@ -7,6 +7,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>concrete-protobufs</module>
+    <module>concrete-thrift</module>
     <module>concrete-java</module>
   </modules>
 
@@ -107,7 +108,7 @@
       </plugins>
     </pluginManagement>
   </build>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -162,4 +163,3 @@
     </profile>
   </profiles>
 </project>
-

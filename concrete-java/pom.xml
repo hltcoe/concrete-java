@@ -51,7 +51,7 @@
 
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
@@ -76,12 +76,12 @@
       <artifactId>gson</artifactId>
       <version>2.2.4</version>
     </dependency>
-    <dependency> 
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
     </dependency>
-    
+
     <!-- Test deps -->
     <dependency>
       <groupId>edu.jhu.hlt.tift</groupId>
@@ -89,7 +89,7 @@
       <version>1.0.4</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Runtime deps -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
