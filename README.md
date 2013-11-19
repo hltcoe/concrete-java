@@ -8,8 +8,8 @@ Concrete
 Introduction
 ------------
 
-Concrete is an attempt to map out various NLP data types in a 
-protocol buffer schema for use in projects across Johns Hopkins University. 
+Concrete is an attempt to map out various NLP data types in a
+protocol buffer schema for use in projects across Johns Hopkins University.
 This standardized schema allows researchers to use a common, underlying data
 model for all NLP tasks, and thus, facilitating integration between projects.
 
@@ -28,9 +28,9 @@ Installation
 First, checkout our latest tag:
 
     git fetch --tags
-    git checkout 1.1.8
+    git checkout 1.2.0
 
-Running 
+Running
 
     mvn install
 
@@ -46,16 +46,16 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-protobufs</artifactId>
-      <version>1.1.8</version>
+      <version>1.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
       <artifactId>concrete-java</artifactId>
-      <version>1.1.8</version>
+      <version>1.2.0</version>
     </dependency>
 
-At this time, we do not have this hosted on a public maven server. 
+At this time, we do not have this hosted on a public maven server.
 
 Using the code in your project
 ------------------------------
