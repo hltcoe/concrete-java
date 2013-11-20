@@ -63,23 +63,13 @@ struct Token {
   // optional AudioSpan audio_span = 5;
 }
 
-/** A pointer to a token. */
-struct TokenRef {
-  /** The tokenization-relative identifier for the token that is
-    * pointed at. */
-  1: i32 token_index
-
-  /** The UUID of the tokenization that contains the token. */
-  2: uuid.UUID tokenization_id
-}
-
 /** A list of pointers to tokens that all belong to the same
   * tokenization. */
 struct TokenRefSequence {
 
   /** The tokenization-relative identifiers for each token that is
     * included in this sequence. */
-  1: i32 token_index
+  1: list<i32> tokenIndexList
 
   /** An optional field that can be used to describe
    * the root of a sentence (if this sequence is a full sentence),
@@ -87,13 +77,13 @@ struct TokenRefSequence {
    * or some other form of "canonical" token in this sequence if,
    * for instance, it is not easy to map this sequence to a another
    * annotation that has a head */
-  2: optional i32 anchor_token_index = -1
+  2: optional i32 anchorTokenIndex = -1
 
   /** The UUID of the tokenization that contains the tokens. */
-  3: required uuid.UUID tokenization_id
+  3: required uuid.UUID tokenizationId
 
   // The text span associated with this TokenRefSequence.
-  4: optional TextSpan text_span
+  4: optional TextSpan textSpan
 
   // The audio span associated with this TokenRefSequence.
   // optional AudioSpan audio_span
@@ -101,7 +91,7 @@ struct TokenRefSequence {
 
 struct TaggedToken {
   /* A pointer to the token being tagged. */
-  1: optional i32 token_index
+  1: optional i32 tokenIndex
 
     /** A string containing the annotation.
          * If the tag set you are using is not case sensitive,
@@ -140,7 +130,7 @@ struct TokenTagging {
 struct Dependency {
   1: optional i32 gov        // will be null for ROOT token (only)
   2: i32 dep
-  3: optional string edge_type
+  3: optional string edgeType
 }
 
 struct DependencyParse {
@@ -169,7 +159,7 @@ struct Constituent {
    * The list of parse constituents that are directly dominated by
    * this constituent. 
    */
-  // 3: list<Constituent> child
+  3: list<i32> childList
 
   /** 
    * The list of pointers to the tokens dominated by this
@@ -201,7 +191,7 @@ struct Constituent {
 struct Parse {
   1: uuid.UUID uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: optional Constituent root
+  3: list<Constituent> root
 }
 
 
@@ -291,14 +281,15 @@ struct Tokenization {
   2: optional metadata.AnnotationMetadata metadata
   3: list<Token> tokenList
   4: optional TokenLattice lattice
+  5: TokenizationKind kind
   
-  5: optional list<TokenTagging> posTagList
-  6: optional list<TokenTagging> nerTagList
-  7: optional list<TokenTagging> lemmaList
-  8: optional list<TokenTagging> langIdList
+  6: optional TokenTagging posTagList
+  7: optional TokenTagging nerTagList
+  8: optional TokenTagging lemmaList
+  9: optional TokenTagging langIdList
 
-  9: optional list<Parse> parseList
-  10: optional list<DependencyParse> dependencyParseList
+  10: optional Parse parse
+  11: optional list<DependencyParse> dependencyParseList
 }
 
 //===========================================================================

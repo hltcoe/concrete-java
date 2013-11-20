@@ -1,5 +1,6 @@
 include "stage.thrift"
 include "text.thrift"
+include "entities.thrift"
 
 namespace java edu.jhu.hlt.concrete
 
@@ -22,15 +23,18 @@ struct LangId {
   4: map<string,double> languageToProbabilityMap
 }
 
-
-
-struct Document {
+struct Communication {
   1: string id,
-  2: DocType t
+  2: DocType type
   3: string text
   4: optional i32 time
+  
+  // annotations
   5: optional LangId lid
   6: optional text.SectionSegmentation sectionSegmentation
+  7: optional entities.EntityMentionSet entityMentionSet
+  8: optional entities.EntitySet entitySet
+  
 }
 
 exception IngestException {
@@ -44,11 +48,11 @@ exception AnnotationException {
 }
 
 service Ingester {
-  void ingest(1: Document d) throws (1: IngestException ser)
+  void ingest(1: Communication comm) throws (1: IngestException ser)
 }
 
 service Annotator {
-  void addLanguageId(1: Document document, 2: stage.Stage stage, 3: LangId lid) throws (1: AnnotationException ex)
+  void addLanguageId(1: Communication comm, 2: stage.Stage stage, 3: LangId lid) throws (1: AnnotationException ex)
 }
 
 exception RebarThriftException {
@@ -57,9 +61,9 @@ exception RebarThriftException {
 }
 
 service CorpusHandler {
-  void createCorpus(1: string corpusName, 2: set<Document> docList) throws (1: RebarThriftException ex)
+  void createCorpus(1: string corpusName, 2: set<Communication> commList) throws (1: RebarThriftException ex)
 
-  set<Document> getCorpusDocumentSet(1: string corpusName) throws (1: RebarThriftException ex)
+  set<Communication> getCorpusDocumentSet(1: string corpusName) throws (1: RebarThriftException ex)
 
   set<string> listCorpora() throws (1: RebarThriftException ex)
 
