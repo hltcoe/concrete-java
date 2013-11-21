@@ -1,6 +1,7 @@
 include "ex.thrift"
 
 namespace java edu.jhu.hlt.concrete
+namespace py concrete.stage
 
 enum StageType {
   LANG_ID = 1

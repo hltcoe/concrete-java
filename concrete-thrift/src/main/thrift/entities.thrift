@@ -1,4 +1,5 @@
 namespace java edu.jhu.hlt.concrete
+namespace py concrete.entities
 
 include "text.thrift"
 include "uuid.thrift"

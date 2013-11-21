@@ -4,6 +4,7 @@ include "entities.thrift"
 include "ex.thrift"
 
 namespace java edu.jhu.hlt.concrete
+namespace py concrete.communication
 
 enum DocType {
   OTHER = 0
