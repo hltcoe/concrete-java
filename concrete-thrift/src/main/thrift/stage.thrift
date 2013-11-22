@@ -5,7 +5,14 @@ namespace py concrete.stage
 
 enum StageType {
   LANG_ID = 1
-  LANG_PRED = 2
+  SECTION = 2
+  SENTENCE = 3
+  TOKENIZATION = 4
+
+  ENTITY_MENTIONS = 5
+  ENTITIES = 6
+
+  LANG_PRED = 99
 }
 
 struct Stage {
