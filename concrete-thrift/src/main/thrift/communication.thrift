@@ -65,13 +65,13 @@ service Annotator {
 }
 
 service Reader {
-  set<Communication> getAnnotatedCommunications (1: stage.Stage stage) throws (1: ex.RebarThriftException ex)
+  list<Communication> getAnnotatedCommunications (1: stage.Stage stage) throws (1: ex.RebarThriftException ex)
 }
 
 service CorpusHandler {
   void createCorpus(1: string corpusName, 2: set<Communication> commList) throws (1: ex.RebarThriftException ex)
 
-  set<Communication> getCorpusCommunicationSet(1: string corpusName) throws (1: ex.RebarThriftException ex)
+  list<Communication> getCorpusCommunicationSet(1: string corpusName) throws (1: ex.RebarThriftException ex)
 
   set<string> listCorpora() throws (1: ex.RebarThriftException ex)
 
