@@ -12,6 +12,9 @@ enum StageType {
   ENTITY_MENTIONS = 5
   ENTITIES = 6
 
+  SITUATION_MENTIONS = 7
+  SITUATIONS = 8
+
   LANG_PRED = 99
 }
 

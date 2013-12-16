@@ -1,12 +1,16 @@
-include "stage.thrift"
-include "text.thrift"
+include "language.thrift"
+include "structure.thrift"
 include "entities.thrift"
-include "ex.thrift"
+include "situations.thrift"
+include "uuid.thrift"
+include "email.thrift"
+include "twitter.thrift"
+include "audio.thrift"
 
 namespace java edu.jhu.hlt.concrete
 namespace py concrete.communication
 
-enum DocType {
+enum CommunicationType {
   OTHER = 0
   EMAIL = 1
   NEWS = 2
@@ -18,65 +22,26 @@ enum DocType {
   BLOG = 7
 }
 
-struct LangId {
-  1: string id
-  2: string name
-  3: string version
-  4: map<string,double> languageToProbabilityMap
-}
-
-struct LanguagePrediction {
-  1: string predictedLanguage
-}
-
 struct Communication {
   1: string id,
-  2: DocType type
-  3: string text
-  4: optional i32 time
+  2: uuid.UUID uuid
+  3: CommunicationType type
+  4: string text
+  5: optional i64 startTime
+  6: optional i64 endTime
+  
   
   // annotations
-  5: optional LangId lid
-  6: optional text.SectionSegmentation sectionSegmentation
-  7: optional entities.EntityMentionSet entityMentionSet
-  8: optional entities.EntitySet entitySet
+  10: optional language.LanguageIdentification lid
+  11: optional structure.SectionSegmentation sectionSegmentation
+  12: optional entities.EntityMentionSet entityMentionSet
+  13: optional entities.EntitySet entitySet
+  14: optional situations.SituationMentionSet situationMentionSet
+  15: optional situations.SituationSet situationSet
 
-  15: optional LanguagePrediction language
+  20: optional audio.Sound sound
+  21: optional twitter.TweetInfo tweetInfo
+  22: optional email.EmailCommunicationInfo emailInfo
   
+  30: map<string,string> keyValueMap
 }
-
-exception IngestException {
-  1: string message
-  2: optional binary serEx
-}
-
-exception AnnotationException {
-  1: string message
-  2: optional binary serEx
-}
-
-service Ingester {
-  void ingest(1: Communication comm) throws (1: ex.RebarThriftException ex)
-}
-
-service Annotator {
-  void addLanguageId(1: Communication comm, 2: stage.Stage stage, 3: LangId lid) throws (1: ex.RebarThriftException ex)
-  void addLanguagePrediction(1: Communication comm, 2: stage.Stage stage, 3: LanguagePrediction lp) throws (1: ex.RebarThriftException ex)
-}
-
-service Reader {
-  list<Communication> getAnnotatedCommunications (1: stage.Stage stage) throws (1: ex.RebarThriftException ex)
-}
-
-service CorpusHandler {
-  void createCorpus(1: string corpusName, 2: set<Communication> commList) throws (1: ex.RebarThriftException ex)
-
-  list<Communication> getCorpusCommunicationSet(1: string corpusName) throws (1: ex.RebarThriftException ex)
-
-  set<string> listCorpora() throws (1: ex.RebarThriftException ex)
-
-  void deleteCorpus(1: string corpusName) throws (1: ex.RebarThriftException ex)
-
-  bool corpusExists(1: string corpusName) throws (1: ex.RebarThriftException ex)
-}
-

@@ -1,7 +1,7 @@
 namespace java edu.jhu.hlt.concrete
 namespace py concrete.entities
 
-include "text.thrift"
+include "structure.thrift"
 include "uuid.thrift"
 include "metadata.thrift"
 
@@ -84,7 +84,7 @@ struct EntitySet {
    */
   1: uuid.UUID uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: set<Entity> entitySet
+  3: list<Entity> entityList
 }
 
 enum PhraseType {
@@ -125,7 +125,7 @@ struct EntityMention {
    * A unique idenifier for this entity mention.
    */
   1: uuid.UUID uuid
-  2: text.TokenRefSequence tokens
+  2: structure.TokenRefSequence tokens
   3: EntityType entityType
   4: PhraseType phraseType
   
@@ -148,5 +148,5 @@ struct EntityMentionSet {
    */
   1: uuid.UUID uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: set<EntityMention> mentionSet
+  3: list<EntityMention> mentionSet
 }
