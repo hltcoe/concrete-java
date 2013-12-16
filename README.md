@@ -24,7 +24,17 @@ Concrete requires the following:
 Installation
 ------------
 
-First, checkout our latest tag:
+Note: by default, the thrift plugin uses:
+    
+    /usr/local/bin/thrift
+    
+to locate the thrift executable. If you have installed this in a different location, update
+
+    <thrift.exe>
+    
+in the properties of core/pom.xml. 
+
+First, checkout our latest code:
 
     git clone git@github.com:hltcoe/concrete.git
 
