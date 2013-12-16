@@ -214,7 +214,7 @@ struct Constituent {
 struct Parse {
   1: uuid.UUID uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: list<Constituent> root
+  3: list<Constituent> constituentList
 }
 
 struct LatticePath {
