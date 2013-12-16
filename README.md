@@ -18,17 +18,15 @@ Requirements
 
 Concrete requires the following:
 * Java, 1.7 or greater
-* Maven, 3.0.4 or greater
-* Google protocol buffers, v. 2.5.0
-  https://code.google.com/p/protobuf/
+* [Apache Maven](http://maven.apache.org/), 3.0.4 or greater
+* [Apache Thrift](http://thrift.apache.org/)
 
 Installation
 ------------
 
 First, checkout our latest tag:
 
-    git fetch --tags
-    git checkout 1.2.0
+    git clone git@github.com:hltcoe/concrete.git
 
 Running
 
@@ -45,14 +43,8 @@ dependency to your project's pom.xml file, once installed or deployed:
 
     <dependency>
       <groupId>edu.jhu.hlt.concrete</groupId>
-      <artifactId>concrete-protobufs</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>edu.jhu.hlt.concrete</groupId>
-      <artifactId>concrete-java</artifactId>
-      <version>1.2.0</version>
+      <artifactId>concrete-core</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server.
