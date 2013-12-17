@@ -9,7 +9,7 @@ Introduction
 ------------
 
 Concrete is an attempt to map out various NLP data types in a
-protocol buffer schema for use in projects across Johns Hopkins University.
+Thrift schema for use in projects across Johns Hopkins University.
 This standardized schema allows researchers to use a common, underlying data
 model for all NLP tasks, and thus, facilitating integration between projects.
 
@@ -25,14 +25,14 @@ Installation
 ------------
 
 Note: by default, the thrift plugin uses:
-    
+
     /usr/local/bin/thrift
-    
+
 to locate the thrift executable. If you have installed this in a different location, update
 
     <thrift.exe>
-    
-in the properties of core/pom.xml. 
+
+in the properties of core/pom.xml.
 
 First, checkout our latest code:
 
@@ -47,7 +47,7 @@ will install the plugin to your local repository.
 Adding to your project
 ----------------------
 
-This plugin creates compiled Java classes that reflect our protocol buffer
+This plugin creates compiled Java classes that reflect our Thrift
 definitions. You can use these in your java code by adding the following
 dependency to your project's pom.xml file, once installed or deployed:
 
@@ -62,6 +62,6 @@ At this time, we do not have this hosted on a public maven server.
 Using the code in your project
 ------------------------------
 
-Compiled java classes end up in the edu.jhu.hlt.concrete package. The protocol
-buffers generate many classes; additional technical documentation can be found
-in the comments of the protocol buffer definitions themselves.
+Compiled java classes end up in the edu.jhu.hlt.concrete package. The Thrift
+structures generate many classes; additional technical documentation can be found
+in the comments of the thrift definitions themselves.
