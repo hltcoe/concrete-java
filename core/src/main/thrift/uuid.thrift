@@ -7,8 +7,6 @@ namespace py concrete.uuid
 
 /**
  * A 16-byte UUID identifier.
- * 
- * @see http://en.wikipedia.org/wiki/Universally_unique_identifier
  */
 struct UUID {
   1: i64 high
