@@ -15,15 +15,37 @@ import edu.jhu.hlt.concrete.SectionKind
 import edu.jhu.hlt.concrete.util.ConcreteUtil
 
 /**
- * @author max
- *
- */
+  * This object represents a way to apply a single `SectionSegmentation` with a single `Section` to a `Communication` object.
+  * 
+  * @author max
+  *
+  */
 object SingleSectionSegmenter {
+  /**
+    * Return the `AnnotationMetadata` for this `SingleSectionSegmenter` (a constant value).
+    */
   val Metadata: AnnotationMetadata = new AnnotationMetadata()
                                             .setConfidence(1)
-                                            .setTool("SingleSectionSegmenter v1.0s")
+                                            .setTool("SingleSectionSegmenter v2.0.0-scala")
                                             .setTimestamp(System.currentTimeMillis() / 1000)
-  
+  /**
+    * Return a `Communication` object with a single `SectionSegmentation`. The SectionSegmentation contains a single
+    * `Section` whose `TextSpan` has a start at character 0 and an end at the length of the Communication's text value.
+    * 
+    * {{{
+    * scala> val comm = new Communication().setText("hello world!")...
+    * comm: edu.jhu.hlt.concrete.Communication = Communication(...)
+    * 
+    * scala> import concrete.examples.scala.SingleSectionSegmenter
+    * import concrete.examples.scala.SingleSectionSegmenter
+    * 
+    * scala> val singleSectionSeg = SingleSectionSegmenter.sectionCommunication(comm)
+    * singleSectionSeg: edu.jhu.hlt.concrete.SectionSegmentation = SectionSegmentation(...)
+    * 
+    * scala> singleSectionSeg.sectionList.get(0).textSpan
+    * res9: edu.jhu.hlt.concrete.TextSpan = TextSpan(start:0, ending:12)
+    * }}}
+    */
   def sectionCommunication(comm : Communication) : SectionSegmentation = {
     val textSpan = new TextSpan().setStart(0).setEnding(comm.getText().length())
     val section = new Section()
