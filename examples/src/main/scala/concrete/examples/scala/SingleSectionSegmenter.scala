@@ -29,8 +29,13 @@ object SingleSectionSegmenter {
                                             .setTool("SingleSectionSegmenter v2.0.0-scala")
                                             .setTimestamp(System.currentTimeMillis() / 1000)
   /**
-    * Return a `Communication` object with a single `SectionSegmentation`. The SectionSegmentation contains a single
-    * `Section` whose `TextSpan` has a start at character 0 and an end at the length of the Communication's text value.
+    * Return a `SectionSegmentation` object with a single `Section`. The `Section`
+    * contains a single `TextSpan` with a start at character 0 and an end at the 
+    * length of the Communication's text value.
+    * 
+    * @param comm A `Communication` that will be used to generate the `SectionSegmentation`.
+    * @return A `SectionSegmentation` as described above.
+    * @since 2.0.0-SNAPSHOT
     * 
     * {{{
     * scala> val comm = new Communication().setText("hello world!")...
