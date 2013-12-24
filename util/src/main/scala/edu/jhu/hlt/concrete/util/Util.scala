@@ -21,11 +21,11 @@ object ConcreteUtil {
 }
 
 /**
-  * A wrapper around [[TextSpan]] that provides additional utility methods for working with TextSpan objects. 
+  * A wrapper around `TextSpan` that provides additional utility methods for working with TextSpan objects. 
   */
 class SuperTextSpan(textSpan: TextSpan) {
   /**
-    * Returns a `String` that represents the text of the original document that this [[TextSpan]] object points to.
+    * Returns a `String` that represents the text of the original document that this `TextSpan` object points to.
     */
   def getSpanText(text: String) : String = {
     text.substring(textSpan.getStart, textSpan.getEnding)
