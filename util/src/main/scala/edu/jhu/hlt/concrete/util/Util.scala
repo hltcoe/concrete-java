@@ -3,7 +3,13 @@
  */
 package edu.jhu.hlt.concrete.util
 
-import edu.jhu.hlt.concrete.{UUID, TextSpan}
+import edu.jhu.hlt.concrete.{UUID, TextSpan, Communication}
+import java.io.{BufferedInputStream, FileInputStream, File}
+import org.apache.thrift.TDeserializer
+import org.apache.thrift.protocol.TBinaryProtocol
+
+import scala.collection.JavaConversions._
+import scala.language.postfixOps
 
 /**
   * Utility code for working with Concrete objects.
@@ -11,6 +17,31 @@ import edu.jhu.hlt.concrete.{UUID, TextSpan}
   * @author max
   */
 object ConcreteUtil {
+  private val DefaultDeserializer = new TDeserializer(new TBinaryProtocol.Factory())
+
+  /**
+    * Use a default deserialization strategy to return a `Communication` object from a Java `File`.
+    * @param file a Java `File` object representing a serialized Concrete `Communication`.
+    * @return a `Communication` object.
+    */
+  def deserializeFile(file: File) : Communication = {
+    val comm = new Communication()
+    val bis = new BufferedInputStream(new FileInputStream(file))
+    val byteArray = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
+    bis.close
+    DefaultDeserializer.deserialize(comm, byteArray)
+    comm
+  }
+
+  /**
+    * Use a default deserialization strategy to return a `Communication` object from a file path.
+    * @param path The path to a serialized Concrete `Communication`.
+    * @return a `Communication` object.
+    */
+  def deserializeFile(path: String) : Communication = {
+    deserializeFile(new File(path))
+  }
+
   /**
     * Return a randomly generated Concrete `UUID` object. 
     */
