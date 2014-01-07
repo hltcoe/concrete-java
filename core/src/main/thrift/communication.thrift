@@ -22,6 +22,9 @@ enum CommunicationType {
   BLOG = 7
 }
 
+/**
+ * A communication.
+ */
 struct Communication {
   1: string id,
   2: uuid.UUID uuid
@@ -43,5 +46,5 @@ struct Communication {
   21: optional twitter.TweetInfo tweetInfo
   22: optional email.EmailCommunicationInfo emailInfo
   
-  30: map<string,string> keyValueMap
+  // 30: map<string,string> keyValueMap
 }

@@ -2,7 +2,7 @@ include "uuid.thrift"
 include "metadata.thrift"
 
 namespace java edu.jhu.hlt.concrete
-namespace py concrete.communication
+namespace py concrete.discourse
 /**
  * A reference to an Entity in a Communication.
  */
