@@ -3,7 +3,7 @@ include "structure.thrift"
 include "metadata.thrift"
 
 namespace java edu.jhu.hlt.concrete
-namespace py concrete.communication
+namespace py concrete.situations
 
 /** 
  *Enumerated type used to record the relationship between an
