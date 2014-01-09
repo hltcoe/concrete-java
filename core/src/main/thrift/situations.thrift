@@ -397,7 +397,7 @@ struct SituationSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: uuid.UUID id
+  1: uuid.UUID uuid
 
   /** 
    * Information about where this set came from. 
