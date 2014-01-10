@@ -2,4 +2,5 @@
 
 ## Introduction ##
 
-This is a Java utility library based around Concrete that provides some useful utility methods.
+This is a Scala-based library that provides some useful
+utility methods for Concrete.
