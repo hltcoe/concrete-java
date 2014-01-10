@@ -3,6 +3,7 @@ namespace py concrete.text
 
 include "uuid.thrift"
 include "metadata.thrift"
+include "audio.thrift"
 
 //===========================================================================
 // Spans in Text/Audio
@@ -60,12 +61,16 @@ struct Token {
    * no more precise value seems appropriate. */
   3: optional TextSpan textSpan
 
-  /** Location of this token in the original audio. */
-  // optional AudioSpan audio_span = 5;
+  /** 
+   * Location of this token in the original audio. 
+   */
+  4: optional audio.AudioSpan audioSpan
 }
 
-/** A list of pointers to tokens that all belong to the same
-  * tokenization. */
+/** 
+ * A list of pointers to tokens that all belong to the same
+ * tokenization. 
+ */
 struct TokenRefSequence {
 
   /** The tokenization-relative identifiers for each token that is
@@ -87,7 +92,7 @@ struct TokenRefSequence {
   4: optional TextSpan textSpan
 
   // The audio span associated with this TokenRefSequence.
-  // optional AudioSpan audio_span
+  5: optional audio.AudioSpan audioSpan
 }
 
 struct TaggedToken {
