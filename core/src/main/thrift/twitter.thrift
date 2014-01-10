@@ -1,5 +1,6 @@
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.twitter
+#@namespace scala edu.jhu.hlt.concrete
 
 //===========================================================================
 // Twitter Metadata

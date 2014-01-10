@@ -1,5 +1,6 @@
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.email
+#@namespace scala edu.jhu.hlt.concrete
 
 /** 
  * An email address, optionally accompanied by a display_name. These

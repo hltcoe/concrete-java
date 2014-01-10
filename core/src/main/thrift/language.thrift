@@ -1,8 +1,9 @@
 include "uuid.thrift"
 include "metadata.thrift"
 
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.language
+#@namespace scala edu.jhu.hlt.concrete
 
 struct LanguageIdentification {
   1: uuid.UUID uuid

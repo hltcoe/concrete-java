@@ -1,5 +1,6 @@
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.ex
+#@namespace scala edu.jhu.hlt.concrete
 
 exception RebarThriftException {
   1: string message

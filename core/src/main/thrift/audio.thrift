@@ -1,11 +1,13 @@
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.audio
+#@namespace scala edu.jhu.hlt.concrete
 
 //===========================================================================
 // Audio Data
 //===========================================================================
 
-/** A sound wave. A separate optional field is defined for each
+/** 
+ * A sound wave. A separate optional field is defined for each
  * suppported format. Typically, a Sound object will only define
  * a single field.
  *
@@ -18,7 +20,8 @@ struct Sound {
   2: optional binary mp3
   3: optional binary sph
 
-  /** An absolute path to a file on disk where the sound file can be
+  /** 
+   * An absolute path to a file on disk where the sound file can be
    * found. It is assumed that this path will be accessable from any
    * machine that the system is run on (i.e., it should be a shared
    * disk, or possibly a mirrored directory). 

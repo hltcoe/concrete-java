@@ -7,8 +7,9 @@ include "email.thrift"
 include "twitter.thrift"
 include "audio.thrift"
 
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.communication
+#@namespace scala edu.jhu.hlt.concrete
 
 enum CommunicationType {
   OTHER = 0

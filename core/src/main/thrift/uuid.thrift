@@ -1,5 +1,6 @@
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.uuid
+#@namespace scala edu.jhu.hlt.concrete
 
 //===========================================================================
 // Universally Unique Identifiers

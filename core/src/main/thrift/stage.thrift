@@ -1,7 +1,8 @@
 include "ex.thrift"
 
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.stage
+#@namespace scala edu.jhu.hlt.concrete
 
 enum StageType {
   LANG_ID = 1

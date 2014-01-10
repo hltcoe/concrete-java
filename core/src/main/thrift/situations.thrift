@@ -2,8 +2,9 @@ include "uuid.thrift"
 include "structure.thrift"
 include "metadata.thrift"
 
-namespace java edu.jhu.hlt.concrete
+namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.situations
+#@namespace scala edu.jhu.hlt.concrete
 
 /** 
  *Enumerated type used to record the relationship between an
