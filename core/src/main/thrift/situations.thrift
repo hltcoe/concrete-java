@@ -1,10 +1,11 @@
-include "uuid.thrift"
 include "structure.thrift"
 include "metadata.thrift"
 
 namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.situations
 #@namespace scala edu.jhu.hlt.concrete
+
+typedef string UUID
 
 /** 
  *Enumerated type used to record the relationship between an
@@ -70,10 +71,10 @@ struct Argument {
    *A pointer to the value of this argument, if it is explicitly
    * encoded as an Entity or a Situation. 
    */
-  2: optional uuid.UUID entityId
+  2: optional UUID entityId
 
   // A pointer to the value of this argument, if it is a situation.
-  3: optional uuid.UUID situationId
+  3: optional UUID situationId
 
   
   /** 
@@ -106,7 +107,7 @@ struct Justification {
   /** 
    * A pointer to the SituationMention itself. 
    */
-  2: uuid.UUID mentionId
+  2: UUID mentionId
 
   /** 
    * An optional list of pointers to tokens that are (especially)
@@ -314,7 +315,7 @@ enum SituationType {
 struct Situation {
   /** Unique identifier for this situation. 
    */
-  1: uuid.UUID uuid
+  1: UUID uuid
 
   /** The core type of this situation (eg EVENT or SENTIMENT) 
    */
@@ -330,7 +331,7 @@ struct Situation {
   /** Ids of the mentions of this situation in a communication
    * (type=SituationMention) 
    */
-  4: optional list<uuid.UUID> mentionIdList
+  4: optional list<UUID> mentionIdList
 
   /** An list of pointers to SituationMentions that provide
    * justification for this situation. These mentions may be either
@@ -398,7 +399,7 @@ struct SituationSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: uuid.UUID uuid
+  1: UUID uuid
 
   /** 
    * Information about where this set came from. 
@@ -427,7 +428,7 @@ struct SituationMention {
   /** 
    * Unique identifier for this situation. 
    */
-  1: uuid.UUID uuid
+  1: UUID uuid
 
   /** The text content of this situation mention. This field is
    * often redundant with the 'tokens' field, and may not
@@ -496,7 +497,7 @@ struct SituationMention {
 struct SituationMentionSet {
   /** Unique identifier for this set. 
    */
-  1: uuid.UUID uuid
+  1: UUID uuid
 
   /** Information about where this set came from. 
    */

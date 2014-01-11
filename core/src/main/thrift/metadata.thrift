@@ -2,6 +2,9 @@ namespace java edu.jhu.hlt.concrete.java
 namespace py concrete.metadata
 #@namespace scala edu.jhu.hlt.concrete
 
+typedef string UUID
+typedef i64 DateTime
+
 //===========================================================================
 // Metadata
 //===========================================================================
@@ -14,7 +17,8 @@ namespace py concrete.metadata
  * information in whatever way is convenient. 
  */
 struct Digest {
-  /** The following fields define various ways you can store the
+  /** 
+   * The following fields define various ways you can store the
    * digest data (for convenience). If none of these meets your
    * needs, then serialize the digest to a byte sequence and store it
    * in bytesValue. 
@@ -23,25 +27,29 @@ struct Digest {
   2: optional i64 int64Value
   3: optional double doubleValue
   4: optional string stringValue
-  5: list<i64> int64List
-  6: list<double> doubleList
-  7: list<string> stringList
+  5: optional list<i64> int64List
+  6: optional list<double> doubleList
+  7: optional list<string> stringList
 }
 
-/** Metadata associated with an annotation or a set of annotations,
+/** 
+ * Metadata associated with an annotation or a set of annotations,
  * that identifies where those annotations came from. 
  */
 struct AnnotationMetadata {
-  /** The name of the tool that generated this annotation. 
+  /** 
+   * The name of the tool that generated this annotation. 
    */
   1: optional string tool
 
-  /** The time at which this annotation was generated (in unix time
+  /** 
+   * The time at which this annotation was generated (in unix time
    * UTC -- i.e., seconds since January 1, 1970). 
    */
-  2: optional i64 timestamp
+  2: optional DateTime timestamp
 
-  /** Confidence score. To do: define what this means!!! 
+  /** 
+   * Confidence score. To do: define what this means!!! 
    */
   3: optional double confidence
 
