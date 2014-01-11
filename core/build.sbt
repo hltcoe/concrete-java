@@ -14,6 +14,6 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "finagle-thrift" % "6.10.0"
 )
 
-resolvers += "Local Maven Repository" at "file://"+Path.userHome+"/.m2/repository"
+// resolvers += "Local Maven Repository" at "file://"+Path.userHome+"/.m2/repository"
 
-publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+// publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
