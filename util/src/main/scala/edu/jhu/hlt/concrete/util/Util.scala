@@ -3,7 +3,7 @@
  */
 package edu.jhu.hlt.concrete.util
 
-import edu.jhu.hlt.concrete.{Uuid, TextSpan, Communication}
+import edu.jhu.hlt.concrete.{TextSpan, Communication}
 import java.io.{BufferedInputStream, FileInputStream, File}
 import org.apache.thrift.TDeserializer
 import org.apache.thrift.protocol.TBinaryProtocol
@@ -44,13 +44,6 @@ object ConcreteUtil {
     */
   def deserializeFile(path: String) : Communication = {
     deserializeFile(new File(path))
-  }
-
-  /**
-    * Return a randomly generated Concrete `Uuid` object.
-    */
-  def generateUUID : Uuid = {
-    Uuid(java.util.UUID.randomUUID().toString)
   }
 }
 
