@@ -1,9 +1,7 @@
 /**
  *
  */
-package edu.jhu.hlt.concrete.util
-
-import edu.jhu.hlt.concrete.{TextSpan, Communication, CommunicationType}
+package edu.jhu.hlt.concrete
 
 /**
   * Utility code for working with Concrete objects.
@@ -23,10 +21,12 @@ object Util {
   def generateCommunication : Communication = {
     val rInt = r.nextInt
     val docIdStr = s"Communication_$rInt"
-    val uuidStr = java.util.UUID.randomUUID.toString
+    val uuidStr = randomUuid
     val text = "Lorem Ipsum. This is some sample text!"
     new Communication(docIdStr, uuidStr, CommunicationType.OTHER, text)
   }
+
+  def randomUuid : String = java.util.UUID.randomUUID.toString
 }
 
 /**

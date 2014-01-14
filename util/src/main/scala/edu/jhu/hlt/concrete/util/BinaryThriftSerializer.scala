@@ -1,9 +1,8 @@
 /**
  *
  */
-package edu.jhu.hlt.concrete.util
+package edu.jhu.hlt.concrete
 
-import edu.jhu.hlt.concrete.{TextSpan, Communication, CommunicationType}
 import java.io.{BufferedInputStream, FileInputStream, File, InputStream}
 import org.apache.thrift.{TDeserializer, TSerializer, TBase, TFieldIdEnum}
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol, TProtocol,
