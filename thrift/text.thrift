@@ -1,6 +1,6 @@
-namespace java edu.jhu.hlt.concrete.java
+namespace java edu.jhu.hlt.concrete
 namespace py concrete.text
-#@namespace scala edu.jhu.hlt.concrete
+#@namespace scala edu.jhu.hlt.miser
 
 include "metadata.thrift"
 include "audio.thrift"

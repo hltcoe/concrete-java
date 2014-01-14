@@ -1,8 +1,8 @@
 include "metadata.thrift"
 
-namespace java edu.jhu.hlt.concrete.java
+namespace java edu.jhu.hlt.concrete
 namespace py concrete.discourse
-#@namespace scala edu.jhu.hlt.concrete
+#@namespace scala edu.jhu.hlt.miser
 
 typedef string UUID
 typedef i64 DateTime

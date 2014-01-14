@@ -6,9 +6,9 @@ include "email.thrift"
 include "twitter.thrift"
 include "audio.thrift"
 
-namespace java edu.jhu.hlt.concrete.java
+namespace java edu.jhu.hlt.concrete
 namespace py concrete.communication
-#@namespace scala edu.jhu.hlt.concrete
+#@namespace scala edu.jhu.hlt.miser
 
 typedef string UUID
 typedef i64 DateTime

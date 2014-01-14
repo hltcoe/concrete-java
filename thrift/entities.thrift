@@ -1,6 +1,6 @@
-namespace java edu.jhu.hlt.concrete.java
+namespace java edu.jhu.hlt.concrete
 namespace py concrete.entities
-#@namespace scala edu.jhu.hlt.concrete
+#@namespace scala edu.jhu.hlt.miser
 
 include "structure.thrift"
 include "metadata.thrift"

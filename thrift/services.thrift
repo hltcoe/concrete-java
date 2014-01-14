@@ -9,9 +9,9 @@ include "twitter.thrift"
 include "audio.thrift"
 include "communication.thrift"
 
-namespace java edu.jhu.hlt.concrete.java.services
+namespace java edu.jhu.hlt.concrete.services
 namespace py concrete.services
-#@namespace scala edu.jhu.hlt.concrete.services
+#@namespace scala edu.jhu.hlt.miser.services
 
 service Ingester {
   void ingest(1: communication.Communication comm) throws (1: ex.RebarThriftException ex)
