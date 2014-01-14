@@ -44,9 +44,22 @@ class SuperTextSpan(textSpan: TextSpan) {
 }
 
 /**
-  * A wrapper around `Communication` that provides additional utility
-  * methods.
+  * A wrapper around `Communication` that provides additional
+  * functionality.
   */
 class SuperCommunication(comm: Communication) {
+  private val populated : Boolean =
+    comm.id != null &
+    comm.uuid != null &
+    comm.`type` != null &
+    comm.text != null
 
+  lazy val valid : Boolean = populated & validUuid
+
+  private def validUuid : Boolean = try {
+    java.util.UUID.fromString(comm.uuid)
+    true
+  } catch {
+    case _ : Exception => false
+  }
 }
