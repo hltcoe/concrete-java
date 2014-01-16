@@ -4,7 +4,6 @@ namespace py concrete.situations
 
 include "structure.thrift"
 include "metadata.thrift"
-include "constants.thrift"
 
 /** 
  * Enumerated type used to record the relationship between an
