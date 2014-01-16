@@ -186,7 +186,8 @@ struct Constituent {
   5: optional i32 headChildIndex = -1
 }
 
-/** A theory about the syntactic parse of a sentence.
+/** 
+ * A theory about the syntactic parse of a sentence.
  *
  * \note If we add support for parse forests in the future, then it
  * will most likely be done by adding a new field (e.g.
@@ -198,7 +199,7 @@ struct Constituent {
 struct Parse {
   1: string uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: list<Constituent> root
+  3: list<Constituent> constituentList
 }
 
 
