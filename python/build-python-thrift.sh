@@ -20,5 +20,5 @@ fi
 
 for P in `find $1 -name '*.thrift'`
 do
-    thrift -gen py $P
+    thrift --gen py:new_style,utf8strings $P
 done
