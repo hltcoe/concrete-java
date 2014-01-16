@@ -1,33 +1,30 @@
-include "metadata.thrift"
-
 namespace java edu.jhu.hlt.concrete
 namespace py concrete.discourse
 #@namespace scala edu.jhu.hlt.miser
 
-typedef string UUID
-typedef i64 DateTime
+include "metadata.thrift"
 
 /**
  * A reference to an Entity in a Communication.
  */
 struct EntityRef {
-  1: UUID entityId                // type=Entity
-  2: UUID communicationId        // type=Communication
+  1: string entityId                // type=Entity
+  2: string communicationId        // type=Communication
 }
 
 /**
  * A reference to a Situation in a Communication.
  */
 struct SituationRef {
-  1: UUID situationId                // type=Situation
-  2: UUID communicationId        // type=Communication
+  1: string situationId                // type=Situation
+  2: string communicationId        // type=Communication
 }
 
 /**
  * represents one Entity in a cross-doc situation coref/alignment
  */
 struct DiscourseEntity {
-  1: UUID uuid
+  1: string uuid
   2: list<EntityRef> entityRefList                        // all mentions of this entity
   3: optional double confidence
 }
@@ -36,7 +33,7 @@ struct DiscourseEntity {
  * represents one Situation in a cross-doc situation coref/alignment
  */
 struct DiscourseSituation {
-  1: UUID uuid
+  1: string uuid
   2: list<SituationRef> situationRefList                // all mentions of this situation
   3: optional double confidence
 }
@@ -46,7 +43,7 @@ struct DiscourseSituation {
  */
 struct DiscourseAnnotation {        // come in gold and synthetic varieties
   // The ID associated with this DiscourseAnnotation.
-  1: UUID uuid
+  1: string uuid
 
   // The metadata associated with the tool responsible for suggesting this DiscourseAnnotation.
   2: metadata.AnnotationMetadata metadata
@@ -66,7 +63,7 @@ struct DiscourseAnnotation {        // come in gold and synthetic varieties
 struct Discourse {        
 
   // the ID associated with this Discourse object.
-  1: UUID uuid
+  1: string uuid
 
   /**
    * the tool that identified this set of Communications

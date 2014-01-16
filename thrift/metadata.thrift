@@ -2,9 +2,6 @@ namespace java edu.jhu.hlt.concrete
 namespace py concrete.metadata
 #@namespace scala edu.jhu.hlt.miser
 
-typedef string UUID
-typedef i64 DateTime
-
 //===========================================================================
 // Metadata
 //===========================================================================
@@ -46,7 +43,7 @@ struct AnnotationMetadata {
    * The time at which this annotation was generated (in unix time
    * UTC -- i.e., seconds since January 1, 1970). 
    */
-  2: optional DateTime timestamp
+  2: optional i64 timestamp
 
   /** 
    * Confidence score. To do: define what this means!!! 

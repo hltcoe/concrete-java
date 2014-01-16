@@ -4,9 +4,6 @@ namespace py concrete.structure
 
 include "metadata.thrift"
 
-typedef string UUID
-typedef i64 DateTime
-
 //===========================================================================
 // Spans in Text/Audio
 //===========================================================================
@@ -108,7 +105,7 @@ struct TokenRefSequence {
   /** 
    * The UUID of the tokenization that contains the tokens. 
    */
-  3: required UUID tokenizationId
+  3: required string tokenizationId
 
   // The text span associated with this TokenRefSequence.
   4: optional TextSpan textSpan
@@ -150,7 +147,7 @@ struct TaggedToken {
  * (eg treebank tags), or for adding compound tags.
  */
 struct TokenTagging {
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<TaggedToken> taggedTokenList
 }
@@ -162,7 +159,7 @@ struct Dependency {
 }
 
 struct DependencyParse {
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<Dependency> dependencyList
 }
@@ -217,7 +214,7 @@ struct Constituent {
  * using a simple tree or a parse forest.
  */
 struct Parse {
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<Constituent> constituentList
 }
@@ -302,7 +299,7 @@ struct Tokenization {
   /*
    * Unique identifier for this tokenization. 
    */ 
-  1: UUID uuid  
+  1: string uuid  
   2: optional metadata.AnnotationMetadata metadata
   3: list<Token> tokenList
   4: optional TokenLattice lattice
@@ -316,7 +313,7 @@ struct Tokenization {
   10: optional Parse parse
   11: optional list<DependencyParse> dependencyParseList
 
-  12: UUID sentenceId
+  12: string sentenceId
 }
 
 struct TokenizationCollection {
@@ -332,7 +329,7 @@ struct TokenizationCollection {
  * A single sentence or utterance in a communication. 
  */
 struct Sentence {
-  1: UUID uuid
+  1: string uuid
   2: Tokenization tokenization
   3: optional TextSpan textSpan
   4: optional AudioSpan audioSpan
@@ -344,10 +341,10 @@ struct Sentence {
  * SentenceSegmentation should be ordered and non-overlapping. 
  */
 struct SentenceSegmentation {
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<Sentence> sentenceList
-  4: UUID sectionId
+  4: string sectionId
 }
 
 /**
@@ -384,7 +381,7 @@ enum SectionKind {
  * contain a list of sentences. 
  */
 struct Section { 
-  1: UUID uuid
+  1: string uuid
   2: SentenceSegmentation sentenceSegmentation
   3: optional TextSpan textSpan
   4: SectionKind kind
@@ -408,7 +405,7 @@ struct Section {
  * and non-overlapping. 
  */
 struct SectionSegmentation {
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<Section> sectionList
 }

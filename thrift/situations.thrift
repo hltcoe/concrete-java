@@ -1,14 +1,13 @@
-include "structure.thrift"
-include "metadata.thrift"
-
 namespace java edu.jhu.hlt.concrete
 namespace py concrete.situations
 #@namespace scala edu.jhu.hlt.miser
 
-typedef string UUID
+include "structure.thrift"
+include "metadata.thrift"
+include "constants.thrift"
 
 /** 
- *Enumerated type used to record the relationship between an
+ * Enumerated type used to record the relationship between an
  * argument and the situation that owns it. 
  */
 enum Role {
@@ -71,10 +70,10 @@ struct Argument {
    *A pointer to the value of this argument, if it is explicitly
    * encoded as an Entity or a Situation. 
    */
-  2: optional UUID entityId
+  2: optional string entityId
 
   // A pointer to the value of this argument, if it is a situation.
-  3: optional UUID situationId
+  3: optional string situationId
 
   
   /** 
@@ -107,7 +106,7 @@ struct Justification {
   /** 
    * A pointer to the SituationMention itself. 
    */
-  2: UUID mentionId
+  2: string mentionId
 
   /** 
    * An optional list of pointers to tokens that are (especially)
@@ -315,7 +314,7 @@ enum SituationType {
 struct Situation {
   /** Unique identifier for this situation. 
    */
-  1: UUID uuid
+  1: string uuid
 
   /** The core type of this situation (eg EVENT or SENTIMENT) 
    */
@@ -331,7 +330,7 @@ struct Situation {
   /** Ids of the mentions of this situation in a communication
    * (type=SituationMention) 
    */
-  4: optional list<UUID> mentionIdList
+  4: optional list<string> mentionIdList
 
   /** An list of pointers to SituationMentions that provide
    * justification for this situation. These mentions may be either
@@ -399,7 +398,7 @@ struct SituationSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: UUID uuid
+  1: string uuid
 
   /** 
    * Information about where this set came from. 
@@ -428,7 +427,7 @@ struct SituationMention {
   /** 
    * Unique identifier for this situation. 
    */
-  1: UUID uuid
+  1: string uuid
 
   /** The text content of this situation mention. This field is
    * often redundant with the 'tokens' field, and may not
@@ -497,7 +496,7 @@ struct SituationMention {
 struct SituationMentionSet {
   /** Unique identifier for this set. 
    */
-  1: UUID uuid
+  1: string uuid
 
   /** Information about where this set came from. 
    */

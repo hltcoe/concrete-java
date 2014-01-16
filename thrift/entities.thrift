@@ -5,9 +5,6 @@ namespace py concrete.entities
 include "structure.thrift"
 include "metadata.thrift"
 
-typedef string UUID
-typedef i64 DateTime
-
 /** 
  * A span of text with a specific referent, such as a person,
  * organization, or time. Things that can be referred to by a mention
@@ -70,8 +67,8 @@ enum EntityType {
  * thought of as a coreference set.
  */
 struct Entity {
-  1: UUID uuid
-  2: list<UUID> mentionIdList
+  1: string uuid
+  2: list<string> mentionIdList
   3: EntityType type
   4: optional double confidence
   5: optional string canonicalName
@@ -85,7 +82,7 @@ struct EntitySet {
   /** 
    * Unique identifier for this set. 
    */
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<Entity> entityList
 }
@@ -127,7 +124,7 @@ struct EntityMention {
   /*
    * A unique idenifier for this entity mention.
    */
-  1: UUID uuid
+  1: string uuid
   2: structure.TokenRefSequence tokens
   3: EntityType entityType
   4: PhraseType phraseType
@@ -149,7 +146,7 @@ struct EntityMentionSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: UUID uuid
+  1: string uuid
   2: optional metadata.AnnotationMetadata metadata
   3: list<EntityMention> mentionSet
 }

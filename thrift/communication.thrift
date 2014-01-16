@@ -1,3 +1,7 @@
+namespace java edu.jhu.hlt.concrete
+namespace py concrete.communication
+#@namespace scala edu.jhu.hlt.miser
+
 include "language.thrift"
 include "structure.thrift"
 include "entities.thrift"
@@ -5,13 +9,6 @@ include "situations.thrift"
 include "email.thrift"
 include "twitter.thrift"
 include "audio.thrift"
-
-namespace java edu.jhu.hlt.concrete
-namespace py concrete.communication
-#@namespace scala edu.jhu.hlt.miser
-
-typedef string UUID
-typedef i64 DateTime
 
 enum CommunicationType {
   OTHER = 0
@@ -30,7 +27,7 @@ enum CommunicationType {
  */
 struct Communication {
   1: required string id
-  2: required UUID uuid
+  2: required string uuid
   3: required CommunicationType type
   4: required string text
   5: optional i64 startTime
