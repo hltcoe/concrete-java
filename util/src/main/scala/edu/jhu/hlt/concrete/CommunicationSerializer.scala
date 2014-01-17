@@ -20,8 +20,8 @@ import scala.language.postfixOps
   */
 object CommunicationSerializer {
   val protocolFactory = new TBinaryProtocol.Factory
-  val ser = new TSerializer(protocolFactory)
-  val deser = new TDeserializer(protocolFactory)
+  def ser = new TSerializer(protocolFactory)
+  def deser = new TDeserializer(protocolFactory)
 
   def toBytes (comm: Communication) : Array[Byte] = {
     ser.serialize(comm)
