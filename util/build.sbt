@@ -7,7 +7,9 @@ organization := "edu.jhu.hlt"
 scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
-  "edu.jhu.hlt" % "concrete-core" % "2.0.3-SNAPSHOT"
+  "edu.jhu.hlt" % "concrete-core" % "2.0.3-SNAPSHOT",
+  "org.slf4j" % "slf4j-api" % "1.7.5",
+  "org.specs2" %% "specs2" % "2.3.7" % "test"
 )
 
 resolvers += "Local Maven Repository" at "file://"+Path.userHome+"/.m2/repository"
