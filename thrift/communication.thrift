@@ -17,7 +17,6 @@ enum CommunicationType {
   WIKIPEDIA = 3
   TWEET = 4
   PHONE_CALL = 5
-  // JCM
   USENET = 6
   BLOG = 7
 }
@@ -26,21 +25,45 @@ enum CommunicationType {
  * A communication.
  */
 struct Communication {
+  /** 
+   * Stable identifier for this communication, identifying both the
+   * name of the source corpus and the document that it corresponds to
+   * in that corpus. 
+   */
   1: required string id
+
+  /** 
+   * Universally unique identifier for this communication instance.
+   * This is generated randomly, and can *not* be mapped back to the
+   * source corpus. It is used as a target for symbolic "pointers".
+   */
   2: required string uuid
+
+  /** 
+   * An enumeration used to indicate what type of communication this
+   * is. The optional fields named "<i>kind</i>Info" can be used to
+   * store extra fields that are specific to the communication
+   * type. 
+   */
   3: required CommunicationType type
+
+  /** 
+   * The full text contents of this communication in its original
+   * form, or in the least-processed form available, if the original
+   * is not available. 
+   */
   4: required string text
+
   5: optional i64 startTime
   6: optional i64 endTime
   
-  
   // annotations
-  10: optional language.LanguageIdentification lid
-  11: optional structure.SectionSegmentation sectionSegmentation
-  12: optional entities.EntityMentionSet entityMentionSet
-  13: optional entities.EntitySet entitySet
-  14: optional situations.SituationMentionSet situationMentionSet
-  15: optional situations.SituationSet situationSet
+  10: optional list<language.LanguageIdentification> lid
+  11: optional list<structure.SectionSegmentation> sectionSegmentations
+  12: optional list<entities.EntityMentionSet> entityMentionSets
+  13: optional list<entities.EntitySet> entitySets
+  14: optional list<situations.SituationMentionSet> situationMentionSets
+  15: optional list<situations.SituationSet> situationSets
 
   20: optional audio.Sound sound
   21: optional twitter.TweetInfo tweetInfo

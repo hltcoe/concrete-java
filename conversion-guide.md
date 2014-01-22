@@ -36,9 +36,6 @@ for (Integer i : cKChildren) {
   * This has been replaced by a map<string, string> structure.
 * Sections
   * Section.Kind is now SectionKind, with the same enumerated values.
-  * Sections now carry only one SentenceSegmentation.
-* Sentences
-  * Sentences now carry only one Tokenization.
 * Tokenization
   * Tokenization.Kind has been replaced by TokenizationKind, with the same enumerated values.
   * Previously nested structures inside Tokenization (e.g., Parse, Constituent) are now top-level structures.

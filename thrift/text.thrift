@@ -74,8 +74,10 @@ struct Token {
  */
 struct TokenRefSequence {
 
-  /** The tokenization-relative identifiers for each token that is
-    * included in this sequence. */
+  /** 
+   * The tokenization-relative identifiers for each token that is
+   * included in this sequence. 
+   */
   1: list<i32> tokenIndexList
 
   /** An optional field that can be used to describe
@@ -97,15 +99,21 @@ struct TokenRefSequence {
 }
 
 struct TaggedToken {
-  /* A pointer to the token being tagged. */
+  /**
+   * A pointer to the token being tagged. 
+   */
   1: optional i32 tokenIndex
 
-    /** A string containing the annotation.
-         * If the tag set you are using is not case sensitive,
-         * then all part of speech tags should be normalized to upper case. */
+  /** 
+   * A string containing the annotation.
+   * If the tag set you are using is not case sensitive,
+   * then all part of speech tags should be normalized to upper case. 
+   */
   2: optional string tag
 
-    /** Confidence of the annotation. */
+  /** 
+   * Confidence of the annotation. 
+   */
   3: optional double confidence
 }
 
@@ -162,7 +170,7 @@ struct Constituent {
   1: i32 id
   2: optional string tag
 
-  /*
+  /** 
    * The list of parse constituents that are directly dominated by
    * this constituent. 
    */
@@ -202,15 +210,12 @@ struct Parse {
   3: list<Constituent> constituentList
 }
 
-
-
-
 struct LatticePath {
   1: optional double weight
   2: list<Token> tokenList
 }
 
-/*
+/** 
  * Type for arcs. For epsilon edges, leave 'token' blank. 
  */
 struct Arc {
@@ -221,23 +226,23 @@ struct Arc {
 }
 
 struct TokenLattice {
-  /*
+  /** 
    * Start state for this token lattice. 
    */
   1: optional i32 startState = 0
   
-  /*
+  /** 
    * End state for this token lattice. 
    */
   2: optional i32 endState = 0
 
-  /*
+  /** 
    * The set of arcs that make up this lattice (order is
    * unspecified). 
    */
   3: list<Arc> arcList
 
-  /*
+  /** 
    * A cached copy of the one-best path through the token lattice.
    * This field must always be kept consistent with the arc-based
    * lattice: if you edit the lattice, then you must either delete
@@ -286,7 +291,7 @@ struct Tokenization {
    * Unique identifier for this tokenization. 
    */ 
   1: string uuid  
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Token> tokenList
   4: optional TokenLattice lattice
   5: TokenizationKind kind
@@ -303,12 +308,12 @@ struct Tokenization {
 //===========================================================================
 // Sentences
 //===========================================================================
-/*
+/** 
  * A single sentence or utterance in a communication. 
  */
 struct Sentence {
   1: string uuid
-  2: Tokenization tokenization
+  2: optional list<Tokenization> tokenizations
   3: optional TextSpan textSpan
 }
 
@@ -319,7 +324,7 @@ struct Sentence {
  */
 struct SentenceSegmentation {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Sentence> sentenceList
 }
 
@@ -349,7 +354,7 @@ enum SectionKind {
  */
 struct Section { 
   1: string uuid
-  2: SentenceSegmentation sentenceSegmentation
+  2: optional list<SentenceSegmentation> sentenceSegmentations
   3: optional TextSpan textSpan
   4: SectionKind kind
   5: optional string label
@@ -371,6 +376,6 @@ struct Section {
  */
 struct SectionSegmentation {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Section> sectionList
 }
