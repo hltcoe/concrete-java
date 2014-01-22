@@ -58,7 +58,7 @@ struct Communication {
   6: optional i64 endTime
   
   // annotations
-  10: optional list<language.LanguageIdentification> lid
+  10: optional list<language.LanguageIdentification> lids
   11: optional list<structure.SectionSegmentation> sectionSegmentations
   12: optional list<entities.EntityMentionSet> entityMentionSets
   13: optional list<entities.EntitySet> entitySets
