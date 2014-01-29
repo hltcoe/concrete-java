@@ -330,7 +330,7 @@ struct TokenizationCollection {
  */
 struct Sentence {
   1: string uuid
-  2: Tokenization tokenization
+  2: optional Tokenization tokenization
   3: optional TextSpan textSpan
   4: optional AudioSpan audioSpan
 }
@@ -382,7 +382,7 @@ enum SectionKind {
  */
 struct Section { 
   1: string uuid
-  2: SentenceSegmentation sentenceSegmentation
+  2: optional SentenceSegmentation sentenceSegmentation
   3: optional TextSpan textSpan
   4: SectionKind kind
   5: optional string label
