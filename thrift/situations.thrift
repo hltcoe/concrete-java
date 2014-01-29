@@ -66,14 +66,15 @@ struct Argument {
   1: optional Role role
 
   /** 
-   *A pointer to the value of this argument, if it is explicitly
+   * A pointer to the value of this argument, if it is explicitly
    * encoded as an Entity or a Situation. 
    */
   2: optional string entityId
 
-  // A pointer to the value of this argument, if it is a situation.
+  /**
+   * A pointer to the value of this argument, if it is a situation.
+   */
   3: optional string situationId
-
   
   /** 
    * New roles should usually be added to the enum, but for use
@@ -278,7 +279,8 @@ enum Polarity {
 // Situations
 //===========================================================================
 
-/** An enumerated type used to record the core types of situations.
+/** 
+ * An enumerated type used to record the core types of situations.
  * These types form a type hierarchy, as follows:
  *
  * * SITUATION
@@ -311,45 +313,54 @@ enum SituationType {
  */
 
 struct Situation {
-  /** Unique identifier for this situation. 
+  /** 
+   * Unique identifier for this situation. 
    */
   1: string uuid
 
-  /** The core type of this situation (eg EVENT or SENTIMENT) 
+  /** 
+   * The core type of this situation (eg EVENT or SENTIMENT).
    */
   2: SituationType situationType
 
-  /** The arguments for this situation. Each argument consists of a
+  /** 
+   * The arguments for this situation. Each argument consists of a
    * role and a value. It is possible for an situation to have
    * multiple arguments with the same role. Arguments are
    * unordered. 
    */
   3: optional list<Argument> argumentList
 
-  /** Ids of the mentions of this situation in a communication
+  /** 
+   * Ids of the mentions of this situation in a communication
    * (type=SituationMention) 
    */
   4: optional list<string> mentionIdList
 
-  /** An list of pointers to SituationMentions that provide
+  /** 
+   * An list of pointers to SituationMentions that provide
    * justification for this situation. These mentions may be either
    * direct mentions of the situation, or indirect evidence. 
    */
   5: optional list<Justification> justificationList
 
-  /** The event type for situations where situation_type=EVENT 
+  /** 
+   * The event type for situations where situation_type=EVENT 
    */
   50: optional EventType eventType
 
-  /** The state type for situations where situation_type=STATE 
+  /** 
+   * The state type for situations where situation_type=STATE 
    */
   51: optional StateType stateType
   
-  /** The temporal fact type for situations where situation_type=TEMPORAL_FACT 
+  /** 
+   * The temporal fact type for situations where situation_type=TEMPORAL_FACT 
    */
   52: optional TemporalFactType temporalFactType
   
-  /** This lemma represents a canonical lemma for the situation kind
+  /** 
+   * This lemma represents a canonical lemma for the situation kind
    * when the situation kind cannot be specified by a situation type subtype
    * (ex, when using arbitrary verbs or nominalizations as events which do
    * not appear in the event_type enumeration).
@@ -358,31 +369,37 @@ struct Situation {
    */
   53: optional string situationKindLemma
   
-  /** The TimeML class for situations representing TimeML events 
+  /** 
+   * The TimeML class for situations representing TimeML events 
    */
   54: optional TimeMLClass timemlClass
   
-  /** The TimeML tense for situations representing TimeML events 
+  /** 
+   * The TimeML tense for situations representing TimeML events 
    */
   55: optional TimeMLTense timemlTense
   
-  /** The TimeML aspect for situations representing TimeML events 
+  /** 
+   * The TimeML aspect for situations representing TimeML events 
    */
   56: optional TimeMLAspect timemlAspect
 
-  /** An "intensity" rating for this situation, typically ranging from
+  /** 
+   * An "intensity" rating for this situation, typically ranging from
    * 0-1. In the case of SENTIMENT situations, this is used to record
    * the intensity of the sentiment. 
    */
   100: optional double intensity
 
-  /** The polarity of this situation. In the case of SENTIMENT
+  /** 
+   * The polarity of this situation. In the case of SENTIMENT
    * situations, this is used to record the polarity of the
    * sentiment. 
    */
   101: optional Polarity polarity
 
-  /** A confidence score for this individual situation. You can also
+  /** 
+   * A confidence score for this individual situation. You can also
    * set a confidence score for an entire SituationSet using the
    * SituationSet's metadata. 
    */
@@ -402,7 +419,7 @@ struct SituationSet {
   /** 
    * Information about where this set came from. 
    */
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
 
   /** 
    * List of mentions in this set. 
@@ -428,32 +445,38 @@ struct SituationMention {
    */
   1: string uuid
 
-  /** The text content of this situation mention. This field is
+  /** 
+   * The text content of this situation mention. This field is
    * often redundant with the 'tokens' field, and may not
    * be generated by all analytics. 
    */
   2: optional string text
 
-  /** The core type of this situation (eg EVENT or SENTIMENT) 
+  /** 
+   * The core type of this situation (eg EVENT or SENTIMENT) 
    */
   3: optional SituationType situationType
 
-  /** The arguments for this situation mention. Each argument
+  /** 
+   * The arguments for this situation mention. Each argument
    * consists of a role and a value. It is possible for an situation
    * to have multiple arguments with the same role. Arguments are
    * unordered. 
    */
   4: list<Argument> argumentList
 
-  /** The event type for situations where situation_type=EVENT 
+  /** 
+   * The event type for situations where situation_type=EVENT 
    */
   50: optional EventType eventType
 
-  /** The state type for situations where situation_type=STATE 
+  /** 
+   * The state type for situations where situation_type=STATE 
    */
   51: optional StateType stateType
   
-  /** This lemma represents a canonical lemma for the situation kind
+  /** 
+   * This lemma represents a canonical lemma for the situation kind
    * when the situation kind cannot be specified by a situation type subtype
    * (ex, when using arbitrary verbs or nominalizations as events which do
    * not appear in the event_type enumeration).
@@ -462,19 +485,22 @@ struct SituationMention {
    */
   53: optional string situationKindLemma
 
-  /** An "intensity" rating for the situation, typically ranging from
+  /** 
+   * An "intensity" rating for the situation, typically ranging from
    * 0-1. In the case of SENTIMENT situations, this is used to record
    * the intensity of the sentiment. 
    */
   100: optional double intensity
 
-  /** The polarity of this situation. In the case of SENTIMENT
+  /** 
+   * The polarity of this situation. In the case of SENTIMENT
    * situations, this is used to record the polarity of the
    * sentiment. 
    */
   101: optional Polarity polarity
 
-  /** An optional pointer to tokens that are (especially)
+  /** 
+   * An optional pointer to tokens that are (especially)
    * relevant to this situation mention. It is left up to individual
    * analytics to decide what tokens (if any) they wish to include in
    * this field. In particular, it is not specified whether the
@@ -482,26 +508,31 @@ struct SituationMention {
    */
   150: structure.TokenRefSequence tokens
 
-  /** A confidence score for this individual situation mention. You
+  /** 
+   * A confidence score for this individual situation mention. You
    * can also set a confidence score for an entire SituationMentionSet
    * using the SituationMentionSet's metadata. 
    */
   200: optional double confidence
 }
 
-/** A theory about the set of situation mentions that are present in a
+/** 
+ * A theory about the set of situation mentions that are present in a
  * message. See also: SituationMention 
  */
 struct SituationMentionSet {
-  /** Unique identifier for this set. 
+  /** 
+   * Unique identifier for this set. 
    */
   1: string uuid
 
-  /** Information about where this set came from. 
+  /** 
+   * Information about where this set came from. 
    */
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
 
-  /** List of mentions in this set. 
+  /** 
+   * List of mentions in this set. 
    */
   3: list<SituationMention> mentionList
 }

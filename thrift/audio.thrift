@@ -29,11 +29,3 @@ struct Sound {
   4: optional string path
 }
 
-/** 
- * A span of audio within a single communication, identified by a
- * pair of time offests. Time offsets are zero-based.
- */
-struct AudioSpan {
-  1: required i64 start
-  2: required i64 ending
-}

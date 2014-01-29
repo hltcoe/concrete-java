@@ -3,48 +3,7 @@ namespace py concrete.structure
 #@namespace scala edu.jhu.hlt.miser
 
 include "metadata.thrift"
-
-//===========================================================================
-// Spans in Text/Audio
-//===========================================================================
-
-/** 
- * A span of text within a single communication, identified by a pair
- * of character offsets. In this context, a "character offset" is a
- * zero-based count of UTF-16 codepoints. I.e., if you are using
- * Java, or are using a Python build where sys.maxunicode==0xffff,
- * then the "character offset" is an offset into the standard
- * (unicode) string data type. If you are using a Python build where
- * sys.maxunicode==0xffffffff, then you would need to encode the
- * unicode string using UTF-16 before using the character offsets. 
- */
-struct TextSpan {
-  /** Start character, inclusive. 
-   */
-  1: i32 start
-
-  /** End character, exclusive 
-   */
-  2: i32 ending
-}
-
-/** 
- * A span of audio within a single communication, identified by a
- * pair of time offests. Time offsets are zero-based.
- */
-struct AudioSpan {
-  /** Start time (in seconds)
-   */
-  1: i64 start
-  /** End time (in seconds)
-   */
-  2: i64 ending
-
-  // NOTE: we may add a "channel" field or something
-  // analogous, for multi-channel audio (left/right, etc).
-}
-
-
+include "spans.thrift"
 
 //===========================================================================
 // Tokens & Tokenizations
@@ -58,7 +17,8 @@ struct AudioSpan {
  * Usually, each token will include at least a text string.
  */
 struct Token {
-  /** A tokenization-relative identifier for this token. Together
+  /** 
+   * A tokenization-relative identifier for this token. Together
    * with the UUID for a Tokenization, this can be used to define
    * pointers to specific tokens. If a Tokenization object contains
    * multiple Token objects with the same id (e.g., in different
@@ -68,38 +28,48 @@ struct Token {
   // A 0-based index that represents the order that this token appears in the sentence.
   1: i32 tokenIndex
 
-  // The text associated with this token.
-  // Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
-  // and as a result, we want to maintain this field.
+  /** 
+   * The text associated with this token.
+   * Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
+   * and as a result, we want to maintain this field.
+   */
   2: string text
 
-  /** Location of this token in the original text. In cases where
+  /** 
+   * Location of this token in the original text. In cases where
    * this token does not correspond directly with any text span in
    * the original text (such as word insertion during MT), this field
    * may be given a value indicating "approximately" where the token
    * comes from. A span covering the entire sentence may be used if
-   * no more precise value seems appropriate. */
-  3: optional TextSpan textSpan
+   * no more precise value seems appropriate. 
+   */
+  3: optional spans.TextSpan textSpan
 
-  /** Location of this token in the original audio. */
-  5: optional AudioSpan audioSpan
+  /** 
+   * Location of this token in the original audio. 
+   */
+  5: optional spans.AudioSpan audioSpan
 }
 
-/** A list of pointers to tokens that all belong to the same
+/** 
+ * A list of pointers to tokens that all belong to the same
  * tokenization. 
  */
 struct TokenRefSequence {
-
-  /** The tokenization-relative identifiers for each token that is
-    * included in this sequence. */
+  /** 
+   * The tokenization-relative identifiers for each token that is
+   * included in this sequence. 
+   */
   1: list<i32> tokenIndexList
 
-  /** An optional field that can be used to describe
+  /** 
+   * An optional field that can be used to describe
    * the root of a sentence (if this sequence is a full sentence),
    * the head of a constituent (if this sequence is a constituent),
    * or some other form of "canonical" token in this sequence if,
    * for instance, it is not easy to map this sequence to a another
-   * annotation that has a head */
+   * annotation that has a head. 
+   */
   2: optional i32 anchorTokenIndex = -1
 
   /** 
@@ -107,23 +77,33 @@ struct TokenRefSequence {
    */
   3: required string tokenizationId
 
-  // The text span associated with this TokenRefSequence.
-  4: optional TextSpan textSpan
+  /**
+   * The text span associated with this TokenRefSequence.
+   */
+  4: optional spans.TextSpan textSpan
 
-  // The audio span associated with this TokenRefSequence.
-  5: optional AudioSpan audioSpan
+  /** 
+   * The audio span associated with this TokenRefSequence.
+   */
+  5: optional spans.AudioSpan audioSpan
 }
 
 struct TaggedToken {
-  /* A pointer to the token being tagged. */
+  /** 
+   * A pointer to the token being tagged. 
+   */
   1: optional i32 tokenIndex
 
-    /** A string containing the annotation.
-         * If the tag set you are using is not case sensitive,
-         * then all part of speech tags should be normalized to upper case. */
+  /** 
+   * A string containing the annotation.
+   * If the tag set you are using is not case sensitive,
+   * then all part of speech tags should be normalized to upper case. 
+   */
   2: optional string tag
 
-    /** Confidence of the annotation. */
+  /** 
+   * Confidence of the annotation. 
+   */
   3: optional double confidence
 }
 
@@ -148,7 +128,18 @@ struct TaggedToken {
  */
 struct TokenTagging {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+
+  /** 
+   * Information about where the annotation came from.
+   * This should be used to tell between gold-standard annotations
+   * and automatically-generated theories about the data 
+   */
+  2: metadata.AnnotationMetadata metadata
+
+  /** 
+   * The mapping from tokens to annotations.
+   * This may be a partial mapping. 
+   */
   3: list<TaggedToken> taggedTokenList
 }
 
@@ -158,9 +149,12 @@ struct Dependency {
   3: optional string edgeType
 }
 
+/**
+ * Represents a dependency parse with typed edges.
+ */
 struct DependencyParse {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Dependency> dependencyList
 }
 
@@ -178,6 +172,7 @@ struct Constituent {
    * pointers to specific constituents. 
    */
   1: i32 id
+  
   2: optional string tag
 
   /*
@@ -234,6 +229,31 @@ struct Arc {
   4: optional double weight //!< additive weight; lower is better
 }
 
+/** 
+ * A lattice structure that assigns scores to a set of token
+ * sequences.  The lattice is encoded as an FSA, where states are
+ * identified by integers, and each arc is annotated with an
+ * optional tokens and a weight.  (Arcs with no tokens are
+ * "epsilon" arcs.)  The lattice has a single start state and a
+ * single end state.  (You can use epsilon edges to simulate
+ * multiple start states or multiple end states, if desired.)
+ * 
+ * The score of a path through the lattice is the sum of the weights
+ * of the arcs that make up that path.  A path with a lower score
+ * is considered "better" than a path with a higher score.  
+ * 
+ * If possible, path scores should be negative log likelihoods
+ * (with base e -- e.g. if P=1, then weight=0; and if P=0.5, then
+ * weight=0.693).  Furthermore, if possible, the path scores should
+ * be globally normalized (i.e., they should encode probabilities).
+ * This will allow for them to be combined with other information
+ * in a reasonable way when determining confidences for system
+ * outputs.
+ *
+ * TokenLattices should never contain any paths with cycles.  Every
+ * arc in the lattice should be included in some path from the start
+ * state to the end state.
+ */
 struct TokenLattice {
   /*
    * Start state for this token lattice. 
@@ -260,6 +280,9 @@ struct TokenLattice {
   4: optional LatticePath cachedBestPath
 }
 
+/**
+ * Enumerated types of Tokenizations
+ */
 enum TokenizationKind {
   TOKEN_LIST = 1
   TOKEN_LATTICE = 2
@@ -299,10 +322,30 @@ struct Tokenization {
   /*
    * Unique identifier for this tokenization. 
    */ 
-  1: string uuid  
-  2: optional metadata.AnnotationMetadata metadata
-  3: list<Token> tokenList
+  1: string uuid
+
+  /**
+   * Information about where this tokenization came from.
+   */
+  2: metadata.AnnotationMetadata metadata
+  
+  /**
+   * An ordered list of the tokens in this tokenization.  This field
+   * should only have a value if kind==TOKEN_LIST. 
+   */
+  3: optional list<Token> tokenList
+
+  /**
+   * A lattice that compactly describes a set of token sequences that
+   * might make up this tokenization.  This field should only have a
+   * value if kind==LATTICE. 
+   */
   4: optional TokenLattice lattice
+  
+  /**
+   * Enumerated value indicating whether this tokenization is
+   * implemented using an n-best list or a lattice.
+   */
   5: TokenizationKind kind
   
   6: optional TokenTagging posTagList
@@ -325,14 +368,33 @@ struct TokenizationCollection {
 //===========================================================================
 // Sentences
 //===========================================================================
-/*
+/**
  * A single sentence or utterance in a communication. 
  */
 struct Sentence {
   1: string uuid
-  2: optional Tokenization tokenization
-  3: optional TextSpan textSpan
-  4: optional AudioSpan audioSpan
+  
+  /** 
+   * Theories about the tokens that make up this sentence.  For text
+   * communications, these tokenizations will typically be generated
+   * by a tokenizer.  For audio communications, these tokenizations
+   * will typically be generated by an automatic speech recognizer. 
+   *
+   * The "Tokenization" message type is also used to store the output
+   * of machine translation systems and text normalization
+   * systems. 
+   */
+  2: optional list<Tokenization> tokenizationList
+
+  /**
+   * Location of this sentence in the original text.
+   */
+  3: optional spans.TextSpan textSpan
+  
+  /**
+   * Location of this sentence in the original audio.
+   */
+  4: optional spans.AudioSpan audioSpan
 }
 
 /** 
@@ -342,8 +404,28 @@ struct Sentence {
  */
 struct SentenceSegmentation {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+
+  /**
+   * Information about where this segmentation came from.
+   */  
+  2: metadata.AnnotationMetadata metadata
+  
+  /** 
+   * Theories about the tokens that make up this sentence.  For text
+   * communications, these tokenizations will typically be generated
+   * by a tokenizer.  For audio communications, these tokenizations
+   * will typically be generated by an automatic speech recognizer. 
+   *
+   * The "Tokenization" message type is also used to store the output
+   * of machine translation systems and text normalization
+   * systems. 
+   */
   3: list<Sentence> sentenceList
+  
+  /**
+   * A UUID pointer to the "parent" Section that this SentenceSegmentation
+   * is associated with. 
+   */
   4: string sectionId
 }
 
@@ -367,7 +449,7 @@ enum SectionKind {
   // an embedded table that will almost certainly cause NLP tools to choke
   TABLE = 4
   // TODO, include embedded image support when actually needed
-    IMAGE = 5
+  IMAGE = 5
   // etc..
 }
 
@@ -382,21 +464,41 @@ enum SectionKind {
  */
 struct Section { 
   1: string uuid
-  2: optional SentenceSegmentation sentenceSegmentation
-  3: optional TextSpan textSpan
+  /**
+   * Theories about how this section is divided into sentences.
+   */ 
+  2: optional list<SentenceSegmentation> sentenceSegmentation
+  
+  /**
+   * Location of this section in the original text.
+   */
+  3: optional spans.TextSpan textSpan
+
+  /**
+   * Location of this section in the original audio. 
+   */
+  9: optional spans.AudioSpan audioSpan
+
+  /**
+   * The type of this section.
+   */
   4: SectionKind kind
+  
+  /**
+   * The name of the section
+   */
   5: optional string label
 
-  // Position within the communication with respect to other Sections:
-  // The section number, E.g., 3, or 3.1, or 3.1.2, etc. Aimed at
-  // Communications with content organized in a hierarchy, such as a Book
-  // with multiple chapters, then sections, then paragraphs. Or even a
-  // dense Wikipedia page with subsections. Sections should still be
-  // arranged linearly, where reading these numbers should not be required
-  // to get a start-to-finish enumeration of the Communication's content.
+  /**
+   * Position within the communication with respect to other Sections:
+   * The section number, E.g., 3, or 3.1, or 3.1.2, etc. Aimed at
+   * Communications with content organized in a hierarchy, such as a Book
+   * with multiple chapters, then sections, then paragraphs. Or even a
+   * dense Wikipedia page with subsections. Sections should still be
+   * arranged linearly, where reading these numbers should not be required
+   * to get a start-to-finish enumeration of the Communication's content.
+   */
   6: optional list<i32> number
-
-  9: optional AudioSpan audioSpan
 }
 
 /** 
@@ -405,7 +507,18 @@ struct Section {
  * and non-overlapping. 
  */
 struct SectionSegmentation {
+  /**
+   * Unique identifier for this segmentation.
+   */
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+
+  /**
+   * Information about where this segmentation came from.
+   */
+  2: metadata.AnnotationMetadata metadata
+
+  /**
+   * Ordered list of sections in this segmentation.
+   */
   3: list<Section> sectionList
 }

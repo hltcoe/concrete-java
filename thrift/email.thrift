@@ -14,7 +14,6 @@ struct EmailAddress {
   2: optional string displayName
 }
 
-
 /** 
  * Extra information about an email communication instance. 
  */
@@ -27,7 +26,7 @@ struct EmailCommunicationInfo {
   5: optional list<string> reference //!< defined by RFC 1036, RFC 2822
   6: optional EmailAddress senderAddress
   7: optional EmailAddress returnPathAddress
-  8: list<EmailAddress> toAddress
+  8: optional list<EmailAddress> toAddress
   9: optional list<EmailAddress> ccAddress
   10: optional list<EmailAddress> bccAddress
 }

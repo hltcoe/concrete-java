@@ -3,30 +3,7 @@ namespace py concrete.text
 #@namespace scala edu.jhu.hlt.miser
 
 include "metadata.thrift"
-include "audio.thrift"
-
-
-//===========================================================================
-// Spans in Text/Audio
-//===========================================================================
-
-/** 
- * A span of text within a single communication, identified by a pair
- * of character offsets. In this context, a "character offset" is a
- * zero-based count of UTF-16 codepoints. I.e., if you are using
- * Java, or are using a Python build where sys.maxunicode==0xffff,
- * then the "character offset" is an offset into the standard
- * (unicode) string data type. If you are using a Python build where
- * sys.maxunicode==0xffffffff, then you would need to encode the
- * unicode string using UTF-16 before using the character offsets. 
- */
-struct TextSpan {
-  /** Start character, inclusive. */
-  1: i32 start
-
-  /** End character, exclusive */
-  2: i32 ending
-}
+include "spans.thrift"
 
 //===========================================================================
 // Tokens & Tokenizations
@@ -60,12 +37,12 @@ struct Token {
    * may be given a value indicating "approximately" where the token
    * comes from. A span covering the entire sentence may be used if
    * no more precise value seems appropriate. */
-  3: optional TextSpan textSpan
+  3: optional spans.TextSpan textSpan
 
   /** 
    * Location of this token in the original audio. 
    */
-  4: optional audio.AudioSpan audioSpan
+  4: optional spans.AudioSpan audioSpan
 }
 
 /** 
@@ -92,10 +69,10 @@ struct TokenRefSequence {
   3: required string tokenizationId
 
   // The text span associated with this TokenRefSequence.
-  4: optional TextSpan textSpan
+  4: optional spans.TextSpan textSpan
 
   // The audio span associated with this TokenRefSequence.
-  5: optional audio.AudioSpan audioSpan
+  5: optional spans.AudioSpan audioSpan
 }
 
 struct TaggedToken {
@@ -314,7 +291,7 @@ struct Tokenization {
 struct Sentence {
   1: string uuid
   2: optional list<Tokenization> tokenizations
-  3: optional TextSpan textSpan
+  3: optional spans.TextSpan textSpan
 }
 
 /** 
@@ -355,7 +332,7 @@ enum SectionKind {
 struct Section { 
   1: string uuid
   2: optional list<SentenceSegmentation> sentenceSegmentations
-  3: optional TextSpan textSpan
+  3: optional spans.TextSpan textSpan
   4: SectionKind kind
   5: optional string label
 

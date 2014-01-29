@@ -37,7 +37,7 @@ struct AnnotationMetadata {
   /** 
    * The name of the tool that generated this annotation. 
    */
-  1: optional string tool
+  1: string tool
 
   /** 
    * The time at which this annotation was generated (in unix time
@@ -46,10 +46,9 @@ struct AnnotationMetadata {
   2: optional i64 timestamp
 
   /** 
-   * Confidence score. To do: define what this means!!! 
+   * Confidence score. To do: define what this means!
    */
   3: optional double confidence
-
 
   /** 
    * A Digest, carrying over any information the annotation metadata
