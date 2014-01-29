@@ -27,7 +27,7 @@ public class SingleSectionSegmenter extends AbstractAnnotationTool
    * @param c a {@link Communication} object to "section"
    * @return a {@link SectionSegmentation} that can be added to the {@link Communication}
    */
-  public SectionSegmentation sectionCommunication(Communication c) {
+  public SectionSegmentation generateSectionSegmentation(Communication c) throws AnnotationException {
     SectionSegmentation ss = new SectionSegmentation();
     // you can directly set the member...
     ss.metadata = getMetadata();

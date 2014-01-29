@@ -8,9 +8,9 @@
     <version>2.0.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>concrete-examples</artifactId>
-  <name>Concrete :: Java Examples</name>
-  <description>Useful examples for use with Concrete-Java</description>
+  <artifactId>concrete-util</artifactId>
+  <name>Concrete :: Utility Library</name>
+  <description>Utility library for use with Concrete-Java</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,27 +41,5 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-util</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <!-- Test deps -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.0.13</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 </project>

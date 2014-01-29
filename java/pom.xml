@@ -8,6 +8,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>core</module>
+    <module>util</module>
     <module>examples</module>
   </modules>
 
@@ -136,6 +137,21 @@
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-core</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.5</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

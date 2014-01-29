@@ -13,5 +13,5 @@ import edu.jhu.hlt.concrete.SectionSegmentation;
  * @author max
  */
 public interface SectionSegmenter {
-  public SectionSegmentation sectionCommunication(Communication c);
+  public SectionSegmentation generateSectionSegmentation(Communication c) throws AnnotationException;
 }
