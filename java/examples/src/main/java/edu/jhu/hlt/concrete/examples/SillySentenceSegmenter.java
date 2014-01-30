@@ -11,9 +11,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SectionSegmentation;
@@ -31,8 +28,6 @@ import edu.jhu.hlt.concrete.util.SuperTextSpan;
  */
 public class SillySentenceSegmenter extends AbstractAnnotationTool implements SentenceSegmenter {
 
-  private static final Logger logger = LoggerFactory.getLogger(SillySentenceSegmenter.class);
-  
   public static final Pattern DEFAULT_SENTENCE_PATTERN = Pattern.compile("[a-zA-Z0-9 ']+[.?!]+");
   private final Pattern splitPattern;
   
@@ -81,6 +76,7 @@ public class SillySentenceSegmenter extends AbstractAnnotationTool implements Se
       ss.setUuid(UUID.randomUUID().toString());
       ss.metadata = getMetadata();
       ss.setSentenceList(sentList);
+      ss.sectionId = s.uuid;
       
       col.addToSentSegList(ss);
     }
@@ -113,19 +109,5 @@ public class SillySentenceSegmenter extends AbstractAnnotationTool implements Se
     }
     
     return sentList;
-  }
-
-  public static void main(String... args) {
-    if (args.length != 1) {
-      logger.info("Usage: " + SillySentenceSegmenter.class.getSimpleName() + " sentence-to-split");
-      logger.info("Example: " + SillySentenceSegmenter.class.getSimpleName() + " hello world! This is a test sentence.");
-      System.exit(1);
-    }
-    
-    SillySentenceSegmenter sss = new SillySentenceSegmenter();
-    List<Sentence> sentList = sss.generateSentencesFromText(args[0]);
-    for (Sentence s : sentList) 
-      logger.info("Got sentence: " + s.toString());
-    
   }
 }
