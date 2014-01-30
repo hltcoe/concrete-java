@@ -17,26 +17,31 @@ include "spans.thrift"
  * Usually, each token will include at least a text string.
  */
 struct Token {
-  /** A tokenization-relative identifier for this token. Together
-    * with the UUID for a Tokenization, this can be used to define
-    * pointers to specific tokens. If a Tokenization object contains
-    * multiple Token objects with the same id (e.g., in different
-    * n-best lists), then all of their other fields *must* be
-    * identical as well. */
+  /** 
+   * A tokenization-relative identifier for this token. Together
+   * with the UUID for a Tokenization, this can be used to define
+   * pointers to specific tokens. If a Tokenization object contains
+   * multiple Token objects with the same id (e.g., in different
+   * n-best lists), then all of their other fields *must* be
+   * identical as well. 
+   */
   // A 0-based index that represents the order that this token appears in the sentence.
   1: i32 tokenIndex
 
-  // The text associated with this token.
-  // Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
-  // and as a result, we want to maintain this field.
+  /** The text associated with this token.
+   * Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
+   * and as a result, we want to maintain this field.
+   */
   2: string text
 
-  /** Location of this token in the original text. In cases where
+  /** 
+   * Location of this token in the original text. In cases where
    * this token does not correspond directly with any text span in
    * the original text (such as word insertion during MT), this field
    * may be given a value indicating "approximately" where the token
    * comes from. A span covering the entire sentence may be used if
-   * no more precise value seems appropriate. */
+   * no more precise value seems appropriate. 
+   */
   3: optional spans.TextSpan textSpan
 
   /** 
@@ -57,15 +62,19 @@ struct TokenRefSequence {
    */
   1: list<i32> tokenIndexList
 
-  /** An optional field that can be used to describe
+  /** 
+   * An optional field that can be used to describe
    * the root of a sentence (if this sequence is a full sentence),
    * the head of a constituent (if this sequence is a constituent),
    * or some other form of "canonical" token in this sequence if,
    * for instance, it is not easy to map this sequence to a another
-   * annotation that has a head */
+   * annotation that has a head.
+   */
   2: optional i32 anchorTokenIndex = -1
 
-  /** The UUID of the tokenization that contains the tokens. */
+  /** 
+   * The UUID of the tokenization that contains the tokens. 
+   */
   3: required string tokenizationId
 
   // The text span associated with this TokenRefSequence.
@@ -115,7 +124,7 @@ struct TaggedToken {
  */
 struct TokenTagging {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<TaggedToken> taggedTokenList
 }
 
@@ -125,9 +134,12 @@ struct Dependency {
   3: optional string edgeType
 }
 
+/**
+ * Represents a dependency parse with typed edges.
+ */
 struct DependencyParse {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Dependency> dependencyList
 }
 
@@ -267,10 +279,30 @@ struct Tokenization {
   /*
    * Unique identifier for this tokenization. 
    */ 
-  1: string uuid  
+  1: string uuid
+
+  /**
+   * Information about where this tokenization came from. 
+   */
   2: metadata.AnnotationMetadata metadata
-  3: list<Token> tokenList
+
+  /** 
+   * An ordered list of the tokens in this tokenization.  This field
+   * should only have a value if kind==TOKEN_LIST. 
+   */
+  3: optional list<Token> tokenList
+
+  /**
+   * A lattice that compactly describes a set of token sequences that
+   * might make up this tokenization.  This field should only have a
+   * value if kind==LATTICE. 
+   */
   4: optional TokenLattice lattice
+
+  /**
+   * Enumerated value indicating whether this tokenization is
+   * implemented using an n-best list or a lattice.
+   */
   5: TokenizationKind kind
   
   6: optional TokenTagging posTagList
@@ -278,6 +310,9 @@ struct Tokenization {
   8: optional TokenTagging lemmaList
   9: optional TokenTagging langIdList
 
+  /**
+   * Theories about the parse structure of this Tokenization. 
+   */
   10: optional Parse parse
   11: optional list<DependencyParse> dependencyParseList
 }
@@ -303,8 +338,12 @@ struct SentenceSegmentation {
   1: string uuid
   2: metadata.AnnotationMetadata metadata
   3: list<Sentence> sentenceList
+  
 }
 
+/**
+ * Enumerated Section types.
+ */
 enum SectionKind {
   OTHER = 0
   // E.g., one or more paragraphs, or the full text of a tweet
@@ -316,7 +355,7 @@ enum SectionKind {
   // an embedded table that will almost certainly cause NLP tools to choke
   TABLE = 4
   // TODO, include embedded image support when actually needed
-    IMAGE = 5
+  IMAGE = 5
   // etc..
 }
 
@@ -336,13 +375,15 @@ struct Section {
   4: SectionKind kind
   5: optional string label
 
-  // Position within the communication with respect to other Sections:
-  // The section number, E.g., 3, or 3.1, or 3.1.2, etc. Aimed at
-  // Communications with content organized in a hierarchy, such as a Book
-  // with multiple chapters, then sections, then paragraphs. Or even a
-  // dense Wikipedia page with subsections. Sections should still be
-  // arranged linearly, where reading these numbers should not be required
-  // to get a start-to-finish enumeration of the Communication's content.
+  /**
+   * Position within the communication with respect to other Sections:
+   * The section number, E.g., 3, or 3.1, or 3.1.2, etc. Aimed at
+   * Communications with content organized in a hierarchy, such as a Book
+   * with multiple chapters, then sections, then paragraphs. Or even a
+   * dense Wikipedia page with subsections. Sections should still be
+   * arranged linearly, where reading these numbers should not be required
+   * to get a start-to-finish enumeration of the Communication's content.
+   */
   6: optional list<i32> number
 }
 
