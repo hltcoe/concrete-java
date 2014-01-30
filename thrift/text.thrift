@@ -195,7 +195,7 @@ struct Constituent {
  */
 struct Parse {
   1: string uuid
-  2: optional metadata.AnnotationMetadata metadata
+  2: metadata.AnnotationMetadata metadata
   3: list<Constituent> constituentList
 }
 
@@ -315,6 +315,11 @@ struct Tokenization {
    */
   10: optional Parse parse
   11: optional list<DependencyParse> dependencyParseList
+
+  /**
+   * A pointer to the Sentence that this annotation belongs to.
+   */
+  15: string sentencePointer
 }
 
 //===========================================================================
@@ -338,7 +343,10 @@ struct SentenceSegmentation {
   1: string uuid
   2: metadata.AnnotationMetadata metadata
   3: list<Sentence> sentenceList
-  
+  /**
+   * A pointer to the Section that this annotation belongs to.
+   */
+  4: string sectionIdPointer
 }
 
 /**
