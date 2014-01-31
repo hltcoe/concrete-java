@@ -319,7 +319,7 @@ struct Tokenization {
   /**
    * A pointer to the Sentence that this annotation belongs to.
    */
-  15: string sentencePointer
+  15: string sentenceIdPointer
 }
 
 //===========================================================================
