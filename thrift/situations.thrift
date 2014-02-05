@@ -419,7 +419,7 @@ struct SituationSet {
   /** 
    * Information about where this set came from. 
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /** 
    * List of mentions in this set. 
@@ -529,7 +529,7 @@ struct SituationMentionSet {
   /** 
    * Information about where this set came from. 
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /** 
    * List of mentions in this set. 

@@ -83,9 +83,9 @@ struct HashTag {
 }
 
 struct TwitterEntities {
-  1: list<HashTag> hashtags
-  2: list<URL> urls
-  3: list<UserMention> userMentions
+  1: optional list<HashTag> hashtags
+  2: optional list<URL> urls
+  3: optional list<UserMention> userMentions
 }
 
 struct TwitterPlace {

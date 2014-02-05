@@ -18,7 +18,7 @@ struct LanguageIdentification {
   /**
    * Information about where this language identification came from.
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /** 
    * A list mapping from a language to the probability that that

@@ -111,7 +111,7 @@ struct EntitySet {
   /**
    * Information about where this set came from.
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /**
    * List of entities in this set.
@@ -208,7 +208,7 @@ struct EntityMentionSet {
   /**
    * Information about where this set came from. 
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /**
    * List of mentions in this set. 

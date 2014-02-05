@@ -127,6 +127,9 @@ struct TaggedToken {
  * (eg treebank tags), or for adding compound tags.
  */
 struct TokenTagging {
+  /**
+   * The UUID of this TokenTagging object.
+   */
   1: string uuid
 
   /** 
@@ -134,7 +137,7 @@ struct TokenTagging {
    * This should be used to tell between gold-standard annotations
    * and automatically-generated theories about the data 
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /** 
    * The mapping from tokens to annotations.
@@ -154,7 +157,7 @@ struct Dependency {
  */
 struct DependencyParse {
   1: string uuid
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
   3: list<Dependency> dependencyList
 }
 
@@ -199,7 +202,8 @@ struct Constituent {
   5: optional i32 headChildIndex = -1
 }
 
-/** A theory about the syntactic parse of a sentence.
+/** 
+ * A theory about the syntactic parse of a sentence.
  *
  * \note If we add support for parse forests in the future, then it
  * will most likely be done by adding a new field (e.g.
@@ -219,7 +223,7 @@ struct LatticePath {
   2: list<Token> tokenList
 }
 
-/*
+/**
  * Type for arcs. For epsilon edges, leave 'token' blank. 
  */
 struct Arc {
@@ -327,7 +331,7 @@ struct Tokenization {
   /**
    * Information about where this tokenization came from.
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
   
   /**
    * An ordered list of the tokens in this tokenization.  This field
@@ -355,8 +359,11 @@ struct Tokenization {
 
   10: optional Parse parse
   11: optional list<DependencyParse> dependencyParseList
-
-  12: string sentenceId
+  
+  /**
+   * A pointer to the sentence from which this Tokenization was generated.
+   */
+  12: optional string sentenceId
 }
 
 struct TokenizationCollection {
@@ -408,7 +415,7 @@ struct SentenceSegmentation {
   /**
    * Information about where this segmentation came from.
    */  
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
   
   /** 
    * Theories about the tokens that make up this sentence.  For text
@@ -426,7 +433,7 @@ struct SentenceSegmentation {
    * A UUID pointer to the "parent" Section that this SentenceSegmentation
    * is associated with. 
    */
-  4: string sectionId
+  4: optional string sectionId
 }
 
 /**
@@ -464,6 +471,7 @@ enum SectionKind {
  */
 struct Section { 
   1: string uuid
+  
   /**
    * Theories about how this section is divided into sentences.
    */ 
@@ -515,7 +523,7 @@ struct SectionSegmentation {
   /**
    * Information about where this segmentation came from.
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /**
    * Ordered list of sections in this segmentation.

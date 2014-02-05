@@ -50,7 +50,7 @@ struct DiscourseAnnotation {        // come in gold and synthetic varieties
   /**
    * The metadata associated with the tool responsible for suggesting this DiscourseAnnotation.
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /**
    * A set of DiscourseEntities suggested by this DiscourseAnnotation object.
@@ -76,13 +76,11 @@ struct Discourse {
    * The tool that identified this set of Communications
    * (not the tool that determined any coreference assessments).
    */
-  2: metadata.AnnotationMetadata metadata
+  2: optional metadata.AnnotationMetadata metadata
 
   /**
    * Theories about the coreference relationships between
    * Entity or Situtation discussed in this set of Communications.
    */
   3: list<DiscourseAnnotation> annotationList
-
 }
-
