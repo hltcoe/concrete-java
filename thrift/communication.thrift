@@ -139,5 +139,5 @@ struct Communication {
   /**
    * A catch-all store of keys and values. Use sparingly!
    */
-  30: map<string, string> keyValueMap
+  30: optional map<string, string> keyValueMap
 }
