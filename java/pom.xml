@@ -34,6 +34,17 @@
     </developer>
   </developers>
 
+  <scm>
+    <url>https://github.com/hltcoe/concrete</url>
+    <connection>scm:git:git://github.com/hltcoe/concrete.git</connection>
+    <developerConnection>scm:git:git@github.com:hltcoe/concrete.git</developerConnection>
+  </scm>
+
+  <issueManagement>
+    <url>https://github.com/hltcoe/concrete/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
   <licenses>
     <license>
       <name>2-clause BSD license</name>
