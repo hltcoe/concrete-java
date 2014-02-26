@@ -26,6 +26,7 @@ Checkout the latest code:
 On a *nix-like system, running:
 
     cd python
+    sh build-python-thrift.sh ../thrift/
     python setup.py install
 
 will build and install the 'concrete' package.
