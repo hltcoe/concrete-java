@@ -10,12 +10,16 @@ Requirements
 
 Concrete-Python requires the following:
 * Python >= 2.7.x
-* Thrift installed with the python package
+* Apache Thrift >= 0.9.1
+* 'thrift' Python package >= 0.9.1
 
 Installation
 ------------
 
-First, checkout the latest code:
+In order to generate the Python classes for Concrete, the Thrift
+compiler (`thrift`) must be in your path.
+
+Checkout the latest code:
 
     git clone git@github.com:hltcoe/concrete.git
 
@@ -23,14 +27,10 @@ On a *nix-like system, running:
 
     cd python
     sh build-python-thrift.sh ../thrift/
+    python setup.py install
 
-will build the Python classes for Concrete in a folder called
-`gen-py`. You will then need to add these to your script's build path:
+will build and install the 'concrete' package.
 
-```python
-import sys
-sys.path.append('gen-py')
-```
 
 Using the code in your project
 ------------------------------

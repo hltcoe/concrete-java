@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from thrift.transport import TSocket, TTransport
 from thrift.protocol import TBinaryProtocol
 
