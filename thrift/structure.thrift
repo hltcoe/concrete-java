@@ -445,6 +445,9 @@ struct SentenceSegmentationCollection {
   2: list<SentenceSegmentation> sentSegList
 }
 
+/**
+ * Possible types of Sections.
+ */
 enum SectionKind {
   OTHER = 0
   // E.g., one or more paragraphs, or the full text of a tweet
@@ -457,6 +460,8 @@ enum SectionKind {
   TABLE = 4
   // TODO, include embedded image support when actually needed
   IMAGE = 5
+  // Titles that may appear in documents.
+  TITLE = 6
   // etc..
 }
 
