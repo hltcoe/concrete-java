@@ -14,7 +14,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <thrift.exe>/usr/local/bin/thrift</thrift.exe>
     <thrift.sources>../../thrift</thrift.sources>
   </properties>
 
