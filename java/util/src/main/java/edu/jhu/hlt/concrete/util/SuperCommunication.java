@@ -6,6 +6,7 @@ package edu.jhu.hlt.concrete.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.thrift.TException;
 
@@ -52,5 +53,9 @@ public class SuperCommunication {
     } catch (IOException e) {
       throw new ConcreteException(e);
     }
+  }
+  
+  public void writeToFile(String pathString, boolean deleteExisting) throws ConcreteException {
+    this.writeToFile(Paths.get(pathString), deleteExisting);
   }
 }
