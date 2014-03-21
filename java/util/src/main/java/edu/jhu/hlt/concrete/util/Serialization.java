@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
@@ -23,7 +23,7 @@ public class Serialization {
    * 
    */
   private Serialization() {
-    // TODO Auto-generated constructor stub
+
   }
 
   public static byte[] toBytes(Communication c) throws TException {
