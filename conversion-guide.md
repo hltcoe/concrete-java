@@ -32,6 +32,8 @@ for (Integer i : cKChildren) {
   * Removed.
 * TextSpan / AudioSpan
   * Fields are now required.
+  * TextSpan.end is now TextSpan.ending
+  * AudioSpan.end is now AudioSpan.ending
 * KeyValues
   * This has been replaced by a map<string, string> structure.
 * Sections
