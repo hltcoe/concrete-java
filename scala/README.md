@@ -12,11 +12,13 @@ Concrete-Scala requires the following:
 Installation
 ------------
 
-`cd concrete-scala
+```bash
+cd concrete-scala
 sbt +publish-local
 cd ..
 cd screed
-sbt +publish-local`
+sbt +publish-local
+```
 
 or, to install into `~/.m2/repository`, replace `+publish-local` with `+publish` in the above code block.
 
