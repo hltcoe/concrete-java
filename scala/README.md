@@ -5,8 +5,8 @@ Requirements
 ------------
 
 Concrete-Scala requires the following:
-* [sbt](www.scala-sbt.org/), >= 0.13.1
-* [Scala](www.scala-lang.org/), >= 2.10.3 (`sbt` will get this for you)
+* [sbt](http://www.scala-sbt.org/), >= 0.13.1
+* [Scala](http://www.scala-lang.org/), >= 2.10.3 (`sbt` will get this for you)
 * Current versions of `concrete-core` and `concrete-util`
 
 Installation
