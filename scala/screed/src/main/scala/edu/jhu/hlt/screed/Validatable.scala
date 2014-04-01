@@ -7,10 +7,10 @@ import org.apache.thrift._
 import com.twitter.scrooge.ThriftStruct
 
 object Validatable {
-  def allValid [T <: ThriftStruct] (i: Iterable[Validatable[T]], comm: Communication) : Boolean =
+  def allValid [T <: ThriftStruct] (i: List[Validatable[T]], comm: Communication) : Boolean =
     i.par.forall(item => item.isValid(comm))
 
-  def allValid [T <: ThriftStruct] (i: Iterable[Validatable[T]]) : Boolean =
+  def allValid [T <: ThriftStruct] (i: List[Validatable[T]]) : Boolean =
     i.par.forall(x => x.isValid)
 }
 
