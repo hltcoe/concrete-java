@@ -67,7 +67,7 @@ struct Argument {
 
   /** 
    * A pointer to the value of this argument, if it is explicitly
-   * encoded as an Entity or a Situation. 
+   * encoded as an Entity.
    */
   2: optional string entityId
 
@@ -427,6 +427,39 @@ struct SituationSet {
   3: list<Situation> situationList
 }
 
+/**
+ * A "concrete" argument, that may be used by SituationMentions or EntityMentions
+ * to avoid conflicts where abstract Arguments were being used to support concrete Mentions.
+ */
+struct MentionArgument {
+  /** 
+   * The relationship between this argument and the situation that
+   * owns it. The roles that a situation's arguments can take
+   * depend on the type of the situation (including subtype
+   * information, such as event_type). 
+   */
+  1: optional Role role
+
+  /** 
+   * A pointer to the value of an EntityMention, if this is being used to support
+   * an EntityMention.
+   */
+  2: optional string entityMentionId
+
+  /**
+   * A pointer to the value of this argument, if it is a SituationMention.
+   */
+  3: optional string situationMentionId
+  
+  /** 
+   * New roles should usually be added to the enum, but for use
+   * cases with many varied and possibly dynamic role names, this can be
+   * used. Presumably this would only be used in a prototype stage of an
+   * analytic, with roles eventually "hardening" and moving to the enum. 
+   */
+  4: optional string roleLabel
+}
+
 //===========================================================================
 // Situation Mentions
 //===========================================================================
@@ -463,7 +496,7 @@ struct SituationMention {
    * to have multiple arguments with the same role. Arguments are
    * unordered. 
    */
-  4: list<Argument> argumentList
+  4: list<MentionArgument> argumentList
 
   /** 
    * The event type for situations where situation_type=EVENT 
