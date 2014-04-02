@@ -13,7 +13,7 @@ struct LanguageIdentification {
   /**
    * Unique identifier for this language identification.
    */
-  1: string uuid
+  1: required string uuid
 
   /**
    * Information about where this language identification came from.
@@ -33,5 +33,5 @@ struct LanguageIdentification {
    * 
    * Note: The string key should represent the ISO 639-3 three-letter code.
    */
-  3: map<string,double> languageToProbabilityMap
+  3: required map<string,double> languageToProbabilityMap
 }

@@ -26,14 +26,14 @@ struct Token {
    * identical as well. 
    */
   // A 0-based index that represents the order that this token appears in the sentence.
-  1: i32 tokenIndex
+  1: required i32 tokenIndex
 
   /** 
    * The text associated with this token.
    * Note - we may have a destructive tokenizer (e.g., Stanford rewriting)
    * and as a result, we want to maintain this field.
    */
-  2: string text
+  2: required string text
 
   /** 
    * Location of this token in the original text. In cases where
@@ -60,7 +60,7 @@ struct TokenRefSequence {
    * The tokenization-relative identifiers for each token that is
    * included in this sequence. 
    */
-  1: list<i32> tokenIndexList
+  1: required list<i32> tokenIndexList
 
   /** 
    * An optional field that can be used to describe
@@ -130,7 +130,7 @@ struct TokenTagging {
   /**
    * The UUID of this TokenTagging object.
    */
-  1: string uuid
+  1: required string uuid
 
   /** 
    * Information about where the annotation came from.
@@ -148,7 +148,7 @@ struct TokenTagging {
 
 struct Dependency {
   1: optional i32 gov        // will be null for ROOT token (only)
-  2: i32 dep
+  2: required i32 dep
   3: optional string edgeType
 }
 
@@ -156,9 +156,9 @@ struct Dependency {
  * Represents a dependency parse with typed edges.
  */
 struct DependencyParse {
-  1: string uuid
+  1: required string uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: list<Dependency> dependencyList
+  3: required list<Dependency> dependencyList
 }
 
 //===========================================================================
@@ -174,7 +174,7 @@ struct Constituent {
    * with the UUID for a Parse, this can be used to define
    * pointers to specific constituents. 
    */
-  1: i32 id
+  1: required i32 id
   
   2: optional string tag
 
@@ -182,7 +182,7 @@ struct Constituent {
    * The list of parse constituents that are directly dominated by
    * this constituent. 
    */
-  3: list<i32> childList
+  3: required list<i32> childList
 
   /** 
    * The list of pointers to the tokens dominated by this
@@ -213,14 +213,14 @@ struct Constituent {
  * using a simple tree or a parse forest.
  */
 struct Parse {
-  1: string uuid
+  1: required string uuid
   2: optional metadata.AnnotationMetadata metadata
-  3: list<Constituent> constituentList
+  3: required list<Constituent> constituentList
 }
 
 struct LatticePath {
   1: optional double weight
-  2: list<Token> tokenList
+  2: required list<Token> tokenList
 }
 
 /**
@@ -273,7 +273,7 @@ struct TokenLattice {
    * The set of arcs that make up this lattice (order is
    * unspecified). 
    */
-  3: list<Arc> arcList
+  3: required list<Arc> arcList
 
   /*
    * A cached copy of the one-best path through the token lattice.
@@ -367,8 +367,8 @@ struct Tokenization {
 }
 
 struct TokenizationCollection {
-  1: metadata.AnnotationMetadata metadata
-  2: list<Tokenization> tokenizationList
+  1: required metadata.AnnotationMetadata metadata
+  2: required list<Tokenization> tokenizationList
   
 }
 
@@ -379,7 +379,7 @@ struct TokenizationCollection {
  * A single sentence or utterance in a communication. 
  */
 struct Sentence {
-  1: string uuid
+  1: required string uuid
   
   /** 
    * Theories about the tokens that make up this sentence.  For text
@@ -427,7 +427,7 @@ struct SentenceSegmentation {
    * of machine translation systems and text normalization
    * systems. 
    */
-  3: list<Sentence> sentenceList
+  3: required list<Sentence> sentenceList
   
   /**
    * A UUID pointer to the "parent" Section that this SentenceSegmentation
@@ -441,8 +441,8 @@ struct SentenceSegmentation {
  * to better wrap up and merge results.
  */
 struct SentenceSegmentationCollection {
-  1: metadata.AnnotationMetadata metadata
-  2: list<SentenceSegmentation> sentSegList
+  1: required metadata.AnnotationMetadata metadata
+  2: required list<SentenceSegmentation> sentSegList
 }
 
 /**
@@ -475,7 +475,7 @@ enum SectionKind {
  * contain a list of sentences. 
  */
 struct Section { 
-  1: string uuid
+  1: required string uuid
   
   /**
    * Theories about how this section is divided into sentences.
@@ -495,7 +495,7 @@ struct Section {
   /**
    * The type of this section.
    */
-  4: SectionKind kind
+  4: required SectionKind kind
   
   /**
    * The name of the section
@@ -523,7 +523,7 @@ struct SectionSegmentation {
   /**
    * Unique identifier for this segmentation.
    */
-  1: string uuid
+  1: required string uuid
 
   /**
    * Information about where this segmentation came from.
@@ -533,5 +533,5 @@ struct SectionSegmentation {
   /**
    * Ordered list of sections in this segmentation.
    */
-  3: list<Section> sectionList
+  3: required list<Section> sectionList
 }

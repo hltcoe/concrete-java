@@ -20,12 +20,12 @@ struct TextSpan {
   /** 
    * Start character, inclusive. 
    */
-  1: i32 start
+  1: required i32 start
 
   /** 
    * End character, exclusive 
    */
-  2: i32 ending
+  2: required i32 ending
 }
 
 /** 
@@ -36,10 +36,10 @@ struct AudioSpan {
   /**
    * Start time (in seconds)
    */ 
-  1: i64 start
+  1: required i64 start
 
   /**
    * End time (in seconds)
    */
-  2: i64 ending
+  2: required i64 ending
 }

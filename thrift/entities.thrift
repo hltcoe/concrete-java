@@ -70,18 +70,18 @@ struct Entity {
   /**
    * Unique identifier for this entity.
    */
-  1: string uuid
+  1: required string uuid
   
   /**
    * An list of pointers to all of the mentions of this Entity's
    * referent.  (type=EntityMention) 
    */
-  2: list<string> mentionIdList
+  2: required list<string> mentionIdList
 
   /**
    * The basic type of this entity's referent. 
    */
-  3: EntityType type
+  3: required EntityType type
 
   /**  
    * Confidence score for this individual entity.  You can also set a
@@ -106,7 +106,7 @@ struct EntitySet {
   /** 
    * Unique identifier for this set. 
    */
-  1: string uuid
+  1: required string uuid
 
   /**
    * Information about where this set came from.
@@ -116,7 +116,7 @@ struct EntitySet {
   /**
    * List of entities in this set.
    */
-  3: list<Entity> entityList
+  3: required list<Entity> entityList
 }
 
 /**
@@ -159,22 +159,22 @@ struct EntityMention {
   /*
    * A unique idenifier for this entity mention.
    */
-  1: string uuid
+  1: required string uuid
 
   /**
    * List of mentions in this set.
    */
-  2: structure.TokenRefSequence tokens
+  2: required structure.TokenRefSequence tokens
   
   /**
    * The type of referent that is referred to by this mention. 
    */
-  3: EntityType entityType
+  3: required EntityType entityType
   
   /**
    * The phrase type of the tokens that constitute this mention. 
    */
-  4: PhraseType phraseType
+  4: required PhraseType phraseType
 
   /**
    * A confidence score for this individual mention.  You can also
@@ -203,7 +203,7 @@ struct EntityMentionSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: string uuid
+  1: required string uuid
   
   /**
    * Information about where this set came from. 
@@ -213,5 +213,5 @@ struct EntityMentionSet {
   /**
    * List of mentions in this set. 
    */
-  3: list<EntityMention> mentionSet
+  3: required list<EntityMention> mentionSet
 }

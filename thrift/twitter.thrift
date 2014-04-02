@@ -51,7 +51,7 @@ struct TwitterLatLong {
 
 struct BoundingBox {
   1: optional string type
-  2: list<TwitterLatLong> coordinates
+  2: required list<TwitterLatLong> coordinates
 }
 
 struct PlaceAttributes {

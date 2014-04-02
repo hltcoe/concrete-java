@@ -37,7 +37,7 @@ struct AnnotationMetadata {
   /** 
    * The name of the tool that generated this annotation. 
    */
-  1: string tool
+  1: required string tool
 
   /** 
    * The time at which this annotation was generated (in unix time

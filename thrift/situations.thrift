@@ -106,7 +106,7 @@ struct Justification {
   /** 
    * A pointer to the SituationMention itself. 
    */
-  2: string mentionId
+  2: required string mentionId
 
   /** 
    * An optional list of pointers to tokens that are (especially)
@@ -316,12 +316,12 @@ struct Situation {
   /** 
    * Unique identifier for this situation. 
    */
-  1: string uuid
+  1: required string uuid
 
   /** 
    * The core type of this situation (eg EVENT or SENTIMENT).
    */
-  2: SituationType situationType
+  2: required SituationType situationType
 
   /** 
    * The arguments for this situation. Each argument consists of a
@@ -414,7 +414,7 @@ struct SituationSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: string uuid
+  1: required string uuid
 
   /** 
    * Information about where this set came from. 
@@ -424,7 +424,7 @@ struct SituationSet {
   /** 
    * List of mentions in this set. 
    */
-  3: list<Situation> situationList
+  3: required list<Situation> situationList
 }
 
 /**
@@ -476,7 +476,7 @@ struct SituationMention {
   /** 
    * Unique identifier for this situation. 
    */
-  1: string uuid
+  1: required string uuid
 
   /** 
    * The text content of this situation mention. This field is
@@ -496,7 +496,7 @@ struct SituationMention {
    * to have multiple arguments with the same role. Arguments are
    * unordered. 
    */
-  4: list<MentionArgument> argumentList
+  4: required list<MentionArgument> argumentList
 
   /** 
    * The event type for situations where situation_type=EVENT 
@@ -539,7 +539,7 @@ struct SituationMention {
    * this field. In particular, it is not specified whether the
    * arguments' tokens should be included. 
    */
-  150: structure.TokenRefSequence tokens
+  150: optional structure.TokenRefSequence tokens
 
   /** 
    * A confidence score for this individual situation mention. You
@@ -557,7 +557,7 @@ struct SituationMentionSet {
   /** 
    * Unique identifier for this set. 
    */
-  1: string uuid
+  1: required string uuid
 
   /** 
    * Information about where this set came from. 
@@ -567,5 +567,5 @@ struct SituationMentionSet {
   /** 
    * List of mentions in this set. 
    */
-  3: list<SituationMention> mentionList
+  3: required list<SituationMention> mentionList
 }
