@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 
 import org.apache.thrift.TException;
 
@@ -153,5 +154,31 @@ public class SuperCommunication {
     else
       throw new ConcreteException("Sentence: " + s.getUuid() + " does not have"
           + " any Tokenizations.");
+  }
+  
+  /**
+   * @return true if {@link SectionSegmentation}(s) are present
+   */
+  public boolean hasSectionSegmentations() {
+    return this.comm.isSetText()
+        && this.comm.isSetSectionSegmentations()
+        && this.comm.getSectionSegmentationsSize() > 0;
+  }
+  
+  /**
+   * @return true if {@link Section}(s) are present in all {@link SectionSegmentation}s
+   */
+  public boolean hasSections() {
+    if (!this.hasSectionSegmentations())
+      return false;
+    
+    Iterator<SectionSegmentation> i = this.comm.getSectionSegmentationsIterator();
+    boolean validSections = true;
+    while (validSections && i.hasNext()) {
+      SectionSegmentation ss = i.next();
+      validSections = ss.isSetSectionList() && ss.getSectionListSize() > 0;
+    }
+    
+    return validSections;
   }
 }
