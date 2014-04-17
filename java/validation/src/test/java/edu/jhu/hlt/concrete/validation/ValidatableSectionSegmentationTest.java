@@ -53,7 +53,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
   }
   
   public SectionSegmentation generateValidSectSeg() {
-    return generateValidSectSeg(generateValidCommunication());
+    return generateValidSectSeg(this.factory.randomCommunication());
   }
   
   public SectionSegmentation generateValidSectSeg (Communication c) {
@@ -69,7 +69,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
     s.textSpan = new TextSpan(0, commText.length());
     
     ss.addToSectionList(s);
-    ss.metadata = this.getMetadata();
+    ss.metadata = this.factory.randomMetadata();
     return ss;
   }
 
@@ -80,7 +80,6 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
   public void good() {
     logger.entry();
     this.test(true);
-    logger.exit();
   }
   
   /**

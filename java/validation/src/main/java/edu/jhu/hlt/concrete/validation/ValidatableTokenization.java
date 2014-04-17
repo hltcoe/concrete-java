@@ -3,9 +3,10 @@
  */
 package edu.jhu.hlt.concrete.validation;
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
@@ -67,31 +68,74 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       if (this.annotation.getKind() == TokenizationKind.TOKEN_LATTICE)
         validByType = this.printStatus("Kind == LATTICE, so lattice must be set, AND list must NOT be set.", this.annotation.isSetLattice() && !this.annotation.isSetTokenList());
       
-      else {
+      else
         validByType = this.printStatus("Kind == LIST, so list must be set, AND list must NOT be set.", this.annotation.isSetTokenList() && !this.annotation.isSetLattice())
-            && this.printStatus("TokenList must not be empty.", this.annotation.getTokenListSize() > 0);
-        
-        if (!validByType)
+            && this.printStatus("TokenList must not be empty.", this.annotation.getTokenListSize() > 0)
+            && this.printStatus("TokenList must be valid.", this.validateTokenList());
+      
+      return validByType;
+    }
+  }
+  
+  /**
+   * Validate a {@link List} of {@link Token}s relative
+   * to a {@link Tokenization} object.
+   * 
+   * @return <code>true</code> if valid
+   */
+  private boolean validateTokenList() {
+    // Populate a set of integers with the token IDs.
+    Set<Integer> tokenIdSet = new HashSet<Integer>();
+    
+    // Iterate over tokens to validate them.
+    Iterator<Token> iter = this.annotation.getTokenListIterator();
+    boolean validTokenIdx = true;
+    while (validTokenIdx && iter.hasNext()) {
+      Token current = iter.next();
+      boolean isSetIdx = this.printStatus("Token idx must be set.", current.isSetTokenIndex());
+      if (!isSetIdx)
+        return false;
+      else {
+        int idx = current.getTokenIndex();
+        if (!this.printStatus("Token idx can't be < 0", idx >= 0))
           return false;
         else {
-          NavigableSet<Integer> tokenIdSet = new TreeSet<Integer>();
-          
-          Iterator<Token> iter = this.annotation.getTokenListIterator();
-          boolean validTokenIdx = true;
-          while (validTokenIdx && iter.hasNext()) {
-            Token current = iter.next();
-            int idx = current.getTokenIndex();
+          // If set is empty, we can safely add.
+          if (tokenIdSet.isEmpty())
+            tokenIdSet.add(idx);
+          else {
+            // IF set is not empty, need to make sure it is not already present.
+            validTokenIdx = tokenIdSet.add(idx);
           }
-          
         }
       }
-      
-      if (!validByType)
-        return false;
-      else 
-        return true;
-      
     }
+    
+    // We have now gotten all of the token IDs, or exited when one was invalid.
+    // First, make sure that validTokenIdx is still true.
+    if (!validTokenIdx)
+      return false;
+    else {
+      // Need to make sure that this set is continuous from 0..K
+      return this.printStatus("Token indices must be continuous from 0.." + tokenIdSet.size(), this.validateTokenSet(tokenIdSet));
+    }
+  }
+  
+  private boolean validateTokenSet(Set<Integer> tokenIdxSet) {
+    boolean validOrder = true;    
+    final int sz = tokenIdxSet.size();
+    
+    // From 0..K, generate an int.
+    for (int i = 0; i < sz; i++) {
+      // If previous was invalid, exit with false.
+      if (!validOrder)
+        return false;
+      else
+        validOrder = tokenIdxSet.contains(i);
+    }
+    
+    // Return order validity.
+    return validOrder;
   }
 
 }
