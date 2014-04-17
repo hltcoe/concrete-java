@@ -37,7 +37,7 @@ public abstract class AbstractValidationTest {
   public AnnotationMetadata getMetadata() {
     AnnotationMetadata md = new AnnotationMetadata();
     md.confidence = 1F;
-    md.timestamp = (int) System.currentTimeMillis() / 1000;
+    md.setTimestamp(System.currentTimeMillis());
     md.tool = "Validation library";
     
     return md;

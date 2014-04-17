@@ -6,7 +6,6 @@ package edu.jhu.hlt.concrete.validation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,76 +17,72 @@ import edu.jhu.hlt.concrete.TextSpan;
  */
 public class ValidatableTextSpanTest extends AbstractValidationTest {
 
-  ValidatableTextSpan vts;
+  TextSpan base;
 
   /**
    * @throws java.lang.Exception
    */
   @Before
   public void setUp() throws Exception {
-    TextSpan good = new TextSpan(0, this.comm.text.length());
-    this.vts = new ValidatableTextSpan(good);
+    base = new TextSpan(0, this.comm.text.length());
   }
 
-  /**
-   * @throws java.lang.Exception
-   */
-  @After
-  public void tearDown() throws Exception {
+  private boolean testValidity () {
+    return new ValidatableTextSpan(this.base).validate(this.comm);
   }
-
+  
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void good() {
-    assertTrue(this.vts.isValid(this.comm));
+    assertTrue(this.testValidity());
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void negativeStart() {
-    this.vts.getAnnotation().start = -1;
-    assertFalse(this.vts.isValid(this.comm));
+    this.base.setStart(-1);
+    assertFalse(this.testValidity());
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void negativeEnd() {
-    this.vts.getAnnotation().ending = -1;
-    assertFalse(this.vts.isValid(this.comm));
+    this.base.setEnding(-1);
+    assertFalse(this.testValidity());
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void endLessThanStart() {
-    this.vts.getAnnotation().start = 4;
-    this.vts.getAnnotation().ending = 3;
-    assertFalse(this.vts.isValid(this.comm));
+    this.base.setStart(2);
+    this.base.setEnding(1);
+    assertFalse(this.testValidity());
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void endGreaterThanLength() {
-    this.vts.getAnnotation().ending = this.comm.getText().length() + 100;
-    assertFalse(this.vts.isValid(this.comm));
+    this.base.setEnding(this.comm.getText().length() + 2);
+    assertFalse(this.testValidity());
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void zeroLength() {
-    this.vts.getAnnotation().start = 5;
-    this.vts.getAnnotation().ending = 5;
-    assertFalse(this.vts.isValid(this.comm));
+    this.base.setStart(5);
+    this.base.setEnding(5);
+    assertFalse(this.testValidity());
   }
 }

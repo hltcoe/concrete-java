@@ -12,27 +12,28 @@ import edu.jhu.hlt.concrete.TextSpan;
  */
 public class ValidatableTextSpan extends AbstractAnnotation<TextSpan> {
 
+  // Beginning.
+  private final int begin;
+  // End.
+  private final int end;
+  
   public ValidatableTextSpan(TextSpan annotation) {
     super(annotation);
+    this.begin = this.annotation.getStart();
+    this.end = this.annotation.getEnding();
   }
 
   @Override
-  public boolean isValid(Communication c) {
-    int begin = this.getAnnotation().start;
-    int end = this.getAnnotation().ending;
+  protected boolean isValidWithComm(Communication c) {
     int textLength = c.getText().length();
     
-    // Begin can't be negative
-    // End can't be equal or less than beginning
     // End can't be > length of text
-    return begin >= 0 
-        && end > begin 
-        && end <= textLength;
+    return this.printStatus("End can't be > text length", end <= textLength);
   }
 
   @Override
   public boolean isValid() {
-    // TODO Auto-generated method stub
-    return false;
+    return this.printStatus("Beginning has to be >= 0", begin >= 0)
+        && this.printStatus("Ending has to be > beginning", end > begin);
   }
 }

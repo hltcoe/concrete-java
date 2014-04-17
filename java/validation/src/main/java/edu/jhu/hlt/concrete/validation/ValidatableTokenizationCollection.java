@@ -22,7 +22,7 @@ public class ValidatableTokenizationCollection extends AbstractAnnotation<Tokeni
    * @see edu.jhu.hlt.rebar.ballast.validation.AbstractAnnotation#isValid(edu.jhu.hlt.concrete.Communication)
    */
   @Override
-  public boolean isValid(Communication c) {
+  public boolean isValidWithComm(Communication c) {
     return true;
   }
 

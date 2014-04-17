@@ -25,7 +25,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     }
 
     @Override
-    public boolean isValid(Communication c) {
+    public boolean isValidWithComm(Communication c) {
       return false;
     }
 

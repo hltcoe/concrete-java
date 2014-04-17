@@ -11,6 +11,8 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
@@ -24,15 +26,23 @@ import edu.jhu.hlt.concrete.TextSpan;
  */
 public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
 
-  ValidatableSectionSegmentation vss;
+  private static final XLogger logger = XLoggerFactory.getXLogger(ValidatableSectionSegmentationTest.class);
+  
+  SectionSegmentation ss;
   
   /**
    * @throws java.lang.Exception
    */
   @Before
   public void setUp() throws Exception {
-    SectionSegmentation ss = this.generateValidSectSeg(this.comm);
-    this.vss = new ValidatableSectionSegmentation(ss);
+    ss = this.generateValidSectSeg(this.comm);
+  }
+  
+  private void test(boolean checkTrue) {
+    if (checkTrue)
+      assertTrue(new ValidatableSectionSegmentation(this.ss).validate(this.comm));
+    else
+      assertFalse(new ValidatableSectionSegmentation(this.ss).validate(this.comm));
   }
 
   /**
@@ -64,51 +74,49 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void good() {
-    assertTrue(this.vss.isValid(this.comm));
+    logger.entry();
+    this.test(true);
+    logger.exit();
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void badUUID() {
-    SectionSegmentation ss = this.vss.getAnnotation();
-    ss.uuid = "hello";
-    assertFalse(this.vss.isValid(this.comm));
+    this.ss.uuid = "hello";
+    this.test(false);
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void noUUID() {
-    SectionSegmentation ss = this.vss.getAnnotation();
     ss.uuid = null;
-    assertFalse(this.vss.isValid(this.comm));
+    this.test(false);
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void noSections() {
-    SectionSegmentation ss = this.vss.getAnnotation();
     ss.getSectionList().remove(0);
-    assertFalse(this.vss.isValid(this.comm));
+    this.test(false);
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValid(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
   @Test
   public void invalidTextSpan() {
-    SectionSegmentation ss = this.vss.getAnnotation();
     Section s = ss.getSectionList().get(0);
     s.setTextSpan(new TextSpan(-1, 1));
-    assertFalse(this.vss.isValid(this.comm));
+    this.test(false);
   }
 }
