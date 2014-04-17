@@ -26,13 +26,13 @@ public class ValidatableSentenceSegmentationCollection extends AbstractAnnotatio
   public ValidatableSentenceSegmentationCollection(SentenceSegmentationCollection annotation) {
     super(annotation);
   }
-
+  
   /*
    * (non-Javadoc)
    * @see edu.jhu.hlt.rebar.annotations.AbstractRebarAnnotation#validate(edu.jhu.hlt.concrete.Communication)
    */
   @Override
-  public boolean isValidWithComm(Communication c) {
+  protected boolean isValidWithComm(Communication c) {
     int sentCollLen = this.annotation.getSentSegListSize();
 
     List<SectionSegmentation> sectSegList = c.getSectionSegmentations();

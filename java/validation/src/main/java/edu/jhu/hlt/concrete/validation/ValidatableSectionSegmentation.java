@@ -28,7 +28,7 @@ public class ValidatableSectionSegmentation extends AbstractAnnotation<SectionSe
    * @see edu.jhu.hlt.rebar.ballast.validation.AbstractAnnotation#isValid(edu.jhu.hlt.concrete.Communication)
    */
   @Override
-  public boolean isValidWithComm(Communication c) {
+  protected boolean isValidWithComm(Communication c) {
     boolean valid = true;
     Iterator<Section> sects = this.annotation.getSectionListIterator();
     while (valid && sects.hasNext()) {

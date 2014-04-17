@@ -11,6 +11,7 @@ import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.util.Util;
 
 /**
  * Abstract validation class. Focusing on immutable values, attempt to 
@@ -104,5 +105,15 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
       logger.info(paramd, st, "Failed");
     
     return exp;
+  }
+  
+  /**
+   * Convenience method for UUID checking.
+   * 
+   * @param uuidToCheck
+   * @return
+   */
+  boolean validateUUID(String uuidToCheck) {
+    return this.printStatus("UUID string must be valid UUID", Util.isValidUUIDString(uuidToCheck));
   }
 }
