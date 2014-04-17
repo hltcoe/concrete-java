@@ -57,7 +57,6 @@ public class ValidatableSentenceSegmentationCollection extends AbstractAnnotatio
 
   @Override
   public boolean isValid() {
-    // TODO Auto-generated method stub
     return false;
   }
 }
