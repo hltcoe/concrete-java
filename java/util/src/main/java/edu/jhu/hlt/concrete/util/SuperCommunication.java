@@ -28,12 +28,14 @@ import edu.jhu.hlt.concrete.Tokenization;
 public class SuperCommunication {
 
   protected final Communication comm;
+  protected final Serialization ser;
   
   /**
    * 
    */
   public SuperCommunication(Communication comm) {
     this.comm = comm;
+    this.ser = new Serialization();
   }
   
   /**
@@ -54,10 +56,8 @@ public class SuperCommunication {
           throw new ConcreteException("File exists at: " + path.toString() + ". Delete it, or "
               + "call this method with the second parameter set to 'true'.");
     
-      byte[] bytez = Serialization.toBytes(this.comm);
+      byte[] bytez = this.ser.toBytes(this.comm);
       Files.write(path, bytez);
-    } catch (TException e) {
-      throw new ConcreteException(e);
     } catch (IOException e) {
       throw new ConcreteException(e);
     }
