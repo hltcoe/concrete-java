@@ -40,7 +40,8 @@ public class SuperCommunication {
    * 
    */
   public SuperCommunication(Communication comm) {
-    this.comm = comm;
+    // Create a copy, providing some immutability.
+    this.comm = new Communication(comm);
     this.ser = new Serialization();
   }
 

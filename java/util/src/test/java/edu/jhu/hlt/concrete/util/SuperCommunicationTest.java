@@ -3,19 +3,24 @@
  */
 package edu.jhu.hlt.concrete.util;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.ConcreteFactory;
+import edu.jhu.hlt.concrete.Section;
+import edu.jhu.hlt.concrete.SectionKind;
 import edu.jhu.hlt.concrete.SectionSegmentation;
+import edu.jhu.hlt.concrete.TextSpan;
 
 /**
  * @author max
@@ -23,11 +28,14 @@ import edu.jhu.hlt.concrete.SectionSegmentation;
  */
 public class SuperCommunicationTest {
 
+  ConcreteFactory cf;
+  
   /**
    * @throws java.lang.Exception
    */
   @Before
   public void setUp() throws Exception {
+    cf = new ConcreteFactory();
   }
 
   /**
@@ -53,10 +61,7 @@ public class SuperCommunicationTest {
    */
   @Test
   public void hasSectionSegmentationsFalseForNoSectionSegs() {
-    Communication comm = mock(Communication.class);
-    when(comm.isSetSectionSegmentations()).thenReturn(true);
-    when(comm.getSectionSegmentationsSize()).thenReturn(0);
-    
+    Communication comm = cf.randomCommunication();
     assertFalse(new SuperCommunication(comm).hasSectionSegmentations());
   }
 
@@ -65,11 +70,17 @@ public class SuperCommunicationTest {
    */
   @Test
   public void hasSectionSegmentationsTrueForOverZeroSectionSegs() {
-    Communication comm = mock(Communication.class);
-    when(comm.isSetSectionSegmentations()).thenReturn(true);
-    when(comm.getSectionSegmentationsSize()).thenReturn(1);
+    Communication comm = cf.randomCommunication();
+    SectionSegmentation ss = new SectionSegmentation()
+      .setUuid(UUID.randomUUID().toString());
+    Section s = new Section()
+      .setUuid(UUID.randomUUID().toString())
+      .setKind(SectionKind.OTHER)
+      .setTextSpan(new TextSpan(0, comm.getText().length()));
+    ss.addToSectionList(s);
+    comm.addToSectionSegmentations(ss);
     
-    assertFalse(new SuperCommunication(comm).hasSectionSegmentations());
+    assertTrue(new SuperCommunication(comm).hasSectionSegmentations());
   }
   
   /**
@@ -82,10 +93,8 @@ public class SuperCommunicationTest {
     List<SectionSegmentation> list = new ArrayList<SectionSegmentation>();
     list.add(ss);
     
-    Communication comm = mock(Communication.class);
-    when(comm.isSetSectionSegmentations()).thenReturn(true);
-    when(comm.getSectionSegmentationsSize()).thenReturn(1);
-    when(comm.getSectionSegmentations()).thenReturn(list);
+    Communication comm = cf.randomCommunication();
+    comm.addToSectionSegmentations(ss);
     
     assertFalse(new SuperCommunication(comm).hasSections());
   }

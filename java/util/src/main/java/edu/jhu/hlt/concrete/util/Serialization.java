@@ -40,7 +40,7 @@ public class Serialization {
    */
   public <T extends TBase<T, ? extends TFieldIdEnum>> byte[] toBytes(T object) throws ConcreteException {
     try {
-      return new TSerializer().serialize(object);
+      return new TSerializer(this.strategy).serialize(object);
     } catch (TException e) {
       throw new ConcreteException("Error during serialization.", e);
     }
