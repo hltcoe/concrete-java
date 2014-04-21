@@ -9,7 +9,9 @@ import java.util.Set;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SentenceSegmentation;
-import edu.jhu.hlt.concrete.util.SuperCommunication;
+import edu.jhu.hlt.concrete.communications.CachedSuperCommunication;
+import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
+import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max
@@ -29,8 +31,8 @@ public class ValidatableSentenceSegmentation extends AbstractAnnotation<Sentence
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    SuperCommunication sc = new SuperCommunication(c);
-    Map<String, Section> sectIdToSectMap = sc.sectionIdToSectionMap();
+    SectionedSuperCommunication sc = new SectionedSuperCommunication(c);
+    Map<String, Section> sectIdToSectMap = sc.getSectionIdToSectionMap();
     Set<String> sectIds = sectIdToSectMap.keySet();
     boolean validSectionPointer = sectIds.contains(this.annotation.getSectionId());
 

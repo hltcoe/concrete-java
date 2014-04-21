@@ -3,18 +3,13 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.hlt.concrete.util;
+package edu.jhu.hlt.concrete.communications;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.apache.thrift.TException;
 
@@ -23,8 +18,9 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.SentenceSegmentation;
-import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.util.Serialization;
 
 /**
  * Wrapper around {@link Communication} to allow advanced functionality.
@@ -185,70 +181,4 @@ public class SuperCommunication {
     return validSections;
   }
 
-  /**
-   * Iterate over all {@link SectionSegmentation}s and create a {@link Map} of [SectionID, Section].
-   * 
-   * @return a {@link Map} whose keys contain {@link Section} {@link UUID} strings, and whose values contain {@link Section} objects with that id string.
-   */
-  public Map<String, Section> sectionIdToSectionMap() {
-    final Map<String, Section> toRet = new HashMap<String, Section>();
-
-    if (this.comm.isSetSectionSegmentations())
-      for (SectionSegmentation ss : this.comm.getSectionSegmentations())
-        if (ss.isSetSectionList())
-          for (Section s : ss.getSectionList())
-            toRet.put(s.getUuid(), s);
-
-    return toRet;
-  }
-
-  /**
-   * Return a {@link Map} of [SentenceID, Sentence] for all {@link SentenceSegmentation}s in all {@link SectionSegmentation}s.
-   * 
-   * @return a {@link Map} whose keys contain {@link Sentence} {@link UUID} strings, and whose values contain {@link Section} objects with that id string.
-   */
-  public Map<String, Sentence> sentIdToSentenceMap() {
-    final Map<String, Sentence> toRet = new HashMap<String, Sentence>();
-
-    List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap().values());
-    for (Section s : sectList)
-      if (s.isSetSentenceSegmentation())
-        for (SentenceSegmentation ss : s.getSentenceSegmentation())
-          if (ss.isSetSentenceList())
-            for (Sentence st : ss.getSentenceList())
-              toRet.put(st.getUuid(), st);
-
-    return toRet;
-  }
-
-  /**
-   * Returns a nested map. <br>
-   * <br>
-   * Top level: <br>
-   * Key: Tokenization ID <br>
-   * Value: Map[Integer, Token] that represents [ID, Token] for this {@link Tokenization} <br>
-   * <br>
-   * Nested Map: <br>
-   * Key: Token Sequence ID <br>
-   * Value: {@link Token} object
-   * 
-   */
-  public Map<String, Map<Integer, Token>> tokenizationIdToTokenSeqIdToTokensMap() {
-    final Map<String, Map<Integer, Token>> toRet = new HashMap<>();
-
-    List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap().values());
-    for (Sentence st : stList)
-      if (st.isSetTokenizationList())
-        for (Tokenization t : st.getTokenizationList()) {
-          String tId = t.getUuid();
-          Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
-          if (t.isSetTokenList())
-            for (Token tok : t.getTokenList())
-              idToTokenMap.put(tok.getTokenIndex(), tok);
-
-          toRet.put(tId, idToTokenMap);
-        }
-
-    return toRet;
-  }
 }

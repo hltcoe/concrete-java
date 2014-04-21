@@ -12,7 +12,8 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
-import edu.jhu.hlt.concrete.util.SuperCommunication;
+import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
+import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max
@@ -32,8 +33,8 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    return new SuperCommunication(c)
-      .sentIdToSentenceMap()
+    return new SectionedSuperCommunication(c)
+      .getSectionIdToSectionMap()
       .keySet()
       .contains(this.annotation.getSentenceId());
   }

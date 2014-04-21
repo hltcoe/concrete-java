@@ -21,6 +21,7 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SectionKind;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max
@@ -46,7 +47,7 @@ public class SuperCommunicationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperCommunication#hasSectionSegmentations()}.
+   * Test method for {@link edu.jhu.hlt.concrete.communications.SuperCommunication#hasSectionSegmentations()}.
    */
   @Test
   public void hasSectionSegmentationsFalseForUnsetSectionSegs() {
@@ -57,7 +58,7 @@ public class SuperCommunicationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperCommunication#hasSectionSegmentations()}.
+   * Test method for {@link edu.jhu.hlt.concrete.communications.SuperCommunication#hasSectionSegmentations()}.
    */
   @Test
   public void hasSectionSegmentationsFalseForNoSectionSegs() {
@@ -66,7 +67,7 @@ public class SuperCommunicationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperCommunication#hasSectionSegmentations()}.
+   * Test method for {@link edu.jhu.hlt.concrete.communications.SuperCommunication#hasSectionSegmentations()}.
    */
   @Test
   public void hasSectionSegmentationsTrueForOverZeroSectionSegs() {
@@ -84,7 +85,7 @@ public class SuperCommunicationTest {
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperCommunication#hasSections()}.
+   * Test method for {@link edu.jhu.hlt.concrete.communications.SuperCommunication#hasSections()}.
    */
   @Test
   public void hasSectionsFalseWhenUnsetSections() {
