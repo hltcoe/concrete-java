@@ -32,9 +32,9 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
     List<Integer> tokenIdxIds = this.annotation.getTokenIndexList();
     
     TokenizedSuperCommunication cc = new TokenizedSuperCommunication(c);
-    if (cc.getTokenizationIds().contains(tokUuid)) {
+    if (this.printStatus("Tokenization UUID must be an existing tokenization.", cc.getTokenizationIds().contains(tokUuid))) {
       Set<Integer> tokIdxSet = cc.getTokenizationIdToTokenIdxToTokenMap().get(tokUuid).keySet();
-      if (!tokIdxSet.containsAll(tokenIdxIds))
+      if (this.printStatus("All token IDs must be present in the tokenization.", !tokIdxSet.containsAll(tokenIdxIds)))
         return false;
       else
         return true;

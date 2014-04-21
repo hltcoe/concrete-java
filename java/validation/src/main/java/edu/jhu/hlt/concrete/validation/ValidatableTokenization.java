@@ -13,7 +13,6 @@ import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max

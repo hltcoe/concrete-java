@@ -9,9 +9,7 @@ import java.util.Set;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SentenceSegmentation;
-import edu.jhu.hlt.concrete.communications.CachedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max
