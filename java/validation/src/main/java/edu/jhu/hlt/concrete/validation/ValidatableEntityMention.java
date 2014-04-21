@@ -45,5 +45,4 @@ public class ValidatableEntityMention extends AbstractAnnotation<EntityMention> 
       return this.printStatus("TokenRefSeq must be valid.", new ValidatableTokenRefSequence(trs).isValid());
     }
   }
-
 }
