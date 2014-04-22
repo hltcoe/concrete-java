@@ -23,7 +23,7 @@ public class ValidatableSection extends AbstractAnnotation<Section> {
   @Override
   protected boolean isValidWithComm(Communication c) {
     // No text --> false
-    if (this.printStatus("Text must be set in the comm", !c.isSetText())) return false;
+    if (!this.printStatus("Text must be set in the comm", c.isSetText())) return false;
     // For Sections: need to ensure that this TextSpan
     // is valid in the context of the communication.
     return this.printStatus("TextSpan must be valid wrt comm", new ValidatableTextSpan(this.annotation.getTextSpan()).isValidWithComm(c));

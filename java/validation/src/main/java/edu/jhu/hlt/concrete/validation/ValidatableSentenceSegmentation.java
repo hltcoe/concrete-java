@@ -50,5 +50,4 @@ public class ValidatableSentenceSegmentation extends AbstractAnnotation<Sentence
         && this.printStatus("Section ID must be set", this.annotation.isSetSectionId())
         && this.validateUUID(this.annotation.getSectionId());
   }
-
 }
