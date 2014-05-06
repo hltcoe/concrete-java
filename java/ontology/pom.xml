@@ -2,36 +2,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete-project</artifactId>
-  <version>2.0.7-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <modules>
-    <module>core</module>
-    <module>util</module>
-    <module>ontology</module>
-    <module>validation</module>
-    <module>examples</module>
-  </modules>
-
   <parent>
-    <groupId>edu.jhu.hlt.parent</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0.0</version>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-project</artifactId>
+    <version>2.0.7-SNAPSHOT</version>
   </parent>
 
-  <name>Concrete</name>
-  <description>Parent for Concrete - Java libraries.</description>
-  <url>https://github.com/hltcoe/concrete/java</url>
-
-  <organization>
-    <name>Johns Hopkins University HLTCOE</name>
-    <url>http://hltcoe.jhu.edu</url>
-  </organization>
-
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
+  <artifactId>concrete-ontology</artifactId>
+  <name>Concrete :: Ontology</name>
+  <description>Concrete ontology and Java library.</description>
 
   <developers>
     <developer>
@@ -41,17 +20,6 @@
       <id>maxthomas</id>
     </developer>
   </developers>
-
-  <scm>
-    <url>https://github.com/hltcoe/concrete</url>
-    <connection>scm:git:git://github.com/hltcoe/concrete.git</connection>
-    <developerConnection>scm:git:git@github.com:hltcoe/concrete.git</developerConnection>
-  </scm>
-
-  <issueManagement>
-    <url>https://github.com/hltcoe/concrete/issues</url>
-    <system>GitHub Issues</system>
-  </issueManagement>
 
   <licenses>
     <license>
@@ -140,38 +108,78 @@
     </profile>
   </profiles>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.thrift</groupId>
-        <artifactId>libthrift</artifactId>
-        <version>0.9.1</version>
-      </dependency>
-      <dependency>
-        <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-util</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.6</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.9.5</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.thrift</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.6</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.jena</groupId>
+    	<artifactId>apache-jena-libs</artifactId>
+    	<version>2.11.1</version>
+    	<type>pom</type>
+    	<exclusions>
+     	  <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+     	  </exclusion>
+      </exclusions>
+  	</dependency>
+  	<dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.0-rc1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.0-rc1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.0-rc1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+  </dependencies>
 </project>
