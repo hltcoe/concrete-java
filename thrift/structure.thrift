@@ -445,26 +445,6 @@ struct SentenceSegmentationCollection {
   2: required list<SentenceSegmentation> sentSegList
 }
 
-/**
- * Possible types of Sections.
- */
-enum SectionKind {
-  OTHER = 0
-  // E.g., one or more paragraphs, or the full text of a tweet
-  PASSAGE = 1
-  // E.g., the header text of an email from Enron
-  METADATA = 2
-  // a bulleted list that is formatted such that we expect NLP tools to choke
-  LIST = 3
-  // an embedded table that will almost certainly cause NLP tools to choke
-  TABLE = 4
-  // TODO, include embedded image support when actually needed
-  IMAGE = 5
-  // Titles that may appear in documents.
-  TITLE = 6
-  // etc..
-}
-
 //===========================================================================
 // Sections (aka "Regions" or "Zones")
 //===========================================================================
@@ -495,7 +475,7 @@ struct Section {
   /**
    * The type of this section.
    */
-  4: required SectionKind kind
+  4: required string kind
   
   /**
    * The name of the section

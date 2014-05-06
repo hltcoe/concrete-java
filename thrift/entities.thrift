@@ -26,36 +26,6 @@ include "metadata.thrift"
  * be marked as a mention for France.
  */
 
-enum EntityType {
-  PERSON = 1;
-  ORGANIZATION = 2
-  GPE = 3
-  OTHER = 4
-  DATE = 5
-  FACILITY = 6
-  VEHICLE = 7
-  WEAPON = 8
-  LOCATION = 9
-  TIME = 10
-  URL = 11
-  EMAIL = 12
-  MONEY = 13
-  PERCENTAGE = 14 /** XX is this different from PERCENT?? */
-  PHONE_NUMBER = 15
-  OCCUPATION = 16
-  CHEMICAL = 17
-  AGE = 18
-  PERCENT = 19
-  PERSON_NN = 20
-  GPE_ITE = 21
-  ORGANIZATION_ITE = 22
-  JOB_TITLE = 23
-  UNKNOWN = 24
-  SET = 25                                 // From TimeML Timex
-  DURATION = 26                         // From TimeML Timex
-  // This list is expected to grow over time.
-}
-
 /**
  * A single referent (or "entity") that is referred to at least once
  * in a given communication, along with pointers to all of the
@@ -81,7 +51,7 @@ struct Entity {
   /**
    * The basic type of this entity's referent. 
    */
-  3: required EntityType type
+  3: required string type
 
   /**  
    * Confidence score for this individual entity.  You can also set a
@@ -117,18 +87,6 @@ struct EntitySet {
    * List of entities in this set.
    */
   3: required list<Entity> entityList
-}
-
-/**
- * Enumeration of phrase types.
- */
-enum PhraseType {
-  NAME = 1 //!< aka "proper noun"
-  PRONOUN = 2
-  COMMON_NOUN = 3
-  OTHER = 4
-  APPOSITIVE = 5
-  LIST = 6
 }
 
 //===========================================================================
@@ -169,12 +127,12 @@ struct EntityMention {
   /**
    * The type of referent that is referred to by this mention. 
    */
-  3: required EntityType entityType
+  3: required string entityType
   
   /**
    * The phrase type of the tokens that constitute this mention. 
    */
-  4: required PhraseType phraseType
+  4: required string phraseType
 
   /**
    * A confidence score for this individual mention.  You can also

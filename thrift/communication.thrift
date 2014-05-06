@@ -10,19 +10,6 @@ include "email.thrift"
 include "twitter.thrift"
 include "audio.thrift"
 
-/**
- * Possible communication types. This list will likely grow over time.
- */
-enum CommunicationType {
-  OTHER = 0
-  EMAIL = 1
-  NEWS = 2
-  WIKIPEDIA = 3
-  TWEET = 4
-  PHONE_CALL = 5
-  USENET = 6
-  BLOG = 7
-}
 
 /** 
  * A single communication instance, containing linguistic content
@@ -59,7 +46,7 @@ struct Communication {
    * store extra fields that are specific to the communication
    * type. 
    */
-  3: required CommunicationType type
+  3: required string type
 
   /** 
    * The full text contents of this communication in its original
