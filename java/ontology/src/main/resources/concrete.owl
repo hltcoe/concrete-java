@@ -100,6 +100,14 @@
     
 
 
+    <!-- http://hltcoe.jhu.edu/ontologies/2014/4/concrete-ontology#Other -->
+
+    <owl:Class rdf:about="http://hltcoe.jhu.edu/ontologies/2014/4/concrete-ontology#Other">
+        <rdfs:subClassOf rdf:resource="http://hltcoe.jhu.edu/ontologies/2014/4/concrete-ontology#Section"/>
+    </owl:Class>
+    
+
+
     <!-- http://hltcoe.jhu.edu/ontologies/2014/4/concrete-ontology#Passage -->
 
     <owl:Class rdf:about="http://hltcoe.jhu.edu/ontologies/2014/4/concrete-ontology#Passage">
