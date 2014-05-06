@@ -12,15 +12,6 @@
   <name>Concrete :: Ontology</name>
   <description>Concrete ontology and Java library.</description>
 
-  <developers>
-    <developer>
-      <email>max.thomas@jhu.edu</email>
-      <name>Max Thomas</name>
-      <url>https://github.com/maxthomas</url>
-      <id>maxthomas</id>
-    </developer>
-  </developers>
-
   <licenses>
     <license>
       <name>2-clause BSD license</name>
