@@ -8,8 +8,8 @@
   <packaging>pom</packaging>
   <modules>
     <module>core</module>
-    <module>util</module>
     <module>ontology</module>
+    <module>util</module>
     <module>validation</module>
     <module>examples</module>
   </modules>
@@ -150,6 +150,11 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-ontology</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

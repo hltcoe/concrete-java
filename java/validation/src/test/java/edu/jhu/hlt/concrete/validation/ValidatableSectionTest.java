@@ -3,7 +3,8 @@
  */
 package edu.jhu.hlt.concrete.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -13,7 +14,6 @@ import org.junit.Test;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionKind;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
@@ -29,7 +29,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     Section s = new Section()
       .setUuid(UUID.randomUUID().toString())
       .setTextSpan(new TextSpan(0, this.comm.getText().length()))
-      .setKind(SectionKind.PASSAGE);
+      .setKind("Passage");
     return s;
   }
   

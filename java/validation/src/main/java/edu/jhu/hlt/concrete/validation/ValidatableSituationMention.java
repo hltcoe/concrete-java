@@ -5,7 +5,6 @@ package edu.jhu.hlt.concrete.validation;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.SituationMention;
-import edu.jhu.hlt.concrete.SituationType;
 
 /**
  * @author max
@@ -41,10 +40,10 @@ public class ValidatableSituationMention extends AbstractAnnotation<SituationMen
         && this.printStatus("SituationType must be set", this.annotation.isSetSituationType());
     if (!init) return false;
     else {
-      SituationType st = this.annotation.getSituationType();
-      if (st == SituationType.EVENT)
+      String st = this.annotation.getSituationType();
+      if (st == "Event")
         return this.printStatus("If SituationType == EVENT, EventType must be set.", this.annotation.isSetEventType());
-      else if (st == SituationType.STATE)
+      else if (st == "State")
         return this.printStatus("If SituationType == STATE, StateType must be set.", this.annotation.isSetStateType());
       else
         return true;

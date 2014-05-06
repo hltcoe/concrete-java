@@ -5,7 +5,7 @@
  */
 package edu.jhu.hlt.concrete.examples;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.CommunicationType;
 
 /**
  * Simple document serialization/deserialization example with UTF-8 and {@link TBinaryProtocol}.
@@ -37,7 +36,7 @@ public class SingleDocumentTest {
     c.uuid = UUID.randomUUID().toString();
     c.id = "Random-doc-1";
     c.setText("Lốrem ipsum");
-    c.type = CommunicationType.OTHER;
+    c.type = "Other";
     
     byte[] bytez = new TSerializer(new TBinaryProtocol.Factory()).serialize(c);
     TDeserializer deser = new TDeserializer(new TBinaryProtocol.Factory());

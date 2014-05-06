@@ -6,8 +6,7 @@ package edu.jhu.hlt.concrete;
 import java.util.Random;
 import java.util.UUID;
 
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.CommunicationType;
+import concrete.ontology.ConcreteOntology;
 
 /**
  * Class for generating test Concrete data.
@@ -17,7 +16,7 @@ import edu.jhu.hlt.concrete.CommunicationType;
 public class ConcreteFactory {
   
   private final Random r;
-  private static final CommunicationType[] COMM_TYPES = CommunicationType.values();
+  private static final String[] COMM_TYPES = new ConcreteOntology().getValidCommunicationTypes().toArray(new String[0]);
   private static final int COMM_TYPE_SIZE = COMM_TYPES.length;
 
   /**
@@ -31,7 +30,7 @@ public class ConcreteFactory {
     this.r = new Random(seed); 
   }
   
-  public CommunicationType randomCommunicationType() {
+  public String randomCommunicationType() {
     return COMM_TYPES[this.r.nextInt(COMM_TYPE_SIZE)];
   }
 

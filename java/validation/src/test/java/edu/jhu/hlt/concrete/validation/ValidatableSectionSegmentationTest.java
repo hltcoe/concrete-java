@@ -16,7 +16,6 @@ import org.slf4j.ext.XLoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionKind;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
 
@@ -65,7 +64,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
     
     Section s = new Section();
     s.uuid = UUID.randomUUID().toString();
-    s.kind = SectionKind.OTHER;
+    s.kind = "Other";
     s.textSpan = new TextSpan(0, commText.length());
     
     ss.addToSectionList(s);

@@ -3,7 +3,8 @@
  */
 package edu.jhu.hlt.concrete.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +19,6 @@ import org.junit.Test;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ConcreteFactory;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionKind;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
@@ -76,7 +76,7 @@ public class SuperCommunicationTest {
       .setUuid(UUID.randomUUID().toString());
     Section s = new Section()
       .setUuid(UUID.randomUUID().toString())
-      .setKind(SectionKind.OTHER)
+      .setKind("Other")
       .setTextSpan(new TextSpan(0, comm.getText().length()));
     ss.addToSectionList(s);
     comm.addToSectionSegmentations(ss);
