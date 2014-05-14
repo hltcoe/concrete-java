@@ -53,20 +53,25 @@ public class ConcreteOntology {
     
     this.defaultNamespace = this.model.getNsPrefixURI("");
     this.commTypes = new HashSet<String>();
+    this.commTypes.addAll(this.loadViaOntology("Communication"));
+    
     this.sectionTypes = new HashSet<>();
+    this.sectionTypes.addAll(this.loadViaOntology("Section"));
   }
   
   public final Set<String> getValidCommunicationTypes() {
-    if (this.commTypes.size() == 0)
-      this.commTypes.addAll(this.loadViaOntology("Communication"));
-      
     return new HashSet<>(this.commTypes);
   }
   
+  public final boolean isValidCommunicationType(String toCheck) {
+    return this.commTypes.contains(toCheck);
+  }
+  
+  public final boolean isValidSectionType(String toCheck) {
+    return this.sectionTypes.contains(toCheck);
+  }
+  
   public final Set<String> getValidSectionTypes() {
-    if (this.sectionTypes.size() == 0)
-      this.sectionTypes.addAll(this.loadViaOntology("Section"));
-    
     return new HashSet<>(this.sectionTypes);
   }
   
