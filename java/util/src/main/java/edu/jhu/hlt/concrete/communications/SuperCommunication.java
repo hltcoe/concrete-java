@@ -40,6 +40,19 @@ public class SuperCommunication {
     this.comm = new Communication(comm);
     this.ser = new Serialization();
   }
+  
+  /**
+   * True if this {@link Communication} contains annotations that are not part of a
+   * "root" {@link Communication}. Used in rebar to see if any dangling annotations
+   * exist and chop them off if needed. 
+   */
+  public boolean containsAnnotations() {
+    return this.comm.isSetSectionSegmentations()
+        || this.comm.isSetEntityMentionSets()
+        || this.comm.isSetEntitySets()
+        || this.comm.isSetSituationMentionSets()
+        || this.comm.isSetSituationSets();
+  }
 
   /**
    * Take in a {@link Path} to an output file, and whether or not to delete the file at that path if it already exists, and output a byte array that represents
