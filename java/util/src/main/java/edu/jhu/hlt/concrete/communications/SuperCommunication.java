@@ -60,7 +60,8 @@ public class SuperCommunication {
         || this.comm.isSetEntityMentionSets()
         || this.comm.isSetEntitySets()
         || this.comm.isSetSituationMentionSets()
-        || this.comm.isSetSituationSets();
+        || this.comm.isSetSituationSets()
+        || this.comm.isSetLids();
   }
   
   /**
@@ -80,7 +81,9 @@ public class SuperCommunication {
       copy.unsetSituationMentionSets();
     if (copy.isSetSectionSegmentations())
       copy.unsetSectionSegmentations();
-    
+    if (copy.isSetLids())
+      copy.unsetLids();
+
     return new SuperCommunication(copy);
   }
 
