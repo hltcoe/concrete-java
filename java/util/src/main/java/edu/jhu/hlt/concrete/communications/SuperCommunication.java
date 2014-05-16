@@ -42,6 +42,15 @@ public class SuperCommunication {
   }
   
   /**
+   * Returns a <b>copy</b> of the {@link Communication} wrapped by this {@link SuperCommunication}.
+   * 
+   * If you modify the copy, modifications will not show up. 
+   */
+  public Communication getCopy() {
+    return new Communication(this.comm);
+  }
+  
+  /**
    * True if this {@link Communication} contains annotations that are not part of a
    * "root" {@link Communication}. Used in rebar to see if any dangling annotations
    * exist and chop them off if needed. 
@@ -55,9 +64,9 @@ public class SuperCommunication {
   }
   
   /**
-   * Return a "trimmed" {@link SuperCommunication} with extraneous annotations removed.
+   * Return a "stripped" {@link SuperCommunication} with extraneous annotations removed.
    */
-  public SuperCommunication trim() {
+  public SuperCommunication stripAnnotations() {
     Communication copy = new Communication(this.comm);
     
     // Unset annotation fields if set.
