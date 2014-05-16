@@ -53,6 +53,27 @@ public class SuperCommunication {
         || this.comm.isSetSituationMentionSets()
         || this.comm.isSetSituationSets();
   }
+  
+  /**
+   * Return a "trimmed" {@link SuperCommunication} with extraneous annotations removed.
+   */
+  public SuperCommunication trim() {
+    Communication copy = new Communication(this.comm);
+    
+    // Unset annotation fields if set.
+    if (copy.isSetEntitySets())
+      copy.unsetEntitySets();
+    if (copy.isSetEntityMentionSets())
+      copy.unsetEntityMentionSets();
+    if (copy.isSetSituationSets())
+      copy.unsetSituationSets();
+    if (copy.isSetSituationMentionSets())
+      copy.unsetSituationMentionSets();
+    if (copy.isSetSectionSegmentations())
+      copy.unsetSectionSegmentations();
+    
+    return new SuperCommunication(copy);
+  }
 
   /**
    * Take in a {@link Path} to an output file, and whether or not to delete the file at that path if it already exists, and output a byte array that represents
