@@ -40,6 +40,52 @@ public class SuperCommunication {
     this.comm = new Communication(comm);
     this.ser = new Serialization();
   }
+  
+  /**
+   * Returns a <b>copy</b> of the {@link Communication} wrapped by this {@link SuperCommunication}.
+   * 
+   * If you modify the copy, modifications will not show up. 
+   */
+  public Communication getCopy() {
+    return new Communication(this.comm);
+  }
+  
+  /**
+   * True if this {@link Communication} contains annotations that are not part of a
+   * "root" {@link Communication}. Used in rebar to see if any dangling annotations
+   * exist and chop them off if needed. 
+   */
+  public boolean containsAnnotations() {
+    return this.comm.isSetSectionSegmentations()
+        || this.comm.isSetEntityMentionSets()
+        || this.comm.isSetEntitySets()
+        || this.comm.isSetSituationMentionSets()
+        || this.comm.isSetSituationSets()
+        || this.comm.isSetLids();
+  }
+  
+  /**
+   * Return a "stripped" {@link SuperCommunication} with extraneous annotations removed.
+   */
+  public SuperCommunication stripAnnotations() {
+    Communication copy = new Communication(this.comm);
+    
+    // Unset annotation fields if set.
+    if (copy.isSetEntitySets())
+      copy.unsetEntitySets();
+    if (copy.isSetEntityMentionSets())
+      copy.unsetEntityMentionSets();
+    if (copy.isSetSituationSets())
+      copy.unsetSituationSets();
+    if (copy.isSetSituationMentionSets())
+      copy.unsetSituationMentionSets();
+    if (copy.isSetSectionSegmentations())
+      copy.unsetSectionSegmentations();
+    if (copy.isSetLids())
+      copy.unsetLids();
+
+    return new SuperCommunication(copy);
+  }
 
   /**
    * Take in a {@link Path} to an output file, and whether or not to delete the file at that path if it already exists, and output a byte array that represents
