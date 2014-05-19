@@ -82,6 +82,21 @@ public class SuperCommunication {
   }
 
   /**
+   * Return true if this {@link Communication} contains at least 1 {@link SectionSegmentation}
+   * that is not empty.
+   */
+  public boolean containsSectionSegmentation() {
+    return this.comm.isSetSectionSegmentations() && this.comm.getSectionSegmentationsSize() > 0;
+  }
+  
+  public boolean containsSection() throws ConcreteException {
+    if (!this.containsSectionSegmentation())
+      return false;
+    SectionSegmentation ss = this.firstSectionSegmentation();
+    return ss.isSetSectionList() && ss.getSectionListSize() > 0;
+  }
+  
+  /**
    * Get the first {@link SectionSegmentation} from this {@link Communication}.
    * 
    * If it is not set or is empty, throw a {@link ConcreteException}.
@@ -91,7 +106,7 @@ public class SuperCommunication {
    *           if {@link SectionSegmentation} is not set or is empty
    */
   public SectionSegmentation firstSectionSegmentation() throws ConcreteException {
-    if (this.comm.isSetSectionSegmentations() && this.comm.getSectionSegmentationsSize() > 0)
+    if (this.containsSectionSegmentation())
       return this.comm.getSectionSegmentations().get(0);
     else
       throw new ConcreteException("Communication: " + this.comm.getUuid() + " does not have" + " any SectionSegmentations.");
@@ -106,7 +121,7 @@ public class SuperCommunication {
    */
   public Section firstSection() throws ConcreteException {
     SectionSegmentation ss = this.firstSectionSegmentation();
-    if (ss.isSetSectionList() && ss.getSectionListSize() > 0)
+    if (this.hasSections())
       return ss.getSectionList().get(0);
     else
       throw new ConcreteException("SectionSegmentation: " + ss.getUuid() + " does not have" + " any Sections.");
@@ -180,5 +195,4 @@ public class SuperCommunication {
 
     return validSections;
   }
-
 }
