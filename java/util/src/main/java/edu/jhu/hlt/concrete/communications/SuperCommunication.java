@@ -50,6 +50,14 @@ public class SuperCommunication {
     return new Communication(this.comm);
   }
   
+  public String getId() {
+    return this.comm.getId();
+  }
+  
+  public String getUuid() {
+    return this.comm.getUuid();
+  }
+  
   /**
    * True if this {@link Communication} contains annotations that are not part of a
    * "root" {@link Communication}. Used in rebar to see if any dangling annotations
