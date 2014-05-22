@@ -43,7 +43,7 @@ public class CommunicationUtils {
 
   }
 
-  protected static List<Tokenization> getTokenizationList(Collection<Communication> commColl) {
+  static List<Tokenization> getTokenizationList(Collection<Communication> commColl) {
     List<Tokenization> tokList = new ArrayList<>();
     for (Communication c : commColl) {
       TokenizedSuperCommunication ssc = new TokenizedSuperCommunication(c);
