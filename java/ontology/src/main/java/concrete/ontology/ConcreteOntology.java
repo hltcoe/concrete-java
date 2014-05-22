@@ -26,7 +26,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  */
 public class ConcreteOntology {
   
-  public static final String ONTOLOGY_FILE_NAME = "concrete.owl";
+  public static final String ONTOLOGY_FILE_NAME = "concrete-3.0.0.owl";
   
   private static final Logger logger = LoggerFactory.getLogger(ConcreteOntology.class);
   
@@ -35,6 +35,8 @@ public class ConcreteOntology {
   
   protected final Set<String> commTypes;
   protected final Set<String> sectionTypes;
+  protected final Set<String> posTags;
+  protected final Set<String> nerTags;
   
   /**
    * 
@@ -57,6 +59,12 @@ public class ConcreteOntology {
     
     this.sectionTypes = new HashSet<>();
     this.sectionTypes.addAll(this.loadViaOntology("Section"));
+    
+    this.nerTags = new HashSet<>();
+    this.nerTags.addAll(this.loadViaOntology("NamedEntityRecognitionTag"));
+    
+    this.posTags = new HashSet<>();
+    this.posTags.addAll(this.loadViaOntology("PartOfSpeechTag"));
   }
   
   public final Set<String> getValidCommunicationTypes() {
@@ -75,14 +83,24 @@ public class ConcreteOntology {
     return new HashSet<>(this.sectionTypes);
   }
   
+  public final Set<String> getValidNERTags() {
+    return new HashSet<>(this.nerTags);
+  }
+  
+  public final Set<String> getValidPOSTags() {
+    return new HashSet<>(this.posTags);
+  }
+  
   private Set<String> loadViaOntology(String ontString) {
     Set<String> toLoadInto = new HashSet<>();  
     OntClass oc = this.model.getOntClass(this.toURI(ontString));
-      ExtendedIterator<OntClass> ei = oc.listSubClasses(false);
-      while (ei.hasNext()) {
-        OntClass occ = ei.next();
-        toLoadInto.add(occ.getLocalName());
-      }
+    if (oc == null)
+      return toLoadInto;
+    ExtendedIterator<OntClass> ei = oc.listSubClasses(false);
+    while (ei.hasNext()) {
+      OntClass occ = ei.next();
+      toLoadInto.add(occ.getLocalName());
+    }
     
     return toLoadInto;
   }
@@ -110,6 +128,12 @@ public class ConcreteOntology {
       logger.info(s);
     logger.info("Section Types:");
     for (String s : co.getValidSectionTypes())
+      logger.info(s);
+    logger.info("NamedEntityRecognition tags:");
+    for (String s : co.getValidNERTags())
+      logger.info(s);    
+    logger.info("PartOfSpeech tags:");
+    for (String s : co.getValidPOSTags())
       logger.info(s);
   }
 }
