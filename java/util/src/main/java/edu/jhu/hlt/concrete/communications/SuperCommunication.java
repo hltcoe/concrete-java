@@ -5,11 +5,15 @@
  */
 package edu.jhu.hlt.concrete.communications;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 
 import org.apache.thrift.TException;
 
@@ -248,5 +252,41 @@ public class SuperCommunication {
     }
 
     return validSections;
+  }
+  
+  public static List<Communication> loadCommunications(String pathStringToFileList) throws ConcreteException, IOException {
+    return loadCommunications(Paths.get(pathStringToFileList));
+  }
+  
+  public static List<Communication> loadCommunications(Path pathToFileList) throws ConcreteException, IOException {
+    if (!Files.exists(pathToFileList))
+      throw new FileNotFoundException("No file at path: " + pathToFileList.toString());
+    List<Path> pathList = new ArrayList<>();
+    try (Scanner sc = new Scanner(pathToFileList.toFile())) {
+      while (sc.hasNextLine())
+        pathList.add(Paths.get(sc.nextLine()));
+    }
+    
+    return loadCommunicationsFromPaths(pathList);
+  }
+  
+  public static List<Communication> loadCommunicationsFromPaths(List<Path> pathList) throws ConcreteException, IOException {
+    List<Communication> loadList = new ArrayList<>(pathList.size());
+    
+    Serialization ser = new Serialization();
+    for (Path p : pathList)
+      loadList.add(ser.fromBytes(new Communication(), Files.readAllBytes(p)));
+    return loadList;    
+  }
+  
+  public static List<Communication> loadCommunicationsFromPathStrings(List<String> pathStringList) throws ConcreteException, IOException {
+    List<Path> pathList = new ArrayList<>();
+    for (String s : pathStringList) {
+      Path p = Paths.get(s);
+      if (!Files.exists(p))
+        throw new FileNotFoundException("No file found at path: " + p.toString());
+    }
+    
+    return loadCommunicationsFromPaths(pathList);
   }
 }
