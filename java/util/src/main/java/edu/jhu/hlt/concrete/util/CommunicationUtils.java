@@ -9,22 +9,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import concrete.util.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.Constituent;
-import edu.jhu.hlt.concrete.Dependency;
-import edu.jhu.hlt.concrete.DependencyParse;
-import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.TaggedToken;
-import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.TokenizedSuperCommunication;
 
@@ -41,69 +36,6 @@ public class CommunicationUtils {
    */
   private CommunicationUtils() {
 
-  }
-
-  static List<Tokenization> getTokenizationList(Collection<Communication> commColl) {
-    List<Tokenization> tokList = new ArrayList<>();
-    for (Communication c : commColl) {
-      TokenizedSuperCommunication ssc = new TokenizedSuperCommunication(c);
-      tokList.addAll(ssc.getTokenizationIdToTokenizationMap().values());
-    }
-
-    return tokList;
-  }
-
-  public static Set<String> enumerateDependencyParseTags(Collection<Communication> commColl) {
-    Set<String> dps = new HashSet<>();
-    List<Tokenization> sectList = getTokenizationList(commColl);
-    for (Tokenization s : sectList)
-      for (DependencyParse dp : s.getDependencyParseList())
-        for (Dependency d : dp.getDependencyList())
-          dps.add(d.getEdgeType());
-
-    return dps;
-  }
-
-  public static Set<String> enumeratePartOfSpeechTags(Collection<Communication> commColl) {
-    Set<String> dps = new HashSet<>();
-    List<Tokenization> sectList = getTokenizationList(commColl);
-    for (Tokenization s : sectList)
-      for (TaggedToken tt : s.getPosTagList().getTaggedTokenList())
-        dps.add(tt.getTag());
-
-    return dps;
-  }
-
-  public static Set<String> enumerateNamedEntityTags(Collection<Communication> commColl) {
-    Set<String> dps = new HashSet<>();
-    List<Tokenization> sectList = getTokenizationList(commColl);
-    for (Tokenization s : sectList)
-      for (TaggedToken tt : s.getNerTagList().getTaggedTokenList())
-        dps.add(tt.getTag());
-
-    return dps;
-  }
-
-  public static Set<String> enumerateConstituentTags(Collection<Communication> commColl) {
-    Set<String> dps = new HashSet<>();
-    List<Tokenization> sectList = getTokenizationList(commColl);
-    for (Tokenization s : sectList)
-      for (Constituent tt : s.getParse().getConstituentList())
-        dps.add(tt.getTag());
-
-    return dps;
-  }
-
-  public static Set<String> enumerateSectionKinds(Collection<Communication> commColl) {
-    Set<String> ss = new HashSet<>();
-    for (Communication c : commColl) {
-      SectionedSuperCommunication ssc = new SectionedSuperCommunication(c);
-      List<Section> sectList = new ArrayList<>(ssc.getSectionIdToSectionMap().values());
-      for (Section s : sectList)
-        ss.add(s.getKind());
-    }
-
-    return ss;
   }
 
   public static List<Communication> loadCommunicationsFromPathStrings(List<String> pathStringList) throws ConcreteException, IOException {
@@ -142,7 +74,7 @@ public class CommunicationUtils {
     return loadCommunications(Paths.get(pathStringToFileList));
   }
 
-  public static void main(String... args) throws ConcreteException, IOException {
+  public static void main(String... args) throws Exception {
     if (args.length != 2) {
       logger.info("Usage: {} <path-to-file-list> <type>", CommunicationUtils.class.getSimpleName());
       logger.info("Available types (case insensitive):");
@@ -158,31 +90,39 @@ public class CommunicationUtils {
     String fileListString = args[0];
     String toDump = args[1];
 
-    List<Communication> commList = CommunicationUtils.loadCommunications(fileListString);
+    List<Future<Communication>> commList;
+    try (ConcurrentCommunicationLoader ccl = new ConcurrentCommunicationLoader(Runtime.getRuntime().availableProcessors())) {
+      commList = ccl.bulkLoad(fileListString);
+    }
+    
+    Set<String> strings = new HashSet<>();
     switch (toDump.toLowerCase()) {
     case "sectionkinds":
-      for (String s : enumerateSectionKinds(commList))
-        System.out.println(s);
+      for (Future<Communication> comm : commList) 
+        strings.addAll(new SectionedSuperCommunication(comm.get()).enumerateSectionKinds());
       break;
     case "postags":
-      for (String s : enumeratePartOfSpeechTags(commList))
-        System.out.println(s);
+      for (Future<Communication> comm : commList) 
+        strings.addAll(new TokenizedSuperCommunication(comm.get()).enumeratePartOfSpeechTags());      
       break;
     case "nertags":
-      for (String s : enumerateNamedEntityTags(commList))
-        System.out.println(s);
+      for (Future<Communication> comm : commList) 
+        strings.addAll(new TokenizedSuperCommunication(comm.get()).enumerateNamedEntityTags());      
       break;
     case "dependencyparsetags":
-      for (String s : enumerateDependencyParseTags(commList))
-        System.out.println(s);
+      for (Future<Communication> comm : commList) 
+        strings.addAll(new TokenizedSuperCommunication(comm.get()).enumerateDependencyParseTags());      
       break;
     case "constituenttags":
-      for (String s : enumerateConstituentTags(commList))
-        System.out.println(s);
+      for (Future<Communication> comm : commList) 
+        strings.addAll(new TokenizedSuperCommunication(comm.get()).enumerateConstituentTags());
       break;
       default:
         logger.error("You can't dump that type. Run this without arguments for a list of types.");
         System.exit(1);
     }
+    
+    for (String s : strings)
+      System.out.println(s);
   }
 }

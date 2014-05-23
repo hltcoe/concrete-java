@@ -4,6 +4,7 @@
 package edu.jhu.hlt.concrete.communications;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.Constituent;
+import edu.jhu.hlt.concrete.Dependency;
+import edu.jhu.hlt.concrete.DependencyParse;
 import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 
@@ -83,5 +88,46 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
   
   public final Set<String> getTokenizationIds() {
     return new HashSet<>(this.tokenizationIdToTokenizationMap.keySet());
+  }
+  
+  public Set<String> enumerateConstituentTags() {
+    Set<String> dps = new HashSet<>();
+    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+    for (Tokenization s : sectList)
+      for (Constituent tt : s.getParse().getConstituentList())
+        dps.add(tt.getTag());
+
+    return dps;
+  }
+  
+  public Set<String> enumerateDependencyParseTags() {
+    Set<String> dps = new HashSet<>();
+    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+    for (Tokenization s : sectList)
+      for (DependencyParse dp : s.getDependencyParseList())
+        for (Dependency d : dp.getDependencyList())
+          dps.add(d.getEdgeType());
+
+    return dps;
+  }
+
+  public Set<String> enumeratePartOfSpeechTags() {
+    Set<String> dps = new HashSet<>();
+    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+    for (Tokenization s : sectList)
+      for (TaggedToken tt : s.getPosTagList().getTaggedTokenList())
+        dps.add(tt.getTag());
+
+    return dps;
+  }
+
+  public Set<String> enumerateNamedEntityTags() {
+    Set<String> dps = new HashSet<>();
+    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+    for (Tokenization s : sectList)
+      for (TaggedToken tt : s.getNerTagList().getTaggedTokenList())
+        dps.add(tt.getTag());
+
+    return dps;
   }
 }
