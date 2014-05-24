@@ -44,7 +44,7 @@
 
   <scm>
     <url>https://github.com/hltcoe/concrete</url>
-    <connection>scm:git:test1:/export/common/git/concrete.git</connection>
+    <connection>scm:git:git://test1:/export/common/git/concrete.git</connection>
     <developerConnection>scm:git:test1:/export/common/git/concrete.git</developerConnection>
   </scm>
 
