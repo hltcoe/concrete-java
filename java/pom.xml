@@ -45,7 +45,6 @@
   <scm>
     <url>https://github.com/hltcoe/concrete</url>
     <connection>scm:git:git://test1:/export/common/git/concrete.git</connection>
-    <developerConnection>scm:git:test1:/export/common/git/concrete.git</developerConnection>
   </scm>
 
   <issueManagement>
@@ -68,6 +67,20 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-plugin</artifactId>
+          <version>1.9</version>
+          <configuration>
+            <connectionType>connection</connectionType>
+            <tag>${project.artifactId}-${project.version}</tag>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
