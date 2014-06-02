@@ -23,7 +23,11 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.Serialization;
 
 /**
- * Wrapper around {@link Communication} to allow advanced functionality.
+ * <strong>Read-only</strong> wrapper around {@link Communication} to allow advanced functionality.
+ * <br>
+ * <br>
+ * Be aware that changes to wrapped {@link Communication} objects are not propagated through to the 
+ * {@link SuperCommunication} object. 
  * 
  * @author max
  */
@@ -33,7 +37,7 @@ public class SuperCommunication {
   protected final Serialization ser;
 
   /**
-   * 
+   * Single arg ctor: pass in a {@link Communication} object to wrap. 
    */
   public SuperCommunication(Communication comm) {
     // Create a copy, providing some immutability.

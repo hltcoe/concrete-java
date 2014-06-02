@@ -24,8 +24,9 @@ import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.TokenizedSuperCommunication;
 
 /**
+ * Contains a number of useful utility methods for working with {@link Communication}s.
+ * 
  * @author max
- *
  */
 public class CommunicationUtils {
 

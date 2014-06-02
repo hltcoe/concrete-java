@@ -38,7 +38,7 @@ public class Util {
   /**
    * Determine if a string is truly a {@link UUID} string.
    * 
-   * Unfortunately, we have to catch an exception that is thrown if it is not valid.
+   * Unfortunately, an exception will be thrown if it is not valid.
    * 
    * @param uuidStr - {@link String} to check
    * @return true if a {@link UUID} string, otherwise false.

@@ -14,7 +14,7 @@ import edu.jhu.hlt.concrete.Communication;
 public class CachedSuperCommunication extends TokenizedSuperCommunication {
 
   /**
-   * @param comm
+   * Single arg ctor: pass in a {@link Communication} to wrap and cache.
    */
   public CachedSuperCommunication(Communication comm) {
     super(comm);

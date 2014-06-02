@@ -5,6 +5,11 @@
  */
 package edu.jhu.hlt.concrete.util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -32,9 +37,10 @@ public class Serialization {
   }
 
   /**
-   * Serialize a thrift-like object.
+   * Generic method to serialize a thrift-like object.
    * 
-   * @param object
+   * @param object - a 'thrift-like' {@link TBase}] object that can be used by
+   * {@link TSerializer#serialize(TBase)} to produce a byte array.
    * @return
    * @throws ConcreteException
    */
@@ -47,12 +53,14 @@ public class Serialization {
   }
   
   /**
-   * Deserialize a thrift-like object.
+   * Generic method to deserialize a thrift-like object.
    * 
-   * @param object
-   * @param bytez
-   * @return
-   * @throws ConcreteException
+   * @param object - a 'thrift-like' [{@link TBase}] object that will be deserialized into. In other words,
+   * if you were reading in a {@link Communication} byte array, you should pass in a <code>new Communication()</code>
+   * object as the first parameter. 
+   * @param bytez - the byte array that holds the serialized {@link TBase} object.
+   * @return a deserialized {@link TBase} object. 
+   * @throws ConcreteException if there is an error during deserialization.
    */
   public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, byte[] bytez) throws ConcreteException {
     try {
@@ -61,5 +69,28 @@ public class Serialization {
     } catch (TException e) {
       throw new ConcreteException("Error during deserialization.", e);
     }
+  }
+  
+  /**
+   * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link Path} object.
+   * 
+   * @see #fromBytes(TBase, byte[])
+   */
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, Path pathToSerializedFile) throws ConcreteException {
+    try {
+      return this.fromBytes(object, Files.readAllBytes(pathToSerializedFile));
+    } catch (IOException e) {
+      throw new ConcreteException(e);
+    }
+  }
+  
+  /**
+   * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link String} that represents
+   * a path to a serialized {@link TBase} object on disk. 
+   * 
+   * @see #fromBytes(TBase, Path)
+   */
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, String pathToSerializedFileString) throws ConcreteException {
+    return this.fromBytes(object, Paths.get(pathToSerializedFileString));
   }
 }
