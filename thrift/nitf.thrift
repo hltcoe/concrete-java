@@ -370,7 +370,7 @@ struct NITFInfo {
    * <li>COLLINS, GLENN
    * </ol>
    */
-  36: list<string> people
+  36: optional list<string> people
 
   /**
    * This field specifies the date of the article�s publication.
@@ -439,7 +439,7 @@ struct NITFInfo {
    * <li>Top/Opinion
    * </ol>
    */
-  45: list<string> taxonomicClassifiers
+  45: optional list<string> taxonomicClassifiers
 
   /**
    * This field specifies a list of authored works that correspond to works
@@ -453,7 +453,7 @@ struct NITFInfo {
    * <li>BATTLEFIELD EARTH (BOOK)
    * </ol>
    */
-  46: list<string> titles
+  46: optional list<string> titles
 
   /**
    * This field specifies a normalized list of terms describing the general
@@ -467,7 +467,7 @@ struct NITFInfo {
    * <li>ANALYSIS
    * </ol>
    */
-  47: list<string> typesOfMaterial
+  47: optional list<string> typesOfMaterial
 
   /**
    * This field specifies the location on nytimes.com of the article. The
