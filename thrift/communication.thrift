@@ -9,6 +9,7 @@ include "situations.thrift"
 include "email.thrift"
 include "twitter.thrift"
 include "audio.thrift"
+include "nitf.thrift"
 
 
 /** 
@@ -122,6 +123,13 @@ struct Communication {
    * Extra information for communications where kind==EMAIL
    */
   22: optional email.EmailCommunicationInfo emailInfo
+
+  /**
+   * Extra information that may come from the NITF
+   * (News Industry Text Format) schema. See 'nitf.thrift'.
+   */
+
+  23: optional nitf.NITFInfo nitfInfo
   
   /**
    * A catch-all store of keys and values. Use sparingly!
