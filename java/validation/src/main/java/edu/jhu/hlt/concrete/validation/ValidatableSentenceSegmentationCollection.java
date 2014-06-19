@@ -4,6 +4,7 @@
 package edu.jhu.hlt.concrete.validation;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,21 @@ public class ValidatableSentenceSegmentationCollection extends AbstractAnnotatio
 
   @Override
   public boolean isValid() {
-    return false;
+    boolean initValidation = 
+        this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
+        && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
+        // Sections must exist.
+        && this.printStatus("Sections must exist", this.annotation.isSetSentSegList())
+        // Section size must be >0.
+        && this.printStatus("Section size must be >0", this.annotation.getSentSegListSize() > 0);
+    if (initValidation) {
+      Iterator<SentenceSegmentation> iter = this.annotation.getSentSegListIterator();
+      boolean subValid = true;
+      while (subValid && iter.hasNext())
+        subValid = new ValidatableSentenceSegmentation(iter.next()).isValid();
+      
+      return subValid;
+    } else
+      return false;
   }
 }

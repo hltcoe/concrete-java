@@ -15,7 +15,7 @@ import edu.jhu.hlt.concrete.util.Util;
 
 /**
  * Abstract validation class. Focusing on immutable values, attempt to 
- * easily provide valiation methods that can be used in downstream tools. 
+ * easily provide validation methods that can be used in downstream tools. 
  * 
  * @author max
  */
