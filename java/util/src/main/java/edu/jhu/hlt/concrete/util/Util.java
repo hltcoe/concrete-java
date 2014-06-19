@@ -7,8 +7,6 @@ package edu.jhu.hlt.concrete.util;
 
 import java.util.UUID;
 
-import edu.jhu.hlt.concrete.AnnotationMetadata;
-
 /**
  * @author max
  *
@@ -20,19 +18,6 @@ public class Util {
    */
   private Util() {
 
-  }
-  
-  /**
-   * Generate an {@link AnnotationMetadata} object that describes this "tool".
-   *
-   * @return a {@link AnnotationMetadata} object for this project
-   */
-  public static AnnotationMetadata getMetadata() {
-    AnnotationMetadata md = new AnnotationMetadata();
-    md.confidence = 1.0d;
-    md.timestamp = (int) (System.currentTimeMillis() / 1000);
-    md.tool = "concrete-util";
-    return md;
   }
   
   /**
