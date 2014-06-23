@@ -1,4 +1,0 @@
-concrete-ontology
-=================
-
-Concrete ontology
