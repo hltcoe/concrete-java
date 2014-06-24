@@ -1,5 +1,7 @@
 /*
- * 
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package concrete.ontology;
 
@@ -10,7 +12,7 @@ package concrete.ontology;
 public class InvalidConcreteTypeException extends Exception {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = -1068547726911898063L;
 

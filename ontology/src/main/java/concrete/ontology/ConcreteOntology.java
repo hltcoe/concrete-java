@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package concrete.ontology;
 
@@ -25,74 +27,74 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  *
  */
 public class ConcreteOntology {
-  
+
   public static final String ONTOLOGY_FILE_NAME = "concrete-3.0.0.owl";
-  
+
   private static final Logger logger = LoggerFactory.getLogger(ConcreteOntology.class);
-  
+
   protected final OntModel model;
   protected final String defaultNamespace;
-  
+
   protected final Set<String> commTypes;
   protected final Set<String> sectionTypes;
   protected final Set<String> posTags;
   protected final Set<String> nerTags;
-  
+
   /**
-   * 
+   *
    */
   public ConcreteOntology() {
     this(ONTOLOGY_FILE_NAME);
   }
-  
+
   public ConcreteOntology(String fileName) {
     this(ClassLoader.getSystemResourceAsStream(fileName));
   }
-  
+
   public ConcreteOntology(InputStream is) {
     this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
     model.read(is, null);
-    
+
     this.defaultNamespace = this.model.getNsPrefixURI("");
     this.commTypes = new HashSet<String>();
     this.commTypes.addAll(this.loadViaOntology("Communication"));
-    
+
     this.sectionTypes = new HashSet<>();
     this.sectionTypes.addAll(this.loadViaOntology("Section"));
-    
+
     this.nerTags = new HashSet<>();
     this.nerTags.addAll(this.loadViaOntology("NamedEntityRecognitionTag"));
-    
+
     this.posTags = new HashSet<>();
     this.posTags.addAll(this.loadViaOntology("PartOfSpeechTag"));
   }
-  
+
   public final Set<String> getValidCommunicationTypes() {
     return new HashSet<>(this.commTypes);
   }
-  
+
   public final boolean isValidCommunicationType(String toCheck) {
     return this.commTypes.contains(toCheck);
   }
-  
+
   public final boolean isValidSectionType(String toCheck) {
     return this.sectionTypes.contains(toCheck);
   }
-  
+
   public final Set<String> getValidSectionTypes() {
     return new HashSet<>(this.sectionTypes);
   }
-  
+
   public final Set<String> getValidNERTags() {
     return new HashSet<>(this.nerTags);
   }
-  
+
   public final Set<String> getValidPOSTags() {
     return new HashSet<>(this.posTags);
   }
-  
+
   private Set<String> loadViaOntology(String ontString) {
-    Set<String> toLoadInto = new HashSet<>();  
+    Set<String> toLoadInto = new HashSet<>();
     OntClass oc = this.model.getOntClass(this.toURI(ontString));
     if (oc == null)
       return toLoadInto;
@@ -101,14 +103,14 @@ public class ConcreteOntology {
       OntClass occ = ei.next();
       toLoadInto.add(occ.getLocalName());
     }
-    
+
     return toLoadInto;
   }
 
   public static final String toURI(QName qn) {
     return qn.getNamespaceURI() + qn.getLocalPart();
   }
-  
+
   public final String toURI(String local) {
     return toURI(this.toQName(local));
   }
@@ -116,11 +118,11 @@ public class ConcreteOntology {
   public final String getDefaultNamespace() {
     return this.defaultNamespace;
   }
-  
+
   public final QName toQName(String local) {
     return new QName(this.defaultNamespace, local);
   }
-  
+
   public static void main (String... args) {
     ConcreteOntology co = new ConcreteOntology();
     logger.info("Communication Types:");
@@ -131,7 +133,7 @@ public class ConcreteOntology {
       logger.info(s);
     logger.info("NamedEntityRecognition tags:");
     for (String s : co.getValidNERTags())
-      logger.info(s);    
+      logger.info(s);
     logger.info("PartOfSpeech tags:");
     for (String s : co.getValidPOSTags())
       logger.info(s);
