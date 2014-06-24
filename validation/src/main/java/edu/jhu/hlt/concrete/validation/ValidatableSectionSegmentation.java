@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -16,7 +18,7 @@ import edu.jhu.hlt.concrete.SectionSegmentation;
 public class ValidatableSectionSegmentation extends AbstractAnnotation<SectionSegmentation> {
 
   /**
-   * 
+   *
    */
   public ValidatableSectionSegmentation(SectionSegmentation annot) {
     super(annot);
@@ -34,13 +36,13 @@ public class ValidatableSectionSegmentation extends AbstractAnnotation<SectionSe
       Section s = sects.next();
       valid = this.printStatus("Section must be valid wrt comm", new ValidatableSection(s).validate(c));
     }
-    
+
     return valid;
   }
 
   @Override
   public boolean isValid() {
-    return         
+    return
         // Rebar depends upon valid metadata.
         this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())

@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -20,15 +22,15 @@ import edu.jhu.hlt.concrete.UUID;
  *
  */
 public class ValidatableSentenceSegmentationCollection extends AbstractAnnotation<SentenceSegmentationCollection> {
-  
+
   /**
-   * 
+   *
    * @param annotation
    */
   public ValidatableSentenceSegmentationCollection(SentenceSegmentationCollection annotation) {
     super(annotation);
   }
-  
+
   /*
    * (non-Javadoc)
    * @see edu.jhu.hlt.rebar.annotations.AbstractRebarAnnotation#validate(edu.jhu.hlt.concrete.Communication)
@@ -41,25 +43,25 @@ public class ValidatableSentenceSegmentationCollection extends AbstractAnnotatio
     if (sectSegList != null && sectSegList.size() == sentCollLen) {
       // Map from UUID --> Section
       Map<UUID, Section> idToSectionSegMap = new HashMap<>(sentCollLen);
-      
+
       for (SectionSegmentation ss : sectSegList) {
         for (Section s : ss.getSectionList())
           idToSectionSegMap.put(s.uuid, s);
-        
+
         for (SentenceSegmentation sts : this.annotation.getSentSegList()) {
           if (!idToSectionSegMap.containsKey(sts.sectionId))
             return false;
-          
-        }            
+
+        }
       }
     }
-    
+
     return true;
   }
 
   @Override
   public boolean isValid() {
-    boolean initValidation = 
+    boolean initValidation =
         this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
         // Sections must exist.
@@ -71,7 +73,7 @@ public class ValidatableSentenceSegmentationCollection extends AbstractAnnotatio
       boolean subValid = true;
       while (subValid && iter.hasNext())
         subValid = new ValidatableSentenceSegmentation(iter.next()).isValid();
-      
+
       return subValid;
     } else
       return false;

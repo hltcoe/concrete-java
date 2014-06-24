@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -16,7 +18,7 @@ public class ValidatableTextSpan extends AbstractAnnotation<TextSpan> {
   private final int begin;
   // End.
   private final int end;
-  
+
   public ValidatableTextSpan(TextSpan annotation) {
     super(annotation);
     this.begin = this.annotation.getStart();
@@ -26,7 +28,7 @@ public class ValidatableTextSpan extends AbstractAnnotation<TextSpan> {
   @Override
   protected boolean isValidWithComm(Communication c) {
     int textLength = c.getText().length();
-    
+
     // End can't be > length of text
     return this.printStatus("End can't be > text length", end <= textLength);
   }

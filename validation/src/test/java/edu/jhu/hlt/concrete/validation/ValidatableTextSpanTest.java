@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -30,7 +32,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   private boolean testValidity () {
     return new ValidatableTextSpan(this.base).validate(this.comm);
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -47,7 +49,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
     this.base.setStart(-1);
     assertFalse(this.testValidity());
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -56,7 +58,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
     this.base.setEnding(-1);
     assertFalse(this.testValidity());
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -66,7 +68,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
     this.base.setEnding(1);
     assertFalse(this.testValidity());
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -75,7 +77,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
     this.base.setEnding(this.comm.getText().length() + 2);
     assertFalse(this.testValidity());
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */

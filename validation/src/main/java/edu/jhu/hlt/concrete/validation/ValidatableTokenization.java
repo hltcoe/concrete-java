@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -46,7 +48,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
    * <li>Metadata is valid</li>
    * <li>TokenizationKind is set</li>
    * </ol>
-   * 
+   *
    * <ul>
    * <li>If TokenizationKind == Lattice, check Lattice exists and List does not</li>
    * <li>If TokenizationKind == List, check List exists and Lattice does not; validate List[Token]</li>
@@ -61,32 +63,32 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
         && this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
         && this.printStatus("TokenizationKind must be set.", this.annotation.isSetKind());
-    if (!basics) 
+    if (!basics)
       return false;
     else {
       boolean validByType = true;
       if (this.annotation.getKind() == TokenizationKind.TOKEN_LATTICE)
         validByType = this.printStatus("Kind == LATTICE, so lattice must be set, AND list must NOT be set.", this.annotation.isSetLattice() && !this.annotation.isSetTokenList());
-      
+
       else
         validByType = this.printStatus("Kind == LIST, so list must be set, AND list must NOT be set.", this.annotation.isSetTokenList() && !this.annotation.isSetLattice())
             && this.printStatus("TokenList must not be empty.", this.annotation.getTokenListSize() > 0)
             && this.printStatus("TokenList must be valid.", this.validateTokenList());
-      
+
       return validByType;
     }
   }
-  
+
   /**
    * Validate a {@link List} of {@link Token}s relative
    * to a {@link Tokenization} object.
-   * 
+   *
    * @return <code>true</code> if valid
    */
   private boolean validateTokenList() {
     // Populate a set of integers with the token IDs.
     Set<Integer> tokenIdSet = new HashSet<Integer>();
-    
+
     // Iterate over tokens to validate them.
     Iterator<Token> iter = this.annotation.getTokenListIterator();
     boolean validTokenIdx = true;
@@ -110,7 +112,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
         }
       }
     }
-    
+
     // We have now gotten all of the token IDs, or exited when one was invalid.
     // First, make sure that validTokenIdx is still true.
     if (!validTokenIdx)
@@ -120,11 +122,11 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       return this.printStatus("Token indices must be continuous from 0.." + tokenIdSet.size(), this.validateTokenSet(tokenIdSet));
     }
   }
-  
+
   private boolean validateTokenSet(Set<Integer> tokenIdxSet) {
-    boolean validOrder = true;    
+    boolean validOrder = true;
     final int sz = tokenIdxSet.size();
-    
+
     // From 0..K, generate an int.
     for (int i = 0; i < sz; i++) {
       // If previous was invalid, exit with false.
@@ -133,7 +135,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       else
         validOrder = tokenIdxSet.contains(i);
     }
-    
+
     // Return order validity.
     return validOrder;
   }

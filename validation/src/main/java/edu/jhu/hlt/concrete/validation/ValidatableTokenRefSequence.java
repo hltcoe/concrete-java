@@ -1,5 +1,7 @@
 /*
- * 
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -31,7 +33,7 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
   protected boolean isValidWithComm(Communication c) {
     UUID tokUuid = this.annotation.getTokenizationId();
     List<Integer> tokenIdxIds = this.annotation.getTokenIndexList();
-    
+
     TokenizedSuperCommunication cc = new TokenizedSuperCommunication(c);
     if (this.printStatus("Tokenization UUID must be an existing tokenization.", cc.getTokenizationIds().contains(tokUuid))) {
       Set<Integer> tokIdxSet = cc.getTokenizationIdToTokenIdxToTokenMap().get(tokUuid).keySet();

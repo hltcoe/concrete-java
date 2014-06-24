@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -25,9 +27,9 @@ import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
 public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
 
   private static final XLogger logger = XLoggerFactory.getXLogger(ValidatableSectionSegmentationTest.class);
-  
+
   SectionSegmentation ss;
-  
+
   /**
    * @throws java.lang.Exception
    */
@@ -35,7 +37,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
   public void setUp() throws Exception {
     ss = this.generateValidSectSeg(this.comm);
   }
-  
+
   private void test(boolean checkTrue) {
     if (checkTrue)
       assertTrue(new ValidatableSectionSegmentation(this.ss).validate(this.comm));
@@ -49,23 +51,23 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
   @After
   public void tearDown() throws Exception {
   }
-  
+
   public SectionSegmentation generateValidSectSeg() {
     return generateValidSectSeg(this.factory.randomCommunication());
   }
-  
+
   public SectionSegmentation generateValidSectSeg (Communication c) {
     Communication copy = new Communication(c);
-    
+
     SectionSegmentation ss = new SectionSegmentation();
     ss.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
     String commText = copy.getText();
-    
+
     Section s = new Section();
     s.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
     s.kind = "Other";
     s.textSpan = new TextSpan(0, commText.length());
-    
+
     ss.addToSectionList(s);
     ss.metadata = this.factory.randomMetadata();
     return ss;
@@ -79,7 +81,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
     logger.entry();
     this.test(true);
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -88,7 +90,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
     ss.uuid = null;
     this.test(false);
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */
@@ -97,7 +99,7 @@ public class ValidatableSectionSegmentationTest extends AbstractValidationTest {
     ss.getSectionList().remove(0);
     this.test(false);
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableSectionSegmentation#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
    */

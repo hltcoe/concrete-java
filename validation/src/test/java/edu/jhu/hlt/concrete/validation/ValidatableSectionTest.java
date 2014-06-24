@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -24,7 +26,7 @@ import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
  *
  */
 public class ValidatableSectionTest extends AbstractValidationTest {
-  
+
   public Section generateSection() {
     Section s = new Section()
       .setUuid(new ConcreteUUIDFactory().getConcreteUUID())
@@ -32,7 +34,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
       .setKind("Passage");
     return s;
   }
-  
+
   public Communication constructComm() {
     Communication cpy = new Communication(this.comm);
     SectionSegmentation ss = new ValidatableSectionSegmentationTest().generateValidSectSeg(cpy);
@@ -58,11 +60,11 @@ public class ValidatableSectionTest extends AbstractValidationTest {
   @Test
   public void validOK() throws ConcreteException {
     Communication v = this.constructComm();
-    ValidatableSection vs = new ValidatableSection(new SuperCommunication(v).firstSection()); 
+    ValidatableSection vs = new ValidatableSection(new SuperCommunication(v).firstSection());
     assertTrue(vs.isValid());
     assertTrue(vs.validate(v));
   }
-  
+
   @Test
   public void badUuid() throws ConcreteException {
     Communication v = this.constructComm();
@@ -72,7 +74,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     assertFalse(vs.isValid());
     assertFalse(vs.validate(v));
   }
-  
+
   @Test
   public void badTextSpan() throws ConcreteException {
     Communication v = this.constructComm();
@@ -82,7 +84,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     assertFalse(vs.isValid());
     assertFalse(vs.validate(v));
   }
-  
+
   @Test
   public void noKind() throws ConcreteException {
     Communication v = this.constructComm();
@@ -92,7 +94,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     assertFalse(vs.isValid());
     assertFalse(vs.validate(v));
   }
-  
+
   @Test
   public void misalignedTextSpan() throws ConcreteException {
     Communication v = this.constructComm();

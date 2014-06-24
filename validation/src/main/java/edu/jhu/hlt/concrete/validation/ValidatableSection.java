@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -30,9 +32,9 @@ public class ValidatableSection extends AbstractAnnotation<Section> {
 
   @Override
   public boolean isValid() {
-    return 
+    return
         this.validateUUID(this.annotation.getUuid())
-        // Hard-coded to text validity. 
+        // Hard-coded to text validity.
         // TODO: update to Audio if ever is used.
         && this.printStatus("SectionKind must be set", this.annotation.isSetKind())
         && this.printStatus("TextSpan must be set", this.annotation.isSetTextSpan())

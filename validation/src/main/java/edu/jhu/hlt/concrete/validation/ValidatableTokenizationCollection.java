@@ -1,5 +1,7 @@
-/**
- * 
+/*
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
@@ -31,7 +33,7 @@ public class ValidatableTokenizationCollection extends AbstractAnnotation<Tokeni
 
   @Override
   public boolean isValid() {
-    boolean initValidation = 
+    boolean initValidation =
         this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
         // Sections must exist.
