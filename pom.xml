@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete-project</artifactId>
+  <artifactId>concrete-java</artifactId>
   <version>3.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
@@ -11,14 +11,7 @@
     <module>ontology</module>
     <module>util</module>
     <module>validation</module>
-    <module>examples</module>
   </modules>
-
-  <parent>
-    <groupId>edu.jhu.hlt.parent</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0.0</version>
-  </parent>
 
   <name>Concrete</name>
   <description>Parent for Concrete - Java libraries.</description>
