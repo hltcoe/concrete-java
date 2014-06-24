@@ -8,8 +8,7 @@ package edu.jhu.hlt.concrete.util;
 import java.util.UUID;
 
 /**
- * @author max
- *
+ * 
  */
 public class Util {
 
