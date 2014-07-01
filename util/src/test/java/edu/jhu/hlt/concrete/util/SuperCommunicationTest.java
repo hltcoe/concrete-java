@@ -17,8 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.ConcreteFactory;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;

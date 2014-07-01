@@ -72,7 +72,7 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
       UUID tId = t.getUuid();
       Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
       if (t.isSetTokenList())
-        for (Token tok : t.getTokenList()) {
+        for (Token tok : t.getTokenList().getTokenList()) {
           idToTokenMap.put(tok.getTokenIndex(), tok);
           toRet.put(tId, idToTokenMap);
         }
