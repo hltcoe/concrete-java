@@ -39,7 +39,7 @@ public class SuperTextSpan {
    */
   public String getText() {
     return c
-        .getText()
+        .getProcessedContent()
         .substring(ts.getStart(), ts.getEnding());
   }
 }
