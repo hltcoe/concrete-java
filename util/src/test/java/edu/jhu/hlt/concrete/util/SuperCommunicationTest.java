@@ -101,4 +101,11 @@ public class SuperCommunicationTest {
     assertFalse(new SuperCommunication(comm).hasSections());
   }
 
+//  @Test
+//  public void entityMentionSetCaching() {
+//    Communication c = new ConcreteFactory().randomCommunication();
+//    EntityMentionSet ems = new EntityMentionSet();
+//    ems.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
+//    
+//  }
 }
