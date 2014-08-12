@@ -102,7 +102,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
         if (!this.printStatus("Token idx can't be < 0", idx >= 0))
           return false;
         else {
-          // If set is empty, we can safely add.
+          // If set is empty, can safely add.
           if (tokenIdSet.isEmpty())
             tokenIdSet.add(idx);
           else {
@@ -113,7 +113,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       }
     }
 
-    // We have now gotten all of the token IDs, or exited when one was invalid.
+    // have now gotten all of the token IDs, or exited when one was invalid.
     // First, make sure that validTokenIdx is still true.
     if (!validTokenIdx)
       return false;

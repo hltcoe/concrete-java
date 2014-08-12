@@ -28,7 +28,7 @@ public class ValidatableEntityMention extends AbstractAnnotation<EntityMention> 
   @Override
   protected boolean isValidWithComm(Communication c) {
     TokenRefSequence trs = this.annotation.getTokens();
-    return this.printStatus("TokenRefSeq must be valid with given Communication.", new ValidatableTokenRefSequence(trs).isValidWithComm(c));
+    return this.printStatus("TokenRefSeq must be valid with given Communication", new ValidatableTokenRefSequence(trs).isValidWithComm(c));
   }
 
   /* (non-Javadoc)
@@ -44,7 +44,7 @@ public class ValidatableEntityMention extends AbstractAnnotation<EntityMention> 
       return false;
     else {
       TokenRefSequence trs = this.annotation.getTokens();
-      return this.printStatus("TokenRefSeq must be valid.", new ValidatableTokenRefSequence(trs).isValid());
+      return this.printStatus("TokenRefSeq must be valid", new ValidatableTokenRefSequence(trs).isValid());
     }
   }
 }
