@@ -14,6 +14,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 
 /**
@@ -34,10 +35,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    return new SectionedSuperCommunication(c)
-      .getSectionIdToSectionMap()
-      .keySet()
-      .contains(this.annotation.getSentenceId());
+    return true;
   }
 
   /**

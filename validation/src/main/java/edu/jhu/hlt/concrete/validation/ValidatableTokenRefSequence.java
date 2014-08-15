@@ -37,10 +37,7 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
     TokenizedSuperCommunication cc = new TokenizedSuperCommunication(c);
     if (this.printStatus("Tokenization UUID must be an existing tokenization.", cc.getTokenizationIds().contains(tokUuid))) {
       Set<Integer> tokIdxSet = cc.getTokenizationIdToTokenIdxToTokenMap().get(tokUuid).keySet();
-      if (this.printStatus("All token IDs must be present in the tokenization.", !tokIdxSet.containsAll(tokenIdxIds)))
-        return false;
-      else
-        return true;
+      return this.printStatus("All token IDs must be present in the tokenization.", tokIdxSet.containsAll(tokenIdxIds));
     } else {
       return false;
     }
