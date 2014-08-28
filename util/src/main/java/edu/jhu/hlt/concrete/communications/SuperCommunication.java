@@ -95,12 +95,12 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * exist and chop them off if needed. 
    */
   public boolean containsAnnotations() {
-    return this.comm.isSetSectionSegmentations()
-        || this.comm.isSetEntityMentionSets()
-        || this.comm.isSetEntitySets()
-        || this.comm.isSetSituationMentionSets()
-        || this.comm.isSetSituationSets()
-        || this.comm.isSetLids();
+    return this.comm.isSetSectionSegmentationList()
+        || this.comm.isSetEntityMentionSetList()
+        || this.comm.isSetEntitySetList()
+        || this.comm.isSetSituationMentionSetList()
+        || this.comm.isSetSituationSetList()
+        || this.comm.isSetLidList();
   }
   
   /**
@@ -110,18 +110,18 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     Communication copy = new Communication(this.comm);
     
     // Unset annotation fields if set.
-    if (copy.isSetEntitySets())
-      copy.unsetEntitySets();
-    if (copy.isSetEntityMentionSets())
-      copy.unsetEntityMentionSets();
-    if (copy.isSetSituationSets())
-      copy.unsetSituationSets();
-    if (copy.isSetSituationMentionSets())
-      copy.unsetSituationMentionSets();
-    if (copy.isSetSectionSegmentations())
-      copy.unsetSectionSegmentations();
-    if (copy.isSetLids())
-      copy.unsetLids();
+    if (copy.isSetEntitySetList())
+      copy.unsetEntitySetList();
+    if (copy.isSetEntityMentionSetList())
+      copy.unsetEntityMentionSetList();
+    if (copy.isSetSituationSetList())
+      copy.unsetSituationSetList();
+    if (copy.isSetSituationMentionSetList())
+      copy.unsetSituationMentionSetList();
+    if (copy.isSetSectionSegmentationList())
+      copy.unsetSectionSegmentationList();
+    if (copy.isSetLidList())
+      copy.unsetLidList();
 
     return new SuperCommunication(copy);
   }
@@ -171,7 +171,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * that is not empty.
    */
   public boolean containsSectionSegmentation() {
-    return this.comm.isSetSectionSegmentations() && this.comm.getSectionSegmentationsSize() > 0;
+    return this.comm.isSetSectionSegmentationList() && this.comm.getSectionSegmentationListSize() > 0;
   }
   
   public boolean containsSection() throws ConcreteException {
@@ -192,7 +192,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    */
   public SectionSegmentation firstSectionSegmentation() throws ConcreteException {
     if (this.containsSectionSegmentation())
-      return this.comm.getSectionSegmentations().get(0);
+      return this.comm.getSectionSegmentationList().get(0);
     else
       throw new ConcreteException("Communication: " + this.comm.getUuid() + " does not have" + " any SectionSegmentations.");
   }
@@ -221,8 +221,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    */
   public SentenceSegmentation firstSentenceSegmentation() throws ConcreteException {
     Section s = this.firstSection();
-    if (s.isSetSentenceSegmentation() && s.getSentenceSegmentationSize() > 0)
-      return s.getSentenceSegmentation().get(0);
+    if (s.isSetSentenceSegmentationList() && s.getSentenceSegmentationListSize() > 0)
+      return s.getSentenceSegmentationList().get(0);
     else
       throw new ConcreteException("Section: " + s.getUuid() + " does not have" + " any Sentence Segmentations.");
   }
@@ -261,7 +261,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * @return true if {@link SectionSegmentation}(s) are present
    */
   public boolean hasSectionSegmentations() {
-    return this.comm.isSetText() && this.comm.isSetSectionSegmentations() && this.comm.getSectionSegmentationsSize() > 0;
+    return this.comm.isSetText() && this.comm.isSetSectionSegmentationList() && this.comm.getSectionSegmentationListSize() > 0;
   }
 
   /**
@@ -271,7 +271,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     if (!this.hasSectionSegmentations())
       return false;
 
-    Iterator<SectionSegmentation> i = this.comm.getSectionSegmentationsIterator();
+    Iterator<SectionSegmentation> i = this.comm.getSectionSegmentationListIterator();
     boolean validSections = true;
     while (validSections && i.hasNext()) {
       SectionSegmentation ss = i.next();
@@ -295,8 +295,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<UUID, SituationMention>(this.situationMentionIdToSituationMentionMap);
     else {
       Map<UUID, SituationMention> map = new HashMap<UUID, SituationMention>();
-      if (this.comm.isSetSituationMentionSets())
-        for (SituationMentionSet sms : this.comm.getSituationMentionSets())
+      if (this.comm.isSetSituationMentionSetList())
+        for (SituationMentionSet sms : this.comm.getSituationMentionSetList())
           for (SituationMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
       
@@ -370,7 +370,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       UUID tId = t.getUuid();
       Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
       if (t.isSetTokenList())
-        for (Token tok : t.getTokenList().getTokens()) {
+        for (Token tok : t.getTokenList().getTokenList()) {
           idToTokenMap.put(tok.getTokenIndex(), tok);
           toRet.put(tId, idToTokenMap);
         }
@@ -396,8 +396,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
       List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
       for (Section s : sectList)
-        if (s.isSetSentenceSegmentation())
-          for (SentenceSegmentation ss : s.getSentenceSegmentation())
+        if (s.isSetSentenceSegmentationList())
+          for (SentenceSegmentation ss : s.getSentenceSegmentationList())
             if (ss.isSetSentenceList())
               for (Sentence st : ss.getSentenceList())
                 toRet.put(st.getUuid(), st);
@@ -419,8 +419,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     else {
       final Map<UUID, Section> map = new HashMap<>();
 
-      if (this.comm.isSetSectionSegmentations())
-        for (SectionSegmentation ss : this.comm.getSectionSegmentations())
+      if (this.comm.isSetSectionSegmentationList())
+        for (SectionSegmentation ss : this.comm.getSectionSegmentationList())
           if (ss.isSetSectionList())
             for (Section s : ss.getSectionList())
               map.put(s.getUuid(), s);
@@ -444,9 +444,9 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<>(this.entityMentionIdToEntityMentionMap);
     else {
       Map<UUID, EntityMention> map = new HashMap<UUID, EntityMention>();
-      if (this.comm.isSetEntityMentionSets())
-        for (EntityMentionSet sms : this.comm.getEntityMentionSets())
-          for (EntityMention sm : sms.getMentionSet())
+      if (this.comm.isSetEntityMentionSetList())
+        for (EntityMentionSet sms : this.comm.getEntityMentionSetList())
+          for (EntityMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
       
       this.entityMentionIdToEntityMentionMap = map;
@@ -467,8 +467,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<>(this.entityIdToEntityMap);
     else {
       Map<UUID, Entity> map = new HashMap<UUID, Entity>();
-      if (this.comm.isSetEntitySets())
-        for (EntitySet sms : this.comm.getEntitySets())
+      if (this.comm.isSetEntitySetList())
+        for (EntitySet sms : this.comm.getEntitySetList())
           for (Entity sm : sms.getEntityList())
             map.put(sm.getUuid(), sm);
       
@@ -490,8 +490,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<>(this.situationIdToSituationMap);
     else {
       Map<UUID, Situation> map = new HashMap<UUID, Situation>();
-      if (this.comm.isSetEntitySets())
-        for (SituationSet sms : this.comm.getSituationSets())
+      if (this.comm.isSetEntitySetList())
+        for (SituationSet sms : this.comm.getSituationSetList())
           for (Situation sm : sms.getSituationList())
             map.put(sm.getUuid(), sm);
       

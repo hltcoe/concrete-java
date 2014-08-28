@@ -35,9 +35,9 @@ public class ValidatableSentenceSegmentation extends AbstractAnnotation<Sentence
     SectionedSuperCommunication sc = new SectionedSuperCommunication(c);
     Map<UUID, Section> sectIdToSectMap = sc.getSectionIdToSectionMap();
     Set<UUID> sectIds = sectIdToSectMap.keySet();
-    boolean validSectionPointer = sectIds.contains(this.annotation.getSectionId());
+    // boolean validSectionPointer = sectIds.contains(this.annotation.getSectionId());
 
-    return validSectionPointer;
+    return true;
   }
 
   /* (non-Javadoc)
@@ -49,8 +49,8 @@ public class ValidatableSentenceSegmentation extends AbstractAnnotation<Sentence
         && this.printStatus("Metadata must be set", this.annotation.isSetMetadata())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
         && this.printStatus("Sentence list must be set", this.annotation.isSetSentenceList())
-        && this.printStatus("Sentence list size must be > 0", this.annotation.getSentenceListSize() > 0)
-        && this.printStatus("Section ID must be set", this.annotation.isSetSectionId())
-        && this.validateUUID(this.annotation.getSectionId());
+        && this.printStatus("Sentence list size must be > 0", this.annotation.getSentenceListSize() > 0);
+        // && this.printStatus("Section ID must be set", this.annotation.isSetSectionId())
+        // && this.validateUUID(this.annotation.getSectionId());
   }
 }

@@ -44,8 +44,8 @@ public class SectionedSuperCommunication extends SuperCommunication {
   private final Map<UUID, Section> sectionIdToSectionMap() {
     final Map<UUID, Section> toRet = new HashMap<>();
 
-    if (this.comm.isSetSectionSegmentations())
-      for (SectionSegmentation ss : this.comm.getSectionSegmentations())
+    if (this.comm.isSetSectionSegmentationList())
+      for (SectionSegmentation ss : this.comm.getSectionSegmentationList())
         if (ss.isSetSectionList())
           for (Section s : ss.getSectionList())
             toRet.put(s.getUuid(), s);

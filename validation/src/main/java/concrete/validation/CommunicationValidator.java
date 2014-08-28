@@ -44,15 +44,15 @@ public class CommunicationValidator {
   
   public boolean validate() {
     boolean valid = true;
-    if (this.comm.isSetSectionSegmentations()) {
-      Iterator<SectionSegmentation> ssIter = this.comm.getSectionSegmentationsIterator();
+    if (this.comm.isSetSectionSegmentationList()) {
+      Iterator<SectionSegmentation> ssIter = this.comm.getSectionSegmentationListIterator();
       while (valid && ssIter.hasNext()) {
         SectionSegmentation ss = ssIter.next();
         valid = new ValidatableSectionSegmentation(ss).validate(this.comm);
         if (valid) {
           for (Section sect : ss.getSectionList()) {
-            if (sect.isSetSentenceSegmentation()) {
-              Iterator<SentenceSegmentation> sentSegIter = sect.getSentenceSegmentationIterator();
+            if (sect.isSetSentenceSegmentationList()) {
+              Iterator<SentenceSegmentation> sentSegIter = sect.getSentenceSegmentationListIterator();
               while (valid && sentSegIter.hasNext()) {
                 SentenceSegmentation sentSeg = sentSegIter.next();
                 valid = new ValidatableSentenceSegmentation(sentSeg).validate(this.comm);
@@ -74,8 +74,8 @@ public class CommunicationValidator {
       }
     }
     
-    if (this.comm.isSetEntityMentionSets()) {
-      Iterator<EntityMentionSet> emsIter = this.comm.getEntityMentionSetsIterator();
+    if (this.comm.isSetEntityMentionSetList()) {
+      Iterator<EntityMentionSet> emsIter = this.comm.getEntityMentionSetListIterator();
       while (valid && emsIter.hasNext()) {
         EntityMentionSet ems = emsIter.next();
         valid = new ValidatableEntityMentionSet(ems).validate(this.comm);

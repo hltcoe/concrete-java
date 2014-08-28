@@ -31,7 +31,7 @@ public class ValidatableEntityMentionSet extends AbstractAnnotation<EntityMentio
   @Override
   protected boolean isValidWithComm(Communication c) {
     boolean validMens = true;
-    Iterator<EntityMention> menIter = this.annotation.getMentionSetIterator();
+    Iterator<EntityMention> menIter = this.annotation.getMentionListIterator();
     while (validMens && menIter.hasNext()) {
       EntityMention em = menIter.next();
       validMens = this.printStatus("EntityMention: " + em.getUuid().toString() + " must be valid", new ValidatableEntityMention(em).validate(c));
@@ -47,10 +47,10 @@ public class ValidatableEntityMentionSet extends AbstractAnnotation<EntityMentio
   public boolean isValid() {
     boolean init = this.validateUUID(this.annotation.getUuid())
         && this.printStatus("Metadata must be valid", new ValidatableMetadata(this.annotation.getMetadata()).isValid())
-        && this.printStatus("EntityMentionSet must be set.", this.annotation.isSetMentionSet());
+        && this.printStatus("EntityMentionSet must be set.", this.annotation.isSetMentionList());
     if (init) {
       boolean validMens = true;
-      Iterator<EntityMention> menIter = this.annotation.getMentionSetIterator();
+      Iterator<EntityMention> menIter = this.annotation.getMentionListIterator();
       while (validMens && menIter.hasNext()) {
         EntityMention em = menIter.next();
         UUID emId = em.getUuid();

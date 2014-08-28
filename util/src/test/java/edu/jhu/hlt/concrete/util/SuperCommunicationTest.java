@@ -53,7 +53,7 @@ public class SuperCommunicationTest {
   @Test
   public void hasSectionSegmentationsFalseForUnsetSectionSegs() {
     Communication comm = mock(Communication.class);
-    when(comm.isSetSectionSegmentations()).thenReturn(false);
+    when(comm.isSetSectionSegmentationList()).thenReturn(false);
     
     assertFalse(new SuperCommunication(comm).hasSectionSegmentations());
   }
@@ -80,7 +80,7 @@ public class SuperCommunicationTest {
       .setKind("Other")
       .setTextSpan(new TextSpan(0, comm.getText().length()));
     ss.addToSectionList(s);
-    comm.addToSectionSegmentations(ss);
+    comm.addToSectionSegmentationList(ss);
     
     assertTrue(new SuperCommunication(comm).hasSectionSegmentations());
   }
@@ -96,7 +96,7 @@ public class SuperCommunicationTest {
     list.add(ss);
     
     Communication comm = cf.randomCommunication();
-    comm.addToSectionSegmentations(ss);
+    comm.addToSectionSegmentationList(ss);
     
     assertFalse(new SuperCommunication(comm).hasSections());
   }

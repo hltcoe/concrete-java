@@ -46,8 +46,8 @@ public class SentencedSuperCommunication extends SectionedSuperCommunication {
 
     List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
     for (Section s : sectList)
-      if (s.isSetSentenceSegmentation())
-        for (SentenceSegmentation ss : s.getSentenceSegmentation())
+      if (s.isSetSentenceSegmentationList())
+        for (SentenceSegmentation ss : s.getSentenceSegmentationList())
           if (ss.isSetSentenceList())
             for (Sentence st : ss.getSentenceList())
               toRet.put(st.getUuid(), st);

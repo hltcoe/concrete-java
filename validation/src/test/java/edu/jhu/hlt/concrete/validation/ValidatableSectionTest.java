@@ -39,7 +39,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
     Communication cpy = new Communication(this.comm);
     SectionSegmentation ss = new ValidatableSectionSegmentationTest().generateValidSectSeg(cpy);
     ss.addToSectionList(this.generateSection());
-    cpy.addToSectionSegmentations(ss);
+    cpy.addToSectionSegmentationList(ss);
     return cpy;
   }
 
