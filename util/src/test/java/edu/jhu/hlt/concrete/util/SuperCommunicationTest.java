@@ -12,16 +12,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import concrete.tools.AnnotationDiffTool;
+import concrete.tools.impl.SingleSectionSegmenter;
 import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
@@ -47,6 +51,8 @@ public class SuperCommunicationTest {
   public void tearDown() throws Exception {
   }
 
+  
+  
   /**
    * Test method for {@link edu.jhu.hlt.concrete.communications.SuperCommunication#hasSectionSegmentations()}.
    */
@@ -56,6 +62,19 @@ public class SuperCommunicationTest {
     when(comm.isSetSectionSegmentationList()).thenReturn(false);
     
     assertFalse(new SuperCommunication(comm).hasSectionSegmentations());
+  }
+  
+  @Test
+  public void testSuperCommunicationMutability() throws Exception {
+    Communication c = cf.randomCommunication();
+    AnnotationDiffTool<SectionSegmentation> tool = new SingleSectionSegmenter();
+    SectionSegmentation ss = tool.annotateDiff(c);
+    c.addToSectionSegmentationList(ss);
+    
+    SuperCommunication sc = new SuperCommunication(c);
+    Map<UUID, Section> idToSectionMap = sc.generateSectionIdToSectionMap();
+    idToSectionMap.values().iterator().next().addToNumberList(2);
+    assertFalse(c.getSectionSegmentationListIterator().next().getSectionListIterator().next().isSetNumberList());
   }
 
   /**

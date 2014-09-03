@@ -194,7 +194,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     if (this.containsSectionSegmentation())
       return this.comm.getSectionSegmentationList().get(0);
     else
-      throw new ConcreteException("Communication: " + this.comm.getUuid() + " does not have" + " any SectionSegmentations.");
+      throw new ConcreteException("Communication: " + this.comm.getUuid() + " does not have any SectionSegmentations.");
   }
 
   /**
