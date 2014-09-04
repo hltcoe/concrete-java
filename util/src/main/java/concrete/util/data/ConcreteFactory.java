@@ -55,7 +55,8 @@ public class ConcreteFactory {
       .setUuid(new ConcreteUUIDFactory().getConcreteUUID())
       .setId("corpus_" + Math.abs(this.r.nextInt()))
       .setText("Some sample text.")
-      .setType(this.randomCommunicationType());
+      .setType(this.randomCommunicationType())
+      .setMetadata(this.randomMetadata());
   }
   
   /**
