@@ -78,7 +78,7 @@ public class Serialization {
    * 
    * @see #fromBytes(TBase, byte[])
    */
-  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, Path pathToSerializedFile) throws ConcreteException {
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromPath(T object, Path pathToSerializedFile) throws ConcreteException {
     try {
       return this.fromBytes(object, Files.readAllBytes(pathToSerializedFile));
     } catch (IOException e) {
@@ -92,7 +92,7 @@ public class Serialization {
    * 
    * @see #fromBytes(TBase, Path)
    */
-  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, String pathToSerializedFileString) throws ConcreteException {
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromFileString(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromBytes(object, Paths.get(pathToSerializedFileString));
   }
   
@@ -102,7 +102,7 @@ public class Serialization {
    * 
    * @see #fromBytes(TBase, Path)
    */
-  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, InputStream is) throws ConcreteException {
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromInputStream(T object, InputStream is) throws ConcreteException {
     try {
       return this.fromBytes(object, IOUtils.toByteArray(is));
     } catch (IOException e) {
