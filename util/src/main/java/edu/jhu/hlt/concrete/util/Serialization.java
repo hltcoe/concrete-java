@@ -23,7 +23,7 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
- * 
+ * Utility class for convenient serialization of Thrift-like data structures. 
  * 
  * @author max
  */
@@ -92,7 +92,7 @@ public class Serialization {
    * 
    * @see #fromBytes(TBase, Path)
    */
-  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromFileString(T object, String pathToSerializedFileString) throws ConcreteException {
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromPathString(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromPath(object, Paths.get(pathToSerializedFileString));
   }
   
