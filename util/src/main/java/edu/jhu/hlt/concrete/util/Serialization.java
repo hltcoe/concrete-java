@@ -6,10 +6,12 @@
 package edu.jhu.hlt.concrete.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -92,5 +94,19 @@ public class Serialization {
    */
   public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromBytes(object, Paths.get(pathToSerializedFileString));
+  }
+  
+  /**
+   * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link InputStream} that represents
+   * a serialized {@link TBase} object.
+   * 
+   * @see #fromBytes(TBase, Path)
+   */
+  public <T extends TBase<T, ? extends TFieldIdEnum>> T fromBytes(T object, InputStream is) throws ConcreteException {
+    try {
+      return this.fromBytes(object, IOUtils.toByteArray(is));
+    } catch (IOException e) {
+      throw new ConcreteException(e);
+    }
   }
 }
