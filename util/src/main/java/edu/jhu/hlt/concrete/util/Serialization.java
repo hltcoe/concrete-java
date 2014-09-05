@@ -93,7 +93,7 @@ public class Serialization {
    * @see #fromBytes(TBase, Path)
    */
   public <T extends TBase<T, ? extends TFieldIdEnum>> T fromFileString(T object, String pathToSerializedFileString) throws ConcreteException {
-    return this.fromBytes(object, Paths.get(pathToSerializedFileString));
+    return this.fromPath(object, Paths.get(pathToSerializedFileString));
   }
   
   /**
