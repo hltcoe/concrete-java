@@ -19,8 +19,8 @@ import edu.jhu.hlt.concrete.Dependency;
 import edu.jhu.hlt.concrete.DependencyParse;
 import edu.jhu.hlt.concrete.Parse;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.Token;
+import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 
@@ -32,6 +32,8 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
 
   protected final Map<UUID, Tokenization> tokenizationIdToTokenizationMap;
   protected final Map<UUID, Map<Integer, Token>> tokenizationIdToTokenIdxToTokenMap;
+  protected final Map<UUID, TokenTagging> idToTokenTaggingMap;
+  protected final Map<String, List<TokenTagging>> ttTypeToTTListMap;
   
   /**
    * @param comm
@@ -40,6 +42,24 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
     super(comm);
     this.tokenizationIdToTokenizationMap = this.tokenizationIdToTokenizationMap();
     this.tokenizationIdToTokenIdxToTokenMap = this.tokenizationIdToTokenSeqIdToTokensMap();
+    
+    this.idToTokenTaggingMap = new HashMap<>();
+    this.ttTypeToTTListMap = new HashMap<>();
+    
+    for (Tokenization tokeniz : this.tokenizationIdToTokenizationMap.values()) {
+      for (TokenTagging tt : tokeniz.getTokenTaggingList()) {
+        this.idToTokenTaggingMap.put(tt.getUuid(), tt);
+        String type = tt.getTaggingType();
+        if (this.ttTypeToTTListMap.containsKey(type)) {
+          List<TokenTagging> curr = this.ttTypeToTTListMap.get(type);
+          curr.add(tt);
+        } else {
+          List<TokenTagging> init = new ArrayList<>();
+          init.add(tt);
+          this.ttTypeToTTListMap.put(type, init);
+        }
+      }
+    }
   }
 
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
