@@ -5,6 +5,17 @@ See LICENSE in the project root directory.
 Concrete Java
 ========
 
+TLDR Install Guide
+---------
+```bash
+git clone ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git
+git clone ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete.git
+cd concrete
+export THRIFT_SOURCE_DIR=`pwd`
+cd ../concrete-java
+mvn install -Dthrift.sources="$THRIFT_SOURCE_DIR/thrift"
+```
+
 Requirements
 ------------
 
