@@ -9,33 +9,29 @@ Requirements
 ------------
 
 Concrete-Java requires the following:
-* Java, 1.6 or greater
+* Java, 1.7 or greater. If you just want to build the thrift classes, however, only 1.6 is required.
 * [Apache Maven](http://maven.apache.org/), 3.0.4 or greater
-* [Apache Thrift](http://thrift.apache.org/)
+* [Apache Thrift](http://thrift.apache.org/), 0.9.0
 
 Installation
 ------------
 
-Note: by default, the thrift plugin uses:
+You will need `thrift` installed and available on your `PATH`.
 
-    /usr/local/bin/thrift
+Additionally, you will need a copy of `concrete-thrift` checked
+out. This can be obtained by the following commands (which may/not
+work based on your directory setup):
 
-to locate the thrift executable. If you have installed this in a different location, update
+```bash
+git clone ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git
+git clone ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete.git
+cd concrete
+export THRIFT_SOURCE_DIR=`pwd`
+cd ../concrete-java
+mvn install -Dthrift.sources="$THRIFT_SOURCE_DIR/thrift"
+```
 
-    <thrift.exe>
-
-in the properties of core/pom.xml.
-
-First, checkout our latest code:
-
-    git clone git@github.com:hltcoe/concrete.git
-
-Running
-
-    cd java
-    mvn install
-
-will install the plugin to your local repository.
+will install the plugin to your local `mvn` repository.
 
 Adding to your project
 ----------------------
@@ -47,7 +43,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
-      <version>2.0.3-SNAPSHOT</version>
+      <version>3.4.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+      <version>3.4.0-SNAPSHOT</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server.
