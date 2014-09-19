@@ -65,7 +65,6 @@ public class ConcreteFactory {
    */
   public AnnotationMetadata randomMetadata() {
     return new AnnotationMetadata()
-      .setConfidence(this.r.nextFloat())
       .setTimestamp(System.currentTimeMillis())
       .setTool("ConcreteFactory");
   }

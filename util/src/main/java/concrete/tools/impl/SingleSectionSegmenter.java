@@ -79,7 +79,6 @@ public class SingleSectionSegmenter implements AnnotationDiffTool<SectionSegment
   @Override
   public final AnnotationMetadata getMetadata() {
     AnnotationMetadata md = new AnnotationMetadata();
-    md.setConfidence(1.0);
     md.setTimestamp(System.currentTimeMillis());
     md.setTool("Concrete Example tools v1.0");
     return md;

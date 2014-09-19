@@ -34,9 +34,6 @@ public class WeirdMetadataTest {
   @Test
   public void test() {
     AnnotationMetadata md = new AnnotationMetadata();
-    md.confidence = 1f;
-    System.out.println(md.toString());
-    md.setConfidence(1F);
     System.out.println(md.toString());
     md.tool = "Test";
     System.out.println(md.toString());
