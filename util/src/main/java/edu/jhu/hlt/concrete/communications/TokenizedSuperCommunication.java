@@ -65,12 +65,11 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
     final Map<UUID, Tokenization> toRet = new HashMap<>();
     List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap.values());
-    for (Sentence st : stList)
-      if (st.isSetTokenizationList())
-        for (Tokenization t : st.getTokenizationList()) {
-          UUID tId = t.getUuid();
-          toRet.put(tId, t);
-        }
+    for (Sentence st : stList) {
+      Tokenization tok = st.getTokenization();
+      UUID tId = tok.getUuid();
+      toRet.put(tId, tok);
+    }
       
     return toRet;
   }

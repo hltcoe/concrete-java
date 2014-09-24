@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +24,7 @@ import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.EntitySet;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.SentenceSegmentation;
 import edu.jhu.hlt.concrete.Situation;
 import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.SituationMentionSet;
@@ -95,12 +92,12 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * exist and chop them off if needed. 
    */
   public boolean containsAnnotations() {
-    return this.comm.isSetSectionSegmentationList()
-        || this.comm.isSetEntityMentionSetList()
-        || this.comm.isSetEntitySetList()
-        || this.comm.isSetSituationMentionSetList()
-        || this.comm.isSetSituationSetList()
-        || this.comm.isSetLidList();
+    throw new UnsupportedOperationException("This method is not currently supported.");
+//    return this.comm.isSetEntityMentionSetList()
+//        || this.comm.isSetEntitySetList()
+//        || this.comm.isSetSituationMentionSetList()
+//        || this.comm.isSetSituationSetList()
+//        || this.comm.isSetLidList();
   }
   
   /**
@@ -118,8 +115,6 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       copy.unsetSituationSetList();
     if (copy.isSetSituationMentionSetList())
       copy.unsetSituationMentionSetList();
-    if (copy.isSetSectionSegmentationList())
-      copy.unsetSectionSegmentationList();
     if (copy.isSetLidList())
       copy.unsetLidList();
 
@@ -167,37 +162,6 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   }
 
   /**
-   * Return true if this {@link Communication} contains at least 1 {@link SectionSegmentation}
-   * that is not empty.
-   */
-  public boolean containsSectionSegmentation() {
-    return this.comm.isSetSectionSegmentationList() && this.comm.getSectionSegmentationListSize() > 0;
-  }
-  
-  public boolean containsSection() throws ConcreteException {
-    if (!this.containsSectionSegmentation())
-      return false;
-    SectionSegmentation ss = this.firstSectionSegmentation();
-    return ss.isSetSectionList() && ss.getSectionListSize() > 0;
-  }
-  
-  /**
-   * Get the first {@link SectionSegmentation} from this {@link Communication}.
-   * 
-   * If it is not set or is empty, throw a {@link ConcreteException}.
-   * 
-   * @return the first {@link SectionSegmentation} from the wrapped {@link Communication}
-   * @throws ConcreteException
-   *           if {@link SectionSegmentation} is not set or is empty
-   */
-  public SectionSegmentation firstSectionSegmentation() throws ConcreteException {
-    if (this.containsSectionSegmentation())
-      return this.comm.getSectionSegmentationList().get(0);
-    else
-      throw new ConcreteException("Communication: " + this.comm.getUuid() + " does not have any SectionSegmentations.");
-  }
-
-  /**
    * Get the first {@link Section} from the first {@link SectionSegmentation} from the wrapped {@link Communication}.
    * 
    * @return the first {@link Section} from the first {@link SectionSegmentation}
@@ -205,26 +169,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *           if there is no {@link Section} or {@link SectionSegmentation}
    */
   public Section firstSection() throws ConcreteException {
-    SectionSegmentation ss = this.firstSectionSegmentation();
     if (this.hasSections())
-      return ss.getSectionList().get(0);
+      return this.comm.getSectionList().get(0);
     else
-      throw new ConcreteException("SectionSegmentation: " + ss.getUuid() + " does not have" + " any Sections.");
-  }
-
-  /**
-   * Get the first {@link SentenceSegmentation} from the first {@link Section} from the first {@link SectionSegmentation} of this wrapped {@link Communication}.
-   * 
-   * @return the first {@link SentenceSegmentation}
-   * @throws ConcreteException
-   *           if there is no {@link SentenceSegmentation} or any prerequisites are missing
-   */
-  public SentenceSegmentation firstSentenceSegmentation() throws ConcreteException {
-    Section s = this.firstSection();
-    if (s.isSetSentenceSegmentationList() && s.getSentenceSegmentationListSize() > 0)
-      return s.getSentenceSegmentationList().get(0);
-    else
-      throw new ConcreteException("Section: " + s.getUuid() + " does not have" + " any Sentence Segmentations.");
+      throw new ConcreteException("No such section exists.");
   }
 
   /**
@@ -235,11 +183,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *           if there is no {@link Sentence}, or if any prerequisites are missing.
    */
   public Sentence firstSentence() throws ConcreteException {
-    SentenceSegmentation s = this.firstSentenceSegmentation();
-    if (s.isSetSentenceList() && s.getSentenceListSize() > 0)
-      return s.getSentenceList().get(0);
-    else
-      throw new ConcreteException("SentenceSegmentation: " + s.getUuid() + " does not have" + " any Sentences.");
+    throw new UnsupportedOperationException("Not currently supported.");
   }
 
   /**
@@ -250,35 +194,14 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *           if there is no {@link Tokenization}, or if any of the prerequisites are missing.
    */
   public Tokenization firstTokenization() throws ConcreteException {
-    Sentence s = this.firstSentence();
-    if (s.isSetTokenizationList() && s.getTokenizationListSize() > 0)
-      return s.getTokenizationList().get(0);
-    else
-      throw new ConcreteException("Sentence: " + s.getUuid() + " does not have" + " any Tokenizations.");
-  }
-
-  /**
-   * @return true if {@link SectionSegmentation}(s) are present
-   */
-  public boolean hasSectionSegmentations() {
-    return this.comm.isSetText() && this.comm.isSetSectionSegmentationList() && this.comm.getSectionSegmentationListSize() > 0;
+    throw new UnsupportedOperationException("Not currently supported.");
   }
 
   /**
    * @return true if {@link Section}(s) are present in all {@link SectionSegmentation}s
    */
   public boolean hasSections() {
-    if (!this.hasSectionSegmentations())
-      return false;
-
-    Iterator<SectionSegmentation> i = this.comm.getSectionSegmentationListIterator();
-    boolean validSections = true;
-    while (validSections && i.hasNext()) {
-      SectionSegmentation ss = i.next();
-      validSections = ss.isSetSectionList() && ss.getSectionListSize() > 0;
-    }
-
-    return validSections;
+    return this.comm.isSetSectionList() && this.comm.getSectionListSize() > 0;
   }
 
   /* (non-Javadoc)
@@ -342,12 +265,11 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
     final Map<UUID, Tokenization> toRet = new HashMap<>();
     List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap.values());
-    for (Sentence st : stList)
-      if (st.isSetTokenizationList())
-        for (Tokenization t : st.getTokenizationList()) {
-          UUID tId = t.getUuid();
-          toRet.put(tId, t);
-        }
+    for (Sentence st : stList) {
+      Tokenization tok = st.getTokenization();
+      UUID tId = tok.getUuid();
+      toRet.put(tId, tok);
+    }
       
     return toRet;
   }
@@ -388,7 +310,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     if (this.sectionIdToSectionMap == null)
       this.generateSectionIdToSectionMap();
     
-    // if we have run this before, just return. 
+    // if run before, return. 
     if (this.sentIdToSentenceMap != null)
       return new HashMap<>(this.sentIdToSentenceMap);
     else {
@@ -396,11 +318,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
       List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
       for (Section s : sectList)
-        if (s.isSetSentenceSegmentationList())
-          for (SentenceSegmentation ss : s.getSentenceSegmentationList())
-            if (ss.isSetSentenceList())
-              for (Sentence st : ss.getSentenceList())
-                toRet.put(st.getUuid(), st);
+        for (Sentence st : s.getSentenceList())
+          toRet.put(st.getUuid(), st);
 
       this.sentIdToSentenceMap = toRet;
       return new HashMap<>(toRet);
@@ -418,12 +337,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       
     else {
       final Map<UUID, Section> map = new HashMap<>();
-
-      if (this.comm.isSetSectionSegmentationList())
-        for (SectionSegmentation ss : this.comm.getSectionSegmentationList())
-          if (ss.isSetSectionList())
-            for (Section s : ss.getSectionList())
-              map.put(s.getUuid(), s);
+      for (Section s : this.comm.getSectionList())
+        map.put(s.getUuid(), s);
 
       this.sectionIdToSectionMap = map;
       return new HashMap<>(map);

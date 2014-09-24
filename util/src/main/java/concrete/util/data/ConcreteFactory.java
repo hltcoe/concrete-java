@@ -53,7 +53,7 @@ public class ConcreteFactory {
   public Communication randomCommunication() {
     return new Communication()
       .setUuid(new ConcreteUUIDFactory().getConcreteUUID())
-      .setId("corpus_" + Math.abs(this.r.nextInt()))
+      .setId("corpus_" + this.r.nextInt(Integer.MAX_VALUE))
       .setText("Some sample text.")
       .setType(this.randomCommunicationType())
       .setMetadata(this.randomMetadata());
