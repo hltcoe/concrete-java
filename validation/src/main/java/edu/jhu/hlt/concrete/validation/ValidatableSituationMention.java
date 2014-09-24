@@ -42,12 +42,12 @@ public class ValidatableSituationMention extends AbstractAnnotation<SituationMen
         && this.printStatus("SituationType must be set", this.annotation.isSetSituationType());
     if (!init) return false;
     else {
-      String st = this.annotation.getSituationType();
-      if (st == "Event")
-        return this.printStatus("If SituationType == EVENT, EventType must be set.", this.annotation.isSetEventType());
-      else if (st == "State")
-        return this.printStatus("If SituationType == STATE, StateType must be set.", this.annotation.isSetStateType());
-      else
+      // String st = this.annotation.getSituationType();
+      // if (st == "Event")
+      //   return this.printStatus("If SituationType == EVENT, EventType must be set.", this.annotation.isSetEventType());
+      // else if (st == "State")
+      //   return this.printStatus("If SituationType == STATE, StateType must be set.", this.annotation.isSetStateType());
+      // else
         return true;
     }
   }
