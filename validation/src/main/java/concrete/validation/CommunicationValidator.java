@@ -16,13 +16,11 @@ import concrete.util.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.SentenceSegmentation;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.validation.ValidatableEntityMentionSet;
-import edu.jhu.hlt.concrete.validation.ValidatableSectionSegmentation;
-import edu.jhu.hlt.concrete.validation.ValidatableSentenceSegmentation;
+import edu.jhu.hlt.concrete.validation.ValidatableSection;
+import edu.jhu.hlt.concrete.validation.ValidatableSentence;
 import edu.jhu.hlt.concrete.validation.ValidatableTokenization;
 
 /**
@@ -44,33 +42,18 @@ public class CommunicationValidator {
   
   public boolean validate() {
     boolean valid = true;
-    if (this.comm.isSetSectionSegmentationList()) {
-      Iterator<SectionSegmentation> ssIter = this.comm.getSectionSegmentationListIterator();
-      while (valid && ssIter.hasNext()) {
-        SectionSegmentation ss = ssIter.next();
-        valid = new ValidatableSectionSegmentation(ss).validate(this.comm);
-        if (valid) {
-          for (Section sect : ss.getSectionList()) {
-            if (sect.isSetSentenceSegmentationList()) {
-              Iterator<SentenceSegmentation> sentSegIter = sect.getSentenceSegmentationListIterator();
-              while (valid && sentSegIter.hasNext()) {
-                SentenceSegmentation sentSeg = sentSegIter.next();
-                valid = new ValidatableSentenceSegmentation(sentSeg).validate(this.comm);
-                if (valid) {
-                  for (Sentence sent : sentSeg.getSentenceList()) {
-                    if (sent.isSetTokenizationList()) {
-                      Iterator<Tokenization> tokIter = sent.getTokenizationListIterator();
-                      while (valid && tokIter.hasNext()) {
-                        Tokenization tok = tokIter.next();
-                        valid = new ValidatableTokenization(tok).validate(this.comm);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+    // for (Section sect : this.comm.getSectionList()) {
+    Iterator<Section> sectIter = this.comm.getSectionListIterator();
+    while (valid && sectIter.hasNext()) {
+      Section s = sectIter.next();
+      valid = new ValidatableSection(s).validate(this.comm);
+      
+      Iterator<Sentence> sentIter = s.getSentenceListIterator();
+      while (valid && sentIter.hasNext()) {
+        Sentence st = sentIter.next();
+        valid = new ValidatableSentence(st).validate(this.comm);
+        Tokenization tok = st.getTokenization();
+        valid = new ValidatableTokenization(tok).validate(this.comm);
       }
     }
     

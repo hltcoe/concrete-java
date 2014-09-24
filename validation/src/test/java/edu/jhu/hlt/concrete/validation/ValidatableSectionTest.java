@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
@@ -37,9 +36,7 @@ public class ValidatableSectionTest extends AbstractValidationTest {
 
   public Communication constructComm() {
     Communication cpy = new Communication(this.comm);
-    SectionSegmentation ss = new ValidatableSectionSegmentationTest().generateValidSectSeg(cpy);
-    ss.addToSectionList(this.generateSection());
-    cpy.addToSectionSegmentationList(ss);
+    cpy.addToSectionList(this.generateSection());
     return cpy;
   }
 
