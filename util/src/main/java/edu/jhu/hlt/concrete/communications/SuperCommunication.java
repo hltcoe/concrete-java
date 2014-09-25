@@ -183,7 +183,15 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *           if there is no {@link Sentence}, or if any prerequisites are missing.
    */
   public Sentence firstSentence() throws ConcreteException {
-    throw new UnsupportedOperationException("Not currently supported.");
+    if (this.hasSections()) {
+      Section s = this.firstSection();
+      if (s.isSetSentenceList() && s.getSentenceListSize() > 0)
+        return s.getSentenceListIterator().next();
+      else
+        throw new ConcreteException("This communication does not have sentences.");
+    } else {
+      throw new ConcreteException("No sections, so no sentences in this Communication.");
+    }
   }
 
   /**
@@ -194,7 +202,19 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *           if there is no {@link Tokenization}, or if any of the prerequisites are missing.
    */
   public Tokenization firstTokenization() throws ConcreteException {
-    throw new UnsupportedOperationException("Not currently supported.");
+    if (this.hasSections()) {
+      Section s = this.firstSection();
+      if (s.isSetSentenceList() && s.getSentenceListSize() > 0) {
+        Sentence firstSent =  s.getSentenceListIterator().next();
+        if (firstSent.isSetTokenization())
+          return firstSent.getTokenization();
+        else
+          throw new ConcreteException("The first sentence does not have a tokenization.");
+      } else
+        throw new ConcreteException("This communication does not have sentences in the first section.");
+    } else {
+      throw new ConcreteException("No sections, so no tokenizations in this Communication.");
+    }
   }
 
   /**
