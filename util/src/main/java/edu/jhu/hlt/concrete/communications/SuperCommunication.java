@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.thrift.TException;
 
+import concrete.tools.AnnotationException;
 import concrete.util.ConcreteEntityized;
 import concrete.util.ConcreteSituationized;
 import edu.jhu.hlt.concrete.Communication;
@@ -29,67 +30,89 @@ import edu.jhu.hlt.concrete.Situation;
 import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.SituationMentionSet;
 import edu.jhu.hlt.concrete.SituationSet;
+import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
 import edu.jhu.hlt.concrete.util.Serialization;
 
 /**
  * <strong>Read-only</strong> wrapper around {@link Communication} to allow advanced functionality.
  * <br>
  * <br>
- * Be aware that changes to wrapped {@link Communication} objects are not propagated through to the 
- * {@link SuperCommunication} object. 
- * 
+ * Be aware that changes to wrapped {@link Communication} objects are not propagated through to the
+ * {@link SuperCommunication} object.
+ *
  * @author max
  */
 public class SuperCommunication implements ConcreteSituationized, ConcreteEntityized {
 
   protected final Communication comm;
   protected final Serialization ser;
-  
+  protected final ConcreteUUIDFactory idf = new ConcreteUUIDFactory();
+
   protected Map<UUID, Section> sectionIdToSectionMap;
   protected Map<UUID, Sentence> sentIdToSentenceMap;
   protected Map<UUID, Tokenization> tokenizationIdToTokenizationMap;
   protected Map<UUID, Map<Integer, Token>> tokenizationIdToTokenIdxToTokenMap;
-  
+
   protected Map<UUID, SituationMention> situationMentionIdToSituationMentionMap;
   protected Map<UUID, Situation> situationIdToSituationMap;
-  
+
   protected Map<UUID, EntityMention> entityMentionIdToEntityMentionMap;
   protected Map<UUID, Entity> entityIdToEntityMap;
-  
+
   /**
-   * Single arg ctor: pass in a {@link Communication} object to wrap. 
+   * Single arg ctor: pass in a {@link Communication} object to wrap.
    */
   public SuperCommunication(Communication comm) {
     // Create a copy, providing some immutability.
     this.comm = new Communication(comm);
     this.ser = new Serialization();
   }
-  
+
+  /**
+   * Return a {@link Section} that encompasses the entire {@link Communication} .text
+   * field.
+   *
+   * @param sectionKind the kind of section to generate
+   * @return a {@link Section} with the appropriate kind that spans the entire text
+   * @throws AnnotationException if the .text field is not set in this {@link Communication} object.
+   */
+  public Section singleSection(String sectionKind) throws AnnotationException {
+    if (!this.comm.isSetText())
+      throw new AnnotationException("This method requires the .text field to be set.");
+
+    Section s = new Section(this.idf.getConcreteUUID(), sectionKind);
+    TextSpan ts = new TextSpan(0, this.comm.getText().length());
+    s.setTextSpan(ts);
+
+    return s;
+  }
+
   /**
    * Returns a <b>copy</b> of the {@link Communication} wrapped by this {@link SuperCommunication}.
-   * 
-   * If you modify the copy, modifications will not show up. 
+   *
+   * If you modify the copy, modifications will not show up.
    */
   public Communication getCopy() {
     return new Communication(this.comm);
   }
-  
+
   public String getId() {
     return this.comm.getId();
   }
-  
+
   public UUID getUuid() {
     return this.comm.getUuid();
   }
-  
+
   /**
    * True if this {@link Communication} contains annotations that are not part of a
    * "root" {@link Communication}. Used in rebar to see if any dangling annotations
-   * exist and chop them off if needed. 
+   * exist and chop them off if needed.
    */
   public boolean containsAnnotations() {
     throw new UnsupportedOperationException("This method is not currently supported.");
@@ -99,13 +122,13 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 //        || this.comm.isSetSituationSetList()
 //        || this.comm.isSetLidList();
   }
-  
+
   /**
    * Return a "stripped" {@link SuperCommunication} with extraneous annotations removed.
    */
   public SuperCommunication stripAnnotations() {
     Communication copy = new Communication(this.comm);
-    
+
     // Unset annotation fields if set.
     if (copy.isSetEntitySetList())
       copy.unsetEntitySetList();
@@ -124,7 +147,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   /**
    * Take in a {@link Path} to an output file, and whether or not to delete the file at that path if it already exists, and output a byte array that represents
    * a serialized {@link Communication} object.
-   * 
+   *
    * @param path
    *          - a {@link Path} to the destination of the serialized {@link Communication}.
    * @param deleteExisting
@@ -148,9 +171,9 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
   /**
    * Wrapper around {@link #writeToFile(Path, boolean)} that takes a {@link String} instead of a {@link Path}.
-   * 
+   *
    * @see #writeToFile(Path, boolean)
-   * 
+   *
    * @param pathString
    * @param deleteExisting
    *          - whether to delete the file at path, if it exists.
@@ -163,7 +186,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
   /**
    * Get the first {@link Section} from the first {@link SectionSegmentation} from the wrapped {@link Communication}.
-   * 
+   *
    * @return the first {@link Section} from the first {@link SectionSegmentation}
    * @throws ConcreteException
    *           if there is no {@link Section} or {@link SectionSegmentation}
@@ -177,7 +200,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
   /**
    * Get the first {@link Sentence}.
-   * 
+   *
    * @return the first {@link Sentence}
    * @throws ConcreteException
    *           if there is no {@link Sentence}, or if any prerequisites are missing.
@@ -196,7 +219,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
   /**
    * Get the first {@link Tokenization}.
-   * 
+   *
    * @return the first {@link Tokenization}
    * @throws ConcreteException
    *           if there is no {@link Tokenization}, or if any of the prerequisites are missing.
@@ -233,7 +256,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // TODO: needed?
 //    if (this.tokenizationIdToTokenizationMap == null)
 //      this.generateTokenizationIdToTokenizationMap();
-    
+
     if (this.situationMentionIdToSituationMentionMap != null)
       return new HashMap<UUID, SituationMention>(this.situationMentionIdToSituationMentionMap);
     else {
@@ -242,7 +265,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         for (SituationMentionSet sms : this.comm.getSituationMentionSetList())
           for (SituationMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
-      
+
       this.situationMentionIdToSituationMentionMap = map;
       return new HashMap<>(map);
     }
@@ -256,7 +279,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // if the sentence cache is not set up, do it first.
     if (this.sentIdToSentenceMap == null)
       this.generateSentenceIdToSectionMap();
-    
+
     if (this.tokenizationIdToTokenizationMap != null)
       return new HashMap<>(this.tokenizationIdToTokenizationMap);
     else {
@@ -273,7 +296,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // if the tokenization cache is not set up, do it first.
     if (this.tokenizationIdToTokenizationMap == null)
       this.generateTokenizationIdToTokenizationMap();
-    
+
     if (this.tokenizationIdToTokenIdxToTokenMap != null)
       return new HashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
     else {
@@ -281,7 +304,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
     }
   }
-  
+
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
     final Map<UUID, Tokenization> toRet = new HashMap<>();
     List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap.values());
@@ -290,10 +313,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       UUID tId = tok.getUuid();
       toRet.put(tId, tok);
     }
-      
+
     return toRet;
   }
-  
+
   /**
    * Returns a nested map. <br>
    * <br>
@@ -304,10 +327,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * Nested Map: <br>
    * Key: Token Sequence ID <br>
    * Value: {@link Token} object
-   * 
+   *
    */
   private Map<UUID, Map<Integer, Token>> tokenizationIdToTokenSeqIdToTokensMap() {
-    Map<UUID, Map<Integer, Token>> toRet = new HashMap<>();    
+    Map<UUID, Map<Integer, Token>> toRet = new HashMap<>();
     for (Tokenization t : this.tokenizationIdToTokenizationMap.values()) {
       UUID tId = t.getUuid();
       Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
@@ -317,7 +340,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
           toRet.put(tId, idToTokenMap);
         }
     }
-    
+
     return toRet;
   }
 
@@ -329,8 +352,8 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // if the section cache is not set up, do it first.
     if (this.sectionIdToSectionMap == null)
       this.generateSectionIdToSectionMap();
-    
-    // if run before, return. 
+
+    // if run before, return.
     if (this.sentIdToSentenceMap != null)
       return new HashMap<>(this.sentIdToSentenceMap);
     else {
@@ -351,10 +374,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    */
   @Override
   public Map<UUID, Section> generateSectionIdToSectionMap() {
-    // return cached if it exists. otherwise run. 
+    // return cached if it exists. otherwise run.
     if (this.sectionIdToSectionMap != null)
       return new HashMap<>(this.sectionIdToSectionMap);
-      
+
     else {
       final Map<UUID, Section> map = new HashMap<>();
       for (Section s : this.comm.getSectionList())
@@ -364,17 +387,17 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new HashMap<>(map);
     }
   }
-  
+
   /* (non-Javadoc)
    * @see concrete.util.ConcreteEntityMentionized#generateEntityMentionIdToEntityMentionMap()
    */
   @Override
   public Map<UUID, EntityMention> generateEntityMentionIdToEntityMentionMap() {
     // if the tokenization cache is not set up, do it first.
-    // TODO: needed? 
+    // TODO: needed?
 //    if (this.tokenizationIdToTokenizationMap == null)
 //      this.generateTokenizationIdToTokenizationMap();
-    
+
     if (this.entityMentionIdToEntityMentionMap != null)
       return new HashMap<>(this.entityMentionIdToEntityMentionMap);
     else {
@@ -383,7 +406,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         for (EntityMentionSet sms : this.comm.getEntityMentionSetList())
           for (EntityMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
-      
+
       this.entityMentionIdToEntityMentionMap = map;
       return new HashMap<>(map);
     }
@@ -397,7 +420,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // if the tokenization cache is not set up, do it first.
     if (this.entityMentionIdToEntityMentionMap == null)
       this.generateEntityMentionIdToEntityMentionMap();
-    
+
     if (this.entityIdToEntityMap != null)
       return new HashMap<>(this.entityIdToEntityMap);
     else {
@@ -406,7 +429,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         for (EntitySet sms : this.comm.getEntitySetList())
           for (Entity sm : sms.getEntityList())
             map.put(sm.getUuid(), sm);
-      
+
       this.entityIdToEntityMap = map;
       return new HashMap<>(map);
     }
@@ -420,7 +443,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     // if the tokenization cache is not set up, do it first.
     if (this.situationMentionIdToSituationMentionMap == null)
       this.generateSituationMentionIdToSituationMentionMap();
-    
+
     if (this.situationIdToSituationMap != null)
       return new HashMap<>(this.situationIdToSituationMap);
     else {
@@ -429,7 +452,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         for (SituationSet sms : this.comm.getSituationSetList())
           for (Situation sm : sms.getSituationList())
             map.put(sm.getUuid(), sm);
-      
+
       this.situationIdToSituationMap = map;
       return new HashMap<>(map);
     }
