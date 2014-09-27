@@ -361,8 +361,9 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
       List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
       for (Section s : sectList)
-        for (Sentence st : s.getSentenceList())
-          toRet.put(st.getUuid(), st);
+        if (s.isSetSentenceList())
+          for (Sentence st : s.getSentenceList())
+            toRet.put(st.getUuid(), st);
 
       this.sentIdToSentenceMap = toRet;
       return new HashMap<>(toRet);
