@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -258,16 +258,16 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 //      this.generateTokenizationIdToTokenizationMap();
 
     if (this.situationMentionIdToSituationMentionMap != null)
-      return new HashMap<UUID, SituationMention>(this.situationMentionIdToSituationMentionMap);
+      return new LinkedHashMap<UUID, SituationMention>(this.situationMentionIdToSituationMentionMap);
     else {
-      Map<UUID, SituationMention> map = new HashMap<UUID, SituationMention>();
+      Map<UUID, SituationMention> map = new LinkedHashMap<UUID, SituationMention>();
       if (this.comm.isSetSituationMentionSetList())
         for (SituationMentionSet sms : this.comm.getSituationMentionSetList())
           for (SituationMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
 
       this.situationMentionIdToSituationMentionMap = map;
-      return new HashMap<>(map);
+      return new LinkedHashMap<>(map);
     }
   }
 
@@ -281,10 +281,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.generateSentenceIdToSectionMap();
 
     if (this.tokenizationIdToTokenizationMap != null)
-      return new HashMap<>(this.tokenizationIdToTokenizationMap);
+      return new LinkedHashMap<>(this.tokenizationIdToTokenizationMap);
     else {
       this.tokenizationIdToTokenizationMap = this.tokenizationIdToTokenizationMap();
-      return new HashMap<>(this.tokenizationIdToTokenizationMap);
+      return new LinkedHashMap<>(this.tokenizationIdToTokenizationMap);
     }
   }
 
@@ -298,15 +298,15 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.generateTokenizationIdToTokenizationMap();
 
     if (this.tokenizationIdToTokenIdxToTokenMap != null)
-      return new HashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
+      return new LinkedHashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
     else {
       this.tokenizationIdToTokenIdxToTokenMap = this.tokenizationIdToTokenSeqIdToTokensMap();
-      return new HashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
+      return new LinkedHashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
     }
   }
 
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
-    final Map<UUID, Tokenization> toRet = new HashMap<>();
+    final Map<UUID, Tokenization> toRet = new LinkedHashMap<>();
     List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap.values());
     for (Sentence st : stList) {
       Tokenization tok = st.getTokenization();
@@ -330,10 +330,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *
    */
   private Map<UUID, Map<Integer, Token>> tokenizationIdToTokenSeqIdToTokensMap() {
-    Map<UUID, Map<Integer, Token>> toRet = new HashMap<>();
+    Map<UUID, Map<Integer, Token>> toRet = new LinkedHashMap<>();
     for (Tokenization t : this.tokenizationIdToTokenizationMap.values()) {
       UUID tId = t.getUuid();
-      Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
+      Map<Integer, Token> idToTokenMap = new LinkedHashMap<Integer, Token>();
       if (t.isSetTokenList())
         for (Token tok : t.getTokenList().getTokenList()) {
           idToTokenMap.put(tok.getTokenIndex(), tok);
@@ -355,9 +355,9 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
     // if run before, return.
     if (this.sentIdToSentenceMap != null)
-      return new HashMap<>(this.sentIdToSentenceMap);
+      return new LinkedHashMap<>(this.sentIdToSentenceMap);
     else {
-      final Map<UUID, Sentence> toRet = new HashMap<>();
+      final Map<UUID, Sentence> toRet = new LinkedHashMap<>();
 
       List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
       for (Section s : sectList)
@@ -366,7 +366,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
             toRet.put(st.getUuid(), st);
 
       this.sentIdToSentenceMap = toRet;
-      return new HashMap<>(toRet);
+      return new LinkedHashMap<>(toRet);
     }
   }
 
@@ -377,15 +377,15 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   public Map<UUID, Section> generateSectionIdToSectionMap() {
     // return cached if it exists. otherwise run.
     if (this.sectionIdToSectionMap != null)
-      return new HashMap<>(this.sectionIdToSectionMap);
+      return new LinkedHashMap<>(this.sectionIdToSectionMap);
 
     else {
-      final Map<UUID, Section> map = new HashMap<>();
+      final Map<UUID, Section> map = new LinkedHashMap<>();
       for (Section s : this.comm.getSectionList())
         map.put(s.getUuid(), s);
 
       this.sectionIdToSectionMap = map;
-      return new HashMap<>(map);
+      return new LinkedHashMap<>(map);
     }
   }
 
@@ -400,16 +400,16 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 //      this.generateTokenizationIdToTokenizationMap();
 
     if (this.entityMentionIdToEntityMentionMap != null)
-      return new HashMap<>(this.entityMentionIdToEntityMentionMap);
+      return new LinkedHashMap<>(this.entityMentionIdToEntityMentionMap);
     else {
-      Map<UUID, EntityMention> map = new HashMap<UUID, EntityMention>();
+      Map<UUID, EntityMention> map = new LinkedHashMap<UUID, EntityMention>();
       if (this.comm.isSetEntityMentionSetList())
         for (EntityMentionSet sms : this.comm.getEntityMentionSetList())
           for (EntityMention sm : sms.getMentionList())
             map.put(sm.getUuid(), sm);
 
       this.entityMentionIdToEntityMentionMap = map;
-      return new HashMap<>(map);
+      return new LinkedHashMap<>(map);
     }
   }
 
@@ -423,16 +423,16 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.generateEntityMentionIdToEntityMentionMap();
 
     if (this.entityIdToEntityMap != null)
-      return new HashMap<>(this.entityIdToEntityMap);
+      return new LinkedHashMap<>(this.entityIdToEntityMap);
     else {
-      Map<UUID, Entity> map = new HashMap<UUID, Entity>();
+      Map<UUID, Entity> map = new LinkedHashMap<UUID, Entity>();
       if (this.comm.isSetEntitySetList())
         for (EntitySet sms : this.comm.getEntitySetList())
           for (Entity sm : sms.getEntityList())
             map.put(sm.getUuid(), sm);
 
       this.entityIdToEntityMap = map;
-      return new HashMap<>(map);
+      return new LinkedHashMap<>(map);
     }
   }
 
@@ -446,16 +446,16 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.generateSituationMentionIdToSituationMentionMap();
 
     if (this.situationIdToSituationMap != null)
-      return new HashMap<>(this.situationIdToSituationMap);
+      return new LinkedHashMap<>(this.situationIdToSituationMap);
     else {
-      Map<UUID, Situation> map = new HashMap<UUID, Situation>();
+      Map<UUID, Situation> map = new LinkedHashMap<UUID, Situation>();
       if (this.comm.isSetEntitySetList())
         for (SituationSet sms : this.comm.getSituationSetList())
           for (Situation sm : sms.getSituationList())
             map.put(sm.getUuid(), sm);
 
       this.situationIdToSituationMap = map;
-      return new HashMap<>(map);
+      return new LinkedHashMap<>(map);
     }
   }
 }
