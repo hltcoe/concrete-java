@@ -53,21 +53,17 @@ public class TokenizationUtils {
     return getFirstXTags(tokenization, TagTypes.NER);
   }
   private TokenTagging getFirstXTags(Tokenization tokenization, TagTypes which) throws ConcreteException {
+    if (!tokenization.isSetTokenTaggingList())
+      throw new ConcreteException("No TokenTaggings for tokenization: " + tokenization.getUuid());
+    
     List<TokenTagging> tokenTaggingLists = tokenization.getTokenTaggingList();
-    int ttIdx = -1;
-    int idx = -1;
-    for(TokenTagging tt : tokenTaggingLists) { 
-      idx++;
-      if(tt.isSetTaggingType() && tt.getTaggingType().equals(which.name())) {
-        ttIdx = idx;
-        break;
-      }
+    for(int i = 0; i < tokenTaggingLists.size(); i++) {
+      TokenTagging tt = tokenTaggingLists.get(i);
+      if(tt.isSetTaggingType() && tt.getTaggingType().equals(which.name()))
+        return tt;
     }
-    if(ttIdx >= 0) {
-      return tokenTaggingLists.get(ttIdx);
-    } else {
-      throw new ConcreteException("Did not find any tag theories with taggingType == " + which +" in tokenization " + tokenization.getUuid());
-    }
+    
+    throw new ConcreteException("Did not find any tag theories with taggingType == " + which +" in tokenization " + tokenization.getUuid());
   }
 
   /**
@@ -99,25 +95,22 @@ public class TokenizationUtils {
   public TokenTagging getFirstNERTagsName(Tokenization tokenization, String toolName) throws ConcreteException {
     return getFirstXTagsWithName(tokenization, TagTypes.NER, toolName);
   }
+  
   private TokenTagging getFirstXTagsWithName(Tokenization tokenization, TagTypes which,
                                              String toolName) throws ConcreteException {
+    if (!tokenization.isSetTokenTaggingList())
+      throw new ConcreteException("No TokenTaggings for tokenization: " + tokenization.getUuid());
+    
     List<TokenTagging> tokenTaggingLists = tokenization.getTokenTaggingList();
-    int ttIdx = -1;
-    int idx = -1;
-    for(TokenTagging tt : tokenTaggingLists) { 
-      idx++;
+    for(int i = 0; i < tokenTaggingLists.size(); i++) {
+      TokenTagging tt = tokenTaggingLists.get(i);
       if(tt.isSetTaggingType() && 
          tt.getTaggingType().equals(which.name()) &&
-         tt.getMetadata().getTool().contains(toolName)) {
-        ttIdx = idx;
-        break;
-      }
+         tt.getMetadata().getTool().contains(toolName))
+        return tt;
     }
-    if(ttIdx >= 0) {
-      return tokenTaggingLists.get(ttIdx);
-    } else {
-      throw new ConcreteException("Did not find any tag theories with taggingType == " + which +" in tokenization " + tokenization.getUuid() + " with toolname containing " + toolName);
-    }
+    
+    throw new ConcreteException("Did not find any tag theories with taggingType == " + which +" in tokenization " + tokenization.getUuid() + " with toolname containing " + toolName);
   }
 
   // DEPENDENCY PARSES
@@ -128,20 +121,16 @@ public class TokenizationUtils {
    * dependency parses containing the desired toolname are found.
    */  
   public DependencyParse getFirstDependencyParseWithName(Tokenization tokenization, String toolName) throws ConcreteException {
-    int dpIdx = -1;
-    int idx = -1;
-    for(DependencyParse dp : tokenization.getDependencyParseList()) {
-      idx++;
-      if(dp.getMetadata().getTool().contains(toolName)) {
-        dpIdx = idx;
-        break;
-      }
+    if (!tokenization.isSetDependencyParseList())
+      throw new ConcreteException("No DependencyParses for tokenization: " + tokenization.getUuid());
+    
+    List<DependencyParse> parseList = tokenization.getDependencyParseList();
+    for (int i = 0; i < parseList.size(); i++) {
+      DependencyParse dp = parseList.get(i);
+      if(dp.getMetadata().getTool().contains(toolName))
+        return dp;
     }
-    if(dpIdx >= 0) {
-      return tokenization.getDependencyParseList().get(dpIdx);
-    } else {
-      throw new ConcreteException("Did not find any  dependency parses containing the string \""+toolName +"\" in tokenization " + tokenization.getUuid());
-    }
-  }
 
+    throw new ConcreteException("Did not find any  dependency parses containing the string \""+toolName +"\" in tokenization " + tokenization.getUuid());
+  }
 }
