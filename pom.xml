@@ -7,7 +7,6 @@
   <version>3.7.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>interfaces</module>
     <module>core</module>
     <module>ontology</module>
     <module>util</module>
