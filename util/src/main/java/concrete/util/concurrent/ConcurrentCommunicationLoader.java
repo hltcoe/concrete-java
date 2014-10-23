@@ -28,12 +28,14 @@ import edu.jhu.hlt.concrete.Communication;
 public class ConcurrentCommunicationLoader implements AutoCloseable {
 
   private final ExecutorService runner;
+  private final CompletionService<Communication> bytesToCommService;
   
   /**
    * Single arg ctor: pass in the desired number of threads. 
    */
   public ConcurrentCommunicationLoader(int nThreads) {
     this.runner = Executors.newFixedThreadPool(nThreads);
+    this.bytesToCommService = new ExecutorCompletionService<Communication>(this.runner);
   }
   
   /**
@@ -73,6 +75,10 @@ public class ConcurrentCommunicationLoader implements AutoCloseable {
   
   public List<Future<Communication>> bulkLoad(String pathToCommFilesString) throws FileNotFoundException {
     return this.bulkLoad(Paths.get(pathToCommFilesString));
+  }
+  
+  public Future<Communication> fromBytes(byte[] bytes) {
+    return this.bytesToCommService.submit(new CallableBytesToCommunication(bytes));
   }
 
   /**
