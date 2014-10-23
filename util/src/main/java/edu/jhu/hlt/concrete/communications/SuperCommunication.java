@@ -278,7 +278,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   public Map<UUID, Tokenization> generateTokenizationIdToTokenizationMap() {
     // if the sentence cache is not set up, do it first.
     if (this.sentIdToSentenceMap == null)
-      this.generateSentenceIdToSectionMap();
+      this.generateSentenceIdToSentenceMap();
 
     if (this.tokenizationIdToTokenizationMap != null)
       return new LinkedHashMap<>(this.tokenizationIdToTokenizationMap);
@@ -348,7 +348,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    * @see concrete.util.ConcreteSentenced#generateSentenceIdToSectionMap()
    */
   @Override
-  public Map<UUID, Sentence> generateSentenceIdToSectionMap() {
+  public Map<UUID, Sentence> generateSentenceIdToSentenceMap() {
     // if the section cache is not set up, do it first.
     if (this.sectionIdToSectionMap == null)
       this.generateSectionIdToSectionMap();

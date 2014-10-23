@@ -15,5 +15,5 @@ import edu.jhu.hlt.concrete.UUID;
  *
  */
 public interface ConcreteSentenced extends ConcreteSectioned {
-  public Map<UUID, Sentence> generateSentenceIdToSectionMap();
+  public Map<UUID, Sentence> generateSentenceIdToSentenceMap();
 }
