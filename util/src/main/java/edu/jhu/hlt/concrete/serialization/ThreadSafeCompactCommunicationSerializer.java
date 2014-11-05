@@ -21,7 +21,7 @@ public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSe
    */
   @Override
   public Communication fromBytes(byte[] bytes) throws ConcreteException {
-    return this.fromBytes(new Communication(), bytes);
+    return super.fromBytes(new Communication(), bytes);
   }
 
   /* (non-Javadoc)
@@ -29,7 +29,7 @@ public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSe
    */
   @Override
   public byte[] toBytes(Communication c) throws ConcreteException {
-    return this.toBytes(c);
+    return super.toBytes(c);
   }
 
   /* (non-Javadoc)
@@ -37,7 +37,7 @@ public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSe
    */
   @Override
   public Communication fromPath(Path path) throws ConcreteException {
-    return this.fromPath(new Communication(), path);
+    return super.fromPath(new Communication(), path);
   }
 
   /* (non-Javadoc)
@@ -45,7 +45,7 @@ public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSe
    */
   @Override
   public Communication fromPathString(String pathString) throws ConcreteException {
-    return this.fromPathString(new Communication(), pathString);
+    return super.fromPathString(new Communication(), pathString);
   }
 
   /* (non-Javadoc)
@@ -53,6 +53,6 @@ public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSe
    */
   @Override
   public Communication fromInputStream(InputStream is) throws ConcreteException {
-    return this.fromInputStream(new Communication(), is);
+    return super.fromInputStream(new Communication(), is);
   }
 }
