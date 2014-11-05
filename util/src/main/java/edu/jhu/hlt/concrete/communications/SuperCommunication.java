@@ -34,9 +34,10 @@ import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
-import edu.jhu.hlt.concrete.util.Serialization;
 
 /**
  * <strong>Read-only</strong> wrapper around {@link Communication} to allow advanced functionality.
@@ -50,7 +51,7 @@ import edu.jhu.hlt.concrete.util.Serialization;
 public class SuperCommunication implements ConcreteSituationized, ConcreteEntityized {
 
   protected final Communication comm;
-  protected final Serialization ser;
+  protected final CommunicationSerializer ser;
   protected final ConcreteUUIDFactory idf = new ConcreteUUIDFactory();
 
   protected Map<UUID, Section> sectionIdToSectionMap;
@@ -70,7 +71,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   public SuperCommunication(Communication comm) {
     // Create a copy, providing some immutability.
     this.comm = new Communication(comm);
-    this.ser = new Serialization();
+    this.ser = new ThreadSafeCompactCommunicationSerializer();
   }
 
   /**

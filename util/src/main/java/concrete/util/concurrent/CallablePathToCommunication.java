@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.Serialization;
+import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
 
 /**
  * Quick and dirty implementation of {@link Callable} that can be used to
@@ -40,6 +40,6 @@ public class CallablePathToCommunication implements Callable<Communication> {
   @Override
   public Communication call() throws Exception {
     byte[] bytes = Files.readAllBytes(this.p);
-    return new Serialization().fromBytes(new Communication(), bytes);
+    return new ThreadSafeCompactCommunicationSerializer().fromBytes(new Communication(), bytes);
   }
 }

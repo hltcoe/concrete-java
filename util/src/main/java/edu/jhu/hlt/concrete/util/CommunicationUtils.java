@@ -24,6 +24,8 @@ import concrete.util.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.TokenizedSuperCommunication;
+import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
 
 /**
  * Contains a number of useful utility methods for working with {@link Communication}s.
@@ -55,9 +57,10 @@ public class CommunicationUtils {
   public static List<Communication> loadCommunicationsFromPaths(List<Path> pathList) throws ConcreteException, IOException {
     List<Communication> loadList = new ArrayList<>(pathList.size());
 
-    Serialization ser = new Serialization();
+    // ThreadSafeThriftSerializer ser = new ThreadSafeThriftSerializer();
+    CommunicationSerializer ser = new ThreadSafeCompactCommunicationSerializer();
     for (Path p : pathList)
-      loadList.add(ser.fromBytes(new Communication(), Files.readAllBytes(p)));
+      loadList.add(ser.fromBytes(Files.readAllBytes(p)));
     return loadList;
   }
 
