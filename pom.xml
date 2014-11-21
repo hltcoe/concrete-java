@@ -4,11 +4,11 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>3.9.0-SNAPSHOT</version>
+  <version>3.9.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>core</module>
-    <module>ontology</module>
+    <!-- <module>ontology</module> -->
     <module>util</module>
     <module>validation</module>
   </modules>

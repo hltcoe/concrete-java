@@ -10,7 +10,6 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.ontology.ConcreteOntology;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
@@ -26,9 +25,7 @@ public class ConcreteFactory {
   
   private final Random r;
   
-  private static final String[] COMM_TYPES = new ConcreteOntology()
-    .getValidCommunicationTypes()
-    .toArray(new String[0]);
+  private static final String[] COMM_TYPES = new String[] { "Document", "Tweet", "Email" };
   private static final int COMM_TYPE_SIZE = COMM_TYPES.length;
   private static final Logger logger = LoggerFactory.getLogger(ConcreteFactory.class);
 
