@@ -52,10 +52,8 @@ public class TarGzCommunicationIterator implements Iterator<Communication> {
     
     // if any entry is null, done; return false.
     while (this.tis.getCurrentEntry() != null) {
-      String name = this.tis.getCurrentEntry().getName();
-      // no .concrete in name => on a directory
-      // check the next file.
-      if (name.contains(".concrete"))
+      TarArchiveEntry entry = this.tis.getCurrentEntry();
+      if (!entry.isDirectory())
         return true;
       else
         try {
@@ -72,8 +70,7 @@ public class TarGzCommunicationIterator implements Iterator<Communication> {
   public Communication next() {
     try {
       TarArchiveEntry entry = this.tis.getCurrentEntry();
-      String name = entry.getName();
-      if (!name.contains(".concrete")) {
+      if (entry.isDirectory()) {
         // Recurse.
         this.tis.getNextTarEntry();
         this.next();
