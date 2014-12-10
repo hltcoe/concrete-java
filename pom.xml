@@ -10,7 +10,7 @@
     <module>core</module>
     <!-- <module>ontology</module> -->
     <module>util</module>
-    <!-- <module>validation</module> -->
+    <module>validation</module>
   </modules>
 
   <name>Concrete</name>
