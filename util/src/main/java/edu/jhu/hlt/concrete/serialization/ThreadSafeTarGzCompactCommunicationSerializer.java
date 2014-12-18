@@ -31,7 +31,7 @@ public class ThreadSafeTarGzCompactCommunicationSerializer extends ThreadSafeCom
 
   @Override
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException {
-    return new TarGzCommunicationIterator(is);
+    return new TarGzArchiveEntryCommunicationIterator(is);
   }
 
   @Override
