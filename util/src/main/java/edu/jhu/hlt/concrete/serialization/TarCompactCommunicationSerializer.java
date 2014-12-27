@@ -17,7 +17,6 @@ import java.util.Iterator;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import edu.jhu.hlt.concrete.Communication;
@@ -27,19 +26,24 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class ThreadSafeTarGzCompactCommunicationSerializer extends TarCompactCommunicationSerializer implements CommunicationTarGzSerializer {
+public class TarCompactCommunicationSerializer extends ThreadSafeCompactCommunicationSerializer 
+    implements CommunicationTarSerializer {
 
-  @Override
-  public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException {
-    return new TarGzArchiveEntryCommunicationIterator(is);
+  /**
+   * 
+   */
+  public TarCompactCommunicationSerializer() {
+    // TODO Auto-generated constructor stub
   }
-  
+
+  /* (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer#toTar(java.util.Collection, java.nio.file.Path)
+   */
   @Override
-  public void toTarGz(Collection<Communication> commColl, Path outPath) throws ConcreteException {
+  public void toTar(Collection<Communication> commColl, Path outPath) throws ConcreteException, IOException {
     try(OutputStream os = Files.newOutputStream(outPath);
         BufferedOutputStream bos = new BufferedOutputStream(os);
-        GzipCompressorOutputStream gzos = new GzipCompressorOutputStream(bos);
-        TarArchiveOutputStream tos = new TarArchiveOutputStream(gzos);) {
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);) {
       for (Communication c : commColl) {
         TarArchiveEntry entry = new TarArchiveEntry(c.getId() + ".concrete");
         byte[] cbytes = this.toBytes(c);
@@ -56,8 +60,19 @@ public class ThreadSafeTarGzCompactCommunicationSerializer extends TarCompactCom
     }
   }
 
+  /* (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer#toTar(java.util.Collection, java.lang.String)
+   */
   @Override
-  public void toTarGz(Collection<Communication> commColl, String outPathString) throws ConcreteException {
-    this.toTarGz(commColl, Paths.get(outPathString));
+  public void toTar(Collection<Communication> commColl, String outPathString) throws ConcreteException, IOException {
+    this.toTar(commColl, Paths.get(outPathString));
+  }
+
+  /* (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer#fromTar(java.io.InputStream)
+   */
+  @Override
+  public Iterator<Communication> fromTar(InputStream is) throws ConcreteException, IOException {
+    return new TarArchiveEntryCommunicationIterator(is);
   }
 }

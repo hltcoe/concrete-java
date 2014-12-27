@@ -2,7 +2,6 @@
  * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-
 package edu.jhu.hlt.concrete.serialization;
 
 import java.io.IOException;
@@ -18,10 +17,9 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public interface CommunicationTarGzSerializer extends CommunicationTarSerializer {
-  public void toTarGz(Collection<Communication> commColl, Path outPath) throws ConcreteException, IOException;
-
-  public void toTarGz(Collection<Communication> commColl, String outPathString) throws ConcreteException, IOException;
+public interface CommunicationTarSerializer extends CommunicationSerializer {
+  public void toTar(Collection<Communication> commColl, Path outPath) throws ConcreteException, IOException;
+  public void toTar(Collection<Communication> commColl, String outPathString) throws ConcreteException, IOException;
 
   /**
    * @param is
@@ -29,5 +27,5 @@ public interface CommunicationTarGzSerializer extends CommunicationTarSerializer
    * @return
    * @throws ConcreteException
    */
-  public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException;
+  public Iterator<Communication> fromTar(InputStream is) throws ConcreteException, IOException;
 }
