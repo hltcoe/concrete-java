@@ -138,13 +138,17 @@ public class SpaceAudit {
 			return;
 		}
 		ThreadSafeCompactCommunicationSerializer ser = new ThreadSafeCompactCommunicationSerializer();
+		SpaceAudit all = new SpaceAudit();
 		for (String concreteFile : args) {
 			System.out.println(concreteFile);
 			Communication c = ser.fromPathString(concreteFile);
 			SpaceAudit audit = new SpaceAudit();
 			audit.count(c);
-			audit.show(10);
+			all.count(c);
+			audit.show(5);
 			System.out.println();
 		}
+		System.out.println("all " + args.length + " files");
+		all.show(15);
 	}
 }
