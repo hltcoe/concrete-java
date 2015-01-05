@@ -5,12 +5,13 @@
  */
 package concrete.util.data;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.ontology.ConcreteOntology;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
@@ -26,9 +27,7 @@ public class ConcreteFactory {
   
   private final Random r;
   
-  private static final String[] COMM_TYPES = new ConcreteOntology()
-    .getValidCommunicationTypes()
-    .toArray(new String[0]);
+  private static final String[] COMM_TYPES = new String[] { "Document", "Tweet", "Email" };
   private static final int COMM_TYPE_SIZE = COMM_TYPES.length;
   private static final Logger logger = LoggerFactory.getLogger(ConcreteFactory.class);
 
@@ -57,6 +56,16 @@ public class ConcreteFactory {
       .setText("Some sample text.")
       .setType(this.randomCommunicationType())
       .setMetadata(this.randomMetadata());
+  }
+  
+  public Set<Communication> randomCommunicationSet(int nMembers) {
+    Set<Communication> cSet = new HashSet<>(nMembers + 1);
+    for (int i = 0; i < nMembers; i++)
+      cSet.add(this.randomCommunication());
+    // could get some dupes
+    while (cSet.size() < nMembers)
+      cSet.add(this.randomCommunication());
+    return cSet;
   }
   
   /**
