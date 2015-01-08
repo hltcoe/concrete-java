@@ -1,18 +1,23 @@
 package concrete.tools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TSimpleJSONProtocol;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
@@ -24,6 +29,8 @@ import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializ
  * @author travis
  */
 public class SpaceAudit {
+  
+  private final ObjectMapper om = new ObjectMapper();
 
 	/** Stores info about a particular item being accumulated */
 	static class Info {
@@ -80,11 +87,15 @@ public class SpaceAudit {
 		}
 	}
 
-	/** Recursively estimate size of the items under this node */
-	public void count(TBase<?, ?> node) throws TException {
+	/** Recursively estimate size of the items under this node 
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException */
+	public void count(TBase<?, ?> node) throws TException, JsonParseException, JsonMappingException, IOException {
 		TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
 		String json = serializer.toString(node);
-		JSONObject j = new JSONObject(json);
+		Map<String, Object> j = om.readValue(json, Map.class);
+		// JSONObject j = new JSONObject(json);
 		count("", j);
 	}
 
@@ -96,13 +107,13 @@ public class SpaceAudit {
 			getInfo(path).update(((String) maybe).length());
 		} else if (maybe instanceof Number) {
 			getInfo(path).update(4);
-		} else if (maybe instanceof JSONArray) {
-			JSONArray a = ((JSONArray) maybe);
-			for (int i = 0; i < a.length(); i++)
+		} else if (maybe instanceof List) {
+			List<Object> a = ((ArrayList<Object>) maybe);
+			for (int i = 0; i < a.size(); i++)
 				count(path, a.get(i));
-		} else if (maybe instanceof JSONObject) {
-			JSONObject jo = (JSONObject) maybe;
-			String[] keys = JSONObject.getNames(jo);
+		} else if (maybe instanceof Map) {
+			Map<String, Object> jo = (LinkedHashMap<String, Object>) maybe;
+			Set<String> keys = jo.keySet();
 			for (String k : keys)
 				count(path + "/" + k, jo.get(k));
 		}
