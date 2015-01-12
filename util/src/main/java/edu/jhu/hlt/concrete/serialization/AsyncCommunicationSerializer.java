@@ -13,7 +13,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public interface AsyncCommunicationSerializer {
+public interface AsyncCommunicationSerializer extends AutoCloseable {
   public Future<byte[]> toBytes(Communication c) throws ConcreteException;
   public Future<Communication> fromBytes(byte[] bytes) throws ConcreteException;
 }
