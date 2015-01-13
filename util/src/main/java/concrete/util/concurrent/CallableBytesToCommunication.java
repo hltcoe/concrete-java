@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * @author max
@@ -24,8 +25,7 @@ public class CallableBytesToCommunication implements Callable<Communication> {
   }
   
   @Override
-  public Communication call() throws Exception {
+  public Communication call() throws ConcreteException {
     return this.cs.fromBytes(this.bytes);
   }
-
 }

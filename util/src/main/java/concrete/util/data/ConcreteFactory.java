@@ -5,7 +5,9 @@
  */
 package concrete.util.data;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,16 @@ public class ConcreteFactory {
       .setText("Some sample text.")
       .setType(this.randomCommunicationType())
       .setMetadata(this.randomMetadata());
+  }
+  
+  public Set<Communication> randomCommunicationSet(int nMembers) {
+    Set<Communication> cSet = new HashSet<>(nMembers + 1);
+    for (int i = 0; i < nMembers; i++)
+      cSet.add(this.randomCommunication());
+    // could get some dupes
+    while (cSet.size() < nMembers)
+      cSet.add(this.randomCommunication());
+    return cSet;
   }
   
   /**

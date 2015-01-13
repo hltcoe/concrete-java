@@ -27,13 +27,13 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class ThreadSafeTarGzCompactCommunicationSerializer extends ThreadSafeCompactCommunicationSerializer implements CommunicationTarGzSerializer {
+public class ThreadSafeTarGzCompactCommunicationSerializer extends TarCompactCommunicationSerializer implements CommunicationTarGzSerializer {
 
   @Override
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException {
-    return new TarGzCommunicationIterator(is);
+    return new TarGzArchiveEntryCommunicationIterator(is);
   }
-
+  
   @Override
   public void toTarGz(Collection<Communication> commColl, Path outPath) throws ConcreteException {
     try(OutputStream os = Files.newOutputStream(outPath);

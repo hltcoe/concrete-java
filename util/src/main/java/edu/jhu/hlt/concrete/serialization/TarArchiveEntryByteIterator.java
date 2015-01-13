@@ -12,33 +12,23 @@ import java.util.Iterator;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
-
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteException;
+import org.apache.commons.io.IOUtils;
 
 /**
  * @author max
  *
  */
-public class TarGzCommunicationIterator implements Iterator<Communication> {
+public class TarArchiveEntryByteIterator implements Iterator<byte[]> {
 
-  private final BufferedInputStream bis;
-  private final GzipCompressorInputStream gis;
   private final TarArchiveInputStream tis;
-  
-  protected final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
   
   /**
    * @throws IOException 
    * 
    */
-  public TarGzCommunicationIterator(InputStream is) throws IOException {
-    this.bis = new BufferedInputStream(is);
-    this.gis = new GzipCompressorInputStream(bis);
-    this.tis = new TarArchiveInputStream(gis);
-
+  public TarArchiveEntryByteIterator(InputStream is) throws IOException {
+    this.tis = new TarArchiveInputStream(new BufferedInputStream(is));
+    
     // Prepare next entry.
     this.tis.getNextTarEntry();
   }
@@ -46,8 +36,8 @@ public class TarGzCommunicationIterator implements Iterator<Communication> {
   @Override
   public boolean hasNext() {
     // couple possible states:
-    // processed 1 comm file, and are now on a dir.
-    // processed 1 comm file, and are now on another .comm file.
+    // processed 1 file, and are now on a dir.
+    // processed 1 file, and are now on another file.
     // done iterating (nothing left).
     
     // if any entry is null, done; return false.
@@ -67,7 +57,7 @@ public class TarGzCommunicationIterator implements Iterator<Communication> {
   }
 
   @Override
-  public Communication next() {
+  public byte[] next() {
     try {
       TarArchiveEntry entry = this.tis.getCurrentEntry();
       if (entry.isDirectory()) {
@@ -76,10 +66,10 @@ public class TarGzCommunicationIterator implements Iterator<Communication> {
         this.next();
       }
       
-      byte[] bytes = IOUtils.toByteArray(tis);
+      byte[] bytes = IOUtils.toByteArray(this.tis);
       this.tis.getNextTarEntry();
-      return this.cs.fromBytes(bytes);
-    } catch (IOException | ConcreteException e) {
+      return bytes;
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
