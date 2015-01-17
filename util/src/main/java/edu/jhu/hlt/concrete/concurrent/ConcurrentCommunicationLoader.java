@@ -3,7 +3,7 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package concrete.util.concurrent;
+package edu.jhu.hlt.concrete.concurrent;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;

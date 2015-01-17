@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.serialization.concurrent.AsyncCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
@@ -54,7 +56,7 @@ public class CachedThreadPoolCommunicationSerializerTest {
   }
   
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.serialization.CachedThreadPoolCommunicationSerializer#toBytes(edu.jhu.hlt.concrete.Communication)}.
+   * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#toBytes(edu.jhu.hlt.concrete.Communication)}.
    * @throws ConcreteException 
    * @throws ExecutionException 
    * @throws InterruptedException 
@@ -74,7 +76,7 @@ public class CachedThreadPoolCommunicationSerializerTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.serialization.CachedThreadPoolCommunicationSerializer#fromBytes(byte[])}.
+   * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#fromBytes(byte[])}.
    * @throws ConcreteException 
    * @throws ExecutionException 
    * @throws InterruptedException 

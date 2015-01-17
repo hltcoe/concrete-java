@@ -20,10 +20,10 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.util.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.TokenizedSuperCommunication;
+import edu.jhu.hlt.concrete.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
 

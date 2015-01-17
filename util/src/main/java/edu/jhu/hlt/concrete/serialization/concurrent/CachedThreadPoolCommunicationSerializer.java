@@ -2,20 +2,23 @@
  * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.hlt.concrete.serialization;
+package edu.jhu.hlt.concrete.serialization.concurrent;
 
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.util.concurrent.CallableBytesToCommunication;
-import concrete.util.concurrent.CallableCommunicationToBytes;
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.concurrent.CallableBytesToCommunication;
+import edu.jhu.hlt.concrete.concurrent.CallableCommunicationToBytes;
+import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
@@ -68,10 +71,10 @@ public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicati
    * @see java.lang.AutoCloseable#close()
    */
   @Override
-  public void close() throws Exception {
-    LOGGER.info("Close called.");
+  public void close() throws InterruptedException {
+    LOGGER.info("Close called. Shutting down and awaiting task completion.");
     this.exec.shutdown();
+    this.exec.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     LOGGER.info("Shutdown complete.");
   }
-
 }
