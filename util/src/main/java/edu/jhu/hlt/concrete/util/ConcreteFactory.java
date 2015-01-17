@@ -3,7 +3,7 @@
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
-package concrete.util.data;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
-import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
 
 /**
  * Class for generating test Concrete data.

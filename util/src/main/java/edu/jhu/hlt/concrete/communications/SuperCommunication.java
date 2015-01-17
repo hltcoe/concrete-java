@@ -186,11 +186,11 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   }
 
   /**
-   * Get the first {@link Section} from the first {@link SectionSegmentation} from the wrapped {@link Communication}.
+   * Get the first {@link Section} from the wrapped {@link Communication}.
    *
-   * @return the first {@link Section} from the first {@link SectionSegmentation}
+   * @return the first {@link Section}
    * @throws ConcreteException
-   *           if there is no {@link Section} or {@link SectionSegmentation}
+   *           if there is no {@link Section}
    */
   public Section firstSection() throws ConcreteException {
     if (this.hasSections())
@@ -242,7 +242,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   }
 
   /**
-   * @return true if {@link Section}(s) are present in all {@link SectionSegmentation}s
+   * @return true if {@link Section}(s) are present
    */
   public boolean hasSections() {
     return this.comm.isSetSectionList() && this.comm.getSectionListSize() > 0;

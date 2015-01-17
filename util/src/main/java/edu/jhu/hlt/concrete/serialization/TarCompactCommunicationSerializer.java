@@ -14,15 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
@@ -32,8 +28,6 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  */
 public class TarCompactCommunicationSerializer extends CompactCommunicationSerializer 
     implements CommunicationTarSerializer {
-  
-  private static final Logger LOGGER = LoggerFactory.getLogger(TarCompactCommunicationSerializer.class);
   
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer#toTar(java.util.Collection, java.nio.file.Path)
@@ -73,18 +67,5 @@ public class TarCompactCommunicationSerializer extends CompactCommunicationSeria
   @Override
   public Iterator<Communication> fromTar(InputStream is) throws ConcreteException, IOException {
     return new TarArchiveEntryCommunicationIterator(is);
-  }
-  
-  public static void main(String... args) {
-    String outPath = args[0];
-    ConcreteFactory cf = new ConcreteFactory();
-    Set<Communication> cs = cf.randomCommunicationSet(100);
-    Path out = Paths.get(outPath);
-    CommunicationTarSerializer ser = new TarCompactCommunicationSerializer();
-    try {
-      ser.toTar(cs, out);
-    } catch (ConcreteException | IOException e) {
-      LOGGER.error("Caught exception while exporting comms.", e);
-    }
   }
 }

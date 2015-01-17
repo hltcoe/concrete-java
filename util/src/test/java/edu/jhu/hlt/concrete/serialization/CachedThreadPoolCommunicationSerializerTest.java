@@ -18,11 +18,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.concurrent.AsyncCommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.util.ConcreteFactory;
 
 /**
  * @author max

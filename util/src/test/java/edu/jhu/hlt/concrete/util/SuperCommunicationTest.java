@@ -8,8 +8,6 @@ package edu.jhu.hlt.concrete.util;
 import org.junit.After;
 import org.junit.Before;
 
-import concrete.util.data.ConcreteFactory;
-
 /**
  * @author max
  *
