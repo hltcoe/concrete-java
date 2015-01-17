@@ -25,9 +25,9 @@ API
 Use this library's serialization and deserialization classes instead of rolling your own.
 
 `TarGzCompactCommunicationSerializer` will handle almost all of your de/serialization tasks.
-This class is compatible with concatenated `.gz` files from unix `gunzip`.
+This class is compatible with unix `gunzip`.
 
-### Example ###
+#### Examples ####
 ```java
 // your communication collection
 Collection<Communication> myComms = ...
@@ -36,10 +36,10 @@ Collection<Communication> myComms = ...
 CommunicationTarGzSerializer ts = new TarGzCompactCommunicationSerializer();
 
 // create a .tar.gz file
-ts.toTarGz(myComms, "/my/home/dir");
+ts.toTarGz(myComms, "/my/home/dir/comms.tar.gz");
 
 // create a .tar file
-ts.toTar(myComms, "/my/home/dir");
+ts.toTar(myComms, "/my/home/dir/comms.tar");
 
 // read from a .tar file
 // the InputStream is automatically buffered.
