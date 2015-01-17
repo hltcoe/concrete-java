@@ -42,7 +42,7 @@ public class PrintConcreteTarGzArchive {
       System.exit(1);
     }
     
-    CommunicationTarGzSerializer ser = new ThreadSafeTarGzCompactCommunicationSerializer();
+    CommunicationTarGzSerializer ser = new TarGzCompactCommunicationSerializer();
     InputStream is = new FileInputStream(args[0]);
     Iterator<Communication> ci = ser.fromTarGz(is);
     while (ci.hasNext()) {

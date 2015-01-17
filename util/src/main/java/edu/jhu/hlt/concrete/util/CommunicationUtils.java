@@ -25,7 +25,7 @@ import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 import edu.jhu.hlt.concrete.communications.TokenizedSuperCommunication;
 import edu.jhu.hlt.concrete.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 
 /**
  * Contains a number of useful utility methods for working with {@link Communication}s.
@@ -58,7 +58,7 @@ public class CommunicationUtils {
     List<Communication> loadList = new ArrayList<>(pathList.size());
 
     // ThreadSafeThriftSerializer ser = new ThreadSafeThriftSerializer();
-    CommunicationSerializer ser = new ThreadSafeCompactCommunicationSerializer();
+    CommunicationSerializer ser = new CompactCommunicationSerializer();
     for (Path p : pathList)
       loadList.add(ser.fromBytes(Files.readAllBytes(p)));
     return loadList;

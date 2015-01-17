@@ -18,14 +18,15 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.concurrent.CallableBytesToCommunication;
 import edu.jhu.hlt.concrete.concurrent.CallableCommunicationToBytes;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * @author max
  *
  */
-public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicationSerializer, AutoCloseable {
+public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicationSerializer, 
+    AutoCloseable {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(CachedThreadPoolCommunicationSerializer.class);
   
@@ -33,7 +34,7 @@ public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicati
   private final CompletionService<byte[]> bcs;
   private final CompletionService<Communication> ccs;
   
-  private final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  private final CommunicationSerializer cs = new CompactCommunicationSerializer();
   
   /**
    * 
@@ -42,13 +43,6 @@ public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicati
     this.exec = Executors.newCachedThreadPool();
     this.bcs = new ExecutorCompletionService<byte[]>(this.exec);
     this.ccs = new ExecutorCompletionService<Communication>(this.exec);
-  }
-
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
-    // TODO Auto-generated method stub
   }
 
   /* (non-Javadoc)

@@ -19,11 +19,11 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer;
 import edu.jhu.hlt.concrete.serialization.TarCompactCommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 
 public class TarAPITest {
   
-  CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  CommunicationSerializer cs = new CompactCommunicationSerializer();
   ConcreteFactory cf = new ConcreteFactory(1234);
   Communication comm1 = cf.randomCommunication();
   Communication comm2 = cf.randomCommunication();

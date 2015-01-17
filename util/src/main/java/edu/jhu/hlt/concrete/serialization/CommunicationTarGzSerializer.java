@@ -25,7 +25,7 @@ public interface CommunicationTarGzSerializer extends CommunicationTarSerializer
 
   /**
    * @param is
-   *          an {@link InputStream}.You should close this when finished iterating.
+   *          an {@link InputStream}. You should close this when finished iterating.
    * @return
    * @throws ConcreteException
    */

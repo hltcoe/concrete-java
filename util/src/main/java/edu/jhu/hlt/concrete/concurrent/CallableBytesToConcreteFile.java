@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 
 /**
  * @author max
@@ -18,7 +18,7 @@ import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializ
  */
 public class CallableBytesToConcreteFile implements Callable<Void> {
 
-  private final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  private final CommunicationSerializer cs = new CompactCommunicationSerializer();
   private final byte[] bytes;
   private final Path outPath;
   

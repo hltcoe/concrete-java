@@ -30,7 +30,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class TarCompactCommunicationSerializer extends ThreadSafeCompactCommunicationSerializer 
+public class TarCompactCommunicationSerializer extends CompactCommunicationSerializer 
     implements CommunicationTarSerializer {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(TarCompactCommunicationSerializer.class);

@@ -15,10 +15,10 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class TarArchiveEntryCommunicationIterator implements Iterator<Communication> {
+class TarArchiveEntryCommunicationIterator implements Iterator<Communication> {
 
   private final TarArchiveEntryByteIterator byteIter;
-  protected final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  protected final CommunicationSerializer cs = new CompactCommunicationSerializer();
   
   /**
    * @param is

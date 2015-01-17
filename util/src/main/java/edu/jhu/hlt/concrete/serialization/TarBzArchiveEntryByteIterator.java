@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
  * @author max
  *
  */
-public class TarBzArchiveEntryByteIterator extends TarArchiveEntryByteIterator implements Iterator<byte[]> {
+class TarBzArchiveEntryByteIterator extends TarArchiveEntryByteIterator implements Iterator<byte[]> {
 
   /**
    * @throws IOException 

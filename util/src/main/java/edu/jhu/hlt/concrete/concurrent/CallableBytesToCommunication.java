@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
@@ -17,7 +17,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  */
 public class CallableBytesToCommunication implements Callable<Communication> {
 
-  private final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  private final CommunicationSerializer cs = new CompactCommunicationSerializer();
   private final byte[] bytes;
   
   public CallableBytesToCommunication (byte[] bytes) {

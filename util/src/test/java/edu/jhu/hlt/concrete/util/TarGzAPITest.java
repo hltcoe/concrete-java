@@ -18,12 +18,12 @@ import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CommunicationTarGzSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeTarGzCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 
 public class TarGzAPITest {
   
-  CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  CommunicationSerializer cs = new CompactCommunicationSerializer();
   ConcreteFactory cf = new ConcreteFactory(1234);
   Communication comm1 = cf.randomCommunication();
   Communication comm2 = cf.randomCommunication();
@@ -47,7 +47,7 @@ public class TarGzAPITest {
   @Test
   public void tarGzAPI () throws Exception {
     Path testPath = Paths.get("target/test-out.tar.gz");
-    CommunicationTarGzSerializer ts = new ThreadSafeTarGzCompactCommunicationSerializer();
+    CommunicationTarGzSerializer ts = new TarGzCompactCommunicationSerializer();
     List<Communication> cList = new ArrayList<>();
     cList.add(comm1);
     cList.add(comm2);

@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils;
  * @author max
  *
  */
-public class TarArchiveEntryByteIterator implements Iterator<byte[]> {
+class TarArchiveEntryByteIterator implements Iterator<byte[]> {
 
   private final TarArchiveInputStream tis;
   

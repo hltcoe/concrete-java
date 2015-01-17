@@ -34,7 +34,7 @@ public class CachedThreadPoolCommunicationSerializerTest {
   
   private final ConcreteFactory cf = new ConcreteFactory(1234L);
   private final Set<Communication> commSet = this.cf.randomCommunicationSet(100 * 1000);
-  private final CommunicationSerializer cs = new ThreadSafeCompactCommunicationSerializer();
+  private final CommunicationSerializer cs = new CompactCommunicationSerializer();
   
   private AsyncCommunicationSerializer ser;
   

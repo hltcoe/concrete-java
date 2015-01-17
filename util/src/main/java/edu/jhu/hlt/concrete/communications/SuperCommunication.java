@@ -35,7 +35,7 @@ import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
 
@@ -71,7 +71,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
   public SuperCommunication(Communication comm) {
     // Create a copy, providing some immutability.
     this.comm = new Communication(comm);
-    this.ser = new ThreadSafeCompactCommunicationSerializer();
+    this.ser = new CompactCommunicationSerializer();
   }
 
   /**

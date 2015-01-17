@@ -27,7 +27,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class ThreadSafeTarGzCompactCommunicationSerializer extends TarCompactCommunicationSerializer implements CommunicationTarGzSerializer {
+public class TarGzCompactCommunicationSerializer extends TarCompactCommunicationSerializer implements CommunicationTarGzSerializer {
 
   @Override
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException {

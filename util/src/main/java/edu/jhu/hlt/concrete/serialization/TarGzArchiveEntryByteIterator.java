@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
  * @author max
  *
  */
-public class TarGzArchiveEntryByteIterator extends TarArchiveEntryByteIterator implements Iterator<byte[]> {
+class TarGzArchiveEntryByteIterator extends TarArchiveEntryByteIterator implements Iterator<byte[]> {
 
   /**
    * @throws IOException 

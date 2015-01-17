@@ -14,7 +14,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * @author max
  *
  */
-public class ThreadSafeCompactCommunicationSerializer extends ThreadSafeThriftSerializer<Communication> implements CommunicationSerializer {
+public class CompactCommunicationSerializer extends ThreadSafeThriftSerializer<Communication> implements CommunicationSerializer {
 
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.serialization.CommunicationSerializer#fromBytes(byte[])

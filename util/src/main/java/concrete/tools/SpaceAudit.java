@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.serialization.ThreadSafeCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 
 /**
  * Computes the space on disk taken up by each of the types in a Concrete thrift
@@ -148,7 +148,7 @@ public class SpaceAudit {
 			System.err.println("provide some Concrete files");
 			return;
 		}
-		ThreadSafeCompactCommunicationSerializer ser = new ThreadSafeCompactCommunicationSerializer();
+		CompactCommunicationSerializer ser = new CompactCommunicationSerializer();
 		SpaceAudit all = new SpaceAudit();
 		for (String concreteFile : args) {
 			System.out.println(concreteFile);
