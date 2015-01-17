@@ -24,7 +24,7 @@ public interface CommunicationTarSerializer extends CommunicationSerializer {
   /**
    * @param is
    *          an {@link InputStream}. You should close this when finished iterating.
-   * @return
+   * @return an {@link Iterator} of {@link Communication} objects
    * @throws ConcreteException
    */
   public Iterator<Communication> fromTar(InputStream is) throws ConcreteException, IOException;

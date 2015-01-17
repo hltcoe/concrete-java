@@ -50,9 +50,9 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
   /**
    * Generic method to serialize a thrift-like object.
    * 
-   * @param object - a 'thrift-like' {@link TBase}] object that can be used by
+   * @param object - a 'thrift-like' {@link TBase} object that can be used by
    * {@link TSerializer#serialize(TBase)} to produce a byte array.
-   * @return
+   * @return a byte[] representing the object
    * @throws ConcreteException
    */
   public byte[] toBytes(T object) throws ConcreteException {
@@ -84,8 +84,6 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
   
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link Path} object.
-   * 
-   * @see #fromBytes(TBase, byte[])
    */
   public T fromPath(T object, Path pathToSerializedFile) throws ConcreteException {
     try {
@@ -98,8 +96,6 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link String} that represents
    * a path to a serialized {@link TBase} object on disk. 
-   * 
-   * @see #fromBytes(TBase, Path)
    */
   public T fromPathString(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromPath(object, Paths.get(pathToSerializedFileString));
@@ -108,8 +104,6 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link InputStream} that represents
    * a serialized {@link TBase} object.
-   * 
-   * @see #fromBytes(TBase, Path)
    */
   public T fromInputStream(T object, InputStream is) throws ConcreteException {
     try {
