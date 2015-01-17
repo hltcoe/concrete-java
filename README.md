@@ -22,7 +22,7 @@ Requirements
 Concrete-Java requires the following:
 * Java, 1.7 or greater. If you just want to build the thrift classes, however, only 1.6 is required.
 * [Apache Maven](http://maven.apache.org/), 3.0.4 or greater
-* [Apache Thrift](http://thrift.apache.org/), 0.9.0
+* [Apache Thrift](http://thrift.apache.org/), 0.9.1
 
 Installation
 ------------
@@ -54,13 +54,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
-      <version>3.4.0-SNAPSHOT</version>
+      <version>4.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
-      <version>3.4.0-SNAPSHOT</version>
+      <version>4.2.0</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server.
