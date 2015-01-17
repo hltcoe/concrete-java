@@ -12,12 +12,12 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import concrete.util.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.concurrent.ConcurrentCommunicationLoader;
 import edu.jhu.hlt.concrete.validation.ValidatableEntityMentionSet;
 import edu.jhu.hlt.concrete.validation.ValidatableSection;
 import edu.jhu.hlt.concrete.validation.ValidatableSentence;

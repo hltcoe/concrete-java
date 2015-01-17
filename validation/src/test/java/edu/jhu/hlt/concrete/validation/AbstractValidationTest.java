@@ -5,8 +5,8 @@
  */
 package edu.jhu.hlt.concrete.validation;
 
-import concrete.util.data.ConcreteFactory;
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.util.ConcreteFactory;
 
 /**
  *
