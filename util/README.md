@@ -11,7 +11,7 @@ Adding to your project
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
-      <version>4.2.0</version>
+      <version>4.2.1</version>
     </dependency>
 
 

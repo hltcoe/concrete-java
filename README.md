@@ -54,13 +54,13 @@ dependency to your project's pom.xml file, once installed or deployed:
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
-      <version>4.2.0</version>
+      <version>4.2.1</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
-      <version>4.2.0</version>
+      <version>4.2.1</version>
     </dependency>
 
 At this time, we do not have this hosted on a public maven server.
