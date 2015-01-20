@@ -20,6 +20,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.serialization.iterators.TarArchiveEntryCommunicationIterator;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**

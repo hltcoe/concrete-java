@@ -21,6 +21,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
