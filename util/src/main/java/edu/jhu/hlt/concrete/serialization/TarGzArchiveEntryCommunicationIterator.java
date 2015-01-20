@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import edu.jhu.hlt.acute.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
