@@ -241,14 +241,12 @@
 
   <distributionManagement>
     <repository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-releases</name>
-      <url>http://10.162.95.47:8081/artifactory/libs-release-local</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
     <snapshotRepository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-snapshots</name>
-      <url>http://10.162.95.47:8081/artifactory/libs-snapshot-local</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </snapshotRepository>
   </distributionManagement>
 </project>
