@@ -20,7 +20,7 @@ Requirements
 ------------
 
 Concrete-Java requires the following:
-* Java, 1.8 or greater. If you just want to build the thrift classes, however, only 1.6 is required.
+* Java, 1.7 or greater. If you just want to build the thrift classes, however, only 1.6 is required.
 * [Apache Maven](http://maven.apache.org/), 3.0.4 or greater
 * [Apache Thrift](http://thrift.apache.org/), 0.9.1
 
