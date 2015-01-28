@@ -14,7 +14,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
-import edu.jhu.hlt.concrete.communications.SectionedSuperCommunication;
 
 /**
  * @author max
@@ -34,10 +33,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    return new SectionedSuperCommunication(c)
-      .getSectionIdToSectionMap()
-      .keySet()
-      .contains(this.annotation.getSentenceId());
+    return true;
   }
 
   /**
@@ -72,7 +68,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
 
       else
         validByType = this.printStatus("Kind == LIST, so list must be set, AND list must NOT be set.", this.annotation.isSetTokenList() && !this.annotation.isSetLattice())
-            && this.printStatus("TokenList must not be empty.", this.annotation.getTokenList().getTokensSize() > 0)
+            && this.printStatus("TokenList must not be empty.", this.annotation.getTokenList().getTokenListSize() > 0)
             && this.printStatus("TokenList must be valid.", this.validateTokenList());
 
       return validByType;
@@ -90,7 +86,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
     Set<Integer> tokenIdSet = new HashSet<Integer>();
 
     // Iterate over tokens to validate them.
-    Iterator<Token> iter = this.annotation.getTokenList().getTokensIterator();
+    Iterator<Token> iter = this.annotation.getTokenList().getTokenListIterator();
     boolean validTokenIdx = true;
     while (validTokenIdx && iter.hasNext()) {
       Token current = iter.next();
@@ -102,7 +98,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
         if (!this.printStatus("Token idx can't be < 0", idx >= 0))
           return false;
         else {
-          // If set is empty, we can safely add.
+          // If set is empty, can safely add.
           if (tokenIdSet.isEmpty())
             tokenIdSet.add(idx);
           else {
@@ -113,7 +109,7 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       }
     }
 
-    // We have now gotten all of the token IDs, or exited when one was invalid.
+    // have now gotten all of the token IDs, or exited when one was invalid.
     // First, make sure that validTokenIdx is still true.
     if (!validTokenIdx)
       return false;

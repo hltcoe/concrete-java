@@ -5,7 +5,7 @@
  */
 package edu.jhu.hlt.concrete.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +43,6 @@ public class SuperTextSpanTest {
     String txt = "Test out super text spans!";
     String txtTwo = "More test text";
     c.text = txt + txtTwo;
-    c.processedContent = txt + txtTwo;
     TextSpan ts = new TextSpan(0, txt.length());
     SuperTextSpan sts = new SuperTextSpan(ts, c);
     assertEquals(txt, sts.getText());

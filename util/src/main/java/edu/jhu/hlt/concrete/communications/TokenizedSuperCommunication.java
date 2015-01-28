@@ -17,9 +17,10 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Constituent;
 import edu.jhu.hlt.concrete.Dependency;
 import edu.jhu.hlt.concrete.DependencyParse;
+import edu.jhu.hlt.concrete.Parse;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.Token;
+import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 
@@ -31,6 +32,8 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
 
   protected final Map<UUID, Tokenization> tokenizationIdToTokenizationMap;
   protected final Map<UUID, Map<Integer, Token>> tokenizationIdToTokenIdxToTokenMap;
+  protected final Map<UUID, TokenTagging> idToTokenTaggingMap;
+  protected final Map<String, List<TokenTagging>> ttTypeToTTListMap;
   
   /**
    * @param comm
@@ -39,17 +42,34 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
     super(comm);
     this.tokenizationIdToTokenizationMap = this.tokenizationIdToTokenizationMap();
     this.tokenizationIdToTokenIdxToTokenMap = this.tokenizationIdToTokenSeqIdToTokensMap();
+    
+    this.idToTokenTaggingMap = new HashMap<>();
+    this.ttTypeToTTListMap = new HashMap<>();
+    
+    for (Tokenization tokeniz : this.tokenizationIdToTokenizationMap.values()) {
+      for (TokenTagging tt : tokeniz.getTokenTaggingList()) {
+        this.idToTokenTaggingMap.put(tt.getUuid(), tt);
+        String type = tt.getTaggingType();
+        if (this.ttTypeToTTListMap.containsKey(type)) {
+          List<TokenTagging> curr = this.ttTypeToTTListMap.get(type);
+          curr.add(tt);
+        } else {
+          List<TokenTagging> init = new ArrayList<>();
+          init.add(tt);
+          this.ttTypeToTTListMap.put(type, init);
+        }
+      }
+    }
   }
 
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap() {
     final Map<UUID, Tokenization> toRet = new HashMap<>();
     List<Sentence> stList = new ArrayList<>(this.sentIdToSentenceMap.values());
-    for (Sentence st : stList)
-      if (st.isSetTokenizationList())
-        for (Tokenization t : st.getTokenizationList()) {
-          UUID tId = t.getUuid();
-          toRet.put(tId, t);
-        }
+    for (Sentence st : stList) {
+      Tokenization tok = st.getTokenization();
+      UUID tId = tok.getUuid();
+      toRet.put(tId, tok);
+    }
       
     return toRet;
   }
@@ -72,7 +92,7 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
       UUID tId = t.getUuid();
       Map<Integer, Token> idToTokenMap = new HashMap<Integer, Token>();
       if (t.isSetTokenList())
-        for (Token tok : t.getTokenList().getTokens()) {
+        for (Token tok : t.getTokenList().getTokenList()) {
           idToTokenMap.put(tok.getTokenIndex(), tok);
           toRet.put(tId, idToTokenMap);
         }
@@ -97,8 +117,9 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
     Set<String> dps = new HashSet<>();
     Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
     for (Tokenization s : sectList)
-      for (Constituent tt : s.getParse().getConstituentList())
-        dps.add(tt.getTag());
+      for (Parse p : s.getParseList())
+        for (Constituent tt : p.getConstituentList())
+          dps.add(tt.getTag());
 
     return dps;
   }
@@ -115,22 +136,24 @@ public class TokenizedSuperCommunication extends SentencedSuperCommunication {
   }
 
   public Set<String> enumeratePartOfSpeechTags() {
-    Set<String> dps = new HashSet<>();
-    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
-    for (Tokenization s : sectList)
-      for (TaggedToken tt : s.getPosTagList().getTaggedTokenList())
-        dps.add(tt.getTag());
-
-    return dps;
+//    Set<String> dps = new HashSet<>();
+//    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+//    for (Tokenization s : sectList)
+//      for (TaggedToken tt : s.getPosTagList().getTaggedTokenList())
+//        dps.add(tt.getTag());
+//
+//    return dps;
+    throw new UnsupportedOperationException("Method temporarily unsupported.");
   }
 
   public Set<String> enumerateNamedEntityTags() {
-    Set<String> dps = new HashSet<>();
-    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
-    for (Tokenization s : sectList)
-      for (TaggedToken tt : s.getNerTagList().getTaggedTokenList())
-        dps.add(tt.getTag());
-
-    return dps;
+//    Set<String> dps = new HashSet<>();
+//    Collection<Tokenization> sectList = this.getTokenizationIdToTokenizationMap().values();
+//    for (Tokenization s : sectList)
+//      for (TaggedToken tt : s.getNerTagList().getTaggedTokenList())
+//        dps.add(tt.getTag());
+//
+//    return dps;
+    throw new UnsupportedOperationException("Method temporarily unsupported.");
   }
 }

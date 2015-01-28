@@ -102,7 +102,7 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
    * @param exp - the returned boolean value
    * @return 2nd parameter (boolean)
    */
-  boolean printStatus(String st, boolean exp) {
+  protected boolean printStatus(String st, boolean exp) {
     logger.trace("Evaluating annotation: {}", this.annotation.toString());
     String paramd = "\t{} = {}";
     if (exp)
@@ -119,11 +119,11 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
    * @param uuidToCheck
    * @return
    */
-  boolean validateUUID(String uuidToCheck) {
+  protected boolean validateUUID(String uuidToCheck) {
     return this.printStatus("UUID string must be valid UUID", Util.isValidUUIDString(uuidToCheck));
   }
   
-  boolean validateUUID(edu.jhu.hlt.concrete.UUID uuid) {
+  protected boolean validateUUID(edu.jhu.hlt.concrete.UUID uuid) {
     if (uuid != null)
       return this.validateUUID(uuid.getUuidString());
     else

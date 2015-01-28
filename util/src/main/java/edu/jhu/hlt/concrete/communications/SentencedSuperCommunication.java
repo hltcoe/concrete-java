@@ -14,9 +14,7 @@ import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.SectionSegmentation;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.SentenceSegmentation;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
@@ -46,11 +44,8 @@ public class SentencedSuperCommunication extends SectionedSuperCommunication {
 
     List<Section> sectList = new ArrayList<>(this.sectionIdToSectionMap.values());
     for (Section s : sectList)
-      if (s.isSetSentenceSegmentation())
-        for (SentenceSegmentation ss : s.getSentenceSegmentation())
-          if (ss.isSetSentenceList())
-            for (Sentence st : ss.getSentenceList())
-              toRet.put(st.getUuid(), st);
+      for (Sentence st : s.getSentenceList())
+        toRet.put(st.getUuid(), st);
 
     return toRet;
   }
