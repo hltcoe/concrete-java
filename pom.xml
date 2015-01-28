@@ -36,12 +36,13 @@
   </developers>
 
   <scm>
-    <url>https://github.com/hltcoe/concrete</url>
-    <connection>scm:git:git://test1:/export/common/git/concrete.git</connection>
+    <connection>scm:git:git@github.com:hltcoe/concrete-java.git</connection>
+    <developerConnection>scm:git:git@github.com:hltcoe/concrete-java.git</developerConnection>
+    <url>https://github.com/hltcoe/concrete-java</url>
   </scm>
 
   <issueManagement>
-    <url>https://github.com/hltcoe/concrete/issues</url>
+    <url>https://github.com/hltcoe/concrete-java/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
@@ -138,7 +139,7 @@
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>1.6.5</version>
-          <extensions>true</extensions>
+          <extensions>false</extensions>
           <configuration>
             <serverId>ossrh</serverId>
             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
@@ -285,13 +286,13 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </repository>
     <snapshotRepository>
       <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
   </distributionManagement>
 </project>
