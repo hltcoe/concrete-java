@@ -11,13 +11,13 @@ Dependencies
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
-      <version>4.2.3</version>
+      <version>4.2.4</version>
     </dependency>
 
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
-      <version>4.2.3</version>
+      <version>4.2.4</version>
     </dependency>
 
 TLDR Install Guide (*nix)
@@ -27,6 +27,7 @@ You will need `thrift` installed and available on your `PATH`, version `0.9.1`.
 
 ```bash
 git clone git@github.com:hltcoe/concrete.git
+git checkout v4.2
 git clone git@github.com:hltcoe/concrete-java.git
 cd concrete
 export THRIFT_SOURCE_DIR=`pwd`
