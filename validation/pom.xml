@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-project</artifactId>
-    <version>4.2.3</version>
+    <version>4.2.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>concrete-validation</artifactId>
@@ -59,8 +59,7 @@
 
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-ext</artifactId>
-      <version>1.7.6</version>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
