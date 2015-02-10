@@ -6,7 +6,7 @@ Concrete Java
 ========
 Java libraries for the [Concrete](https://github.com/hltcoe/concrete) HLT data schema.
 
-Dependencies
+Maven Dependencies
 ----------
 
 ```xml
