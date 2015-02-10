@@ -117,7 +117,7 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
    * Convenience method for UUID checking.
    *
    * @param uuidToCheck
-   * @return
+   * @return true if it is a valid UUID
    */
   protected boolean validateUUID(String uuidToCheck) {
     return this.printStatus("UUID string must be valid UUID", Util.isValidUUIDString(uuidToCheck));
