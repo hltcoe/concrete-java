@@ -13,13 +13,13 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-util</artifactId>
-  <version>4.3.1</version>
+  <version>4.3.2</version>
 </dependency>
 ```
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-validation</artifactId>
-  <version>4.3.1</version>
+  <version>4.3.2</version>
 </dependency>
 ```
