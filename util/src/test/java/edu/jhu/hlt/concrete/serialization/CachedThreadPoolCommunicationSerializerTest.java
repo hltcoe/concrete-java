@@ -1,10 +1,8 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization;
-
-import static org.junit.Assert.fail;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

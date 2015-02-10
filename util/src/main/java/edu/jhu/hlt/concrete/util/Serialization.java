@@ -21,7 +21,9 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
+ * Will be removed in a future release.
  * 
+ * @deprecated
  * 
  * @author max
  */
@@ -41,7 +43,6 @@ public class Serialization {
    * 
    * @param object - a 'thrift-like' {@link TBase}] object that can be used by
    * {@link TSerializer#serialize(TBase)} to produce a byte array.
-   * @return
    * @throws ConcreteException
    */
   public <T extends TBase<T, ? extends TFieldIdEnum>> byte[] toBytes(T object) throws ConcreteException {
