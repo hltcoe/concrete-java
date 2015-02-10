@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import edu.jhu.hlt.acute.tar.TarArchiveEntryByteIterator;
+import edu.jhu.hlt.acute.iterators.tar.TarArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
