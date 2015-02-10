@@ -18,7 +18,9 @@ public class ArchivableCommunication implements Archivable {
   // Cache id and serializer.
   private final String id;
   private final CompactCommunicationSerializer cs;
-  
+
+  private static final String ext = ".concrete";
+
   /**
    * Wrap a {@link Communication} object.
    */
@@ -33,7 +35,7 @@ public class ArchivableCommunication implements Archivable {
    */
   @Override
   public String getFileName() {
-    return this.id;
+    return this.id + ext;
   }
 
   /* (non-Javadoc)
