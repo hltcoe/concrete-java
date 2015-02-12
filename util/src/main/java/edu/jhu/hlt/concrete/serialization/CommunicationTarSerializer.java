@@ -14,7 +14,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
  *
  */
 public interface CommunicationTarSerializer extends CommunicationSerializer {
