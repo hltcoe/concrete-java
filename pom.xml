@@ -239,9 +239,19 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-ingesters-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>1.7.7</version>
+      </dependency>
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.7</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>

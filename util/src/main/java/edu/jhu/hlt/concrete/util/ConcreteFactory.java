@@ -15,31 +15,34 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 
 /**
- * Class for generating test Concrete data.
- * 
- * @author max
+ * See {@link RandomConcreteFactory}.
+ *
+ * @deprecated
+ * @see RandomConcreteFactory
  */
+@Deprecated
 public class ConcreteFactory {
-  
+
   private final Random r;
-  
+
   private static final String[] COMM_TYPES = new String[] { "Document", "Tweet", "Email" };
   private static final int COMM_TYPE_SIZE = COMM_TYPES.length;
   private static final Logger logger = LoggerFactory.getLogger(ConcreteFactory.class);
 
   /**
-   * 
+   *
    */
   public ConcreteFactory() {
     this.r = new Random();
   }
-  
+
   public ConcreteFactory(long seed) {
-    this.r = new Random(seed); 
+    this.r = new Random(seed);
   }
-  
+
   public String randomCommunicationType() {
     return COMM_TYPES[this.r.nextInt(COMM_TYPE_SIZE)];
   }
@@ -55,7 +58,7 @@ public class ConcreteFactory {
       .setType(this.randomCommunicationType())
       .setMetadata(this.randomMetadata());
   }
-  
+
   public Set<Communication> randomCommunicationSet(int nMembers) {
     Set<Communication> cSet = new HashSet<>(nMembers + 1);
     for (int i = 0; i < nMembers; i++)
@@ -65,17 +68,17 @@ public class ConcreteFactory {
       cSet.add(this.randomCommunication());
     return cSet;
   }
-  
+
   /**
    * Generate an {@link AnnotationMetadata} object.
-   * 
+   *
    */
   public AnnotationMetadata randomMetadata() {
     return new AnnotationMetadata()
       .setTimestamp(System.currentTimeMillis())
       .setTool("ConcreteFactory");
   }
-  
+
   public static void main (String... args) throws ConcreteException {
     if (args.length < 1 || args.length > 2) {
       logger.info("Usage: {} <path-to-output-file>", ConcreteFactory.class.getName());
@@ -83,10 +86,10 @@ public class ConcreteFactory {
       logger.info("e.g., my/output/folder.concrete true");
       System.exit(1);
     }
-    
+
     boolean overWrite = true;
     if (args.length == 2)
-      overWrite = Boolean.parseBoolean(args[1]);    
+      overWrite = Boolean.parseBoolean(args[1]);
     new SuperCommunication(new ConcreteFactory().randomCommunication()).writeToFile(args[0], overWrite);
   }
 }
