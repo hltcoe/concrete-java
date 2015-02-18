@@ -10,6 +10,7 @@
     <module>util</module>
     <module>validation</module>
     <module>ingesters/base</module>
+    <module>ingesters/simple</module>
   </modules>
 
   <name>Concrete</name>
