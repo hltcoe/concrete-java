@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+
 /**
  * @author max
  *
@@ -39,7 +41,7 @@ public class UtilTest {
    */
   @Test
   public void good() {
-    assertTrue(Util.isValidUUIDString(UUID.randomUUID().toString()));
+    assertTrue(UUIDFactory.isValidUUID(UUID.randomUUID().toString()));
   }
 
   /**
@@ -47,7 +49,7 @@ public class UtilTest {
    */
   @Test
   public void bad() {
-    assertFalse(Util.isValidUUIDString("asdf-4124-fa"));
+    assertFalse(UUIDFactory.isValidUUID("asdf-4124-fa"));
   }
 
   /**
@@ -55,7 +57,7 @@ public class UtilTest {
    */
   @Test
   public void bad36() {
-    assertFalse(Util.isValidUUIDString("asdf----ffffyyyyhfgb4123namd40ol41nv"));
+    assertFalse(UUIDFactory.isValidUUID("asdf----ffffyyyyhfgb4123namd40ol41nv"));
   }
 
   /**
@@ -63,6 +65,6 @@ public class UtilTest {
    */
   @Test
   public void badNoHyphen() {
-    assertFalse(Util.isValidUUIDString("o3ogjot3jto3jt"));
+    assertFalse(UUIDFactory.isValidUUID("o3ogjot3jto3jt"));
   }
 }

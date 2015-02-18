@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import edu.jhu.hlt.concrete.Entity;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
  * @author max
@@ -41,37 +41,37 @@ public class ValidatableEntityTest {
   @Test
   public void badUUID() {
     Entity e = new Entity();
-    
+
     e.setUuid(new UUID("foo"));
     e.setMentionIdList(new ArrayList<UUID>());
     e.setType("bar");
-    
+
     assertFalse(new ValidatableEntity(e).isValid());
   }
-  
+
   @Test
   public void badType() {
     Entity e = new Entity();
-    
-    e.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
+
+    e.setUuid(UUIDFactory.newUUID());
     List<UUID> uuidList = new ArrayList<>();
-    uuidList.add(new ConcreteUUIDFactory().getConcreteUUID());
-    
+    uuidList.add(UUIDFactory.newUUID());
+
     e.setMentionIdList(uuidList);
     e.setType("");
-    
+
     assertFalse(new ValidatableEntity(e).isValid());
   }
-  
+
   @Test
   public void noIDs() {
     Entity e = new Entity();
-    
-    e.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
+
+    e.setUuid(UUIDFactory.newUUID());
     List<UUID> uuidList = new ArrayList<>();
     e.setMentionIdList(uuidList);
     e.setType("asdf");
-    
+
     assertFalse(new ValidatableEntity(e).isValid());
   }
 }

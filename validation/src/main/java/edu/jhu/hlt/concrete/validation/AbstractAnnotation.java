@@ -13,8 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
-import edu.jhu.hlt.concrete.util.Util;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
  * Abstract validation class. Focusing on immutable values, attempt to
@@ -26,7 +25,6 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
 
   protected final Logger logger = LoggerFactory.getLogger(AbstractAnnotation.class);
   protected final T annotation;
-  protected final ConcreteUUIDFactory uuidFactory = new ConcreteUUIDFactory();
 
   /**
    *
@@ -120,7 +118,7 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
    * @return true if it is a valid UUID
    */
   protected boolean validateUUID(String uuidToCheck) {
-    return this.printStatus("UUID string must be valid UUID", Util.isValidUUIDString(uuidToCheck));
+    return this.printStatus("UUID string must be valid UUID", UUIDFactory.isValidUUID(uuidToCheck));
   }
 
   protected boolean validateUUID(edu.jhu.hlt.concrete.UUID uuid) {

@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 import edu.jhu.hlt.concrete.serialization.concurrent.AsyncCommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteFactory;
 
 /**
  * @author max
@@ -29,14 +29,14 @@ import edu.jhu.hlt.concrete.util.ConcreteFactory;
 public class CachedThreadPoolCommunicationSerializerTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CachedThreadPoolCommunicationSerializerTest.class);
-  
-  private final ConcreteFactory cf = new ConcreteFactory(1234L);
-  private final Set<Communication> commSet = this.cf.randomCommunicationSet(100 * 1000);
+
+  private final RandomConcreteFactory cf = new RandomConcreteFactory(1234L);
+  private final Set<Communication> commSet = this.cf.communicationSet(100 * 1000);
   private final CommunicationSerializer cs = new CompactCommunicationSerializer();
-  
+
   private AsyncCommunicationSerializer ser;
-  
-  
+
+
   /**
    * @throws java.lang.Exception
    */
@@ -52,12 +52,12 @@ public class CachedThreadPoolCommunicationSerializerTest {
   public void tearDown() throws Exception {
     this.ser.close();
   }
-  
+
   /**
    * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#toBytes(edu.jhu.hlt.concrete.Communication)}.
-   * @throws ConcreteException 
-   * @throws ExecutionException 
-   * @throws InterruptedException 
+   * @throws ConcreteException
+   * @throws ExecutionException
+   * @throws InterruptedException
    */
   @Test
   public void testToBytes() throws ConcreteException, InterruptedException, ExecutionException {
@@ -75,9 +75,9 @@ public class CachedThreadPoolCommunicationSerializerTest {
 
   /**
    * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#fromBytes(byte[])}.
-   * @throws ConcreteException 
-   * @throws ExecutionException 
-   * @throws InterruptedException 
+   * @throws ConcreteException
+   * @throws ExecutionException
+   * @throws InterruptedException
    */
   @Test
   public void testFromBytes() throws ConcreteException, InterruptedException, ExecutionException {
@@ -87,7 +87,7 @@ public class CachedThreadPoolCommunicationSerializerTest {
       byte[] bs = this.cs.toBytes(c);
       dq.addLast(this.ser.fromBytes(bs));
     }
-    
+
     LOGGER.info("Communications added.");
     while (!dq.isEmpty()) {
       Future<Communication> fb = dq.pop();

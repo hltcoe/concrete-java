@@ -24,7 +24,7 @@ import edu.jhu.hlt.acute.archivers.Archivable;
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 public class BoundedThriftAPITest {
 
@@ -83,9 +83,8 @@ public class BoundedThriftAPITest {
   public void boundedTarSerialization() throws Exception {
     final Path outFile = outPath.resolve("test.tar");
     List<UUID> uuidList = new ArrayList<>(11);
-    ConcreteUUIDFactory factory = new ConcreteUUIDFactory();
     for (int i = 0; i < 10; i++)
-      uuidList.add(factory.getConcreteUUID());
+      uuidList.add(UUIDFactory.newUUID());
 
     try (OutputStream os = Files.newOutputStream(outFile);
         BufferedOutputStream bos = new BufferedOutputStream(os);
