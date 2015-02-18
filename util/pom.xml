@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>concrete-util</artifactId>
-  <name>Concrete :: Utility Library</name>
+  <name>Utility</name>
   <description>Utility library for use with Concrete-Java</description>
 
   <properties>

@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>concrete-validation</artifactId>
-  <name>Concrete :: Validation Library</name>
+  <name>Validation</name>
   <description>Validation library for use with Concrete-Java</description>
 
   <properties>
