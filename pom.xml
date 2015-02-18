@@ -7,9 +7,9 @@
   <version>4.3.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <!-- <module>ontology</module> -->
     <module>util</module>
     <module>validation</module>
+    <module>ingesters/base</module>
   </modules>
 
   <name>Concrete</name>
