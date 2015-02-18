@@ -26,7 +26,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
    */
   @Before
   public void setUp() throws Exception {
-    base = new TextSpan(0, this.comm.text.length());
+    base = new TextSpan(0, this.comm.getText().length());
   }
 
   private boolean testValidity () {
