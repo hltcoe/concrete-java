@@ -5,7 +5,6 @@
 
 package edu.jhu.hlt.ingesters.simple;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -13,7 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Scanner;
+
+import org.apache.commons.io.IOUtils;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
@@ -56,13 +56,8 @@ public class CompleteFileIngester implements FileIngester {
   public Communication fromCharacterBasedFile(Path path, Charset charset) throws IngestException {
     try {
       ExistingNonDirectoryFile f = new ExistingNonDirectoryFile(path);
-      try(InputStream is = Files.newInputStream(f.getPath());
-          BufferedInputStream bis = new BufferedInputStream(is);
-          Scanner sc = new Scanner(bis, this.cs.toString());) {
-        StringBuilder sb = new StringBuilder();
-        while (sc.hasNextLine())
-          sb.append(sc.nextLine());
-        String content = sb.toString();
+      try(InputStream is = Files.newInputStream(f.getPath());) {
+        String content = IOUtils.toString(is, this.cs);
         return CommunicationFactory.create(f.getName(), content, "Other");
       } catch (IOException e) {
         throw new IngestException("Caught exception reading in document.", e);
