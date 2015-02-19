@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.junit.After;
@@ -15,8 +16,8 @@ import org.junit.rules.TemporaryFolder;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester;
 
 public class DoubleLineBreakFileIngesterTest {
@@ -35,6 +36,9 @@ public class DoubleLineBreakFileIngesterTest {
     sb.append(System.lineSeparator());
     sb.append(System.lineSeparator());
     sb.append("world");
+    sb.append(System.lineSeparator());
+    sb.append(System.lineSeparator());
+    sb.append("whole lotta text here");
     testContent = sb.toString();
     try (FileWriterWithEncoding writer = new FileWriterWithEncoding(tmpPath.toFile(), StandardCharsets.UTF_8)) {
       writer.write(testContent);
@@ -49,7 +53,9 @@ public class DoubleLineBreakFileIngesterTest {
   public void testFromCharacterBasedFile() throws IngestException {
     UTF8FileIngester ing = new DoubleLineBreakFileIngester("other", "other");
     Communication c = ing.fromCharacterBasedFile(tmpPath);
+    List<Section> sList = c.getSectionList();
     assertEquals(testContent, c.getText());
+    assertEquals(3, c.getSectionListSize());
     Section sOne = c.getSectionList().get(0);
     assertEquals("other", sOne.getKind());
     TextSpan tsOne = sOne.getTextSpan();
@@ -59,6 +65,6 @@ public class DoubleLineBreakFileIngesterTest {
     TextSpan tsTwo = sTwo.getTextSpan();
     assertEquals(7, tsTwo.getStart());
     assertEquals(12, tsTwo.getEnding());
-    assertEquals(testContent.length(), tsTwo.getEnding());
+    assertEquals(testContent.length(), sList.get(2).getTextSpan().getEnding());
   }
 }
