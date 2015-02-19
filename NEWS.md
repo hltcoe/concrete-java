@@ -23,6 +23,9 @@ character-based file.
 In the future, additional ingesters for other corpora will be relocated into
 this project.
 
+Consult the [README.md](ingesters/simple/README.md) for information on how
+to run the simple ingester utilities.
+
 ### Type-bounded Thrift iterators
 Iterators for creating and reading archives with generic Thrift-like objects
 (e.g., `Clustering` objects) now exist in the `serialization` package. These use
@@ -32,7 +35,8 @@ Thrift compiler (e.g., any class in concrete-core) can be used as the type bound
 Consumers working with `Communication` objects should maintain their dependency
 on `CommunicationSerializer` and related implementations; these do not reflect.
 
-Consult `BoundedThriftAPITest` for example usage.
+Consult `BoundedThriftAPITest` for example usage, located
+[here](util/src/test/java/edu/jhu/hlt/concrete/serialization/BoundedThriftAPITest.java).
 
 ### Additional thrift-based packages
 Packages for thrift-specific datatypes (`Communication`, `Section`, etc.) have
@@ -57,6 +61,8 @@ now deprecated `ConcreteFactory`.
 The `SingleSectionSegmenter` class introduces a method that will convert
 an entire `String` of text into a `Section` object, with the correct `TextSpan`,
 and the assigned `sectionKind`.
+
+The class can be viewed [here](util/src/main/java/edu/jhu/hlt/concrete/section/SingleSectionSegmenter.java).
 
 ### edu.jhu.hlt.concrete.data package removed
 This package did not belong in `concrete-java` and has been removed. If
