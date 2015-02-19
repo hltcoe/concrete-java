@@ -5,8 +5,6 @@
 
 package edu.jhu.hlt.concrete.ingesters.base;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import edu.jhu.hlt.concrete.Communication;
@@ -15,15 +13,16 @@ import edu.jhu.hlt.concrete.Communication;
  * An interface for Concrete ingesters that process documents in character-based files
  * (for example, .txt files with UTF-8 characters).
  */
-public interface FileIngester {
+public interface UTF8FileIngester extends Ingester {
   /**
-   * Convert an entire character-based file to a Concrete {@link Communication}.
+   * Convert an entire character-based file to a Concrete {@link Communication}. UTF-8
+   * encoding is assumed.
+   *
    * @param path the {@link Path} to the character-based file.
-   * @param charset the {@link Charset} to use. For UTF-8, use {@link StandardCharsets#UTF_8}.
    * @return the prepared {@link Communication}
    * @throws IngestException if there are errors with the conversion (for example,
-   * the path points to a binary file that cannot be mapped to characters, or the wrong
-   * encoding is specified)
+   * the path points to a binary file that cannot be mapped to characters, or the encoding
+   * is not UTF-8)
    */
-  public Communication fromCharacterBasedFile(Path path, Charset charset) throws IngestException;
+  public Communication fromCharacterBasedFile(Path path) throws IngestException;
 }

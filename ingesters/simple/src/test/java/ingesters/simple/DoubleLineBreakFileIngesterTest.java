@@ -15,7 +15,7 @@ import org.junit.rules.TemporaryFolder;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.ingesters.base.FileIngester;
+import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester;
 
@@ -47,8 +47,8 @@ public class DoubleLineBreakFileIngesterTest {
 
   @Test
   public void testFromCharacterBasedFile() throws IngestException {
-    FileIngester ing = new DoubleLineBreakFileIngester("other");
-    Communication c = ing.fromCharacterBasedFile(tmpPath, StandardCharsets.UTF_8);
+    UTF8FileIngester ing = new DoubleLineBreakFileIngester("other", "other");
+    Communication c = ing.fromCharacterBasedFile(tmpPath);
     assertEquals(testContent, c.getText());
     Section sOne = c.getSectionList().get(0);
     assertEquals("other", sOne.getKind());

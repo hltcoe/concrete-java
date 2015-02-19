@@ -6,7 +6,7 @@
 package edu.jhu.hlt.concrete.ingesters.base;
 
 /**
- * An {@link Exception} for use in Concrete ingester projects.
+ * Checked {@link Exception} for use in Concrete {@link Ingester} machinations.
  */
 public class IngestException extends Exception {
 
