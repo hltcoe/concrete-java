@@ -6,6 +6,9 @@ Concrete Java
 ========
 Java libraries for the [Concrete](https://github.com/hltcoe/concrete) HLT data schema.
 
+## How do I run the simple ingesters?
+Consult the [README.md](ingesters/simple/README.md) for the simple ingesters project.
+
 Maven Dependencies
 ----------
 
@@ -16,6 +19,7 @@ Maven Dependencies
   <version>4.4.0</version>
 </dependency>
 ```
+
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
