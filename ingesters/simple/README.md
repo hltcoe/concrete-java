@@ -35,7 +35,8 @@ Takes 4 arguments:
 * `/output/dir` - A directory where the file will be written.
 
 ```sh
-java -cp target/concrete-ingesters-simple-4.4.0-jar-with-dependencies.jar edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester \
+java -cp target/concrete-ingesters-simple-4.4.0-jar-with-dependencies.jar \
+    edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester \
     utf8-file-with-double-newlines.txt \
     communication-type \
     section-type \

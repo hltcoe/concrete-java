@@ -46,10 +46,10 @@ with a UUID already assigned.
 
 The following `Factory` classes are now in the library:
 
-* `SectionFactory`
-* `AnnotationMetadataFactory`
-* `CommunicationFactory`
-* `UUIDFactory`
+* `SectionFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/section/SectionFactory.java))
+* `AnnotationMetadataFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/metadata/AnnotationMetadataFactory.java))
+* `CommunicationFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/communications/CommunicationFactory.java))
+* `UUIDFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/uuid/UUIDFactory.java))
 
 ### edu.jhu.hlt.concrete.random package
 Functionality for generating mock Concrete objects has moved to the
