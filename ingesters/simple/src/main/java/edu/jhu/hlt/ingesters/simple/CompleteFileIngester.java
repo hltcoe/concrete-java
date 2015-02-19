@@ -71,6 +71,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         Communication c = CommunicationFactory.create(f.getName(), content, "Other");
         c.setType(this.getKind());
+        c.setMetadata(this.getMetadata());
         return c;
       } catch (IOException e) {
         throw new IngestException("Caught exception reading in document.", e);
@@ -91,7 +92,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
     if (args.length != 3) {
       System.err.println("This program converts a character-based file to a .concrete file.");
       System.err.println("The text file must contain UTF-8 encoded characters.");
-      System.err.println("The .concrete file will share the same name as the input file.");
+      System.err.println("The .concrete file will share the same name as the input file, including the extension.");
       System.err.println("This program takes 3 arguments.");
       System.err.println("Argument 1: path/to/a/character/based/file");
       System.err.println("Argument 2: type of Communication to generate [e.g., tweet]");
@@ -111,7 +112,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
       Path ep = ef.getPath();
       String fn = ef.getName();
       Path outPath = Paths.get(outPathStr.get());
-      logger.info("Output path: {}", outPathStr);
+      Path outFile = outPath.resolve(fn + ".concrete");
 
       // Output directory exists, or it doesn't.
       // Try to create if it does not.
@@ -129,25 +130,25 @@ public class CompleteFileIngester implements UTF8FileIngester {
           System.exit(1);
         } else {
           // check to make sure the output file won't be overwritten.
-          Path outFile = outPath.resolve(fn + ".concrete");
           if (Files.exists(outFile)) {
             logger.warn("Output file {} exists; not overwriting.", outFile.toString());
             System.exit(1);
           }
-
-          // 100 lines of IO error checking to run one line of code
-          try {
-            UTF8FileIngester ing = new CompleteFileIngester(commType.get());
-            Communication comm = ing.fromCharacterBasedFile(ep);
-            new SuperCommunication(comm).writeToFile(outFile, false);
-          } catch (IngestException e) {
-            logger.error("Caught exception during ingest.", e);
-            System.exit(1);
-          } catch (ConcreteException e) {
-            logger.error("Caught exception writing output.", e);
-          }
         }
       }
+
+      // 100 lines of IO error checking to run one line of code
+      try {
+        UTF8FileIngester ing = new CompleteFileIngester(commType.get());
+        Communication comm = ing.fromCharacterBasedFile(ep);
+        new SuperCommunication(comm).writeToFile(outFile, false);
+      } catch (IngestException e) {
+        logger.error("Caught exception during ingest.", e);
+        System.exit(1);
+      } catch (ConcreteException e) {
+        logger.error("Caught exception writing output.", e);
+      }
+
     } catch (NoSuchFileException e) {
       logger.error("Path {} does not exist.", inPathStr);
       System.exit(1);

@@ -78,6 +78,7 @@ public class DoubleLineBreakFileIngester implements UTF8FileIngester {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         Communication c = CommunicationFactory.create(f.getName(), content);
         c.setType(this.commKind);
+        c.setMetadata(this.getMetadata());
 
         String[] split2xNewline = content.split(doubleLineSep);
         Stream.Builder<TextSpanKindTuple> stream = Stream.builder();
