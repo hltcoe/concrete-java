@@ -3,6 +3,7 @@
 Simple ingesters supporting the [Concrete](https://github.com/hltcoe/concrete) library.
 
 ## Build the utility
+From `ingesters/simple`, run:
 ```sh
 mvn clean compile assembly:single
 ```
