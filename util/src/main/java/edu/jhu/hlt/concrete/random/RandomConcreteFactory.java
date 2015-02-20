@@ -41,7 +41,8 @@ public class RandomConcreteFactory {
       .setId("corpus_" + this.r.nextInt(Integer.MAX_VALUE))
       .setText("Some sample text.")
       .setType(this.communicationType())
-      .setMetadata(AnnotationMetadataFactory.fromCurrentUTCTime().setTool("RandomConcreteFactory"));
+      .setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime()
+          .setTool("RandomConcreteFactory"));
   }
 
   public Set<Communication> communicationSet(int nMembers) {
