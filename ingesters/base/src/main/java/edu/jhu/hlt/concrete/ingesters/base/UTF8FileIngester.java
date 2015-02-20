@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
- * An interface for Concrete ingesters that process documents in character-based files
+ * Interface for Concrete ingesters that process documents in character-based files
  * (for example, .txt files with UTF-8 characters).
  */
 public interface UTF8FileIngester extends Ingester {

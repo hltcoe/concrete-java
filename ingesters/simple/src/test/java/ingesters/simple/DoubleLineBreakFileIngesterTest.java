@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
@@ -66,5 +67,8 @@ public class DoubleLineBreakFileIngesterTest {
     assertEquals(7, tsTwo.getStart());
     assertEquals(12, tsTwo.getEnding());
     assertEquals(testContent.length(), sList.get(2).getTextSpan().getEnding());
+    AnnotationMetadata md = c.getMetadata();
+    assertEquals(ing.getToolName(), md.getTool().split("\n")[0]);
+    assertEquals(ing.getTimestamp(), md.getTimestamp());
   }
 }

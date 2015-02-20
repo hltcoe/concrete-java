@@ -5,10 +5,8 @@
 
 package edu.jhu.hlt.concrete.metadata;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
 import edu.jhu.hlt.concrete.AnnotationMetadata;
+import edu.jhu.hlt.concrete.util.Timing;
 
 /**
  * Class that allows for construction of semi-built {@link AnnotationMetadata}
@@ -26,7 +24,7 @@ public class AnnotationMetadataFactory {
    */
   public static final AnnotationMetadata fromCurrentUTCTime() {
     return new AnnotationMetadata()
-      .setTimestamp(new DateTime(DateTimeZone.UTC).getMillis() / 1000);
+      .setTimestamp(Timing.currentLocalTime());
   }
 
   /**
@@ -35,6 +33,6 @@ public class AnnotationMetadataFactory {
    */
   public static final AnnotationMetadata fromCurrentLocalTime() {
     return new AnnotationMetadata()
-      .setTimestamp(new DateTime().getMillis() / 1000);
+      .setTimestamp(Timing.currentLocalTime());
   }
 }

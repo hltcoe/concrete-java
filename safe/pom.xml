@@ -8,9 +8,9 @@
     <version>4.4.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>concrete-util</artifactId>
-  <name>Utility</name>
-  <description>Utility library for use with Concrete-Java</description>
+  <artifactId>concrete-safe</artifactId>
+  <name>Safe</name>
+  <description>Library for use with Concrete that provides compile-time safety in order to defeat issues around 'requiredness' in Thrift.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,46 +33,6 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-filtered-java-source</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <outputDirectory>${project.build.directory}/filtered-java-src</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/java-filtered</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-filtered-java-source</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/filtered-java-src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -80,10 +40,6 @@
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-safe</artifactId>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>

@@ -33,14 +33,4 @@ public class IngestException extends Exception {
   public IngestException(Throwable cause) {
     super(cause);
   }
-
-  /**
-   * @param message
-   * @param cause
-   * @param enableSuppression
-   * @param writableStackTrace
-   */
-  public IngestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
 }

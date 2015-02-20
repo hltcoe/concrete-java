@@ -12,13 +12,14 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
@@ -28,8 +29,10 @@ import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.ingesters.base.util.ExistingNonDirectoryFile;
 import edu.jhu.hlt.concrete.ingesters.base.util.NotFileException;
-import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
+import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.util.ProjectConstants;
+import edu.jhu.hlt.concrete.util.Timing;
 
 /**
  * Implementation of {@link UTF8FileIngester} whose {@link UTF8FileIngester#fromCharacterBasedFile(Path)}
@@ -49,15 +52,15 @@ public class CompleteFileIngester implements UTF8FileIngester {
   private static final Logger logger = LoggerFactory.getLogger(CompleteFileIngester.class);
 
   private final String kind;
-  private final AnnotationMetadata md;
+
+  private final long ts;
 
   /**
    * @param kind the kind of produced {@link Communication} objects
    */
   public CompleteFileIngester(String kind) {
     this.kind = kind;
-    this.md = AnnotationMetadataFactory.fromCurrentLocalTime()
-        .setTool("CompleteFileIngester (Kind: " + kind + ")");
+    this.ts = Timing.currentLocalTime();
   }
 
   /* (non-Javadoc)
@@ -71,7 +74,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         Communication c = CommunicationFactory.create(f.getName(), content, "Other");
         c.setType(this.getKind());
-        c.setMetadata(this.getMetadata());
+        c.setMetadata(TooledMetadataConverter.convert(this));
         return c;
       } catch (IOException e) {
         throw new IngestException("Caught exception reading in document.", e);
@@ -137,7 +140,6 @@ public class CompleteFileIngester implements UTF8FileIngester {
         }
       }
 
-      // 100 lines of IO error checking to run one line of code
       try {
         UTF8FileIngester ing = new CompleteFileIngester(commType.get());
         Communication comm = ing.fromCharacterBasedFile(ep);
@@ -158,13 +160,50 @@ public class CompleteFileIngester implements UTF8FileIngester {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.ingesters.base.Ingester#getKind()
+   */
   @Override
   public String getKind() {
     return this.kind;
   }
 
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
+   */
   @Override
-  public AnnotationMetadata getMetadata() {
-    return this.md;
+  public long getTimestamp() {
+    return this.ts;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolName()
+   */
+  @Override
+  public String getToolName() {
+    return "CompleteFileIngester";
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolVersion()
+   */
+  @Override
+  public String getToolVersion() {
+    return ProjectConstants.VERSION;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolNotes()
+   */
+  @Override
+  public List<String> getToolNotes() {
+    List<String> sl = new ArrayList<String>();
+    sl.add("Communication kind: " + this.kind);
+    return sl;
   }
 }
