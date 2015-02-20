@@ -15,8 +15,16 @@ Maven Dependencies
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
+  <artifactId>concrete-safe</artifactId>
+  <version>4.4.1</version>
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-util</artifactId>
-  <version>4.4.0</version>
+  <version>4.4.1</version>
 </dependency>
 ```
 
@@ -24,6 +32,14 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-validation</artifactId>
-  <version>4.4.0</version>
+  <version>4.4.1</version>
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>edu.jhu.hlt</groupId>
+  <artifactId>concrete-ingesters-simple</artifactId>
+  <version>4.4.1</version>
 </dependency>
 ```

@@ -1,5 +1,26 @@
 # News
 
+## Concrete-Java v4.4.1 - 2015-2-19
+
+### `safe` module
+
+A new module, `safe`, has been added. This project will attempt to map
+required Concrete fields to Java interfaces, allowing consumers to
+use these implementations without fear of write-time errors due to
+missing fields.
+
+### `MetadataTool` interface
+
+The `MetadataTool` interface supports more detailed and easier-to-parse
+strings for `AnnotationMetadata` objects. Consumers can use implementers
+to easily parse and read output from tools that are then added to
+`AnnotationMetadata` objects.
+
+### Ingester implementation of `safe` and `MetadataTool`
+
+Simple ingesters now implement `MetadataTool` and utilize the safe
+code from `SafeAnnotationMetadata`.
+
 ## Concrete-Java v4.4.0 - 2015-2-18
 
 ### Thrift objects
@@ -51,20 +72,20 @@ The following `Factory` classes are now in the library:
 * `CommunicationFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/communications/CommunicationFactory.java))
 * `UUIDFactory` ([source](util/src/main/java/edu/jhu/hlt/concrete/uuid/UUIDFactory.java))
 
-### edu.jhu.hlt.concrete.random package
+### `edu.jhu.hlt.concrete.random` package
 Functionality for generating mock Concrete objects has moved to the
 `edu.jhu.hlt.concrete.random` package. The class `RandomConcreteFactory`
 contains numerous tools to generate synthetic Concrete objects. It replaces the
 now deprecated `ConcreteFactory`.
 
-### SingleSectionSegmenter for creating whole-document sections
+### `SingleSectionSegmenter` for creating whole-document sections
 The `SingleSectionSegmenter` class introduces a method that will convert
 an entire `String` of text into a `Section` object, with the correct `TextSpan`,
 and the assigned `sectionKind`.
 
 The class can be viewed [here](util/src/main/java/edu/jhu/hlt/concrete/section/SingleSectionSegmenter.java).
 
-### edu.jhu.hlt.concrete.data package removed
+### `edu.jhu.hlt.concrete.data` package removed
 This package did not belong in `concrete-java` and has been removed. If
 consumers need access to this code, it will appear in another library
 in the near future.
