@@ -6,14 +6,14 @@
 package edu.jhu.hlt.concrete.ingesters.base;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.metadata.AnnotationMetadatable;
+import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 
 /**
  * Interface that supports ingesters of Concrete documents. Ingesters
  * perform the task of taking some sort of input and mapping that
  * to a {@link Communication} object.
  */
-public interface Ingester extends AnnotationMetadatable {
+public interface Ingester extends SafeTooledAnnotationMetadata {
   /**
    * @return the kind of {@link Communication} objects this {@link Ingester} produces.
    */
