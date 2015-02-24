@@ -1,5 +1,11 @@
 # News
 
+## Concrete-Java v4.4.2 - 2015-2-24
+
+### `utilt` project
+Utility IO classes that were originally in the `base` module
+have been moved to a different Maven project.
+
 ## Concrete-Java v4.4.1 - 2015-2-19
 
 ### `safe` module
