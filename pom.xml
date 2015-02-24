@@ -4,7 +4,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.4.2</version>
+  <version>4.4.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
