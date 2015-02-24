@@ -27,12 +27,12 @@ import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
-import edu.jhu.hlt.concrete.ingesters.base.util.ExistingNonDirectoryFile;
-import edu.jhu.hlt.concrete.ingesters.base.util.NotFileException;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
+import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
  * Implementation of {@link UTF8FileIngester} whose {@link UTF8FileIngester#fromCharacterBasedFile(Path)}

@@ -46,6 +46,10 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
     </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>utilt</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
