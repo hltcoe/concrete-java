@@ -5,6 +5,7 @@
 
 package edu.jhu.hlt.concrete.serialization;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,18 +39,23 @@ public class PrintConcreteTarGzArchive {
    */
   public static void main(String[] args) throws ConcreteException, IOException {
     if (args.length != 1) {
-      logger.info("Usage: {} {}", PrintConcreteTarGzArchive.class.getName(), "path/to/tar/gz/file");
+      logger.info("Usage: {} {} {}", PrintConcreteTarGzArchive.class.getName(), "path/to/tar/gz/file", "buffer-size");
       System.exit(1);
     }
     
+    int bufferSize = Integer.parseInt(args[2]);
     CommunicationTarGzSerializer ser = new TarGzCompactCommunicationSerializer();
     InputStream is = new FileInputStream(args[0]);
+    if (bufferSize > 0)
+      is = new BufferedInputStream(is, bufferSize);
     Iterator<Communication> ci = ser.fromTarGz(is);
+    int nSections = 0;
     while (ci.hasNext()) {
       Communication c = ci.next();
-      logger.info("Archive contains document: {}", c.getId());
+      nSections += c.getSectionListSize();
     }
     
     is.close();
+    logger.info("Archive contains {} sections.", nSections);
   }
 }
