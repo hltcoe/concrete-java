@@ -17,11 +17,11 @@ import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
-import edu.jhu.hlt.acute.AutoCloseableIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.iterators.TarArchiveBoundedThriftIterator;
 import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveBoundedThriftIterator;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.utilt.AutoCloseableIterator;
 
 /**
  * This class contains a type-bounded parameter and uses reflection to de/serialize Thrift objects in

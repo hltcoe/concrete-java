@@ -19,12 +19,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import edu.jhu.hlt.acute.AutoCloseableIterator;
 import edu.jhu.hlt.acute.archivers.Archivable;
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.utilt.AutoCloseableIterator;
 
 public class BoundedThriftAPITest {
 

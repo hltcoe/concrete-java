@@ -11,10 +11,10 @@ import java.io.InputStream;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 
-import edu.jhu.hlt.acute.AutoCloseableIterator;
 import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.serialization.BoundedThriftSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.utilt.AutoCloseableIterator;
 
 /**
  *
