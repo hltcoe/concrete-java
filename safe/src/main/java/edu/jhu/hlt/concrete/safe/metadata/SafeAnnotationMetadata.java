@@ -10,8 +10,8 @@ import edu.jhu.hlt.concrete.AnnotationMetadata;
 
 /**
  * Interface whose contract contains the required fields of {@link AnnotationMetadata}.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * This interface exists to avoid "write time" errors that can occur when {@link AnnotationMetadata}
  * is present, but the required fields on the object are unset. Utilizing this interface allows
  * compile-time detection of these errors.

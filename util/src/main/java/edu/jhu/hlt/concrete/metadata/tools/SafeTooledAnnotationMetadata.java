@@ -10,8 +10,8 @@ import edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata;
 /**
  * Interface that extends the functionality of {@link SafeAnnotationMetadata},
  * requiring implementation a {@link MetadataTool}.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * Additionally, contains a default implementation of {@link SafeAnnotationMetadata#getTool()}
  * that uses the provided MetadataTool to create a well-formed Tool string.
  */

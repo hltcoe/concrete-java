@@ -40,8 +40,8 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
   /**
    * Implementors should implement this method, which will be called to
    * attempt to validate the annotation object, via {@link #validate(Communication)}.
-   * <br/>
-   * <br/>
+   * <br>
+   * <br>
    * As a result, you don't need to call {@link #isValid()} on everything
    * in your implementation of {@link #isValidWithComm(Communication)}.
    *
@@ -92,7 +92,8 @@ public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEn
 
   /**
    * Print a message, then evaluate a boolean condition.
-   * <br/><br/>
+   * <br>
+   * <br>
    * This stinks, but easiest way I could see about informing the user
    * about invalid things.
    *

@@ -35,7 +35,7 @@ public class SuperTextSpanTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperTextSpan#getText()}.
+   * 
    */
   @Test
   public void testGetText() {

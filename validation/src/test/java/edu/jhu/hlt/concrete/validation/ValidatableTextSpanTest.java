@@ -34,7 +34,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void good() {
@@ -42,7 +42,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void negativeStart() {
@@ -51,7 +51,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void negativeEnd() {
@@ -60,7 +60,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void endLessThanStart() {
@@ -70,7 +70,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void endGreaterThanLength() {
@@ -79,7 +79,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void zeroLength() {

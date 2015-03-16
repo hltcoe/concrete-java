@@ -37,7 +37,7 @@ public class UtilTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.Util#isValidUUIDString(java.lang.String)}.
+   * 
    */
   @Test
   public void good() {
@@ -45,7 +45,7 @@ public class UtilTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.Util#isValidUUIDString(java.lang.String)}.
+   * 
    */
   @Test
   public void bad() {
@@ -53,7 +53,7 @@ public class UtilTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.Util#isValidUUIDString(java.lang.String)}.
+   * 
    */
   @Test
   public void bad36() {
@@ -61,7 +61,7 @@ public class UtilTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.Util#isValidUUIDString(java.lang.String)}.
+   * 
    */
   @Test
   public void badNoHyphen() {

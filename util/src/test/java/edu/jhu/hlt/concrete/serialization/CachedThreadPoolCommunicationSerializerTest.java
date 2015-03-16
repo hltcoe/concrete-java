@@ -7,7 +7,6 @@ package edu.jhu.hlt.concrete.serialization;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.junit.After;
@@ -20,7 +19,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 import edu.jhu.hlt.concrete.serialization.concurrent.AsyncCommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer;
-import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * @author max
@@ -54,13 +52,10 @@ public class CachedThreadPoolCommunicationSerializerTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#toBytes(edu.jhu.hlt.concrete.Communication)}.
-   * @throws ConcreteException
-   * @throws ExecutionException
-   * @throws InterruptedException
+   * @throws java.lang.Exception
    */
   @Test
-  public void testToBytes() throws ConcreteException, InterruptedException, ExecutionException {
+  public void testToBytes() throws Exception {
     Deque<Future<byte[]>> dq = new ArrayDeque<>(100 * 1000 + 1);
     LOGGER.info("Adding communications to set.");
     for (Communication c : this.commSet)
@@ -74,13 +69,10 @@ public class CachedThreadPoolCommunicationSerializerTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.serialization.concurrent.CachedThreadPoolCommunicationSerializer#fromBytes(byte[])}.
-   * @throws ConcreteException
-   * @throws ExecutionException
-   * @throws InterruptedException
+   * @throws java.lang.Exception
    */
   @Test
-  public void testFromBytes() throws ConcreteException, InterruptedException, ExecutionException {
+  public void testFromBytes() throws Exception {
     Deque<Future<Communication>> dq = new ArrayDeque<>(100 * 1000 + 1);
     LOGGER.info("Adding communications to set.");
     for (Communication c : this.commSet) {

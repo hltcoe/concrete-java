@@ -35,7 +35,7 @@ public class ValidatableTokenTagging {
   private final int maxTokenIdx; 
   
   /**
-   * @param annotation
+   * 
    */
   public ValidatableTokenTagging(TokenTagging tagging, Tokenization parent) {
     this.tagging = tagging;
