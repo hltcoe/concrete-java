@@ -4,7 +4,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.4.4-SNAPSHOT</version>
+  <version>4.4.3</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
@@ -60,6 +60,7 @@
     <log4j.version>2.1</log4j.version>
     <jackson.version>2.4.4</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
+    <github.global.server>github</github.global.server>
   </properties>
 
   <build>
@@ -179,6 +180,27 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.7</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.9</version>
+          <configuration>
+            <message>Creating site for ${project.version}</message>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>site</goal>
+              </goals>
+              <phase>site</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>project-info-reports-plugin</artifactId>
+          <version>2.8</version>
         </plugin>
       </plugins>
     </pluginManagement>
