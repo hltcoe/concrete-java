@@ -50,7 +50,7 @@
   <licenses>
     <license>
       <name>2-clause BSD license</name>
-      <url>http://http://opensource.org/licenses/BSD-2-Clause</url>
+      <url>http://opensource.org/licenses/BSD-2-Clause</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -199,7 +199,7 @@
       <plugin>
         <groupId>com.github.github</groupId>
         <artifactId>site-maven-plugin</artifactId>
-        <version>0.9</version>
+        <version>0.11</version>
         <configuration>
           <message>Creating site for ${project.version}</message>
         </configuration>
@@ -211,6 +211,13 @@
             <phase>site</phase>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.mylyn.github</groupId>
+            <artifactId>org.eclipse.egit.github.core</artifactId>
+            <version>2.1.5</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <artifactId>maven-scm-publish-plugin</artifactId>
