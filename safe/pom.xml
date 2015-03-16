@@ -11,6 +11,7 @@
   <artifactId>concrete-safe</artifactId>
   <name>Safe</name>
   <description>Library for use with Concrete that provides compile-time safety in order to defeat issues around 'requiredness' in Thrift.</description>
+  <url>https://hltcoe.github.io/concrete-java/safe/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

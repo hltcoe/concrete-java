@@ -11,6 +11,7 @@
   <artifactId>concrete-util</artifactId>
   <name>Utility</name>
   <description>Utility library for use with Concrete-Java</description>
+  <url>https://hltcoe.github.io/concrete-java/util/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
