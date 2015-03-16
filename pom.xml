@@ -182,28 +182,55 @@
           <version>2.7</version>
         </plugin>
         <plugin>
-          <groupId>com.github.github</groupId>
-          <artifactId>site-maven-plugin</artifactId>
-          <version>0.9</version>
-          <configuration>
-            <message>Creating site for ${project.version}</message>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>site</goal>
-              </goals>
-              <phase>site</phase>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>project-info-reports-plugin</artifactId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>2.8</version>
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.4</version>
+        <configuration>
+          <skipDeploy>true</skipDeploy>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.9</version>
+        <configuration>
+          <message>Creating site for ${project.version}</message>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>site</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>scm-publish</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>publish-scm</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scmBranch>gh-pages</scmBranch>
+          <pubScmUrl>scm:git:git@github.com:hltcoe/concrete-java.git</pubScmUrl>
+          <tryUpdate>true</tryUpdate>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>
@@ -287,11 +314,6 @@
       </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-ontology</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-util</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -369,5 +391,10 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
+     <site>
+       <id>gh-pages</id>
+       <name>Concrete-Java Site</name>
+       <url>https://github.com/hltcoe/concrete-java</url>
+     </site>
   </distributionManagement>
 </project>
