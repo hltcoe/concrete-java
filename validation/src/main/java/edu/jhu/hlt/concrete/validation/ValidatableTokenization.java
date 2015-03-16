@@ -12,6 +12,7 @@ import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
+import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 
@@ -66,10 +67,20 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
       if (this.annotation.getKind() == TokenizationKind.TOKEN_LATTICE)
         validByType = this.printStatus("Kind == LATTICE, so lattice must be set, AND list must NOT be set.", this.annotation.isSetLattice() && !this.annotation.isSetTokenList());
 
-      else
+      else {
         validByType = this.printStatus("Kind == LIST, so list must be set, AND list must NOT be set.", this.annotation.isSetTokenList() && !this.annotation.isSetLattice())
             && this.printStatus("TokenList must not be empty.", this.annotation.getTokenList().getTokenListSize() > 0)
             && this.printStatus("TokenList must be valid.", this.validateTokenList());
+        if (validByType) {
+          Iterator<TokenTagging> iter = this.annotation.getTokenTaggingListIterator();
+          boolean ttsValid = true;
+          while (ttsValid && iter.hasNext()) {
+            // Check validity of each TokenTagging.
+            TokenTagging tt = iter.next();
+            ttsValid = new ValidatableTokenTagging(tt, this.annotation).isValid();
+          }
+        }
+      }
 
       return validByType;
     }

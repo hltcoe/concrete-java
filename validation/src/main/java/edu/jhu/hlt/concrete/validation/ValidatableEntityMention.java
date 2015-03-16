@@ -37,8 +37,8 @@ public class ValidatableEntityMention extends AbstractAnnotation<EntityMention> 
   @Override
   public boolean isValid() {
     boolean emValid = this.validateUUID(this.annotation.getUuid())
-        && this.printStatus("EntityType must be set", this.annotation.isSetEntityType())
-        && this.printStatus("PhraseType must be set", this.annotation.isSetPhraseType())
+        // && this.printStatus("EntityType must be set", this.annotation.isSetEntityType())
+        // && this.printStatus("PhraseType must be set", this.annotation.isSetPhraseType())
         && this.printStatus("Tokens must be set", this.annotation.isSetTokens());
     if (!emValid)
       return false;
