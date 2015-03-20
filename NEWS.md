@@ -1,5 +1,34 @@
 # News
 
+## Concrete-Java v4.4.4 - 2015-3-20
+
+### `mvn site` enabled
+Documentation is now build alongside the project and can be
+accessed [here](http://hltcoe.github.io/concrete-java).
+
+Javadocs can be found by clicking on a module, then looking under the
+`Project Reports` section.
+
+### `gigaword` and `alnc` ingesters added
+Ingesters for [English Gigaword v5](https://catalog.ldc.upenn.edu/LDC2011T07) and
+the ALNC corpus are now available. They can be found in the `ingesters` folder.
+
+### Improved tool names
+Tool names for tools have been improved to include the class, project, and
+version.
+
+### Improvements to `safe` library
+The `safe` module now has support for `Communication` objects via
+`SafeCommunication`.
+
+### Additional `ingesters-base` interfaces
+Consumers can now implement Stream-based ingesters via the
+`edu.jhu.hlt.concrete.ingesters.base.stream` package interfaces.
+
+## Concrete-Java v4.4.3 - 2015-3-4
+
+This update contains the latest `edu.jhu.hlt/acute` library.
+
 ## Concrete-Java v4.4.2 - 2015-2-24
 
 ### `utilt` project

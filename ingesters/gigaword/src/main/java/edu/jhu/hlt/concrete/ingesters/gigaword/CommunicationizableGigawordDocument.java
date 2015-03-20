@@ -156,7 +156,7 @@ public class CommunicationizableGigawordDocument implements GigawordDocument, Co
 
   @Override
   public String getToolName() {
-    return CommunicationizableGigawordDocument.class.getName() + " [Project: " + ProjectConstants.PROJECT_NAME + "]";
+    return this.getClass().getName() + " [Project: concrete-ingesters-gigaword]";
   }
 
   @Override

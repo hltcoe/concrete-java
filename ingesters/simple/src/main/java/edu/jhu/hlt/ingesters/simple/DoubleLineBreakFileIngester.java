@@ -210,7 +210,7 @@ public class DoubleLineBreakFileIngester implements UTF8FileIngester {
    */
   @Override
   public String getToolName() {
-    return this.getClass().getName() + " [Project: " + ProjectConstants.PROJECT_NAME + "]";
+    return this.getClass().getName() + " [Project: concrete-ingesters-simple]";
   }
 
   /*

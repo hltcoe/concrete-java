@@ -49,7 +49,7 @@ public class CommunicationizableALNCArticle implements Communicationizable, Safe
    */
   @Override
   public String getToolName() {
-    return this.getClass().getName() + " [Project: " + ProjectConstants.PROJECT_NAME + "]";
+    return this.getClass().getName() + " [Project: concrete-ingesters-alnc]";
   }
 
   /* (non-Javadoc)
