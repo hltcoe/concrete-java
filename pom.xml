@@ -13,6 +13,7 @@
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
     <module>ingesters/gigaword</module>
+    <module>ingesters/alnc</module>
   </modules>
 
   <name>Concrete</name>

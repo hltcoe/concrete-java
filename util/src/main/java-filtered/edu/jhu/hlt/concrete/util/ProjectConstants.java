@@ -8,6 +8,7 @@ package edu.jhu.hlt.concrete.util;
 public class ProjectConstants {
 
   public static final String VERSION = "${concrete.release.version}";
+  public static final String PROJECT_NAME = "${project.artifactId}";
 
   private ProjectConstants() {
 

@@ -68,7 +68,7 @@ public class DoubleLineBreakFileIngesterTest {
     assertEquals(12, tsTwo.getEnding());
     assertEquals(testContent.length(), sList.get(2).getTextSpan().getEnding());
     AnnotationMetadata md = c.getMetadata();
-    assertEquals(ing.getToolName(), md.getTool().split("\n")[0]);
+    assertEquals(ing.getToolName(), md.getTool().split(" ")[0]);
     assertEquals(ing.getTimestamp(), md.getTimestamp());
   }
 }
