@@ -25,6 +25,13 @@ The `safe` module now has support for `Communication` objects via
 Consumers can now implement Stream-based ingesters via the
 `edu.jhu.hlt.concrete.ingesters.base.stream` package interfaces.
 
+### Other updates
+
+* Small update to the `validation` library to include testing a facet of
+`Tokenization` objects.
+* Began adding more `package-info.java` to various packages.
+* Use latest `acute` library
+
 ## Concrete-Java v4.4.3 - 2015-3-4
 
 This update contains the latest `edu.jhu.hlt/acute` library.
