@@ -40,10 +40,10 @@ public class GigawordConcreteConverter {
     String outPathStr = args[1];
 
     CommunicationTarGzSerializer ser = new TarGzCompactCommunicationSerializer();
-    GigawordIngester factory = new GigawordIngester();
+    GigawordStreamIngester factory = new GigawordStreamIngester(Paths.get(gzPathStr));
 
     try {
-      Iterator<Communication> iter = factory.fromPath(Paths.get(gzPathStr));
+      Iterator<Communication> iter = factory.iterator();
       Set<Communication> cSet = new HashSet<>(10000);
       while (iter.hasNext()) 
         cSet.add(iter.next());

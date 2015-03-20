@@ -23,7 +23,7 @@ import org.junit.rules.TemporaryFolder;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
-import edu.jhu.hlt.concrete.ingesters.gigaword.GigawordIngester;
+import edu.jhu.hlt.concrete.ingesters.gigaword.CommunicationizableGigawordDocumentImpl;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import gigaword.api.GigawordDocumentConverter;
@@ -46,7 +46,7 @@ public class GigawordIngesterTest {
   @Test
   public void pathStringTest() throws IOException, ConcreteException {
     GigawordDocument pdc = new GigawordDocumentConverter().fromPathString(this.p.toString());
-    Communication c = new GigawordIngester().convert(pdc);
+    Communication c = new CommunicationizableGigawordDocumentImpl(pdc).toCommunication();
     this.testAgainstDogVsMan(c);
   }
 
@@ -72,7 +72,7 @@ public class GigawordIngesterTest {
         BufferedInputStream bis = new BufferedInputStream(is)) {
       String sgml = IOUtils.toString(bis, StandardCharsets.UTF_8);
       GigawordDocument pdc = new GigawordDocumentConverter().fromSGMLString(sgml);
-      Communication c = new GigawordIngester().convert(pdc);
+      Communication c = new CommunicationizableGigawordDocumentImpl(pdc).toCommunication();
       this.testAgainstDogVsMan(c);
     }
   }
