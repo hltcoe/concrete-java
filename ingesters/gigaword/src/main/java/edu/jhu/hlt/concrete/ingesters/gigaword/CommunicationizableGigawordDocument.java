@@ -4,10 +4,6 @@
  */
 package edu.jhu.hlt.concrete.ingesters.gigaword;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.ingesters.base.communications.Communicationizable;
@@ -20,6 +16,10 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 import gigaword.GigawordDocumentType;
 import gigaword.interfaces.GigawordDocument;
 import gigaword.interfaces.TextSpan;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Class that represents a {@link GigawordDocument} that can be converted to a Concrete
@@ -156,7 +156,7 @@ public class CommunicationizableGigawordDocument implements GigawordDocument, Co
 
   @Override
   public String getToolName() {
-    return CommunicationizableGigawordDocument.class.getSimpleName();
+    return CommunicationizableGigawordDocument.class.getName() + " [Project: " + ProjectConstants.PROJECT_NAME + "]";
   }
 
   @Override
