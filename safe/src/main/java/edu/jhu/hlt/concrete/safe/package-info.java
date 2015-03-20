@@ -5,7 +5,7 @@
 /**
  * Contains package utility classes and exceptions.
  * 
- * This package exists to avoid "write time" errors that can occur when {@link AnnotationMetadata}
+ * This package exists to avoid "write time" errors that can occur when {@link edu.jhu.hlt.concrete.AnnotationMetadata}
  * is present, but the required fields on the object are unset. Utilizing this interface allows
  * compile-time detection of these errors.
  */
