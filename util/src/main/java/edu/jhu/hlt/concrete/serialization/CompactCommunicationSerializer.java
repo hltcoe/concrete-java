@@ -7,12 +7,13 @@ package edu.jhu.hlt.concrete.serialization;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import org.apache.thrift.protocol.TCompactProtocol;
+
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
- *
+ * Implementation of {@link CommunicationSerializer} that uses {@link TCompactProtocol}.
  */
 public class CompactCommunicationSerializer extends ThreadSafeThriftSerializer<Communication> implements CommunicationSerializer {
 

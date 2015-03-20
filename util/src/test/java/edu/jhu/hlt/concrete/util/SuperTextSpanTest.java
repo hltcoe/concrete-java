@@ -35,14 +35,14 @@ public class SuperTextSpanTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.concrete.util.SuperTextSpan#getText()}.
+   * 
    */
   @Test
   public void testGetText() {
     Communication c = new Communication();
     String txt = "Test out super text spans!";
     String txtTwo = "More test text";
-    c.text = txt + txtTwo;
+    c.setText(txt + txtTwo);
     TextSpan ts = new TextSpan(0, txt.length());
     SuperTextSpan sts = new SuperTextSpan(ts, c);
     assertEquals(txt, sts.getText());

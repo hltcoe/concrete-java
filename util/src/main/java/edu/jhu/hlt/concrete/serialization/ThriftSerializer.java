@@ -13,9 +13,8 @@ import org.apache.thrift.TFieldIdEnum;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * Interface for Thrift serializers.
- * 
- * @author max
+ * Interface for de/serialization of 'thrift-like' objects. These objects
+ * are Java classes that are produced from Apache Thrift.
  */
 public interface ThriftSerializer<T extends TBase<T, ? extends TFieldIdEnum>> {
   public T fromBytes(T base, byte[] bytes) throws ConcreteException;

@@ -6,24 +6,22 @@
 package edu.jhu.hlt.concrete.validation;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteFactory;
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 
 /**
  *
- *
- * @author max
  *
  */
 public abstract class AbstractValidationTest {
 
   protected Communication comm;
-  protected final ConcreteFactory factory;
+  protected final RandomConcreteFactory factory;
 
   /**
    *
    */
   public AbstractValidationTest() {
-    this.factory = new ConcreteFactory();
-    this.comm = this.factory.randomCommunication();
+    this.factory = new RandomConcreteFactory();
+    this.comm = this.factory.communication();
   }
 }

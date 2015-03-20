@@ -21,17 +21,19 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.serialization.ThriftSerializer;
 
 /**
- * Utility class for convenient serialization of Thrift-like data structures. 
- * 
- * @author max
+ * Will be removed in a future release.
+ *
+ * @deprecated
+ * @see ThriftSerializer
  */
-public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum>> implements ThriftSerializer<T> {
+@Deprecated
+public class Serialization {
 
   private final TProtocolFactory strategy;
-  
+
   /**
    * Use a default strategy, {@link TCompactProtocol}, to de/serialize Thrift-like objects.
    */
@@ -49,10 +51,9 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
 
   /**
    * Generic method to serialize a thrift-like object.
-   * 
-   * @param object - a 'thrift-like' {@link TBase} object that can be used by
+   *
+   * @param object - a 'thrift-like' {@link TBase}] object that can be used by
    * {@link TSerializer#serialize(TBase)} to produce a byte array.
-   * @return a byte[] representing the object
    * @throws ConcreteException
    */
   public byte[] toBytes(T object) throws ConcreteException {
@@ -62,15 +63,15 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
       throw new ConcreteException("Error during serialization.", e);
     }
   }
-  
+
   /**
    * Generic method to deserialize a thrift-like object.
-   * 
+   *
    * @param object - a 'thrift-like' [{@link TBase}] object that will be deserialized into. In other words,
    * if you were reading in a {@link Communication} byte array, you should pass in a <code>new Communication()</code>
-   * object as the first parameter. 
+   * object as the first parameter.
    * @param bytez - the byte array that holds the serialized {@link TBase} object.
-   * @return a deserialized {@link TBase} object. 
+   * @return a deserialized {@link TBase} object.
    * @throws ConcreteException if there is an error during deserialization.
    */
   public T fromBytes(T object, byte[] bytez) throws ConcreteException {
@@ -81,9 +82,11 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
       throw new ConcreteException("Error during deserialization.", e);
     }
   }
-  
+
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link Path} object.
+   *
+   * @see #fromBytes(TBase, byte[])
    */
   public T fromPath(T object, Path pathToSerializedFile) throws ConcreteException {
     try {
@@ -92,10 +95,12 @@ public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum
       throw new ConcreteException(e);
     }
   }
-  
+
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link String} that represents
-   * a path to a serialized {@link TBase} object on disk. 
+   * a path to a serialized {@link TBase} object on disk.
+   *
+   * @see #fromBytes(TBase, Path)
    */
   public T fromPathString(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromPath(object, Paths.get(pathToSerializedFileString));

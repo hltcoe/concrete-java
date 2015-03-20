@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import edu.jhu.hlt.acute.tar.TarGzArchiveEntryByteIterator;
+import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;

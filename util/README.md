@@ -5,16 +5,6 @@ See LICENSE in the project root directory.
 concrete-util
 ========
 
-Adding to your project
-----------------------
-
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-util</artifactId>
-      <version>4.2.1</version>
-    </dependency>
-
-
 API
 ------------
 
@@ -42,15 +32,15 @@ ts.toTarGz(myComms, "/my/home/dir/comms.tar.gz");
 ts.toTar(myComms, "/my/home/dir/comms.tar");
 
 // read from a .tar file
-// the InputStream is automatically buffered.
-try (InputStream is = Files.newInputStream(Paths.get("/my/tar/file")) {
-  Iterator<Communication iter = ts.fromTar(is);
+try (InputStream is = Files.newInputStream(Paths.get("/my/tar/file"));
+     BufferedInputStream bis = new BufferedInputStream(is, 1024 * 2 * 128)) {
+  Iterator<Communication iter = ts.fromTar(bis);
 }
 
 // read from a .tar.gz file
-// the InputStream is automatically buffered.
-try (InputStream is = Files.newInputStream(Paths.get("/my/tar/gz/file")) {
-  Iterator<Communication iter = ts.fromTarGz(is);
+try (InputStream is = Files.newInputStream(Paths.get("/my/tar/gz/file"));
+     BufferedInputStream bis = new BufferedInputStream(is, 1024 * 2 * 128)) {
+  Iterator<Communication iter = ts.fromTarGz(bis);
 }
 ```
 

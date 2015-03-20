@@ -5,12 +5,13 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-project</artifactId>
-    <version>4.2.3</version>
+    <version>4.4.4</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>concrete-core</artifactId>
-  <name>Concrete :: Core</name>
-  <description>Java classes for Thrift-based Concrete</description>
+  <artifactId>concrete-ingesters-base</artifactId>
+  <name>Ingester Base</name>
+  <description>Common library for Concrete document ingesters.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,37 +23,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.thrift.tools</groupId>
-        <artifactId>maven-thrift-plugin</artifactId>
-        <version>0.1.11</version>
-        <configuration>
-          <thriftSourceRoot>${thrift.sources}</thriftSourceRoot>
-        </configuration>
-        <executions>
-          <execution>
-            <id>thrift-sources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>thrift-test-sources</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -84,9 +61,21 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.thrift</groupId>
-      <artifactId>libthrift</artifactId>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

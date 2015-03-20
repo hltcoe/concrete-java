@@ -18,17 +18,16 @@ import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
- * @author max
  *
  */
 public class ValidatableSectionTest extends AbstractValidationTest {
 
   public Section generateSection() {
     Section s = new Section()
-      .setUuid(new ConcreteUUIDFactory().getConcreteUUID())
+      .setUuid(UUIDFactory.newUUID())
       .setTextSpan(new TextSpan(0, this.comm.getText().length()))
       .setKind("Passage");
     return s;

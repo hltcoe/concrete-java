@@ -1,14 +1,14 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.util;
 
-import edu.jhu.hlt.concrete.DependencyParse;
-import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.TokenTagging;
-
 import java.util.List;
+
+import edu.jhu.hlt.concrete.DependencyParse;
+import edu.jhu.hlt.concrete.TokenTagging;
+import edu.jhu.hlt.concrete.Tokenization;
 
 public class TokenizationUtils {
   public static enum TagTypes {

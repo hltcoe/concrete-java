@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization;
@@ -14,7 +14,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
  *
  */
 public interface CommunicationTarSerializer extends CommunicationSerializer {

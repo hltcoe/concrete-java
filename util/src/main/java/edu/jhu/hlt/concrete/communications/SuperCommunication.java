@@ -37,7 +37,7 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
  * <strong>Read-only</strong> wrapper around {@link Communication} to allow advanced functionality.
@@ -52,7 +52,6 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
 
   protected final Communication comm;
   protected final CommunicationSerializer ser;
-  protected final ConcreteUUIDFactory idf = new ConcreteUUIDFactory();
 
   protected Map<UUID, Section> sectionIdToSectionMap;
   protected Map<UUID, Sentence> sentIdToSentenceMap;
@@ -86,7 +85,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     if (!this.comm.isSetText())
       throw new AnnotationException("This method requires the .text field to be set.");
 
-    Section s = new Section(this.idf.getConcreteUUID(), sectionKind);
+    Section s = new Section(UUIDFactory.newUUID(), sectionKind);
     TextSpan ts = new TextSpan(0, this.comm.getText().length());
     s.setTextSpan(ts);
 
