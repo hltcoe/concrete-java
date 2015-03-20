@@ -21,6 +21,14 @@ public class UUIDFactory {
   public static UUID newUUID() {
     return new UUID(java.util.UUID.randomUUID().toString());
   }
+  
+  /**
+   * @param uuid a {@link java.util.UUID}
+   * @return a Concrete {@link UUID}
+   */
+  public static UUID fromJavaUUID(java.util.UUID uuid) {
+    return new UUID(uuid.toString());
+  }
 
   /**
    * Guess, then determine, if a string is truly a {@link UUID} string.

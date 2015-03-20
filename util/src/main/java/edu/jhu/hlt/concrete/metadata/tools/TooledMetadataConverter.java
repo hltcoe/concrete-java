@@ -7,6 +7,7 @@ package edu.jhu.hlt.concrete.metadata.tools;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.TheoryDependencies;
+import edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata;
 
 /**
  * Class that converts {@link SafeTooledAnnotationMetadata} objects
@@ -26,7 +27,7 @@ public class TooledMetadataConverter {
    * @param md the {@link SafeTooledAnnotationMetadata} from which to build the metadata
    * @return an {@link AnnotationMetadata} that will not produce write-time errors
    */
-  public static final AnnotationMetadata convert(SafeTooledAnnotationMetadata md) {
+  public static final AnnotationMetadata convert(SafeAnnotationMetadata md) {
     return new AnnotationMetadata()
         .setTool(md.getTool())
         .setTimestamp(md.getTimestamp());
