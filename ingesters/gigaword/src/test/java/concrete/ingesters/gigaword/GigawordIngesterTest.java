@@ -1,9 +1,8 @@
-package concrete.ingesters.gigaword;
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-
+package concrete.ingesters.gigaword;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,9 +19,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
@@ -44,11 +40,7 @@ public class GigawordIngesterTest {
   public TemporaryFolder tmpFolder = new TemporaryFolder();
 
   /**
-   * Test method for {@link edu.jhu.hlt.gigaword.Ingester#convert(java.io.InputStream, edu.jhu.hlt.concrete.CommunicationType)}.
-   *
    * @throws IOException
-   * @throws JsonMappingException
-   * @throws JsonParseException
    * @throws ConcreteException
    */
   @Test
