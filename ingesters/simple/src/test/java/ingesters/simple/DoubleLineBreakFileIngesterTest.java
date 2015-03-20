@@ -1,6 +1,7 @@
 package ingesters.simple;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -73,6 +74,7 @@ public class DoubleLineBreakFileIngesterTest {
     assertEquals(testContent.length(), sList.get(2).getTextSpan().getEnding());
     AnnotationMetadata md = c.getMetadata();
     LOGGER.info("MD: {}", md.toString());
+    assertTrue(md.getTool().contains("concrete-ingesters-simple"));
     assertEquals(ing.getTimestamp(), md.getTimestamp());
   }
 }

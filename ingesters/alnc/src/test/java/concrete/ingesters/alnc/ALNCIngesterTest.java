@@ -32,6 +32,9 @@ public class ALNCIngesterTest {
         LOGGER.info("UUID: {}", c.getUuid());
         AnnotationMetadata md = c.getMetadata();
         LOGGER.info("Got md: {}", md.toString());
+        assertTrue(md.getTool().contains("concrete-ingesters-alnc"));
+        LOGGER.info("Got text: {}", c.getText());
+        assertEquals("news", c.getType());
         ct++;
       }
 

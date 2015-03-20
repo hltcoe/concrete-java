@@ -84,7 +84,7 @@ public class CommunicationizableALNCArticle implements Communicationizable, Safe
     c.setText(this.bean.getContent());
     long millis = alncDateFormatter.parseMillis(this.bean.getDate());
     c.setStartTime(millis / 1000);
-    
+    c.setType("news");
     return c;
   }
 }
