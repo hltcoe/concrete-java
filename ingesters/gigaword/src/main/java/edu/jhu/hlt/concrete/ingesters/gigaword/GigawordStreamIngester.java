@@ -66,7 +66,7 @@ public class GigawordStreamIngester implements IteratorBasedStreamIngester {
     @Override
     public Communication next() {
       try {
-        return new CommunicationizableGigawordDocumentImpl(this.baseIter.next()).toCommunication();
+        return new CommunicationizableGigawordDocument(this.baseIter.next()).toCommunication();
       } catch (Exception e) {
         throw new RuntimeException("Exception during GigawordDocument -> Communication conversion.", e);
       }
