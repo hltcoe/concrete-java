@@ -34,28 +34,6 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-property</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireProperty>
-                  <property>thrift.sources</property>
-                  <message>You must set the thrift.sources property to the location of the Concrete .thrift files; consult concrete-java/README.md for the build process</message>
-                  <regex>\S+</regex>
-                </requireProperty>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 

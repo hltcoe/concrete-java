@@ -1,9 +1,10 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -21,16 +22,14 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.serialization.ThriftSerializer;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * Will be removed in a future release.
+ * Utility class for convenient serialization of Thrift-like data structures.
  *
- * @deprecated
- * @see ThriftSerializer
+ * @author max
  */
-@Deprecated
-public class Serialization {
+public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum>> implements ThriftSerializer<T> {
 
   private final TProtocolFactory strategy;
 
@@ -40,7 +39,7 @@ public class Serialization {
   public ThreadSafeThriftSerializer() {
     this(new TCompactProtocol.Factory());
   }
-  
+
   /**
    * Support additional {@link TProtocolFactory} impls (e.g. {@link TBinaryProtocol}).
    * @param factory
@@ -52,10 +51,12 @@ public class Serialization {
   /**
    * Generic method to serialize a thrift-like object.
    *
-   * @param object - a 'thrift-like' {@link TBase}] object that can be used by
+   * @param object - a 'thrift-like' {@link TBase} object that can be used by
    * {@link TSerializer#serialize(TBase)} to produce a byte array.
+   * @return a byte[] representing the object
    * @throws ConcreteException
    */
+  @Override
   public byte[] toBytes(T object) throws ConcreteException {
     try {
       return new TSerializer(this.strategy).serialize(object);
@@ -74,6 +75,7 @@ public class Serialization {
    * @return a deserialized {@link TBase} object.
    * @throws ConcreteException if there is an error during deserialization.
    */
+  @Override
   public T fromBytes(T object, byte[] bytez) throws ConcreteException {
     try {
       new TDeserializer(this.strategy).deserialize(object, bytez);
@@ -85,12 +87,13 @@ public class Serialization {
 
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link Path} object.
-   *
-   * @see #fromBytes(TBase, byte[])
    */
+  @Override
   public T fromPath(T object, Path pathToSerializedFile) throws ConcreteException {
-    try {
-      return this.fromBytes(object, Files.readAllBytes(pathToSerializedFile));
+    try (InputStream is = Files.newInputStream(pathToSerializedFile);
+        BufferedInputStream bis = new BufferedInputStream(is);) {
+      byte[] bytes = IOUtils.toByteArray(bis);
+      return this.fromBytes(object, bytes);
     } catch (IOException e) {
       throw new ConcreteException(e);
     }
@@ -99,17 +102,17 @@ public class Serialization {
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link String} that represents
    * a path to a serialized {@link TBase} object on disk.
-   *
-   * @see #fromBytes(TBase, Path)
    */
+  @Override
   public T fromPathString(T object, String pathToSerializedFileString) throws ConcreteException {
     return this.fromPath(object, Paths.get(pathToSerializedFileString));
   }
-  
+
   /**
    * Same as {@link #fromBytes(TBase, byte[])}, but takes in a {@link InputStream} that represents
    * a serialized {@link TBase} object.
    */
+  @Override
   public T fromInputStream(T object, InputStream is) throws ConcreteException {
     try {
       return this.fromBytes(object, IOUtils.toByteArray(is));
