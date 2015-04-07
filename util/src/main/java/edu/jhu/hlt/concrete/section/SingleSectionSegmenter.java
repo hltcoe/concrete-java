@@ -62,13 +62,7 @@ public class SingleSectionSegmenter {
     if (ctxt.isEmpty())
       throw new ConcreteException("Text was empty.");
     
-    TextSpan ts = new TextSpan(0, ctxt.length());
-
-    Section s = SectionFactory.create();
-    s.setKind(sectionKind);
-    s.setTextSpan(ts);
-
-    return s;
+    return createSingleSection(ctxt, sectionKind);
   }
   
   public static void main(String... args) {
