@@ -2,7 +2,6 @@
  * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-
 package edu.jhu.hlt.concrete.section;
 
 import java.io.IOException;
@@ -30,9 +29,9 @@ import edu.jhu.hlt.utilt.io.NotFileException;
  * Concrete {@link Section}.
  */
 public class SingleSectionSegmenter {
-  
+
   private static final Logger logger = LoggerFactory.getLogger(SingleSectionSegmenter.class);
-  
+
   private SingleSectionSegmenter() {
 
   }
@@ -54,17 +53,17 @@ public class SingleSectionSegmenter {
 
     return s;
   }
-  
+
   public static final Section createSingleSection (Communication c, String sectionKind) throws ConcreteException {
     if (!c.isSetText())
       throw new ConcreteException("Text was unset.");
     String ctxt = c.getText();
     if (ctxt.isEmpty())
       throw new ConcreteException("Text was empty.");
-    
+
     return createSingleSection(ctxt, sectionKind);
   }
-  
+
   public static void main(String... args) {
     if (args.length != 3) {
       System.err.println("This program converts a Concrete Communication file without sections to a "
@@ -78,7 +77,7 @@ public class SingleSectionSegmenter {
           + " /my/comm/file.concrete passage /my/output/folder");
       System.exit(1);
     }
-    
+
     String inPathStr = args[0];
     Path inPath = Paths.get(inPathStr);
     try {
@@ -115,10 +114,16 @@ public class SingleSectionSegmenter {
 
       try {
         Communication comm = new CompactCommunicationSerializer().fromPath(inPath);
-        // Do not run over sectioned comms. 
-        if (comm.isSetSectionList() && comm.getSectionListSize() > 0)
-          throw new ConcreteException("Communication has sections previously; not running.");
-          
+        // Do not run over sectioned comms.
+        if (comm.isSetSectionList() && comm.getSectionListSize() > 0) {
+          logger.error("Communication has sections previously; not running.");
+          logger.error("Here are the sections:");
+          for (Section s : comm.getSectionList())
+            logger.error("Section {} has kind: {}", s.getUuid().getUuidString(), s.getKind());
+
+          System.exit(1);
+        }
+
         Section s = createSingleSection(comm, sectType.get());
         comm.addToSectionList(s);
         new SuperCommunication(comm).writeToFile(outFile, false);

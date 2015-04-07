@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
@@ -17,7 +16,7 @@ public class SingleSectionSegmenterTest {
 
   RandomConcreteFactory rcf = new RandomConcreteFactory(1234L);
   Communication c = rcf.communication();
-  
+
   @Test
   public void validComm() throws ConcreteException {
     assertFalse(c.isSetSectionList());
@@ -38,7 +37,7 @@ public class SingleSectionSegmenterTest {
     ws.unsetText();
     SingleSectionSegmenter.createSingleSection(ws, "passage");
   }
-  
+
   @Test(expected=ConcreteException.class)
   public void emptyText() throws ConcreteException {
     Communication ws = new Communication(this.c);
