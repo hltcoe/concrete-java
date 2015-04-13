@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
@@ -24,65 +23,36 @@ import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
- * A class that exposes a method for converting {@link String} objects,
- * representing contents of a {@link Communication} for example, into a single
- * Concrete {@link Section}.
+ * Modify all sections in a {@link Communication} object to be of a certain type.
  */
-public class SingleSectionSegmenter {
+public class SectionKindModifier {
 
-  private static final Logger logger = LoggerFactory.getLogger(SingleSectionSegmenter.class);
-
-  private SingleSectionSegmenter() {
-
-  }
+  private static final Logger logger = LoggerFactory.getLogger(SectionKindModifier.class);
 
   /**
-   * Create a single {@link Section} based on some text, with the kind set to
-   * sectionKind.
+   * See usage string.
    *
-   * @param text the {@link String} upon which to create the Section object
-   * @param sectionKind the kind of the Section
-   * @return a {@link Section} with one {@link TextSpan}.
+   * @param args
    */
-  public static final Section createSingleSection (String text, String sectionKind) {
-    TextSpan ts = new TextSpan(0, text.length());
-
-    Section s = SectionFactory.create();
-    s.setKind(sectionKind);
-    s.setTextSpan(ts);
-
-    return s;
-  }
-
-  public static final Section createSingleSection (Communication c, String sectionKind) throws ConcreteException {
-    if (!c.isSetText())
-      throw new ConcreteException("Text was unset.");
-    String ctxt = c.getText();
-    if (ctxt.isEmpty())
-      throw new ConcreteException("Text was empty.");
-
-    return createSingleSection(ctxt, sectionKind);
-  }
-
-  public static void main(String... args) {
+  public static void main(String[] args) {
     if (args.length != 3) {
-      System.err.println("This program converts a Concrete Communication file without sections to a "
-          + "Concrete Communication file with one section.");
+      System.err.println("This program converts a Concrete Communication file with sections to a "
+          + "Concrete Communication file with sections of the provided type.");
       System.err.println("The .concrete file will share the same name as the input file, including the extension.");
       System.err.println("This program takes 3 arguments.");
-      System.err.println("Argument 1: path/to/a/concrete/communication/file/without/sections");
+      System.err.println("Argument 1: path/to/a/concrete/communication/file/with/sections");
       System.err.println("Argument 2: type of Section to generate [e.g., passage]");
       System.err.println("Argument 3: path/to/output/folder");
-      System.err.println("Example usage: " + SingleSectionSegmenter.class.getName()
-          + " /my/comm/file.concrete passage /my/output/folder");
+      System.err.println("Example usage: " + SectionKindModifier.class.getName()
+          + " /my/comm/file.concrete Passage /my/output/folder");
       System.exit(1);
     }
 
-    String inPathStr = args[0];
+    final String inPathStr = args[0];
+    final String sectionKind = args[1];
     Path inPath = Paths.get(inPathStr);
     try {
       ExistingNonDirectoryFile ef = new ExistingNonDirectoryFile(inPath);
-      Optional<String> sectType = Optional.ofNullable(args[1]);
       Optional<String> outPathStr = Optional.ofNullable(args[2]);
 
       String fn = ef.getName();
@@ -115,18 +85,15 @@ public class SingleSectionSegmenter {
       try {
         Communication comm = new CompactCommunicationSerializer().fromPath(inPath);
         // Do not run over sectioned comms.
-        if (comm.isSetSectionList() && comm.getSectionListSize() > 0) {
-          logger.error("Communication has sections previously; not running.");
-          logger.error("Here are the sections:");
-          for (Section s : comm.getSectionList())
-            logger.error("Section {} has kind: {}", s.getUuid().getUuidString(), s.getKind());
-
+        if (!comm.isSetSectionList() || comm.getSectionListSize() <= 0) {
+          logger.error("Communication has no sections. Not running.");
           System.exit(1);
         }
 
-        Section s = createSingleSection(comm, sectType.get());
-        comm.addToSectionList(s);
-        new SuperCommunication(comm).writeToFile(outFile, false);
+        Communication nc = new Communication(comm);
+        for (Section s : nc.getSectionList())
+          s.setKind(sectionKind);
+        new SuperCommunication(nc).writeToFile(outFile, false);
       } catch (ConcreteException e) {
         logger.error("Caught exception writing output.", e);
         System.exit(1);
