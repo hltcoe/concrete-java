@@ -8,14 +8,16 @@ package edu.jhu.hlt.concrete.ingesters.annotatednyt;
 /**
  *
  */
-class StringStringTuple {
+class StringStringStringTuple {
 
   final String s1;
   final String s2;
+  final String s3;
   
-  StringStringTuple(String s1, String s2) {
+  StringStringStringTuple(String s1, String s2, String s3) {
     this.s1 = s1;
     this.s2 = s2;
+    this.s3 = s3;
   }
   
   public String getS1() {
@@ -26,7 +28,11 @@ class StringStringTuple {
     return this.s2;
   }
   
-  static StringStringTuple create(String s1, String s2) {
-    return new StringStringTuple(s1, s2);
+  public String getS3() {
+    return this.s3;
+  }
+  
+  static StringStringStringTuple create(String s1, String s2, String s3) {
+    return new StringStringStringTuple(s1, s2, s3);
   }
 }

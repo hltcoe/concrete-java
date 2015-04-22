@@ -106,15 +106,17 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
       c.setType("news");
       int ctr = 0;
       StringBuilder ctxt = new StringBuilder();
-      List<StringStringTuple> sstList = this.extractTuples().sequential().collect(Collectors.toList());
+      List<StringStringStringTuple> sstList = this.extractTuples().sequential().collect(Collectors.toList());
       final int lSize = sstList.size();
       for (int i = 0; i < lSize; i++) {
-        final StringStringTuple t = sstList.get(i);
-        final String txt = t.getS2();
+        final StringStringStringTuple t = sstList.get(i);
+        final String skind = t.getS1();
+        final String slabel = t.getS2();
+        final String txt = t.getS3();
         final int txtlen = txt.length();
         final TextSpan ts = new TextSpan(ctr, ctr + txtlen);
-        final Section s = SectionFactory.fromTextSpan(ts, t.getS1());
-        s.setLabel(t.getS1());
+        final Section s = SectionFactory.fromTextSpan(ts, skind);
+        s.setLabel(slabel);
         c.addToSectionList(s);
         ctxt.append(txt);
         if (i + 1 != lSize) {
@@ -132,24 +134,26 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     }
   }
 
-  private Stream<StringStringTuple> extractTuples() {
-    Stream.Builder<StringStringTuple> stream = Stream.builder();
-    // label, content tuples
-    this.anytd.getHeadline().ifPresent(str -> stream.add(StringStringTuple.create("Headline", str)));
-    this.anytd.getOnlineHeadline().ifPresent(str -> stream.add(StringStringTuple.create("Online Headline", str)));
-    this.anytd.getByline().ifPresent(str -> stream.add(StringStringTuple.create("Byline", str)));
-    this.anytd.getDateline().ifPresent(str -> stream.add(StringStringTuple.create("Dateline", str)));
-    this.anytd.getArticleAbstract().ifPresent(str -> stream.add(StringStringTuple.create("Article Abstract", str)));
-    this.anytd.getLeadParagraphAsList().stream().filter(i -> !i.isEmpty()).forEach(str -> stream.add(StringStringTuple.create("Lead Paragraphs", str)));
+  private Stream<StringStringStringTuple> extractTuples() {
+    Stream.Builder<StringStringStringTuple> stream = Stream.builder();
+    // kind, label, content triples
+    this.anytd.getHeadline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Headline", str)));
+    this.anytd.getOnlineHeadline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Online Headline", str)));
+    this.anytd.getByline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Byline", str)));
+    this.anytd.getDateline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Dateline", str)));
+    this.anytd.getArticleAbstract().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Article Abstract", str)));
+    this.anytd.getLeadParagraphAsList().stream()
+        .filter(i -> !i.isEmpty())
+        .forEach(str -> stream.add(StringStringStringTuple.create("Other", "Lead Paragraphs", str)));
     this.anytd.getOnlineLeadParagraphAsList().stream()
         .filter(str -> !str.isEmpty())
-        .forEach(str -> stream.add(StringStringTuple.create("Online Lead Paragraph", str)));
+        .forEach(str -> stream.add(StringStringStringTuple.create("Other", "Online Lead Paragraph", str)));
     // judicious use of null - going to thrift, so is OK
     this.anytd.getBodyAsList()
         .stream()
-        .filter(str -> !str.isEmpty()).forEach(str -> stream.add(StringStringTuple.create(null, str)));
-    this.anytd.getCorrectionText().ifPresent(str -> stream.add(StringStringTuple.create("Correction Text", str)));
-    this.anytd.getKicker().ifPresent(str -> stream.add(StringStringTuple.create("Kicker", str)));
+        .filter(str -> !str.isEmpty()).forEach(str -> stream.add(StringStringStringTuple.create("Passage", null, str)));
+    this.anytd.getCorrectionText().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Correction Text", str)));
+    this.anytd.getKicker().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Kicker", str)));
     return stream.build();
   }
 
