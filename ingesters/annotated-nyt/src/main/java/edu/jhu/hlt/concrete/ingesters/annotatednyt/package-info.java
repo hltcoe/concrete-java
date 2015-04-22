@@ -3,6 +3,7 @@
  * See LICENSE in the project root directory.
  */
 /**
- *
+ * Utilities for converting {@link edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument}
+ * objects into Concrete {@link edu.jhu.hlt.concrete.Communication} objects.
  */
 package edu.jhu.hlt.concrete.ingesters.annotatednyt;
