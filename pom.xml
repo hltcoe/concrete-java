@@ -14,6 +14,7 @@
     <module>ingesters/simple</module>
     <module>ingesters/gigaword</module>
     <module>ingesters/alnc</module>
+    <module>ingesters/annotated-nyt</module>
   </modules>
 
   <name>Concrete</name>
