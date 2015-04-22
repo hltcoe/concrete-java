@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
+import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.CommunicationMetadata;
 import edu.jhu.hlt.concrete.NITFInfo;
@@ -18,6 +19,7 @@ import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.ingesters.base.communications.Communicationizable;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
+import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
@@ -28,14 +30,14 @@ import edu.jhu.hlt.concrete.util.Timing;
  * {@link AnnotatedNYTDocument}.
  */
 public class CommunicationizableAnnotatedNYTDocument implements Communicationizable, SafeTooledAnnotationMetadata {
-
+  
   private final AnnotatedNYTDocument anytd;
 
   public CommunicationizableAnnotatedNYTDocument(AnnotatedNYTDocument anytd) {
     this.anytd = anytd;
   }
   
-  public NITFInfo extractNITFInfo(AnnotatedNYTDocument cDoc) {
+  public static NITFInfo extractNITFInfo(AnnotatedNYTDocument cDoc) {
     final NITFInfo ni = new NITFInfo();
 
     cDoc.getAlternateURL().ifPresent(url -> ni.setAlternateURL(url.toString()));
@@ -99,9 +101,11 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     final String localId = "AnnotatedNYT-" + this.anytd.getGuid();
     // shouldn't really throw - inputs are valid
     try {
+      AnnotationMetadata md = TooledMetadataConverter.convert(this);
       CommunicationMetadata cmd = new CommunicationMetadata();
-      cmd.setNitfInfo(this.extractNITFInfo(this.anytd));
+      cmd.setNitfInfo(extractNITFInfo(this.anytd));
       Communication c = CommunicationFactory.create(localId);
+      c.setMetadata(md);
       c.setCommunicationMetadata(cmd);
       c.setType("news");
       int ctr = 0;
