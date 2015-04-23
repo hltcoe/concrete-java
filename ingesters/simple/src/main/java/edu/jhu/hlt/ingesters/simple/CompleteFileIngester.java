@@ -99,7 +99,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
       System.err.println("This program takes 3 arguments.");
       System.err.println("Argument 1: path/to/a/character/based/file");
       System.err.println("Argument 2: type of Communication to generate [e.g., tweet]");
-      System.err.println("Argument 3: path/to/out/concrete/file");
+      System.err.println("Argument 3: path/to/output/folder");
       System.err.println("Example usage: " + CompleteFileIngester.class.getName()
           + " /my/text/file story /my/output/folder");
       System.exit(1);
