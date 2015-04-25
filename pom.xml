@@ -10,6 +10,7 @@
     <module>safe</module>
     <module>util</module>
     <module>validation</module>
+    <module>tift</module>
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
     <module>ingesters/gigaword</module>
@@ -63,8 +64,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.1</log4j.version>
-    <jackson.version>2.4.4</jackson.version>
+    <log4j.version>2.2</log4j.version>
+    <jackson.version>2.5.2</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
@@ -378,6 +379,11 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-validation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>tift</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
