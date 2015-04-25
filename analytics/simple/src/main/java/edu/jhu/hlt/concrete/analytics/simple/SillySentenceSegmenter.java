@@ -65,8 +65,8 @@ public class SillySentenceSegmenter implements Analytic {
     final Communication cpy = new Communication(comm);
     List<Section> sectionList = cpy.getSectionList();
     if (sectionList == null || sectionList.isEmpty()) {
-      throw new AnalyticException("Communication SectionSegmentation does not have at least one Section; "
-          + "cannot generate a SentenceSegmentationCollection from it.");
+      throw new AnalyticException("Communication does not have at least one Section; "
+          + "cannot generate Sentences from it.");
     }
 
     for (Section s : sectionList) {
@@ -78,7 +78,6 @@ public class SillySentenceSegmenter implements Analytic {
     }
 
     return cpy;
-
   }
 
   /* (non-Javadoc)
@@ -103,13 +102,5 @@ public class SillySentenceSegmenter implements Analytic {
   @Override
   public String getToolVersion() {
     return ProjectConstants.VERSION;
-  }
-
-  /* (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolNotes()
-   */
-  @Override
-  public List<String> getToolNotes() {
-    return new ArrayList<>();
   }
 }
