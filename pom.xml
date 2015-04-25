@@ -11,10 +11,12 @@
     <module>util</module>
     <module>validation</module>
     <module>ingesters/base</module>
+    <module>analytics/base</module>
     <module>ingesters/simple</module>
     <module>ingesters/gigaword</module>
     <module>ingesters/alnc</module>
     <module>ingesters/annotated-nyt</module>
+    <module>analytics/simple</module>
   </modules>
 
   <name>Concrete</name>
@@ -385,13 +387,18 @@
       </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-analytics-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
-        <version>2.0.2</version>
+        <version>2.0.3</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.7</version>
+        <version>1.7.12</version>
       </dependency>
       <dependency>
         <groupId>joda-time</groupId>
