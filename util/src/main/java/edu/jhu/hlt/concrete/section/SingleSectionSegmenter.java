@@ -54,6 +54,12 @@ public class SingleSectionSegmenter {
     return s;
   }
 
+  /**
+   * @param c a {@link Communication} to annotate. Must have non-null, non-empty text.
+   * @param sectionKind the kind of {@link Section} to produce (e.g., 'other')
+   * @return a {@link Section} with a single {@link TextSpan} set to (0, comm.getText().length())
+   * @throws ConcreteException if unset or empty Communication text
+   */
   public static final Section createSingleSection (Communication c, String sectionKind) throws ConcreteException {
     if (!c.isSetText())
       throw new ConcreteException("Text was unset.");

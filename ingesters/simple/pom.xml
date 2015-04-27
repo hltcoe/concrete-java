@@ -5,37 +5,13 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-project</artifactId>
-    <version>4.4.5-SNAPSHOT</version>
+    <version>4.4.7-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>concrete-ingesters-simple</artifactId>
   <name>Simple Ingester</name>
   <description>Library containing simple Concrete document ingesters, not specific to any corpus.</description>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencies>
     <dependency>

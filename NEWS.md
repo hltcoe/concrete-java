@@ -1,5 +1,14 @@
 # News
 
+## Concrete-Java v4.4.6 - 2015-4-27
+Notes coming soon
+
+## Concrete-Java v4.4.5 - 2015-4-22
+
+### `annotated-nyt` ingester added
+An ingester for the [Annotated NYT Corpus](https://catalog.ldc.upenn.edu/LDC2008T19)
+has been added. See the `ingesters/annotated-nyt` package.
+
 ## Concrete-Java v4.4.4 - 2015-3-20
 
 ### `mvn site` enabled

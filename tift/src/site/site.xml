@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+
+-->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
+	 name="Tift">
+  <body>
+    <links>
+      <item name="Home" href="http://hltcoe.github.io/tift/index.html" />
+      <item name="Tift @ Github" href="http://github.com/hltcoe/tift"/>
+      <item name="HLTCOE @ Github" href="http://github.com/hltcoe"/>
+      <item name="HLTCOE" href="http://hltcoe.jhu.edu"/>
+    </links>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+
+    <menu ref="reports" />
+    <menu ref="modules" />
+  </body>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.3.0</version>
+  </skin>
+</project>
