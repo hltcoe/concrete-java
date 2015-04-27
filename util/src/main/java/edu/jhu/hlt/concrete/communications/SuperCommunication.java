@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -457,5 +458,37 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.situationIdToSituationMap = map;
       return new LinkedHashMap<>(map);
     }
+  }
+  
+  /**
+   * For this {@link Communication}, extract a map of {@link Entity} to
+   * list of {@link EntityMention} objects. The value associated with each
+   * Entity is the relevant EntityMentions of that entity.
+   * 
+   * @return a {@link Map} with the appropriate {@link Entity} to
+   * {@link EntityMention} list values
+   */
+  public Map<Entity, List<EntityMention>> getEntityToEntityMentionList() {
+    Map<Entity, List<EntityMention>> toRet = new HashMap<>();
+    Map<UUID, EntityMention> idToMentionMap = new HashMap<>();
+    for (EntityMentionSet ems : this.comm.getEntityMentionSetList()) {
+      for (EntityMention em : ems.getMentionList()) {
+        UUID eid = em.getUuid();
+        idToMentionMap.put(eid, em);
+      }
+    }
+    
+    List<EntitySet> esList = this.comm.getEntitySetList();
+    EntitySet fes = esList.get(0);
+    List<Entity> entityList = fes.getEntityList();
+    for (Entity e : entityList) {
+      List<UUID> mentionUuidList = e.getMentionIdList();
+      List<EntityMention> relatedMentionList = new ArrayList<EntityMention>();
+      for (UUID id : mentionUuidList)
+        relatedMentionList.add(idToMentionMap.get(id));
+      toRet.put(e, relatedMentionList);
+    }
+    
+    return toRet;
   }
 }
