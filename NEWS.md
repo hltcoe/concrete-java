@@ -1,5 +1,8 @@
 # News
 
+## Concrete-Java v4.4.6 - 2015-4-27
+Notes coming soon
+
 ## Concrete-Java v4.4.5 - 2015-4-22
 
 ### `annotated-nyt` ingester added
