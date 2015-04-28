@@ -73,7 +73,7 @@ public class AnnotatedNYTIngesterIT {
             NYTCorpusDocument doc = this.parser.fromByteArray(n, false);
             AnnotatedNYTDocument adoc = new AnnotatedNYTDocument(doc);
             Communication c = new CommunicationizableAnnotatedNYTDocument(adoc).toCommunication();
-            LOGGER.info("Successfully got communication: {}", c.getId());
+            LOGGER.debug("Successfully got communication: {}", c.getId());
             boolean isValid = new CommunicationValidator(c).validate();
             assertTrue("Communication " + c.getId() + " is invalid!", isValid);
           }
