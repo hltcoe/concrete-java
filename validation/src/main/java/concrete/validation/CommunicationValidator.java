@@ -44,12 +44,12 @@ public class CommunicationValidator {
     boolean valid = true;
     // for (Section sect : this.comm.getSectionList()) {
     Iterator<Section> sectIter = this.comm.getSectionListIterator();
-    while (valid && sectIter.hasNext()) {
+    while (valid && sectIter != null && sectIter.hasNext()) {
       Section s = sectIter.next();
       valid = new ValidatableSection(s).validate(this.comm);
       
       Iterator<Sentence> sentIter = s.getSentenceListIterator();
-      while (valid && sentIter.hasNext()) {
+      while (valid && sentIter != null && sentIter.hasNext()) {
         Sentence st = sentIter.next();
         valid = new ValidatableSentence(st).validate(this.comm);
         Tokenization tok = st.getTokenization();
