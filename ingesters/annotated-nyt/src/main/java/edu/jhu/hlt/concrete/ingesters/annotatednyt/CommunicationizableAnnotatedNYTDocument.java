@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
@@ -30,13 +33,15 @@ import edu.jhu.hlt.concrete.util.Timing;
  * {@link AnnotatedNYTDocument}.
  */
 public class CommunicationizableAnnotatedNYTDocument implements Communicationizable, SafeTooledAnnotationMetadata {
-  
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationizableAnnotatedNYTDocument.class);
+
   private final AnnotatedNYTDocument anytd;
 
   public CommunicationizableAnnotatedNYTDocument(AnnotatedNYTDocument anytd) {
     this.anytd = anytd;
   }
-  
+
   public static NITFInfo extractNITFInfo(AnnotatedNYTDocument cDoc) {
     final NITFInfo ni = new NITFInfo();
 
@@ -93,7 +98,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.ingesters.base.communications.Communicationizable#toCommunication()
    */
   @Override
@@ -112,12 +117,18 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
       StringBuilder ctxt = new StringBuilder();
       List<StringStringStringTuple> sstList = this.extractTuples().sequential().collect(Collectors.toList());
       final int lSize = sstList.size();
+      LOGGER.debug("{} tuples need to be processed.", lSize);
       for (int i = 0; i < lSize; i++) {
+        LOGGER.debug("Current ctr position: {}", ctr);
         final StringStringStringTuple t = sstList.get(i);
         final String skind = t.getS1();
+        LOGGER.debug("Section kind: {}", skind);
         final String slabel = t.getS2();
+        LOGGER.debug("Section label: {}", slabel);
         final String txt = t.getS3();
+        LOGGER.debug("Section text: {}", txt);
         final int txtlen = txt.length();
+        LOGGER.debug("Preparing to create text span with boundaries: {}, {}", ctr, ctr + txtlen);
         final TextSpan ts = new TextSpan(ctr, ctr + txtlen);
         final Section s = SectionFactory.fromTextSpan(ts, skind);
         s.setLabel(slabel);
@@ -130,7 +141,9 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
         }
       }
 
-      c.setText(ctxt.toString());
+      final String ctxtstr = ctxt.toString();
+      LOGGER.debug("Text length: {}", ctxtstr.length());
+      c.setText(ctxtstr);
       return c;
     } catch (ConcreteException e) {
       // something went way wrong
@@ -145,7 +158,12 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     this.anytd.getOnlineHeadline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Online Headline", str)));
     this.anytd.getByline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Byline", str)));
     this.anytd.getDateline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Dateline", str)));
-    this.anytd.getArticleAbstract().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Article Abstract", str)));
+    this.anytd.getArticleAbstract().ifPresent(str -> {
+      if (!str.isEmpty())
+        stream.add(StringStringStringTuple.create("Other", "Article Abstract", str));
+      else
+        LOGGER.debug("Article abstract was empty; not adding a zone for it.");
+    });
     this.anytd.getLeadParagraphAsList().stream()
         .filter(i -> !i.isEmpty())
         .forEach(str -> stream.add(StringStringStringTuple.create("Other", "Lead Paragraphs", str)));
@@ -163,7 +181,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
    */
   @Override
@@ -173,7 +191,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolName()
    */
   @Override
@@ -183,7 +201,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolVersion()
    */
   @Override
@@ -193,7 +211,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolNotes()
    */
   @Override
