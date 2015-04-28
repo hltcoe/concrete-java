@@ -21,13 +21,13 @@ import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.tift.Tokenizer;
 
 /**
- * A wrapper around Tift that provides {@link TokenizationCollection} objects
+ * A wrapper around Tift that provides {@link Tokenization} objects
  * for each {@link Sentence} in each {@link Section}.
  */
 public class TiftTokenizer implements Analytic {
 
   private final Tokenizer tokenizer;
-  
+
   /**
    * @param tokenizer the {@link Tokenizer} to use
    * @see Tokenizer
@@ -35,7 +35,7 @@ public class TiftTokenizer implements Analytic {
   public TiftTokenizer(Tokenizer tokenizer) {
     this.tokenizer = tokenizer;
   }
-  
+
   /**
    * Default to a {@link Tokenizer#PTB} tokenization.
    */
@@ -57,7 +57,7 @@ public class TiftTokenizer implements Analytic {
       t.setMetadata(TooledMetadataConverter.convert(this));
       st.setTokenization(t);
     }
-    
+
     return cp;
   }
 

@@ -21,26 +21,26 @@ import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
 
 /**
- * An example of how to generate {@link SentenceSegmentationCollection}s. Probably
- * only useful as an example.  
+ * An example of how to generate {@link Sentence}s. Probably
+ * only useful as an example.
  */
 public class SillySentenceSegmenter implements Analytic {
 
   public static final Pattern DEFAULT_SENTENCE_PATTERN = Pattern.compile("[a-zA-Z0-9 ,']+[.?!]+");
   private final Pattern splitPattern;
-  
+
   public SillySentenceSegmenter() {
     this.splitPattern = DEFAULT_SENTENCE_PATTERN;
   }
-  
+
   /**
    * Given some text, generate a {@link List} of {@link Sentence} objects given the {@link Pattern}
    * for this class, which is:
-   * 
+   *
    * <pre>
    * [a-zA-Z0-9 ']+[.?!]+
    * </pre>
-   * 
+   *
    * @param s - The {@link String} from which to generate {@link Sentence}s
    * @return a {@link List} of {@link Sentence} objects
    */
@@ -56,7 +56,7 @@ public class SillySentenceSegmenter implements Analytic {
       sent.setTextSpan(ts);
       sentList.add(sent);
     }
-    
+
     return sentList;
   }
 
