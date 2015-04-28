@@ -1,5 +1,9 @@
 # News
 
+## Concrete-Java v4.4.7 - 2015-4-28
+Contains additional methods in [SuperCommunication](util/src/main/java/edu/jhu/hlt/concrete/communications/SuperCommunication.java)
+to support entity linking tasks.
+
 ## Concrete-Java v4.4.6 - 2015-4-27
 Notes coming soon
 
