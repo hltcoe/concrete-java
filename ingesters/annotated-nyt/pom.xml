@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -17,27 +17,27 @@
     <profile>
       <id>itest</id>
       <build>
-          <plugins>
-              <plugin>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.18.1</version>
-          <executions>
-            <execution>
-              <id>run-integration-tests</id>
-              <goals>
-                <goal>integration-test</goal>
-              </goals>
-              <phase>integration-test</phase>
-            </execution>
-            <execution>
-              <id>verify-integration-tests</id>
-              <goals>
-                <goal>verify</goal>
-              </goals>
-              <phase>verify</phase>
-            </execution>
-          </executions>
-        </plugin>
+        <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.18.1</version>
+            <executions>
+              <execution>
+                <id>run-integration-tests</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+                <phase>integration-test</phase>
+              </execution>
+              <execution>
+                <id>verify-integration-tests</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
@@ -60,8 +60,8 @@
               </execution>
             </executions>
           </plugin>
-      </plugins>
-  </build>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

@@ -30,9 +30,9 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.annotatednyt.CommunicationizableAnnotatedNYTDocument;
 
 public class AnnotatedNYTIngesterIT {
-  
+
   private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedNYTIngesterIT.class);
-  
+
   final Path dataPath = Paths.get(System.getProperty("anytDataPath"));
   final NYTCorpusDocumentParser parser = new NYTCorpusDocumentParser();
 
@@ -49,16 +49,16 @@ public class AnnotatedNYTIngesterIT {
    */
   @After
   public void tearDown() throws Exception {
-    
+
   }
-  
+
   @Test
   public void runAcrossAllArchives() throws Exception {
     try (Stream<Path> nytTgzPaths = Files.list(dataPath);) {
       nytTgzPaths
         .flatMap(subfolder -> {
           try {
-            return Files.list(subfolder); 
+            return Files.list(subfolder);
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
