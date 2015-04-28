@@ -27,6 +27,7 @@ import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.validation.ValidatableTextSpan;
 
 /**
  * Class that implements {@link Communicationizable} given an
@@ -130,6 +131,12 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
         final int txtlen = txt.length();
         LOGGER.debug("Preparing to create text span with boundaries: {}, {}", ctr, ctr + txtlen);
         final TextSpan ts = new TextSpan(ctr, ctr + txtlen);
+        final ValidatableTextSpan vts = new ValidatableTextSpan(ts);
+        if (!vts.isValid()) {
+          LOGGER.info("TextSpan was not valid for label: {}. Omitting from output.", slabel);
+          continue;
+        }
+        
         final Section s = SectionFactory.fromTextSpan(ts, skind);
         s.setLabel(slabel);
         c.addToSectionList(s);
@@ -156,7 +163,13 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     // kind, label, content triples
     this.anytd.getHeadline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Headline", str)));
     this.anytd.getOnlineHeadline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Online Headline", str)));
-    this.anytd.getByline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Byline", str)));
+    this.anytd.getByline().ifPresent(str -> {
+      if (!str.isEmpty())
+        stream.add(StringStringStringTuple.create("Other", "Byline", str));
+      else
+        LOGGER.debug("Byline was empty; not adding a zone for it.");      
+    });
+    
     this.anytd.getDateline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Dateline", str)));
     this.anytd.getArticleAbstract().ifPresent(str -> {
       if (!str.isEmpty())
@@ -175,7 +188,12 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
         .stream()
         .filter(str -> !str.isEmpty()).forEach(str -> stream.add(StringStringStringTuple.create("Passage", null, str)));
     this.anytd.getCorrectionText().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Correction Text", str)));
-    this.anytd.getKicker().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Kicker", str)));
+    this.anytd.getKicker().ifPresent(str -> {
+      if (!str.isEmpty())
+        stream.add(StringStringStringTuple.create("Other", "Kicker", str));
+      else
+        LOGGER.debug("Kicker was empty; not adding a zone for it.");
+    });
     return stream.build();
   }
 
