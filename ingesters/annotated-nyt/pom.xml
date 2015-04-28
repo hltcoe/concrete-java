@@ -17,7 +17,27 @@
     <profile>
       <id>itest</id>
       <build>
-      <plugins>
+          <plugins>
+              <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.18.1</version>
+          <executions>
+            <execution>
+              <id>run-integration-tests</id>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+              <phase>integration-test</phase>
+            </execution>
+            <execution>
+              <id>verify-integration-tests</id>
+              <goals>
+                <goal>verify</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>

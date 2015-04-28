@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nytlabs.corpus.NYTCorpusDocument;
 import com.nytlabs.corpus.NYTCorpusDocumentParser;
@@ -28,6 +30,9 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.annotatednyt.CommunicationizableAnnotatedNYTDocument;
 
 public class AnnotatedNYTIngesterIT {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedNYTIngesterIT.class);
+  
   final Path dataPath = Paths.get(System.getProperty("anytDataPath"));
   final NYTCorpusDocumentParser parser = new NYTCorpusDocumentParser();
 
@@ -57,10 +62,9 @@ public class AnnotatedNYTIngesterIT {
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
-        });
-      nytTgzPaths
-        .filter(tgz -> tgz.toString().endsWith(".tgz"));
-      nytTgzPaths.forEach(p -> {
+        })
+      .filter(tgz -> tgz.toString().endsWith(".tgz"))
+      .forEach(p -> {
         try(InputStream is = Files.newInputStream(p);
             BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 24);
             TarGzArchiveEntryByteIterator iter = new TarGzArchiveEntryByteIterator(bin);) {
@@ -69,6 +73,7 @@ public class AnnotatedNYTIngesterIT {
             NYTCorpusDocument doc = this.parser.fromByteArray(n, false);
             AnnotatedNYTDocument adoc = new AnnotatedNYTDocument(doc);
             Communication c = new CommunicationizableAnnotatedNYTDocument(adoc).toCommunication();
+            LOGGER.info("Successfully got communication: {}", c.getId());
             boolean isValid = new CommunicationValidator(c).validate();
             assertTrue("Communication " + c.getId() + " is invalid!", isValid);
           }
