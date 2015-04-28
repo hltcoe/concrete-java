@@ -4,7 +4,7 @@
  */
 package concrete.annotatednyt;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -12,6 +12,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.junit.After;
@@ -54,6 +57,7 @@ public class AnnotatedNYTIngesterIT {
   
   @Test
   public void runAcrossAllArchives() throws Exception {
+    Map<String, Path> failureMap = new HashMap<>();
     try (Stream<Path> nytTgzPaths = Files.list(dataPath);) {
       nytTgzPaths
         .flatMap(subfolder -> {
@@ -65,6 +69,7 @@ public class AnnotatedNYTIngesterIT {
         })
       .filter(tgz -> tgz.toString().endsWith(".tgz"))
       .forEach(p -> {
+        LOGGER.info("On path: {}", p.toString());
         try(InputStream is = Files.newInputStream(p);
             BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 24);
             TarGzArchiveEntryByteIterator iter = new TarGzArchiveEntryByteIterator(bin);) {
@@ -73,14 +78,28 @@ public class AnnotatedNYTIngesterIT {
             NYTCorpusDocument doc = this.parser.fromByteArray(n, false);
             AnnotatedNYTDocument adoc = new AnnotatedNYTDocument(doc);
             Communication c = new CommunicationizableAnnotatedNYTDocument(adoc).toCommunication();
-            LOGGER.debug("Successfully got communication: {}", c.getId());
+            final String cid = c.getId();
+            LOGGER.debug("Successfully got communication: {}", cid);
             boolean isValid = new CommunicationValidator(c).validate();
-            assertTrue("Communication " + c.getId() + " is invalid!", isValid);
+            if (!isValid)
+              failureMap.put(cid, p);
           }
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       });
+      
+      if (failureMap.size() > 0) {
+        LOGGER.warn("There are failures.");
+        for (Entry<String, Path> e : failureMap.entrySet()) {
+          final Path p = e.getValue();
+          final int nPaths = p.getNameCount();
+          final String part = p.getName(nPaths - 1).toString();
+          LOGGER.warn("ID {} is invalid. File: {}", e.getKey(), part);
+        }
+        
+        fail();
+      }
     }
   }
 }
