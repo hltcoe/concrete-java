@@ -13,6 +13,38 @@
   <name>Annotated NYT Ingester</name>
   <description>Library providing Concrete ingesters and utilities for the Annotated New York Times corpus.</description>
 
+  <profiles>
+    <profile>
+      <id>itest</id>
+      <build>
+      <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <id>enforce-property</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>anytDataPath</property>
+                      <message>You must set the 'anytDataPath' property to the location of the path to the Annotated NYT 'data' folder distributed with the Annotated NYT corpus from LDC.</message>
+                    </requireProperty>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+      </plugins>
+  </build>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
