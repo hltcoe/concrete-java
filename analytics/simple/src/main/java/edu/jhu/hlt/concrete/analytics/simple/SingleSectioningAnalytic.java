@@ -75,7 +75,7 @@ public class SingleSectioningAnalytic implements DependentAnalytic {
   @Override
   public boolean isAnnotatable(Communication c) {
     boolean hasSections = c.isSetSectionList() && c.getSectionListSize() > 0;
-    boolean valid = hasSections && c.isSetText() && !c.getText().equals("");
+    boolean valid = !hasSections && c.isSetText() && !c.getText().equals("");
     return valid;
   }
 
