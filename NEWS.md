@@ -1,5 +1,9 @@
 # News
 
+## Concrete-Java v4.4.9 - 2015-5-3
+* Fix a bug with the `SingleSectioningAnalytic`'s validity check
+* Add `TokenizationFactory` and `TextSpanFactory` utility classes
+
 ## Concrete-Java v4.4.8 - 2015-4-28
 Contains a bug fix for the Annotated NYT Concrete ingester.
 
