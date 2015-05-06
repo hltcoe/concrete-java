@@ -35,7 +35,7 @@ public class CachedTokenizationCommunication implements MappedTokenizedCommunica
   public CachedTokenizationCommunication(final Communication orig) throws MiscommunicationException {
     this.cpy = new CachedSentencedCommunication(orig);
     Optional<Sentence> bs = this.cpy.getSentences().stream()
-        .filter(s -> validPredicate(s))
+        .filter(s -> !validPredicate(s))
         .findAny();
     if (bs.isPresent())
       throw new MiscommunicationException("At least one Sentence did not have a Tokenization (UUID = " + bs.get().getUuid().getUuidString() + ").");

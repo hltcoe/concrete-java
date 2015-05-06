@@ -31,14 +31,14 @@ public class CachedSentencedCommunication implements MappedSentenceCommunication
   
   public CachedSentencedCommunication(final Communication orig) throws MiscommunicationException {
     this.cpy = new CachedSectionedCommunication(orig);
-    Optional<Section> bs = this.cpy.getSections().stream()
-        .filter(s -> validSentencePredicate(s))
+    List<Section> sectList = this.cpy.getSections();
+    Optional<Section> bs = sectList.stream()
+        .filter(s -> !validSentencePredicate(s))
         .findAny();
     if (bs.isPresent())
       throw new MiscommunicationException("At least one Section did not have Sentences (UUID = " + bs.get().getUuid().getUuidString() + ").");
     
     final Map<UUID, Sentence> toRet = new LinkedHashMap<>();
-    List<Section> sectList = new ArrayList<>(this.cpy.getSections());
     for (Section s : sectList)
       for (Sentence st : s.getSentenceList())
         toRet.put(st.getUuid(), st);
