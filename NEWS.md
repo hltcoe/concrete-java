@@ -1,5 +1,31 @@
 # News
 
+## Concrete-Java v4.4.10 - 2015-5-6
+
+### Introduction of `miscommunication` module
+The [miscommunication](miscommunication/) module attempts to add some type
+discpline to Concrete Communication objects. Previously this functionality
+was handled in an uber-object, `SuperCommunication`. This cleaner API allows
+for more modular implementations (e.g., aggresively cached vs. not).
+
+See more in the `miscommunication` directory.
+
+### `analytics` library uses `miscommunication`
+Various interfaces have been added to the `analytics-base` library that utilize
+`miscommunication` interfaces for more safe annotation.
+
+For example, if an `Analytic` implementation produces a `SectionedCommunication` object,
+there exists [an interface](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sectioned/SectionedCommunication.java)
+that allows for type-safe `Communication` objects to be produced. As a result, interfaces in
+`analytics-base` have been updated.
+
+Additionally, the `ingesters-simple` and `analytics-simple` now have example implementations
+of these more strongly typed `Communication`s.
+
+### Miscellaneous
+* Small improvements to `validation` module when working with `Tokenizations` and their children
+* Fix a few bugs with respect to `analytics-simple` analytics not correctly validating their inputs
+
 ## Concrete-Java v4.4.9 - 2015-5-3
 * Fix a bug with the `SingleSectioningAnalytic`'s validity check
 * Add `TokenizationFactory` and `TextSpanFactory` utility classes
