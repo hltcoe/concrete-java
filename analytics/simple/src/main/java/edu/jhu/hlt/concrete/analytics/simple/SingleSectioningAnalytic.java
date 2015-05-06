@@ -65,14 +65,6 @@ public class SingleSectioningAnalytic implements Analytic {
   public String getToolVersion() {
     return ProjectConstants.VERSION;
   }
-
-  /* (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolNotes()
-   */
-  @Override
-  public List<String> getToolNotes() {
-    return new ArrayList<String>();
-  }
   
   private boolean isAnnotatable(Communication c) {
     boolean hasSections = c.isSetSectionList() && c.getSectionListSize() > 0;
