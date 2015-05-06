@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -17,7 +17,6 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 
 /**
- * @author max
  *
  */
 public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
@@ -72,18 +71,31 @@ public class ValidatableTokenization extends AbstractAnnotation<Tokenization> {
             && this.printStatus("TokenList must not be empty.", this.annotation.getTokenList().getTokenListSize() > 0)
             && this.printStatus("TokenList must be valid.", this.validateTokenList());
         if (validByType) {
-          Iterator<TokenTagging> iter = this.annotation.getTokenTaggingListIterator();
-          boolean ttsValid = true;
-          while (ttsValid && iter.hasNext()) {
-            // Check validity of each TokenTagging.
-            TokenTagging tt = iter.next();
-            ttsValid = new ValidatableTokenTagging(tt, this.annotation).isValid();
-          }
+          validByType = this.validateTokenTaggings();
         }
       }
 
       return validByType;
     }
+  }
+
+  /**
+   * @return true if {@link TokenTagging} list is not present in this {@link Tokenization}, or if all TokenTagging
+   * objects in the list are valid.
+   */
+  private boolean validateTokenTaggings() {
+    boolean ttsValid = true;
+    if (this.annotation.isSetTokenTaggingList()) {
+      Iterator<TokenTagging> iter = this.annotation.getTokenTaggingListIterator();
+
+      while (ttsValid && iter.hasNext()) {
+        // Check validity of each TokenTagging.
+        TokenTagging tt = iter.next();
+        ttsValid = new ValidatableTokenTagging(tt, this.annotation).isValid();
+      }
+    }
+
+    return ttsValid;
   }
 
   /**

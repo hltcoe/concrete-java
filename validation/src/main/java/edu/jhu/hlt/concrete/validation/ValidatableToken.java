@@ -9,7 +9,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
 
 /**
- * @author max
  *
  */
 public class ValidatableToken extends AbstractAnnotation<Token> {
