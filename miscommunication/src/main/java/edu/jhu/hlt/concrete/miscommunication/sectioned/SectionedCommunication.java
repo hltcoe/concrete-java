@@ -13,7 +13,7 @@ import edu.jhu.hlt.concrete.miscommunication.WrappedCommunication;
 
 /**
  * Interface representing a Concrete {@link Communication} with <strong>at
- * least one</br> section.
+ * least one</strong> {@link Section}.
  */
 public interface SectionedCommunication extends WrappedCommunication {
   public List<Section> getSections();
