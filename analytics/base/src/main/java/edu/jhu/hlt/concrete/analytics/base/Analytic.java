@@ -13,5 +13,11 @@ import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
  * with some additions.
  */
 public interface Analytic extends SafeTooledAnnotationMetadata {
+  /**
+   * @param c a {@link Communication} to annotate. It is up to the analytic to determine
+   * if this communication is valid for annotation.
+   * @return a {@link Communication} object with the analytic's annotations
+   * @throws AnalyticException on analytic error
+   */
   public Communication annotate(Communication c) throws AnalyticException;
 }

@@ -21,6 +21,10 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
     </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>miscommunication</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
