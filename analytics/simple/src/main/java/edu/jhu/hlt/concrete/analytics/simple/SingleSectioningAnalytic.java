@@ -4,9 +4,6 @@
  */
 package edu.jhu.hlt.concrete.analytics.simple;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
