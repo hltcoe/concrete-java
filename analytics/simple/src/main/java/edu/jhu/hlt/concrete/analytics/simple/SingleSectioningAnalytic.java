@@ -11,7 +11,9 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
-import edu.jhu.hlt.concrete.analytics.base.DependentAnalytic;
+import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.sectioned.CachedSectionedCommunication;
+import edu.jhu.hlt.concrete.miscommunication.sectioned.SectionedCommunication;
 import edu.jhu.hlt.concrete.section.SingleSectionSegmenter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
@@ -22,7 +24,7 @@ import edu.jhu.hlt.concrete.util.Timing;
  * object without any {@link Section}s and creates a single section
  * that encompasses the entire text.
  */
-public class SingleSectioningAnalytic implements DependentAnalytic {
+public class SingleSectioningAnalytic implements Analytic {
   
   private final String sectionKinds;
   
@@ -72,8 +74,7 @@ public class SingleSectioningAnalytic implements DependentAnalytic {
     return new ArrayList<String>();
   }
   
-  @Override
-  public boolean isAnnotatable(Communication c) {
+  private boolean isAnnotatable(Communication c) {
     boolean hasSections = c.isSetSectionList() && c.getSectionListSize() > 0;
     boolean valid = !hasSections && c.isSetText() && !c.getText().equals("");
     return valid;
@@ -84,6 +85,10 @@ public class SingleSectioningAnalytic implements DependentAnalytic {
    */
   @Override
   public Communication annotate(Communication c) throws AnalyticException {
+    return this.annotateTyped(c).getRoot();
+  }
+  
+  public SectionedCommunication annotateTyped(Communication c) throws AnalyticException {
     // ensure this analytic can process this communication
     if (!this.isAnnotatable(c))
       throw new AnalyticException("Communication has sections already, or it does not have text.");
@@ -91,9 +96,11 @@ public class SingleSectioningAnalytic implements DependentAnalytic {
       Communication cpy = new Communication(c);
       Section s = SingleSectionSegmenter.createSingleSection(cpy, this.sectionKinds);
       cpy.addToSectionList(s);
-      return cpy;
+      return new CachedSectionedCommunication(cpy);
     } catch (ConcreteException e) {
       // will not throw - inputs have been checked
+      throw new AnalyticException(e);
+    } catch (MiscommunicationException e) {
       throw new AnalyticException(e);
     }
   }
