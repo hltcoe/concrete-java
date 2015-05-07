@@ -11,9 +11,9 @@ import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteSituationMentionized extends ConcreteTokenized {
   public Map<UUID, SituationMention> generateSituationMentionIdToSituationMentionMap();
 }

@@ -11,9 +11,9 @@ import org.apache.thrift.TFieldIdEnum;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface AnnotationDiffTool<T extends TBase<T, ? extends TFieldIdEnum>> extends AnnotationTool {
   /**
    * Generate an annotation 'diff' based on this tool's generic type (roughly: any Thrift object).
