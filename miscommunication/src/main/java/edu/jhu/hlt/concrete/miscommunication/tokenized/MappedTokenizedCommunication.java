@@ -18,6 +18,6 @@ import edu.jhu.hlt.concrete.UUID;
  */
 public interface MappedTokenizedCommunication extends TokenizedCommunication {
   public Map<UUID, Tokenization> getUuidToTokenizationMap();
-  
+
   public Map<UUID, Map<Integer, Token>> getUuidToTokenIdxToTokenMap();
 }

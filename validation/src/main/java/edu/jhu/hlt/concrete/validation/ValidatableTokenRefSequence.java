@@ -22,7 +22,7 @@ import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommuni
 public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequence> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ValidatableTokenRefSequence.class);
-  
+
   /**
    * @param annotation
    */
@@ -32,7 +32,7 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.validation.AbstractAnnotation#isValidWithComm(edu.jhu.hlt.concrete.Communication)
    */
   @Override
@@ -57,7 +57,7 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see edu.jhu.hlt.concrete.validation.AbstractAnnotation#isValid()
    */
   @Override
