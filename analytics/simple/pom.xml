@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-project</artifactId>
+    <version>4.4.11-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>concrete-analytics-simple</artifactId>
+  <name>Simple Analytics</name>
+  <description>Simple Concrete analytics.</description>
+
+  <properties>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-analytics-base</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>tift</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
