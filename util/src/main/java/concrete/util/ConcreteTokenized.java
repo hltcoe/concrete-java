@@ -12,9 +12,9 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteTokenized extends ConcreteSentenced {
   public Map<UUID, Tokenization> generateTokenizationIdToTokenizationMap();
   public Map<UUID, Map<Integer, Token>> generateTokenizationIdToTokenIdxToTokenMap();

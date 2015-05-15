@@ -13,6 +13,7 @@ import java.util.Optional;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
@@ -21,7 +22,7 @@ import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunicat
 import edu.jhu.hlt.concrete.miscommunication.sentenced.MappedSentenceCommunication;
 
 /**
- * Aggressively cached implementation of {@link MappedTokenizedCommunication},  
+ * Aggressively cached implementation of {@link MappedTokenizedCommunication},
  * {@link MappedSentenceCommunication}, and {@link MappedSectionCommunication}.
  * <br><br>
  * Assumes that each {@link Sentence} object has at least one {@link Tokenization} object. If not, will throw a
@@ -30,8 +31,10 @@ import edu.jhu.hlt.concrete.miscommunication.sentenced.MappedSentenceCommunicati
 public class CachedTokenizationCommunication implements MappedTokenizedCommunication, MappedSentenceCommunication, MappedSectionCommunication {
 
   private final CachedSentencedCommunication cpy;
+
   private final Map<UUID, Tokenization> tokenizationIdToTokenizationMap;
-  
+  private final Map<UUID, Map<Integer, Token>> tokenizationIdToTokenIdxToTokenMap;
+
   public CachedTokenizationCommunication(final Communication orig) throws MiscommunicationException {
     this.cpy = new CachedSentencedCommunication(orig);
     Optional<Sentence> bs = this.cpy.getSentences().stream()
@@ -39,18 +42,28 @@ public class CachedTokenizationCommunication implements MappedTokenizedCommunica
         .findAny();
     if (bs.isPresent())
       throw new MiscommunicationException("At least one Sentence did not have a Tokenization (UUID = " + bs.get().getUuid().getUuidString() + ").");
-    
+
     final Map<UUID, Tokenization> toRet = new LinkedHashMap<>();
+    final Map<UUID, Map<Integer, Token>> uuidToIdxToTokenMap = new LinkedHashMap<>();
+
     List<Sentence> stList = new ArrayList<>(this.cpy.getSentences());
     for (Sentence st : stList) {
       Tokenization tok = st.getTokenization();
       UUID tId = tok.getUuid();
       toRet.put(tId, tok);
+
+      final Map<Integer, Token> idToTokenMap = new LinkedHashMap<>();
+      if (tok.isSetTokenList())
+        for (Token t: tok.getTokenList().getTokenList()) {
+          idToTokenMap.put(t.getTokenIndex(), t);
+          uuidToIdxToTokenMap.put(tId, idToTokenMap);
+        }
     }
 
     this.tokenizationIdToTokenizationMap = toRet;
+    this.tokenizationIdToTokenIdxToTokenMap = uuidToIdxToTokenMap;
   }
-  
+
   private final boolean validPredicate(final Sentence s) {
     return s.isSetTokenization();
   }
@@ -109,5 +122,13 @@ public class CachedTokenizationCommunication implements MappedTokenizedCommunica
   @Override
   public Map<UUID, Tokenization> getUuidToTokenizationMap() {
     return new LinkedHashMap<>(this.tokenizationIdToTokenizationMap);
+  }
+
+  /* (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.miscommunication.tokenized.MappedTokenizedCommunication#getUuidToTokenIdxToTokenMap()
+   */
+  @Override
+  public Map<UUID, Map<Integer, Token>> getUuidToTokenIdxToTokenMap() {
+    return new LinkedHashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
   }
 }

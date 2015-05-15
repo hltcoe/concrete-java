@@ -7,6 +7,7 @@ package edu.jhu.hlt.concrete.miscommunication.tokenized;
 import java.util.Map;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 
@@ -17,4 +18,6 @@ import edu.jhu.hlt.concrete.UUID;
  */
 public interface MappedTokenizedCommunication extends TokenizedCommunication {
   public Map<UUID, Tokenization> getUuidToTokenizationMap();
+
+  public Map<UUID, Map<Integer, Token>> getUuidToTokenIdxToTokenMap();
 }

@@ -11,9 +11,9 @@ import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteEntityMentionized extends ConcreteTokenized {
   public Map<UUID, EntityMention> generateEntityMentionIdToEntityMentionMap();
 }

@@ -47,8 +47,9 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
  * Be aware that changes to wrapped {@link Communication} objects are not propagated through to the
  * {@link SuperCommunication} object.
  *
- * @author max
+ * @deprecated
  */
+@Deprecated
 public class SuperCommunication implements ConcreteSituationized, ConcreteEntityized {
 
   protected final Communication comm;

@@ -1,5 +1,9 @@
 # News
 
+## Concrete-Java v4.4.11 - 2015-5-15
+* Fixes an issue with validation code that uses deprecated libraries - now using
+the Miscommunication API.
+
 ## Concrete-Java v4.4.10 - 2015-5-6
 
 ### Introduction of `miscommunication` module
