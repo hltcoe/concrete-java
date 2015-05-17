@@ -13,8 +13,9 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
+import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -46,19 +47,24 @@ public class TiftTokenizer implements Analytic {
   @Override
   public Communication annotate(Communication comm) throws AnalyticException {
     Communication cp = new Communication(comm);
-    SuperCommunication sc = new SuperCommunication(cp);
-    // backing map is a LinkedHashMap - ordering should be OK
-    List<Sentence> sentences = new ArrayList<>(sc.generateSentenceIdToSentenceMap().values());
-    for (Sentence st : sentences) {
-      SuperTextSpan sts = new SuperTextSpan(st.getTextSpan(), cp);
-      String sentenceText = sts.getText();
-      Tokenization t = this.tokenizer.tokenizeSentence(sentenceText, 0, st.getUuid());
-      // override metadata (should be patched later)
-      t.setMetadata(TooledMetadataConverter.convert(this));
-      st.setTokenization(t);
-    }
+    // SuperCommunication sc = new SuperCommunication(cp);
+    try {
+      CachedSentencedCommunication csc = new CachedSentencedCommunication(cp);
+      // backing map is a LinkedHashMap - ordering should be OK
+      List<Sentence> sentences = new ArrayList<>(csc.getSentences());
+      for (Sentence st : sentences) {
+        SuperTextSpan sts = new SuperTextSpan(st.getTextSpan(), cp);
+        String sentenceText = sts.getText();
+        Tokenization t = this.tokenizer.tokenizeSentence(sentenceText, 0, st.getUuid());
+        // override metadata (should be patched later)
+        t.setMetadata(TooledMetadataConverter.convert(this));
+        st.setTokenization(t);
+      }
 
-    return cp;
+      return cp;
+    } catch (MiscommunicationException e) {
+      throw new AnalyticException(e);
+    }
   }
 
   /* (non-Javadoc)

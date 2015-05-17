@@ -21,8 +21,9 @@ import edu.jhu.hlt.concrete.TokenRefSequence;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
+import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
@@ -34,11 +35,11 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 public class BasicSituationTagger implements Analytic {
 
   private static final Logger logger = LoggerFactory.getLogger(BasicSituationTagger.class);
-  
+
   private final Set<String> basicActionSet;
-  
+
   /**
-   * 
+   *
    */
   public BasicSituationTagger() {
     this.basicActionSet = new HashSet<>();
@@ -49,41 +50,46 @@ public class BasicSituationTagger implements Analytic {
   @Override
   public Communication annotate (Communication c) throws AnalyticException {
     final Communication cpy = new Communication(c);
-    SuperCommunication sc = new SuperCommunication(cpy);
-    SituationMentionSet sms = new SituationMentionSet();
-    sms.setMetadata(TooledMetadataConverter.convert(this));
-    sms.setUuid(UUIDFactory.newUUID());
+    // SuperCommunication sc = new SuperCommunication(cpy);
+    try {
+      CachedTokenizationCommunication ctc = new CachedTokenizationCommunication(cpy);
+      SituationMentionSet sms = new SituationMentionSet();
+      sms.setMetadata(TooledMetadataConverter.convert(this));
+      sms.setUuid(UUIDFactory.newUUID());
 
-    List<Tokenization> tokenizations = new ArrayList<>(sc.generateTokenizationIdToTokenizationMap().values());
-    for (Tokenization t : tokenizations) {
-      TokenList tl = t.getTokenList();
-      for (Token tk : tl.getTokenList()) {
-        String tokenText = tk.getText();
-        logger.debug("Working with token text: {}", tokenText);
-        String lc = tokenText.toLowerCase();
-        if (this.basicActionSet.contains(lc)) {
-          TokenRefSequence trs = new TokenRefSequence();
-          trs.setTokenizationId(t.getUuid());
-          trs.setTextSpan(tk.getTextSpan());
-          trs.addToTokenIndexList(tk.getTokenIndex());
+      List<Tokenization> tokenizations = new ArrayList<>(ctc.getTokenizations());
+      for (Tokenization t : tokenizations) {
+        TokenList tl = t.getTokenList();
+        for (Token tk : tl.getTokenList()) {
+          String tokenText = tk.getText();
+          logger.debug("Working with token text: {}", tokenText);
+          String lc = tokenText.toLowerCase();
+          if (this.basicActionSet.contains(lc)) {
+            TokenRefSequence trs = new TokenRefSequence();
+            trs.setTokenizationId(t.getUuid());
+            trs.setTextSpan(tk.getTextSpan());
+            trs.addToTokenIndexList(tk.getTokenIndex());
 
-          SituationMention sm = new SituationMention();
-          sm.setUuid(UUIDFactory.newUUID());
-          sm.setConfidence(1.0d);
-          sm.setSituationType("Fact");
+            SituationMention sm = new SituationMention();
+            sm.setUuid(UUIDFactory.newUUID());
+            sm.setConfidence(1.0d);
+            sm.setSituationType("Fact");
 
-          sm.setText(tokenText);
-          sm.setTokens(trs);
+            sm.setText(tokenText);
+            sm.setTokens(trs);
 
-          sms.addToMentionList(sm);
+            sms.addToMentionList(sm);
+          }
         }
       }
+
+      if (sms.getMentionListSize() < 1)
+        sms.setMentionList(new ArrayList<SituationMention>());
+      cpy.addToSituationMentionSetList(sms);
+      return cpy;
+    } catch (MiscommunicationException e) {
+      throw new AnalyticException(e);
     }
-    
-    if (sms.getMentionListSize() < 1)
-      sms.setMentionList(new ArrayList<SituationMention>());
-    cpy.addToSituationMentionSetList(sms);
-    return cpy;
   }
 
   /* (non-Javadoc)
