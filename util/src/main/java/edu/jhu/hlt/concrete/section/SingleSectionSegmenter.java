@@ -27,10 +27,7 @@ import edu.jhu.hlt.utilt.io.NotFileException;
  * A class that exposes a method for converting {@link String} objects,
  * representing contents of a {@link Communication} for example, into a single
  * Concrete {@link Section}.
- *
- * @deprecated
  */
-@Deprecated
 public class SingleSectionSegmenter {
 
   private static final Logger logger = LoggerFactory.getLogger(SingleSectionSegmenter.class);
