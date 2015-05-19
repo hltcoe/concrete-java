@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
@@ -93,7 +93,7 @@ public class SectionKindModifier {
         Communication nc = new Communication(comm);
         for (Section s : nc.getSectionList())
           s.setKind(sectionKind);
-        new SuperCommunication(nc).writeToFile(outFile, false);
+        new WritableCommunication(nc).writeToFile(outFile, false);
       } catch (ConcreteException e) {
         logger.error("Caught exception writing output.", e);
         System.exit(1);
