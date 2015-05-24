@@ -1,5 +1,9 @@
 # News
 
+## Concrete-Java v4.5.0 - 2015-5-15
+* Build against concrete v4.5 (ConstituentRef addition)
+* Update to the latest annotated-nyt dependency, fixing an ingest issue.
+
 ## Concrete-Java v4.4.11 - 2015-5-15
 * Fixes an issue with validation code that uses deprecated libraries - now using
 the Miscommunication API.
