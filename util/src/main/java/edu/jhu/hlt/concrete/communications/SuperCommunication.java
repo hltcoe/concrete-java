@@ -156,7 +156,11 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *          - whether to delete the file at path, if it exists.
    * @throws ConcreteException
    *           if there are {@link IOException}s or {@link TException}s.
+   *
+   * @deprecated
+   * @see WritableCommunication#writeToFile(Path, boolean)
    */
+  @Deprecated
   public void writeToFile(Path path, boolean deleteExisting) throws ConcreteException {
     try {
       if (deleteExisting)
@@ -181,7 +185,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *          - whether to delete the file at path, if it exists.
    * @throws ConcreteException
    *           if there are {@link IOException}s or {@link TException}s.
+   * @deprecated
+   * @see WritableCommunication#writeToFile(String, boolean)
    */
+  @Deprecated
   public void writeToFile(String pathString, boolean deleteExisting) throws ConcreteException {
     this.writeToFile(Paths.get(pathString), deleteExisting);
   }
@@ -460,12 +467,12 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       return new LinkedHashMap<>(map);
     }
   }
-  
+
   /**
    * For this {@link Communication}, extract a map of {@link Entity} to
    * list of {@link EntityMention} objects. The value associated with each
    * Entity is the relevant EntityMentions of that entity.
-   * 
+   *
    * @return a {@link Map} with the appropriate {@link Entity} to
    * {@link EntityMention} list values
    */
@@ -478,7 +485,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         idToMentionMap.put(eid, em);
       }
     }
-    
+
     List<EntitySet> esList = this.comm.getEntitySetList();
     EntitySet fes = esList.get(0);
     List<Entity> entityList = fes.getEntityList();
@@ -489,7 +496,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
         relatedMentionList.add(idToMentionMap.get(id));
       toRet.put(e, relatedMentionList);
     }
-    
+
     return toRet;
   }
 }
