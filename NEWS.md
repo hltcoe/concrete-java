@@ -1,6 +1,12 @@
 # News
 
-## Concrete-Java v4.5.0 - 2015-5-15
+## Concrete-Java v4.5.1 - 2015-5-26
+* Add [NonTokenizedSentencedCommunication](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sentenced/NonTokenizedSentencedCommunication.java),
+an implementation of `MappedSentenceCommunication` that enforces no `Sentence` objects have `Tokenization`s set.
+* Add [NonSentencedSectionedCommunication](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sectioned/NonSentencedSectionedCommunication.java),
+an implementation of `MappedSectionCommunication` that enforces no `Section` objects have `Sentence`s set.
+
+## Concrete-Java v4.5.0 - 2015-5-25
 * Build against concrete v4.5 (ConstituentRef addition)
 * Update to the latest annotated-nyt dependency, fixing an ingest issue.
 
