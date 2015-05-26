@@ -16,6 +16,8 @@ import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunication;
+import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
+import edu.jhu.hlt.concrete.miscommunication.tokenized.TokenizedCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -25,7 +27,7 @@ import edu.jhu.hlt.tift.Tokenizer;
  * A wrapper around Tift that provides {@link Tokenization} objects
  * for each {@link Sentence} in each {@link Section}.
  */
-public class TiftTokenizer implements Analytic {
+public class TiftTokenizer implements Analytic<TokenizedCommunication> {
 
   private final Tokenizer tokenizer;
 
@@ -45,7 +47,7 @@ public class TiftTokenizer implements Analytic {
   }
 
   @Override
-  public Communication annotate(Communication comm) throws AnalyticException {
+  public TokenizedCommunication annotate(Communication comm) throws AnalyticException {
     Communication cp = new Communication(comm);
     // SuperCommunication sc = new SuperCommunication(cp);
     try {
@@ -61,7 +63,7 @@ public class TiftTokenizer implements Analytic {
         st.setTokenization(t);
       }
 
-      return cp;
+      return new CachedTokenizationCommunication(cp);
     } catch (MiscommunicationException e) {
       throw new AnalyticException(e);
     }

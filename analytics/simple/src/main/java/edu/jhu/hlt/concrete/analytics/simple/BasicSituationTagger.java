@@ -23,6 +23,8 @@ import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.situationed.CachedSituationMentionedCommunication;
+import edu.jhu.hlt.concrete.miscommunication.situationed.SituationMentionedCommunication;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -32,7 +34,7 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
  * An example of a tool that produces {@link SituationMentionSet}s by tagging any
  * some basic actions.
  */
-public class BasicSituationTagger implements Analytic {
+public class BasicSituationTagger implements Analytic<SituationMentionedCommunication> {
 
   private static final Logger logger = LoggerFactory.getLogger(BasicSituationTagger.class);
 
@@ -48,7 +50,7 @@ public class BasicSituationTagger implements Analytic {
   }
 
   @Override
-  public Communication annotate (Communication c) throws AnalyticException {
+  public SituationMentionedCommunication annotate (Communication c) throws AnalyticException {
     final Communication cpy = new Communication(c);
     // SuperCommunication sc = new SuperCommunication(cpy);
     try {
@@ -86,7 +88,7 @@ public class BasicSituationTagger implements Analytic {
       if (sms.getMentionListSize() < 1)
         sms.setMentionList(new ArrayList<SituationMention>());
       cpy.addToSituationMentionSetList(sms);
-      return cpy;
+      return new CachedSituationMentionedCommunication(cpy);
     } catch (MiscommunicationException e) {
       throw new AnalyticException(e);
     }

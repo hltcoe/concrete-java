@@ -6,17 +6,17 @@ package edu.jhu.hlt.concrete.analytics.base;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.miscommunication.WrappedCommunication;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.TokenizedCommunication;
 
 /**
  * Analytic that depends upon Concrete {@link Tokenization} objects inside
  * the {@link Communication} (at least).
  */
-public interface TokenizationedCommunicationAnalytic extends Analytic {
+public interface TokenizationedCommunicationAnalytic<T extends WrappedCommunication> extends Analytic<T> {
   /**
    * @param sc a {@link TokenizedCommunication} object
-   * @return a {@link Communication} with the analytic's annotations
    * @throws AnalyticException on analytic error
    */
-  public Communication annotate(TokenizedCommunication sc) throws AnalyticException;
+  public T annotate(TokenizedCommunication sc) throws AnalyticException;
 }
