@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.gigaword.CommunicationizableGigawordDocument;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
@@ -64,11 +64,11 @@ public class GigawordIngesterTest {
     assertEquals(
         "John Smith, manager of ACME INC, was bit by a dog on March 10th, 2013.\n", new SuperTextSpan(sectionList.get(1).getTextSpan(), c).getText());
     assertEquals("Passage", sectionList.get(1).getKind());
-    
+
     AnnotationMetadata md = c.getMetadata();
     assertTrue(md.getTool().contains("concrete-ingesters-gigaword"));
 
-    new SuperCommunication(c).writeToFile(tmpFolder.getRoot().toPath().resolve("test-out.concrete"), true);
+    new WritableCommunication(c).writeToFile(tmpFolder.getRoot().toPath().resolve("test-out.concrete"), true);
   }
 
   @Test
