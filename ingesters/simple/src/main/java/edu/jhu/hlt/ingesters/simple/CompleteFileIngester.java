@@ -24,7 +24,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.CommunicationFactory;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
@@ -143,7 +143,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
       try {
         UTF8FileIngester ing = new CompleteFileIngester(commType.get());
         Communication comm = ing.fromCharacterBasedFile(ep);
-        new SuperCommunication(comm).writeToFile(outFile, false);
+        new WritableCommunication(comm).writeToFile(outFile, false);
       } catch (IngestException e) {
         logger.error("Caught exception during ingest.", e);
         System.exit(1);
