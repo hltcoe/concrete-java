@@ -1,5 +1,22 @@
 # News
 
+## Concrete-Java v4.5.2 - 2015-5-27
+Changes include:
+### `miscommunication`
+* Add implementations supporting `EntityMention`s and `SituationMention`s.
+* Fix an issue where `NonTokenizedSentencedCommunication` did not actually
+have anything implemented.
+* Add a package for lemmas.
+
+### `analytics`
+* Refactor the interface to allow production of generic `WrappedCommunication`
+implementations.
+* Add an analytic interface, `NonSentencedSectionedCommunicationAnalytic`,
+that enforces input Communications have `Section`s, but no `Sentence`s.
+
+### General
+* Fixed warnings for deprecated classes across numerous packages.
+
 ## Concrete-Java v4.5.1 - 2015-5-26
 * Add [NonTokenizedSentencedCommunication](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sentenced/NonTokenizedSentencedCommunication.java),
 an implementation of `MappedSentenceCommunication` that enforces no `Sentence` objects have `Tokenization`s set.
