@@ -7,8 +7,8 @@ Miscommunication is a library providing a set of utility classes wrapping Concre
 `Communication`s. This allows for type safety to be added to Communication objects,
 providing a cleaner API for Java consumers of Concrete Communications.
 
-Basic wrappers can be found in the [miscommunication](src/main/java/edu/jhu/hlt/concrete/miscommunication),
-which include types for many popular use cases.
+Basic wrappers can be found in the [miscommunication](src/main/java/edu/jhu/hlt/concrete/miscommunication)
+package, which include types for many popular use cases.
 
 # Quick start
 Support you have a `Communication` object that you are certain pre-hoc contains `Sentence` objects.
@@ -24,3 +24,6 @@ Communication hasSents = ...
 CachedSentencedCommunication csc = new CachedSentencedCommunication(hasSents);
 List<Sentence> allSents = csc.getSentences(); // way nicer than before!
 ```
+
+Similar patterns are available for `Section`ed and `Tokenization`ed communications. See
+the listed package above for more examples.
