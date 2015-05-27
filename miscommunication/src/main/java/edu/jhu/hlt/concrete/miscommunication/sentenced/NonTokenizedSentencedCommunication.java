@@ -54,8 +54,7 @@ public class NonTokenizedSentencedCommunication implements MappedSentenceCommuni
    */
   @Override
   public List<Sentence> getSentences() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.csc.getSentences();
   }
 
   /* (non-Javadoc)
@@ -63,8 +62,7 @@ public class NonTokenizedSentencedCommunication implements MappedSentenceCommuni
    */
   @Override
   public List<Section> getSections() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.csc.getSections();
   }
 
   /* (non-Javadoc)
@@ -72,8 +70,7 @@ public class NonTokenizedSentencedCommunication implements MappedSentenceCommuni
    */
   @Override
   public Communication getRoot() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.csc.getRoot();
   }
 
   /* (non-Javadoc)
@@ -81,8 +78,6 @@ public class NonTokenizedSentencedCommunication implements MappedSentenceCommuni
    */
   @Override
   public Map<UUID, Sentence> getUuidToSentenceMap() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.csc.getUuidToSentenceMap();
   }
-
 }
