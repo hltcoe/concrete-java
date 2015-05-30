@@ -26,21 +26,21 @@ import java.util.regex.Pattern;
 /*
  * Based on combination of patterns from an older tokenizer of my own, the PTB
  * patterns, and those of two other Twitter tokenizers:
- * 
+ *
  * -------------------------------------- --------------------------------------
  * http://sentiment.christopherpotts.net/code-data/happyfuntokenizing.py
- * 
+ *
  * Which included header information:
- * 
+ *
  * __author__ = "Christopher Potts" __copyright__ =
  * "Copyright 2011, Christopher Potts" __credits__ = [] __license__ =
  * "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-nc-sa/3.0/"
  * __version__ = "1.0"
- * 
+ *
  * -------------------------------------- --------------------------------------
  * O'Connor's twokenize.py/scala package. Below is the relevant header/author
  * information as required by Apache 2.0, taken from twokenize.scala :
- * 
+ *
  * Code History Original version in TweetMotif in Python (2009-2010,
  * github.com/brendano/tweetmotif) having two forks: - (2011) Scala port and
  * improvements by David Snyder (dsnyder@cs.utexas.edu) and Jason Baldridge
@@ -48,26 +48,26 @@ import java.util.regex.Pattern;
  * (2011) Modifications for POS tagging by Kevin Gimpel (kgimpel@cs.cmu.edu) and
  * Daniel Mills (dpmills@cs.cmu.edu) Merge to Scala by Brendan O'Connor, for ARK
  * TweetNLP package (2011-06)
- * 
+ *
  * Original paper:
- * 
+ *
  * TweetMotif: Exploratory Search and Topic Summarization for Twitter. Brendan
  * O'Connor, Michel Krieger, and David Ahn. ICWSM-2010 (demo track)
  * http://brenocon.com/oconnor_krieger_ahn.icwsm2010.tweetmotif.pdf
- * 
+ *
  * ---
- * 
+ *
  * Scala port of Brendar O'Connor's twokenize.py
- * 
+ *
  * This is not a direct port, as some changes were made in the aim of
  * simplicity.
- * 
+ *
  * - David Snyder (dsnyder@cs.utexas.edu) April 2011
- * 
+ *
  * Modifications to more functional style, fix a few bugs, and making output
  * more like twokenize.py. Added abbrevations. Tweaked some regex's to produce
  * better tokens.
- * 
+ *
  * - Jason Baldridge (jasonbaldridge@gmail.com) June 2011
  */
 public class TwitterTokenizer {
@@ -245,51 +245,51 @@ public class TwitterTokenizer {
     public static List<PatternStringTuple> getRepeatedPatterns() {
         List<PatternStringTuple> tupleList = new ArrayList<>();
 
-        Object[] x = { 
-                "(\\.)", 28, -1, ".....", 
-                "(\\.)", 9, 27, "....", 
-                "(\\.)", 4, 8, "...", 
-                "(\\.)", 2, 3, "..", 
-                "(\\?)", 28, -1, "?????", 
-                "(\\?)", 9, 27, "????", 
-                "(\\?)", 4, 8, "???", 
-                "(\\?)", 2, 3, "??", 
-                "(!)", 28, -1, "!!!!!", 
+        Object[] x = {
+                "(\\.)", 28, -1, ".....",
+                "(\\.)", 9, 27, "....",
+                "(\\.)", 4, 8, "...",
+                "(\\.)", 2, 3, "..",
+                "(\\?)", 28, -1, "?????",
+                "(\\?)", 9, 27, "????",
+                "(\\?)", 4, 8, "???",
+                "(\\?)", 2, 3, "??",
+                "(!)", 28, -1, "!!!!!",
                 "(!)", 9, 27, "!!!!",
-                "(!)", 4, 8, "!!!", 
+                "(!)", 4, 8, "!!!",
                 "(!)", 2, 3, "!!",
                 // ! inverted
-                "(\u00a1)", 28, -1, "\u00a1\u00a1\u00a1\u00a1\u00a1", 
-                "(\u00a1)", 9, 27, "\u00a1\u00a1\u00a1\u00a1", 
-                "(\u00a1)", 4, 8, "\u00a1\u00a1\u00a1", 
+                "(\u00a1)", 28, -1, "\u00a1\u00a1\u00a1\u00a1\u00a1",
+                "(\u00a1)", 9, 27, "\u00a1\u00a1\u00a1\u00a1",
+                "(\u00a1)", 4, 8, "\u00a1\u00a1\u00a1",
                 "(\u00a1)", 2, 3, "\u00a1\u00a1",
                 // ? inverted
-                "(\u00bf)", 28, -1, "\u00bf\u00bf\u00bf\u00bf\u00bf", 
-                "(\u00bf)", 9, 27, "\u00bf\u00bf\u00bf\u00bf", 
-                "(\u00bf)", 4, 8, "\u00bf\u00bf\u00bf", 
-                "(\u00bf)", 2, 3, "\u00bf\u00bf" 
+                "(\u00bf)", 28, -1, "\u00bf\u00bf\u00bf\u00bf\u00bf",
+                "(\u00bf)", 9, 27, "\u00bf\u00bf\u00bf\u00bf",
+                "(\u00bf)", 4, 8, "\u00bf\u00bf\u00bf",
+                "(\u00bf)", 2, 3, "\u00bf\u00bf"
             };
         for (int i = 0; i < x.length - 3; i += 4)
             tupleList.add(new PatternStringTuple(Pattern.compile(x[i] + "{" + x[i + 1] + ","
                     + ((Integer) x[i + 2] > 0 ? x[i + 2] + "}" : "}")), (String) x[i + 3]));
 
-        String[] y = { 
-                "[eEaA]?[hH]([eEaA]|[hH]){54,}", "hahahahaha", 
+        String[] y = {
+                "[eEaA]?[hH]([eEaA]|[hH]){54,}", "hahahahaha",
                 "[eEaA]?[hH]([eEaA]|[hH]){18,53}", "hahahaha",
-                "[eEaA]?[hH]([eEaA]|[hH]){6,17}", "hahaha", 
-                "[eEaA]?[hH]([eEaA]|[hH]){3,5}", "haha", 
-                "[jJ]([jJ]|[eEaA]){54,}", "jajajajaja", 
-                "[jJ]([jJ]|[eEaA]){18,53}", "jajajaja", 
-                "[jJ]([jJ]|[eEaA]){6,17}", "jajaja", 
-                "[jJ]([jJ]|[eEaA]){3,5}", "jaja", 
-                "[hH]+([mM]){54,}", "hmmmmm", 
-                "[hH]+([mM]){18,53}", "hmmmm", 
-                "[hH]+([mM]){6,17}", "hmmm", 
-                "[hH]+([mM]){3,5}", "hmm", 
-                "([mM]){54,}", "mmmmm", 
-                "([mM]){18,53}", "mmmm", 
-                "([mM]){6,17}", "mmm", 
-                "([mM]){3,5}", "mm" 
+                "[eEaA]?[hH]([eEaA]|[hH]){6,17}", "hahaha",
+                "[eEaA]?[hH]([eEaA]|[hH]){3,5}", "haha",
+                "[jJ]([jJ]|[eEaA]){54,}", "jajajajaja",
+                "[jJ]([jJ]|[eEaA]){18,53}", "jajajaja",
+                "[jJ]([jJ]|[eEaA]){6,17}", "jajaja",
+                "[jJ]([jJ]|[eEaA]){3,5}", "jaja",
+                "[hH]+([mM]){54,}", "hmmmmm",
+                "[hH]+([mM]){18,53}", "hmmmm",
+                "[hH]+([mM]){6,17}", "hmmm",
+                "[hH]+([mM]){3,5}", "hmm",
+                "([mM]){54,}", "mmmmm",
+                "([mM]){18,53}", "mmmm",
+                "([mM]){6,17}", "mmm",
+                "([mM]){3,5}", "mm"
             };
         for (int i = 0; i < y.length - 1; i += 2)
             tupleList.add(new PatternStringTuple(Pattern.compile(y[i]), y[i + 1]));
@@ -299,30 +299,30 @@ public class TwitterTokenizer {
 
   public static List<PatternStringTuple> getUnicodePatterns() throws IOException {
     List<PatternStringTuple> tupleList = new ArrayList<>();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(TwitterTokenizer.class.getClassLoader().getResourceAsStream("unicode.csv")));
-    String line;
-    String[] toks;
-    char[] pair;
-    String regexp;
-    while ((line = reader.readLine()) != null) {
-      toks = line.split(",");
-      if (toks[0].length() > 4) {
-        pair = Character.toChars(Integer.decode("0x" + toks[0]));
-        regexp = "(" + pair[0] + pair[1] + ")";
+    try (InputStreamReader isr = new InputStreamReader(TwitterTokenizer.class.getClassLoader().getResourceAsStream("unicode.csv"));
+        BufferedReader reader = new BufferedReader(isr);) {
+      String line;
+      String[] toks;
+      char[] pair;
+      String regexp;
+      while ((line = reader.readLine()) != null) {
+        toks = line.split(",");
+        if (toks[0].length() > 4) {
+          pair = Character.toChars(Integer.decode("0x" + toks[0]));
+          regexp = "(" + pair[0] + pair[1] + ")";
+          tupleList.add(new PatternStringTuple(Pattern.compile(regexp), toks[1]));
+        }
+        regexp = "(\\u" + toks[0] + ")";
         tupleList.add(new PatternStringTuple(Pattern.compile(regexp), toks[1]));
       }
-      regexp = "(\\u" + toks[0] + ")";
-      tupleList.add(new PatternStringTuple(Pattern.compile(regexp), toks[1]));
+
+      return tupleList;
     }
-
-    reader.close();
-
-    return tupleList;
   }
 
   /**
    * Returns 3 arrays:
-   * 
+   *
    * tokenization tokenzation tags code point offsets
    */
   public static String[][] tokenizeToArray(String text) {
