@@ -26,10 +26,10 @@ import java.util.List;
 public class GigawordStreamIngester implements IteratorBasedStreamIngester {
 
   private final Path path;
-  
+
   private final long ts;
   private static final String kindsGenerated;
-  
+
   static {
     StringBuilder sb = new StringBuilder();
     GigawordDocumentType[] gdt = GigawordDocumentType.values();
@@ -38,7 +38,7 @@ public class GigawordStreamIngester implements IteratorBasedStreamIngester {
       if (i + 1 < gdt.length)
         sb.append(", ");
     }
-    
+
     kindsGenerated = sb.toString();
   }
 
@@ -50,7 +50,7 @@ public class GigawordStreamIngester implements IteratorBasedStreamIngester {
     this.ts = Timing.currentLocalTime();
   }
 
-  private class ConcreteGigawordDocumentIterator implements Iterator<Communication> {
+  private static class ConcreteGigawordDocumentIterator implements Iterator<Communication> {
 
     final Iterator<GigawordDocument> baseIter;
 
