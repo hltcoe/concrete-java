@@ -29,7 +29,7 @@ public class ALNCIngester implements IteratorBasedStreamIngester, AutoCloseable 
   private final long ts;
   private final Path path;
   private final ALNCFileConverter conv;
-  
+
   public ALNCIngester(Path path) throws IngestException {
     this.ts = Timing.currentLocalTime();
     this.path = path;
@@ -39,7 +39,7 @@ public class ALNCIngester implements IteratorBasedStreamIngester, AutoCloseable 
       throw new IngestException(e);
     }
   }
-  
+
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.ingesters.base.Ingester#getKind()
    */
@@ -90,15 +90,15 @@ public class ALNCIngester implements IteratorBasedStreamIngester, AutoCloseable 
       throw new IngestException(e);
     }
   }
-  
-  private class ALNCCommunicationIterator implements Iterator<Communication> {
+
+  private static class ALNCCommunicationIterator implements Iterator<Communication> {
 
     private final Iterator<ALNCArticleBean> iterator;
-    
+
     private ALNCCommunicationIterator(ALNCFileConverter conv) throws IOException {
       this.iterator = conv.stream().iterator();
     }
-    
+
     @Override
     public boolean hasNext() {
       return this.iterator.hasNext();

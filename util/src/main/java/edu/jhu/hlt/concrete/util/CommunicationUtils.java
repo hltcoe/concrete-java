@@ -7,6 +7,7 @@ package edu.jhu.hlt.concrete.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,7 +56,7 @@ public class CommunicationUtils {
     if (!Files.exists(pathToFileList))
       throw new FileNotFoundException("No file at path: " + pathToFileList.toString());
     List<Path> pathList = new ArrayList<>();
-    try (Scanner sc = new Scanner(pathToFileList.toFile())) {
+    try (Scanner sc = new Scanner(pathToFileList.toFile(), StandardCharsets.UTF_8.toString())) {
       while (sc.hasNextLine())
         pathList.add(Paths.get(sc.nextLine()));
     }
