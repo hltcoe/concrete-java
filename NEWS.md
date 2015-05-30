@@ -1,5 +1,14 @@
 # News
 
+## Concrete-Java v4.5.4 - 2015-5-30
+Fix some UTF-8 encoding landmines, make a few inner classes static, and depend
+upon the latest acute and utilt dependencies.
+
+## Concrete-Java v4.5.3 - 2015-5-29
+Add `NoEmptySentenceListOrTokenizedCommunication`, a `miscommunication` implementation
+for analytics that depend upon section objects with either an unset sentence list
+or a sentence list with more than zero members. Primarily to support concrete-stanford.
+
 ## Concrete-Java v4.5.2 - 2015-5-27
 Changes include:
 ### `miscommunication`
