@@ -4,6 +4,7 @@
  */
 package edu.jhu.hlt.concrete.validation;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,10 +43,18 @@ public class ValidatableTokenRefSequence extends AbstractAnnotation<TokenRefSequ
 
     try {
       CachedTokenizationCommunication cc = new CachedTokenizationCommunication(c);
-
       if (this.printStatus("Tokenization UUID must be an existing tokenization.", cc.getUuidToTokenizationMap().keySet().contains(tokUuid))) {
         Set<Integer> tokIdxSet = cc.getUuidToTokenIdxToTokenMap().get(tokUuid).keySet();
-        return this.printStatus("All token IDs must be present in the tokenization.", tokIdxSet.containsAll(tokenIdxIds));
+        boolean allInTokenization = tokIdxSet.containsAll(tokenIdxIds);
+        if (!allInTokenization) {
+          Set<Integer> notInTokenization = new HashSet<>(tokIdxSet);
+          notInTokenization.removeAll(tokenIdxIds);
+          LOGGER.info("Some of the integers in this TokenRefSequence [{}] do not exist in the tokenization's token indices. They are:", tokUuid.getUuidString());
+          notInTokenization.forEach(idx -> LOGGER.info("{}", idx));
+          return false;
+        }
+
+        return true;
       } else {
         return false;
       }
