@@ -1,0 +1,37 @@
+{
+    "configuration": {
+        "appenders": {
+            "Console": {
+                "name": "STDOUT",
+                "PatternLayout": {
+                    "pattern": "%d %-5p %c{1.} [%t] %m%n"
+                }
+            }
+        },
+        "loggers": {
+            "root": {
+                "level": "trace",
+                "appender-ref": {
+                    "ref": "STDOUT"
+                }
+            },
+
+            "logger" : [
+              {
+                "name" : "com.hp",
+                "level": "warn",
+                  "appender-ref": {
+                      "ref": "STDOUT"
+                  }
+              },
+              {
+                "name" : "org.apache.jena",
+                "level": "warn",
+                  "appender-ref": {
+                      "ref": "STDOUT"
+                  }
+              }
+            ]
+        }
+    }
+}
