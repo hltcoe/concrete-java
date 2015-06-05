@@ -1,6 +1,38 @@
 # News
 
-## Concrete-Java v4.5.0 - 2015-5-15
+## Concrete-Java v4.5.4 - 2015-5-30
+Fix some UTF-8 encoding landmines, make a few inner classes static, and depend
+upon the latest acute and utilt dependencies.
+
+## Concrete-Java v4.5.3 - 2015-5-29
+Add `NoEmptySentenceListOrTokenizedCommunication`, a `miscommunication` implementation
+for analytics that depend upon section objects with either an unset sentence list
+or a sentence list with more than zero members. Primarily to support concrete-stanford.
+
+## Concrete-Java v4.5.2 - 2015-5-27
+Changes include:
+### `miscommunication`
+* Add implementations supporting `EntityMention`s and `SituationMention`s.
+* Fix an issue where `NonTokenizedSentencedCommunication` did not actually
+have anything implemented.
+* Add a package for lemmas.
+
+### `analytics`
+* Refactor the interface to allow production of generic `WrappedCommunication`
+implementations.
+* Add an analytic interface, `NonSentencedSectionedCommunicationAnalytic`,
+that enforces input Communications have `Section`s, but no `Sentence`s.
+
+### General
+* Fixed warnings for deprecated classes across numerous packages.
+
+## Concrete-Java v4.5.1 - 2015-5-26
+* Add [NonTokenizedSentencedCommunication](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sentenced/NonTokenizedSentencedCommunication.java),
+an implementation of `MappedSentenceCommunication` that enforces no `Sentence` objects have `Tokenization`s set.
+* Add [NonSentencedSectionedCommunication](miscommunication/src/main/java/edu/jhu/hlt/concrete/miscommunication/sectioned/NonSentencedSectionedCommunication.java),
+an implementation of `MappedSectionCommunication` that enforces no `Section` objects have `Sentence`s set.
+
+## Concrete-Java v4.5.0 - 2015-5-25
 * Build against concrete v4.5 (ConstituentRef addition)
 * Update to the latest annotated-nyt dependency, fixing an ingest issue.
 

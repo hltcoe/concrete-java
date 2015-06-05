@@ -21,24 +21,24 @@ import edu.jhu.hlt.concrete.util.Timing;
  * object without any {@link Section}s and creates a single section
  * that encompasses the entire text.
  */
-public class SingleSectioningAnalytic implements Analytic {
-  
+public class SingleSectioningAnalytic implements Analytic<SectionedCommunication> {
+
   private final String sectionKinds;
-  
+
   /**
    * @param sectionKinds the kinds of {@link Section} objects to produce
    */
   public SingleSectioningAnalytic(final String sectionKinds) {
     this.sectionKinds = sectionKinds;
   }
-  
+
   /**
    * Create {@link Section} objects with kind set to 'Other'.
    */
   public SingleSectioningAnalytic() {
     this("Other");
   }
-  
+
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
    */
@@ -62,7 +62,7 @@ public class SingleSectioningAnalytic implements Analytic {
   public String getToolVersion() {
     return ProjectConstants.VERSION;
   }
-  
+
   private boolean isAnnotatable(Communication c) {
     boolean hasSections = c.isSetSectionList() && c.getSectionListSize() > 0;
     boolean valid = !hasSections && c.isSetText() && !c.getText().equals("");
@@ -73,11 +73,7 @@ public class SingleSectioningAnalytic implements Analytic {
    * @see edu.jhu.hlt.concrete.analytics.base.Analytic#annotate(edu.jhu.hlt.concrete.Communication)
    */
   @Override
-  public Communication annotate(Communication c) throws AnalyticException {
-    return this.annotateTyped(c).getRoot();
-  }
-  
-  public SectionedCommunication annotateTyped(Communication c) throws AnalyticException {
+  public SectionedCommunication annotate(Communication c) throws AnalyticException {
     // ensure this analytic can process this communication
     if (!this.isAnnotatable(c))
       throw new AnalyticException("Communication has sections already, or it does not have text.");

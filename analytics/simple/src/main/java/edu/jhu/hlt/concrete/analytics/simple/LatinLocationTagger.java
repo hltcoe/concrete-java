@@ -23,6 +23,8 @@ import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.entitied.CachedEntityMentionedCommunication;
+import edu.jhu.hlt.concrete.miscommunication.entitied.EntityMentionedCommunication;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -32,7 +34,7 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
  * An example of a tool that produces {@link EntityMentionSet}s by tagging any
  * Latin-esq locations.
  */
-public class LatinLocationTagger implements Analytic {
+public class LatinLocationTagger implements Analytic<EntityMentionedCommunication> {
 
   private static final Logger logger = LoggerFactory.getLogger(LatinLocationTagger.class);
 
@@ -49,7 +51,7 @@ public class LatinLocationTagger implements Analytic {
 
 
   @Override
-  public Communication annotate(Communication original) throws AnalyticException {
+  public EntityMentionedCommunication annotate(Communication original) throws AnalyticException {
     Communication cpy = new Communication(original);
     // SuperCommunication sc = new SuperCommunication(cpy);
     try {
@@ -87,7 +89,7 @@ public class LatinLocationTagger implements Analytic {
       if (ems.getMentionListSize() < 1)
         ems.setMentionList(new ArrayList<EntityMention>());
       cpy.addToEntityMentionSetList(ems);
-      return cpy;
+      return new CachedEntityMentionedCommunication(cpy);
     } catch (MiscommunicationException e) {
       throw new AnalyticException(e);
     }

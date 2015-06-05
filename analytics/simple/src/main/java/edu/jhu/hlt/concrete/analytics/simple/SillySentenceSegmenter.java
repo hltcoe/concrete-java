@@ -15,6 +15,9 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
+import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
+import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunication;
+import edu.jhu.hlt.concrete.miscommunication.sentenced.SentencedCommunication;
 import edu.jhu.hlt.concrete.sentence.SentenceFactory;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
@@ -24,7 +27,7 @@ import edu.jhu.hlt.concrete.util.Timing;
  * An example of how to generate {@link Sentence}s. Probably
  * only useful as an example.
  */
-public class SillySentenceSegmenter implements Analytic {
+public class SillySentenceSegmenter implements Analytic<SentencedCommunication> {
 
   public static final Pattern DEFAULT_SENTENCE_PATTERN = Pattern.compile("[a-zA-Z0-9 ,']+[.?!]+");
   private final Pattern splitPattern;
@@ -61,7 +64,7 @@ public class SillySentenceSegmenter implements Analytic {
   }
 
   @Override
-  public Communication annotate(Communication comm) throws AnalyticException {
+  public SentencedCommunication annotate(Communication comm) throws AnalyticException {
     final Communication cpy = new Communication(comm);
     List<Section> sectionList = cpy.getSectionList();
     if (sectionList == null || sectionList.isEmpty()) {
@@ -77,7 +80,11 @@ public class SillySentenceSegmenter implements Analytic {
       s.setSentenceList(sentList);
     }
 
-    return cpy;
+    try {
+      return new CachedSentencedCommunication(cpy);
+    } catch (MiscommunicationException e) {
+      throw new AnalyticException(e);
+    }
   }
 
   /* (non-Javadoc)

@@ -5,7 +5,6 @@
 package concrete.ingesters.gigaword;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -21,15 +20,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
-import edu.jhu.hlt.concrete.ingesters.gigaword.CommunicationizableGigawordDocument;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
+import edu.jhu.hlt.concrete.ingesters.gigaword.GigawordDocumentConverter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
-import gigaword.api.GigawordDocumentConverter;
-import gigaword.interfaces.GigawordDocument;
 
 /**
  *
@@ -41,34 +37,20 @@ public class GigawordIngesterTest {
   @Rule
   public TemporaryFolder tmpFolder = new TemporaryFolder();
 
-  /**
-   * @throws IOException
-   * @throws ConcreteException
-   */
-  @Test
-  public void pathStringTest() throws IOException, ConcreteException {
-    GigawordDocument pdc = new GigawordDocumentConverter().fromPathString(this.p.toString());
-    Communication c = new CommunicationizableGigawordDocument(pdc).toCommunication();
-    this.testAgainstDogVsMan(c);
-  }
-
   private void testAgainstDogVsMan(Communication c) throws ConcreteException {
     assertEquals("dog-bites-man_20141009.sgml", c.getId());
     assertEquals("other", c.getType().toLowerCase());
 
     List<Section> sectionList = c.getSectionList();
     Section title = sectionList.get(0);
-    assertEquals("Dog Bites Man\n", new SuperTextSpan(title.getTextSpan(), c).getText());
-    assertEquals("Title", title.getKind());
+    assertEquals("Dog Bites Man", new SuperTextSpan(title.getTextSpan(), c).getText());
+    assertEquals("headline", title.getKind());
 
     assertEquals(
-        "John Smith, manager of ACME INC, was bit by a dog on March 10th, 2013.\n", new SuperTextSpan(sectionList.get(1).getTextSpan(), c).getText());
-    assertEquals("Passage", sectionList.get(1).getKind());
-    
-    AnnotationMetadata md = c.getMetadata();
-    assertTrue(md.getTool().contains("concrete-ingesters-gigaword"));
+        "John Smith, manager of ACME INC, was bit by a dog on March 10th, 2013.", new SuperTextSpan(sectionList.get(1).getTextSpan(), c).getText());
+    assertEquals("passage", sectionList.get(1).getKind());
 
-    new SuperCommunication(c).writeToFile(tmpFolder.getRoot().toPath().resolve("test-out.concrete"), true);
+    new WritableCommunication(c).writeToFile(tmpFolder.getRoot().toPath().resolve("test-out.concrete"), true);
   }
 
   @Test
@@ -76,9 +58,8 @@ public class GigawordIngesterTest {
     try (InputStream is = Files.newInputStream(p);
         BufferedInputStream bis = new BufferedInputStream(is)) {
       String sgml = IOUtils.toString(bis, StandardCharsets.UTF_8);
-      GigawordDocument pdc = new GigawordDocumentConverter().fromSGMLString(sgml);
-      Communication c = new CommunicationizableGigawordDocument(pdc).toCommunication();
-      this.testAgainstDogVsMan(c);
+      Communication pdc = new GigawordDocumentConverter().fromSgmlString(sgml);
+      this.testAgainstDogVsMan(pdc);
     }
   }
 }

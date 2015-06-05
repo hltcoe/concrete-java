@@ -43,7 +43,7 @@ public enum Tokenizer {
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
       return generateConcreteTokenization(this, text, textStartPosition);
     }
-    
+
     @Override
     public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
       return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
@@ -121,7 +121,7 @@ public enum Tokenizer {
   //
   /**
    * Return the offsets of tokens in text.
-   * 
+   *
    * @param text
    *          - text to be used
    * @param tokens
@@ -144,7 +144,7 @@ public enum Tokenizer {
 
   /**
    * Sasa Petrovic's tokenization scheme.
-   * 
+   *
    * @param text
    *          - text to tokenize
    * @return a list of Strings that represent tokens.
@@ -239,6 +239,10 @@ public enum Tokenizer {
           token += c;
           break;
         }
+
+      default:
+        // nothing
+        break;
       }
 
       if (update || ((i == (length - 1)) && (!token.equals("")))) {
@@ -252,9 +256,9 @@ public enum Tokenizer {
 
   /**
    * Wrapper around getOffsets that takes a {@link List} of Strings instead of an array.
-   * 
+   *
    * @see #getOffsets(String, String[])
-   * 
+   *
    * @param text
    *          - text that was tokenized
    * @param tokenList
@@ -264,7 +268,7 @@ public enum Tokenizer {
   public static int[] getOffsets(String text, List<String> tokenList) {
     return getOffsets(text, tokenList.toArray(new String[0]));
   }
-  
+
   public static Tokenization generateConcreteTokenization(Tokenizer tokenizationType, String text, int startPosition, UUID sentUuid) {
     return generateConcreteTokenization(tokenizationType, text, startPosition)
         .setUuid(sentUuid);
