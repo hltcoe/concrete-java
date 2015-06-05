@@ -4,11 +4,6 @@ This library provides the ability to ingest to ingest LDC SGML documents into Co
 Communication objects.
 
 ## Quick start
-From the root directory (`concrete-java`):
-```sh
-mvn clean install -T1C
-```
-
 From `ingesters/gigaword`, run:
 ```sh
 mvn clean compile assembly:single
@@ -17,7 +12,7 @@ mvn clean compile assembly:single
 Run:
 ```sh
 java -cp target/concrete-ingesters-gigaword-4.5.6-jar-with-dependencies.jar \
-edu.jhu.hlt.concrete.ingesters.gigaword.GigawordDocumentConverter \
-/path/to/ldc/sgml/file \
-/path/to/output/file
+    edu.jhu.hlt.concrete.ingesters.gigaword.GigawordDocumentConverter \
+    /path/to/ldc/sgml/file \
+    /path/to/output/file
 ```
