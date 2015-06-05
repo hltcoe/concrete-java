@@ -4,9 +4,15 @@
  */
 package edu.jhu.hlt.concrete.ingesters.gigaword;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +24,11 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.CommunicationFactory;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.section.SectionFactory;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
 
@@ -96,16 +104,19 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
    * @param pathToGigaSGMLFile a string that represents a path to a .sgml file on disk.
    * @return a {@link GigawordDocument} object that represents the .sgml file
    */
-  public Communication fromPath(String pathToGigaSGMLFile) {
-    return this.fromSgmlString(pathToGigaSGMLFile);
+  public Communication fromPath(String pathToGigaSGMLFile) throws IOException {
+    return this.fromPath(Paths.get(pathToGigaSGMLFile));
   }
 
   /**
    * @param pathToGigaSGMLFile a {@link Path} that represents a path to a .sgml file on disk.
    * @return a {@link GigawordDocument} object that represents the .sgml file
    */
-  public Communication fromPath(Path pathToGigaSGMLFile) {
-    return this.fromSgmlString(pathToGigaSGMLFile.toString());
+  public Communication fromPath(Path pathToGigaSGMLFile) throws IOException {
+    try(InputStream is = Files.newInputStream(pathToGigaSGMLFile);
+        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 24);) {
+      return this.fromSgmlString(IOUtils.toString(bin));
+    }
   }
 
   /* (non-Javadoc)
@@ -130,5 +141,31 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
   @Override
   public String getToolVersion() {
     return ProjectConstants.VERSION;
+  }
+
+  public static void main (String... args) {
+    if (args.length != 2) {
+      LOGGER.info("This program takes 2 arguments:");
+      LOGGER.info("The first is a path to an LDC SGML file. These include Gigaword documents.");
+      LOGGER.info("The second is a path to the output, where the Concrete Communication will be written.");
+      LOGGER.info("Usage: {} {} {}", GigawordDocumentConverter.class.getName(), "/path/to/input/sgml/file", "/path/to/output/file");
+      System.exit(1);
+    }
+
+    String pathStr = args[0];
+    String outStr = args[1];
+
+    Path path = Paths.get(pathStr);
+    if(!Files.exists(path)) {
+      LOGGER.error("Path {} does not exist.", path.toString());
+      System.exit(1);
+    }
+
+    try {
+      Communication c = new GigawordDocumentConverter().fromPath(path);
+      new WritableCommunication(c).writeToFile(Paths.get(outStr), true);
+    } catch (ConcreteException | IOException e) {
+      LOGGER.error("Caught Exception during conversion.", e);
+    }
   }
 }
