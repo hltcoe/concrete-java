@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.5.8 - 2015-6-11
+Minor release containing a patched Gigaword ingester library. Should provide
+additional safety against StackOverflowErrors.
 
 ## Concrete-Java v4.5.7 - 2015-6-10
 Minor release: add utility factories for creating Parse and DependencyParse
