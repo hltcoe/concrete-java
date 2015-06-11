@@ -1,4 +1,22 @@
 # News
+## Concrete-Java v4.5.8 - 2015-6-11
+Minor release containing a patched Gigaword ingester library. Should provide
+additional safety against StackOverflowErrors.
+
+## Concrete-Java v4.5.7 - 2015-6-10
+Minor release: add utility factories for creating Parse and DependencyParse
+objects; also fix an issue in the TokenTaggingFactory where NPEs could
+occasionally fire.
+
+## Concrete-Java v4.5.6 - 2015-6-5
+Update the `gigaword` library dependency and rework `ingesters/gigaword` to
+use the new API.
+
+Also fix an issue in Tift where Strings were being concatenated naively; now
+uses a StringBuilder.
+
+## Concrete-Java v4.5.5 - 2015-6-3
+Tiny update to make validation more verbose to track down a downstream bug.
 
 ## Concrete-Java v4.5.4 - 2015-5-30
 Fix some UTF-8 encoding landmines, make a few inner classes static, and depend
