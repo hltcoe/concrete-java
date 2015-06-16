@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -25,8 +24,7 @@ import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicati
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
- *
+ * Class that implements {@link CommunicationTarGzSerializer} with a simple strategy.
  */
 public class TarGzCompactCommunicationSerializer extends TarCompactCommunicationSerializer implements CommunicationTarGzSerializer {
 
@@ -34,7 +32,7 @@ public class TarGzCompactCommunicationSerializer extends TarCompactCommunication
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException {
     return new TarGzArchiveEntryCommunicationIterator(is);
   }
-  
+
   @Override
   public void toTarGz(Collection<Communication> commColl, Path outPath) throws ConcreteException {
     try(OutputStream os = Files.newOutputStream(outPath);
@@ -51,14 +49,9 @@ public class TarGzCompactCommunicationSerializer extends TarCompactCommunication
           tos.closeArchiveEntry();
         }
       }
-      
+
     } catch (IOException e) {
       throw new ConcreteException(e);
     }
-  }
-
-  @Override
-  public void toTarGz(Collection<Communication> commColl, String outPathString) throws ConcreteException {
-    this.toTarGz(commColl, Paths.get(outPathString));
   }
 }

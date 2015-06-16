@@ -26,8 +26,6 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * Utility class for convenient serialization of Thrift-like data structures.
- *
- * @author max
  */
 public class ThreadSafeThriftSerializer<T extends TBase<T,? extends TFieldIdEnum>> implements ThriftSerializer<T> {
 

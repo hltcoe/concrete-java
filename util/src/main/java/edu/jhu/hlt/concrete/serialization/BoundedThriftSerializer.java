@@ -42,6 +42,12 @@ public class BoundedThriftSerializer<T extends TBase<T, ? extends TFieldIdEnum>>
   private final Class<T> clazz;
   private final Constructor<T> ctor;
 
+  /**
+   * @param clazz
+   *          the {@link Class} to serialize. Should extend {@link TBase} - e.g., any Concrete class.
+   * @throws ConcreteException
+   *           on Thrift error
+   */
   public BoundedThriftSerializer(Class<T> clazz) throws ConcreteException {
     this(clazz, new TCompactProtocol.Factory());
   }
