@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -20,6 +21,7 @@ import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentArrayMap;
+import clojure.lang.PersistentVector;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
@@ -44,7 +46,8 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GigawordDocumentConverter.class);
 
-  private final IFn gzPathToGigaStringIterFx;
+  private final IFn processSgmlFx;
+  private final IFn gzToStringListFx;
 
   private final Keyword bkw;
   private final Keyword ekw;
@@ -57,17 +60,53 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
     IFn req = Clojure.var("clojure.core", "require");
     req.invoke(Clojure.read("gigaword.core"));
 
-    this.gzPathToGigaStringIterFx = Clojure.var("gigaword.core", "process-ldc-sgml");
+    this.processSgmlFx = Clojure.var("gigaword.core", "process-ldc-sgml");
+    this.gzToStringListFx = Clojure.var("gigaword.core", "gz->docs");
 
     this.bkw = Keyword.find("b");
     this.ekw = Keyword.find("e");
     this.tkw = Keyword.find("t");
   }
 
+  private final class LocalCommIterator implements Iterator<Communication> {
+
+    // really Iterator<String>, cast per use
+    private final Iterator<?> iter;
+
+    /**
+     *
+     */
+    public LocalCommIterator(PersistentVector seq) {
+      this.iter = seq.iterator();
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Iterator#hasNext()
+     */
+    @Override
+    public boolean hasNext() {
+      return this.iter.hasNext();
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Iterator#next()
+     */
+    @Override
+    public Communication next() {
+      String sgml = (String) this.iter.next();
+      return fromSgmlString(sgml);
+    }
+  }
+
+  public Iterator<Communication> gzToStringIterator(Path gzPath) {
+    String pathStr = gzPath.toAbsolutePath().toString();
+    PersistentVector seq = (PersistentVector)this.gzToStringListFx.invoke(pathStr);
+    return new LocalCommIterator(seq);
+  }
+
   private Section fromPAM(final PersistentArrayMap pam) {
     LOGGER.debug("Running on PAM: {}", pam.toString());
     Section s = SectionFactory.create();
-    LOGGER.debug("B keyword: {}", this.bkw);
     final long begin = (long) pam.get(this.bkw);
     final int bi = (int)begin;
     final long end = (long) pam.get(this.ekw);
@@ -80,7 +119,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
   }
 
   public Communication fromSgmlString(String ldcSgml) {
-    PersistentArrayMap map = (PersistentArrayMap) this.gzPathToGigaStringIterFx.invoke(ldcSgml);
+    PersistentArrayMap map = (PersistentArrayMap) this.processSgmlFx.invoke(ldcSgml);
     String kind = (String) map.get(Keyword.find("kind"));
     String id = (String) map.get(Keyword.find("id"));
     long date = (long)map.get(Keyword.find("date"));
