@@ -1,4 +1,16 @@
 # News
+## Concrete-Java v4.5.9 - 2015-6-15
+Update the `ingesters/gigaword` library to take a `.gz` file from
+English Gigaword v5 and create a `.tar.gz` archive of `Communication` objects.
+
+See [this class](ingesters/gigaword/src/main/java/edu/jhu/hlt/concrete/ingesters/gigaword/GigawordGzProcessor.java)
+for details.
+
+Misc:
+* Updated dependencies for `acute`, `joda-time`, and `gigaword`.
+* Improved documentation and added some default implementations
+for serialization classes.
+
 ## Concrete-Java v4.5.8 - 2015-6-11
 Minor release containing a patched Gigaword ingester library. Should provide
 additional safety against StackOverflowErrors.
