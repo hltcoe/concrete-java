@@ -141,7 +141,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
 
   /**
    * @param pathToGigaSGMLFile a string that represents a path to a .sgml file on disk.
-   * @return a {@link GigawordDocument} object that represents the .sgml file
+   * @return a {@link Communication} object that represents the .sgml file
    */
   public Communication fromPath(String pathToGigaSGMLFile) throws IOException {
     return this.fromPath(Paths.get(pathToGigaSGMLFile));
@@ -149,7 +149,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
 
   /**
    * @param pathToGigaSGMLFile a {@link Path} that represents a path to a .sgml file on disk.
-   * @return a {@link GigawordDocument} object that represents the .sgml file
+   * @return a {@link Communication} object that represents the .sgml file
    */
   public Communication fromPath(Path pathToGigaSGMLFile) throws IOException {
     try(InputStream is = Files.newInputStream(pathToGigaSGMLFile);
