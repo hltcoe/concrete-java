@@ -8,9 +8,6 @@ concrete-util
 API
 ------------
 
-### SuperCommunication ###
-`SuperCommunication` is a wrapper around `Communication` with numerous utility functions.
-
 ### Serialization ###
 Use this library's serialization and deserialization classes instead of rolling your own.
 

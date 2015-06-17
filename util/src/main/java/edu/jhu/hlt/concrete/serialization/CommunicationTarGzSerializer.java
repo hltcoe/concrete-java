@@ -8,26 +8,90 @@ package edu.jhu.hlt.concrete.serialization;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
- *
+ * Interface whose implementers should be able to serialize {@link Communication} objects to <code>.tar.gz</code> files.
  */
 public interface CommunicationTarGzSerializer extends CommunicationTarSerializer {
+
+  /**
+   * @param commColl
+   *          a {@link Collection} of {@link Communication} objects to serialize to a <code>.tar.gz</code> file
+   * @param outPath
+   *          the {@link Path} to write the .tar.gz file to
+   * @throws ConcreteException
+   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
+   * @throws IOException
+   *           on I/O error
+   */
   public void toTarGz(Collection<Communication> commColl, Path outPath) throws ConcreteException, IOException;
 
-  public void toTarGz(Collection<Communication> commColl, String outPathString) throws ConcreteException, IOException;
+  /**
+   * Default implementation. Calls {@link #toTarGz(Collection, Path)}.
+   *
+   * @see #toTarGz(Collection, Path)
+   * @param commColl
+   *          a {@link Collection} of {@link Communication} objects to serialize to a <code>.tar.gz</code> file
+   * @param outPathString
+   *          the {@link String} representing a path to write the .tar.gz file to
+   * @throws ConcreteException
+   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
+   * @throws IOException
+   *           on I/O error
+   */
+  default void toTarGz(Collection<Communication> commColl, String outPathString) throws ConcreteException, IOException {
+    this.toTarGz(commColl, Paths.get(outPathString));
+  }
 
   /**
    * @param is
-   *          an {@link InputStream}. You should close this when finished iterating.
+   *          an {@link InputStream}. Should be closed when finished.
    * @return an {@link Iterator} of {@link Communication} objects
    * @throws ConcreteException
+   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
+   * @throws IOException
+   *           on I/O error
    */
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException;
+
+  /**
+   * Default implementation. Calls {@link #fromTarGz(InputStream)}.
+   *
+   * @see #fromTarGz(InputStream)
+   * @param in
+   *          a {@link GZIPInputStream} representing a .tar.gz archive of {@link Communication} objects
+   * @return an {@link Iterator} of {@link Communication} objects
+   * @throws ConcreteException
+   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
+   * @throws IOException
+   *           on I/O error
+   */
+  default Iterator<Communication> fromTarGz(GZIPInputStream in) throws ConcreteException, IOException {
+    return this.fromTarGz(in);
+  }
+
+  /**
+   * Default implementation. Calls {@link #fromTarGz(InputStream)}.
+   *
+   * @see #fromTarGz(InputStream)
+   * @param in
+   *          a {@link GzipCompressorInputStream} representing a .tar.gz archive of {@link Communication} objects
+   * @return an {@link Iterator} of {@link Communication} objects
+   * @throws ConcreteException
+   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
+   * @throws IOException
+   *           on I/O error
+   */
+  default Iterator<Communication> fromTarGz(GzipCompressorInputStream in) throws ConcreteException, IOException {
+    return this.fromTarGz(in);
+  }
 }

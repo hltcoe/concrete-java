@@ -19,7 +19,7 @@ public class ArchivableCommunication implements Archivable {
   private final String id;
   private final CompactCommunicationSerializer cs;
 
-  private static final String ext = ".concrete";
+  private static final String ext = ".comm";
 
   /**
    * Wrap a {@link Communication} object.
