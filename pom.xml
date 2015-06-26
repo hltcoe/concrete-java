@@ -5,12 +5,12 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-parent</artifactId>
-    <version>4.5</version>
+    <version>4.6</version>
   </parent>
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.5.9</version>
+  <version>4.6.0</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
@@ -71,8 +71,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.2</log4j.version>
-    <jackson.version>2.5.2</jackson.version>
+    <log4j.version>2.3</log4j.version>
+    <jackson.version>2.5.4</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
