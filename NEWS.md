@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.6.0 - 2015-6-26
+Updates to support concrete v4.6.
+
 ## Concrete-Java v4.5.9 - 2015-6-15
 Update the `ingesters/gigaword` library to take a `.gz` file from
 English Gigaword v5 and create a `.tar.gz` archive of `Communication` objects.
