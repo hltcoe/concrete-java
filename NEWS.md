@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.6.1 - 2015-6-30
+Fix up a bad release.
+
 ## Concrete-Java v4.6.0 - 2015-6-26
 Updates to support concrete v4.6.
 
