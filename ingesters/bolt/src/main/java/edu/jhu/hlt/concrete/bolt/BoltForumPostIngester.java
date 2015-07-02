@@ -13,13 +13,20 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Optional;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -123,32 +130,35 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
     try (InputStream is = Files.newInputStream(path);
         BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 8)) {
-      XMLStreamReader rdr = null;
+      XMLEventReader rdr = null;
       try {
-        rdr = inF.createXMLStreamReader(bin);
+        rdr = inF.createXMLEventReader(bin);
         boolean insideSpan = false;
         boolean insideQuote = false;
 
+
+
         int spanStart = -1;
         while (rdr.hasNext()) {
-          final int eventType = rdr.next();
-          Location l = rdr.getLocation();
+          XMLEvent next = rdr.nextEvent();
+          final int eventType = next.getEventType();
+          Location l = next.getLocation();
           LOGGER.debug("Offset: {}", l.getCharacterOffset());
-          LOGGER.debug("Event type: {}", eventType);
-          LOGGER.debug("Prefix: {}", rdr.getPrefix());
           if (eventType == XMLStreamReader.START_ELEMENT) {
-            QName qn = rdr.getName();
+            StartElement se = next.asStartElement();
+            QName qn = se.getName();
             final String part = qn.getLocalPart();
             LOGGER.debug("QN: {}", part);
 
             if (part.equals("quote")) {
-              LOGGER.debug("Quote target: {}", rdr.getAttributeValue(0));
+              LOGGER.debug("Quote target: {}", se.getAttributes().next());
               insideQuote = true;
             } else {
               if (part.equals("post")) {
-                LOGGER.debug("Author: {}", rdr.getAttributeValue(0));
-                LOGGER.debug("Datetime: {}", rdr.getAttributeValue(1));
-                LOGGER.debug("id: {}", rdr.getAttributeValue(2));
+                Iterator<Attribute> iter = se.getAttributes();
+                LOGGER.debug("Author: {}", iter.next().getValue());
+                LOGGER.debug("Datetime: {}", iter.next().getValue());
+                LOGGER.debug("id: {}", iter.next().getValue());
                 // next state will be characters.
                 // might be a quote coming - that's handled in the character block below
                 insideSpan = true;
@@ -161,7 +171,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
           }
 
           if (eventType == XMLStreamReader.END_ELEMENT) {
-            QName qn = rdr.getName();
+            EndElement ee = next.asEndElement();
+            QName qn = ee.getName();
             String part = qn.getLocalPart();
             LOGGER.debug("QN (end): {}", part);
             if (part.equals("quote")) {
@@ -179,14 +190,19 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
           }
 
           if (eventType == XMLStreamReader.CHARACTERS) {
+            Characters chars = next.asCharacters();
             LOGGER.debug("In characters");
-            int len = rdr.getTextLength();
-            LOGGER.debug("Len: {}", len);
+            if (chars.isWhiteSpace()) {
+              LOGGER.debug("All whitespace.");
+              continue;
+            }
+            String cc = chars.getData();
+            LOGGER.debug("Len: {}", cc.length());
 
             // if len == 1, there will be a quote following this.
             // not dealing with quoted text now - don't try to get
             // a textspan - it won't be right anyway.
-            if (insideSpan && !insideQuote && len == 1)
+            if (insideSpan && !insideQuote && cc.length() == 1)
               insideQuote = true;
             if (insideSpan && !insideQuote) {
               // sectionable.
