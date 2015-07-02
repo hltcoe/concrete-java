@@ -393,24 +393,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
           subSect = 0;
         }
 
-//        XMLEvent fp = rdr.nextEvent();
-//        StartElement fpse = fp.asStartElement();
-//        LOGGER.info("First post QN: {}", fpse.getName().getLocalPart());
-//        int fpOff = fpse.getLocation().getCharacterOffset();
-//        LOGGER.debug("Offset: {}", fpOff);
-//        Characters fpChars = rdr.nextEvent().asCharacters();
-//        int fpCharOffset = fpChars.getLocation().getCharacterOffset();
-//        String fpContent = fpChars.getData();
-//        LOGGER.debug("Text of next event: {}", fpContent);
-//        LOGGER.debug("Offset of next event: {}", fpCharOffset);
-//        LOGGER.debug("Text via offsets: {}", content.substring(fpOff, fpContent.length() + fpOff));
-//
-//        TextSpan ts = new TextSpan(fpOff, fpContent.length() + fpOff);
-//        Section s = SectionFactory.fromTextSpan(ts, "post");
-//        List<Integer> intList = new ArrayList<>();
-//        intList.add(sectNumber);
-//        intList.add(subSect);
-//        c.addToSectionList(s);
         return c;
       } catch (XMLStreamException | ConcreteException x) {
         throw new IngestException(x);
