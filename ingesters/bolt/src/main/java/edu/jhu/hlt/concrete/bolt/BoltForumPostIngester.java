@@ -183,10 +183,13 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     if (fp.isCharacters())
       if (fp.asCharacters().isWhiteSpace()) {
         // whitespace is not desirable. keep moving.
+        LOGGER.debug("Got whitespace chars - continuing.");
         rdr.nextEvent();
         return this.iterateToCharacters(rdr, previousOffsetPtr);
-      } else
+      } else {
+        LOGGER.debug("Iterator now on non-whitespace chars: {}", fp.asCharacters().getData());
         return previousOffsetPtr;
+      }
     else {
       if (fp.isStartElement()) {
         int prevOff = this.handleNonPostStartElement(rdr);
@@ -238,14 +241,13 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     int localOffset = offsetPtr;
     if (fpChars.isWhiteSpace()) {
       int newOff = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
-      int moved = this.iterateToCharacters(rdr, newOff);
-      localOffset = moved;
+      LOGGER.debug("Moving local offset to: {}", newOff);
+      localOffset = newOff;
+      fpChars = rdr.peek().asCharacters();
     }
 
     String fpContent = fpChars.getData();
-    // LOGGER.debug("Text of next section: {}", fpContent);
-    // LOGGER.debug("Offset of next section: {}", fpCharOffset);
-    // LOGGER.debug("Text via offsets: {}", contentPtr.substring(fpOff, fpContent.length() + fpOff));
+    LOGGER.debug("Character based data: {}", fpContent);
 
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
     final int tsb = localOffset + pads.getKey();
@@ -261,11 +263,26 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     int newSubSectionPtr = subSectionPtr + 1;
 
     XMLEvent next = rdr.peek();
-    if (next.isCharacters()) {
-      // Hyper-peek to see if the next is the end.
+    LOGGER.debug("Peeking at next event.");
+    if (next.isEndElement()) {
+      LOGGER.debug("Next event is an EndElement.");
+      EndElement ee = next.asEndElement();
+      String pn = ee.getName().getLocalPart();
+      if (pn.equals(POST_LOCAL_NAME)) {
+        // Skip the next event, also skip the characters (whitespace) after.
+        rdr.nextEvent();
+        XMLEvent ce = rdr.nextEvent();
+        if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
+          throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
+
+        // Reader should now point to a post.
+        LOGGER.debug("Finished post.");
+        return;
+      }
+    } else if (next.isCharacters() && next.asCharacters().isWhiteSpace()) {
+      // Hyper-peek to see if it's the end.
       next = rdr.nextEvent();
       XMLEvent peek = rdr.peek();
-
       if (peek.isEndElement()) {
         next = rdr.nextEvent();
         // If end of post, return.
@@ -273,21 +290,28 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         String pn = ee.getName().getLocalPart();
         if (pn.equals(POST_LOCAL_NAME)) {
           // Skip the next event, also skip the characters (whitespace) after.
-          rdr.nextEvent();
           XMLEvent ce = rdr.nextEvent();
           if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
             throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
 
           // Reader should now point to a post.
+          LOGGER.debug("Finished post.");
           return;
         }
       } else {
+        LOGGER.debug("Peeked and iterated, but wasn't the end.");
         // Move to characters.
         int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
         // Non-post element coming up - recurse.
         LOGGER.debug("Recursing.");
         this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
       }
+    } else {
+      // Move to characters.
+      int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
+      // Non-post element coming up - recurse.
+      LOGGER.debug("Recursing.");
+      this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
     }
   }
 
@@ -357,8 +381,13 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
         // First post element.
         while (rdr.hasNext()) {
+          XMLEvent nextEvent = rdr.nextEvent();
+          // Peek to see if document is going to end.
+          if (rdr.peek().isEndDocument())
+            break;
+          int initOffset = nextEvent.getLocation().getCharacterOffset();
           List<Section> individualPosts = new ArrayList<>();
-          this.handlePosts(rdr, individualPosts, sectNumber, subSect, rdr.nextEvent().getLocation().getCharacterOffset(), content);
+          this.handlePosts(rdr, individualPosts, sectNumber, subSect, initOffset, content);
           individualPosts.forEach(p -> c.addToSectionList(p));
           sectNumber++;
           subSect = 0;
