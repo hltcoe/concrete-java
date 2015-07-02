@@ -15,17 +15,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -160,26 +156,74 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     return new SimpleImmutableEntry<Integer, Integer>(leftPadding, rightPadding);
   }
 
+  /**
+   * Moves the rdr "iterator" past any img tags or quote tags.
+   *
+   * @param rdr
+   * @throws XMLStreamException
+   */
   private int handleNonPostStartElement(final XMLEventReader rdr) throws XMLStreamException {
     // Next is a start element. Throw if not.
     StartElement se = rdr.nextEvent().asStartElement();
     QName seqn = se.getName();
     String part = seqn.getLocalPart();
 
-    int newOff;
     if (part.equals(QUOTE_LOCAL_NAME)) {
-      newOff = this.handleQuote(rdr);
+      return this.handleQuote(rdr);
     } else if (part.equals(IMG_LOCAL_NAME)) {
-      newOff = this.handleImg(rdr);
+      return this.handleImg(rdr);
     } else
       throw new IllegalArgumentException("Unhandled tag: " + part);
+  }
 
-    return newOff;
+  private int iterateToCharacters(final XMLEventReader rdr, final int previousOffsetPtr) throws XMLStreamException {
+    // Peek at the next element.
+    XMLEvent fp = rdr.peek();
+
+    if (fp.isCharacters())
+      if (fp.asCharacters().isWhiteSpace()) {
+        // whitespace is not desirable. keep moving.
+        rdr.nextEvent();
+        return this.iterateToCharacters(rdr, previousOffsetPtr);
+      } else
+        return previousOffsetPtr;
+    else {
+      if (fp.isStartElement()) {
+        int prevOff = this.handleNonPostStartElement(rdr);
+        return this.iterateToCharacters(rdr, prevOff);
+      }
+      else
+        // ???
+        throw new IllegalArgumentException("Not sure what to do with end element: " + fp.asEndElement().getName().getLocalPart());
+    }
   }
 
   /**
-   * Should only be called after the end of a post element has been seen.
+   * Move the iterator so that a call to nextEvent will return the beginning of a post tag.
    *
+   * @param rdr
+   * @throws XMLStreamException
+   */
+  private void iterateToPosts(final XMLEventReader rdr) throws XMLStreamException {
+    // Peek at the next element.
+    XMLEvent fp = rdr.peek();
+
+    // If start element and part == "post", return.
+    if (fp.isStartElement()) {
+      StartElement se = fp.asStartElement();
+      if (se.getName().getLocalPart().equals(POST_LOCAL_NAME))
+        return;
+      else
+        // Churn through non-post start tags.
+        this.handleNonPostStartElement(rdr);
+    } else
+      // Drop.
+      rdr.nextEvent();
+
+    this.iterateToPosts(rdr);
+  }
+
+  /**
    * @param rdr
    * @param sections
    * @param sectionNumberPtr
@@ -189,40 +233,25 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
    * @throws XMLStreamException
    * @throws ConcreteException
    */
-  private void handlePosts(final XMLEventReader rdr, final List<Section> sections, final int sectionNumberPtr, final int subSectionPtr, final String contentPtr) throws XMLStreamException, ConcreteException {
-    // Get the next element.
-    XMLEvent fp = rdr.nextEvent();
-    StartElement fpse = fp.asStartElement();
-    String lp = fpse.getName().getLocalPart();
-    while (!lp.equals(POST_LOCAL_NAME)) {
-      StartElement sePeek = rdr.peek().asStartElement();
-      lp = sePeek.getName().getLocalPart();
-    }
-
-    // Now on a post start tag.
-    int fpOff = fpse.getLocation().getCharacterOffset();
-    LOGGER.debug("Offset: {}", fpOff);
+  private void handlePosts(final XMLEventReader rdr, final List<Section> sections, final int sectionNumberPtr, final int subSectionPtr, final int offsetPtr, final String contentPtr) throws XMLStreamException, ConcreteException {
     Characters fpChars = rdr.nextEvent().asCharacters();
-    // Below churns through tags and whitespace until
-    // characters that are NOT whitespace (e.g. sectionable
-    // text) is found.
-    while (fpChars.isWhiteSpace()) {
-      // int newOff = this.handleNonPostStartElement(rdr);
-      XMLEvent next = rdr.nextEvent();
-      if (!next.isCharacters())
-        throw new IllegalArgumentException("Non-characters followed end of a tag - unseen case");
-      else
-        fpChars = next.asCharacters();
+    int localOffset = offsetPtr;
+    if (fpChars.isWhiteSpace()) {
+      int newOff = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
+      int moved = this.iterateToCharacters(rdr, newOff);
+      localOffset = moved;
     }
 
-    int fpCharOffset = fpChars.getLocation().getCharacterOffset();
     String fpContent = fpChars.getData();
-    LOGGER.debug("Text of next section: {}", fpContent);
-    LOGGER.debug("Offset of next section: {}", fpCharOffset);
-    LOGGER.debug("Text via offsets: {}", contentPtr.substring(fpOff, fpContent.length() + fpOff));
+    // LOGGER.debug("Text of next section: {}", fpContent);
+    // LOGGER.debug("Offset of next section: {}", fpCharOffset);
+    // LOGGER.debug("Text via offsets: {}", contentPtr.substring(fpOff, fpContent.length() + fpOff));
 
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
-    TextSpan ts = new TextSpan(fpCharOffset + pads.getKey(), fpCharOffset + fpContent.length() - pads.getValue());
+    final int tsb = localOffset + pads.getKey();
+    final int tse = localOffset + fpContent.length() - pads.getValue();
+    LOGGER.debug("Section text: {}", contentPtr.substring(tsb, tse));
+    TextSpan ts = new TextSpan(tsb, tse);
     Section s = SectionFactory.fromTextSpan(ts, "post");
     List<Integer> intList = new ArrayList<>();
     intList.add(sectionNumberPtr);
@@ -232,23 +261,33 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     int newSubSectionPtr = subSectionPtr + 1;
 
     XMLEvent next = rdr.peek();
-    if (next.isEndElement()) {
-      // If end of post, return.
-      EndElement ee = next.asEndElement();
-      String pn = ee.getName().getLocalPart();
-      if (pn.equals(POST_LOCAL_NAME)) {
-        // Skip the next event, also skip the characters (whitespace) after.
-        rdr.nextEvent();
-        XMLEvent ce = rdr.nextEvent();
-        if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
-          throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
+    if (next.isCharacters()) {
+      // Hyper-peek to see if the next is the end.
+      next = rdr.nextEvent();
+      XMLEvent peek = rdr.peek();
 
-        // Reader should now point to a post.
-        return;
+      if (peek.isEndElement()) {
+        next = rdr.nextEvent();
+        // If end of post, return.
+        EndElement ee = next.asEndElement();
+        String pn = ee.getName().getLocalPart();
+        if (pn.equals(POST_LOCAL_NAME)) {
+          // Skip the next event, also skip the characters (whitespace) after.
+          rdr.nextEvent();
+          XMLEvent ce = rdr.nextEvent();
+          if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
+            throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
+
+          // Reader should now point to a post.
+          return;
+        }
+      } else {
+        // Move to characters.
+        int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
+        // Non-post element coming up - recurse.
+        LOGGER.debug("Recursing.");
+        this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
       }
-    } else {
-      // Non-post element coming up - recurse.
-      this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, contentPtr);
     }
   }
 
@@ -257,16 +296,15 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     XMLEvent quoteContent = rdr.nextEvent();
     if (!quoteContent.isCharacters())
       throw new RuntimeException("Characters did not follow quote.");
-    EndElement quoteEnd = rdr.nextEvent().asEndElement();
-    // Maintain the end offset.
-    return quoteEnd.getLocation().getCharacterOffset();
+    // Skip end of quote.
+    return rdr.nextEvent().getLocation().getCharacterOffset();
   }
 
   private int handleImg(final XMLEventReader rdr) throws XMLStreamException {
     // Images should not have anything between start and end.
     // Throw if it does.
-    EndElement imgEnd = rdr.nextEvent().asEndElement();
-    return imgEnd.getLocation().getCharacterOffset();
+    LOGGER.debug("Handling image.");
+    return rdr.nextEvent().asEndElement().getLocation().getCharacterOffset();
   }
 
   /* (non-Javadoc)
@@ -314,182 +352,36 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         int sectNumber = 1;
         int subSect = 0;
 
+        // Move iterator to post start element.
+        this.iterateToPosts(rdr);
+
         // First post element.
-        XMLEvent fp = rdr.nextEvent();
-        StartElement fpse = fp.asStartElement();
-        LOGGER.info("First post QN: {}", fpse.getName().getLocalPart());
-        int fpOff = fpse.getLocation().getCharacterOffset();
-        LOGGER.debug("Offset: {}", fpOff);
-        Characters fpChars = rdr.nextEvent().asCharacters();
-        int fpCharOffset = fpChars.getLocation().getCharacterOffset();
-        String fpContent = fpChars.getData();
-        LOGGER.debug("Text of next event: {}", fpContent);
-        LOGGER.debug("Offset of next event: {}", fpCharOffset);
-        LOGGER.debug("Text via offsets: {}", content.substring(fpOff, fpContent.length() + fpOff));
-
-        TextSpan ts = new TextSpan(fpOff, fpContent.length() + fpOff);
-        Section s = SectionFactory.fromTextSpan(ts, "post");
-        List<Integer> intList = new ArrayList<>();
-        intList.add(sectNumber);
-        intList.add(subSect);
-        c.addToSectionList(s);
-
-        int offsetPointer = 0;
-
-        // Look at the next event.
-        XMLEvent next = rdr.nextEvent();
-
-        // Could be the end of the post. If so, section and update indices.
-        if (next.isEndElement()) {
-          LOGGER.debug("Hit end of post element immediately following characters.");
-          sectNumber++;
-          subSect = 0;
-          offsetPointer = next.getLocation().getCharacterOffset();
-        } else {
-          // Could be the start of an img or quote block.
-          if (next.isStartElement()) {
-            LOGGER.debug("Inside start element.");
-            StartElement lse = next.asStartElement();
-            QName lseName = lse.getName();
-            String lsePart = lseName.getLocalPart();
-
-            // For img blocks, save the offset so that further
-            // text content blocks can be processed.
-            if (lsePart.equals("img")) {
-              LOGGER.debug("Start element was img. Passing through it.");
-              EndElement imgEnd = rdr.nextEvent().asEndElement();
-              offsetPointer = imgEnd.getLocation().getCharacterOffset();
-            } else if (lsePart.equals("quote")) {
-              LOGGER.debug("Start element was quote.");
-              // For quotes, there will be character contents - skip for now...
-              XMLEvent quoteContent = rdr.nextEvent();
-              if (!quoteContent.isCharacters())
-                throw new RuntimeException("Characters did not follow quote.");
-              EndElement quoteEnd = rdr.nextEvent().asEndElement();
-              // Maintain the end offset.
-              offsetPointer = quoteEnd.getLocation().getCharacterOffset();
-            }
-          }
-        }
-
-        // Look at next event.
-        next = rdr.nextEvent();
-        // Again, could be end of post.
-        // If so, section and update indices.
-        if (next.isEndElement()) {
-          LOGGER.debug("Hit end of post element.");
-          sectNumber++;
-          subSect = 0;
-          offsetPointer = next.getLocation().getCharacterOffset();
-        } else if (next.isCharacters()) {
-          // Could also be more text. Get it.
-          int nextTextLen = next.asCharacters().getData().length();
-          LOGGER.debug("Got additional text: {}", content.substring(offsetPointer, offsetPointer + nextTextLen));
-        }
-
-        boolean insideSpan = false;
-        boolean insideQuote = false;
-
-        int spanStart = -1;
         while (rdr.hasNext()) {
-          next = rdr.nextEvent();
-          final int eventType = next.getEventType();
-          Location l = next.getLocation();
-          LOGGER.debug("Offset: {}", l.getCharacterOffset());
-          if (eventType == XMLStreamReader.START_ELEMENT) {
-            StartElement lse = next.asStartElement();
-            QName lqn = lse.getName();
-            final String part = lqn.getLocalPart();
-            LOGGER.debug("QN: {}", part);
-
-            if (part.equals("quote")) {
-              LOGGER.debug("Quote target: {}", lse.getAttributes().next());
-              insideQuote = true;
-            } else {
-              if (part.equals("post")) {
-                Iterator<Attribute> iter = lse.getAttributes();
-                LOGGER.debug("Author: {}", iter.next().getValue());
-                LOGGER.debug("Datetime: {}", iter.next().getValue());
-                LOGGER.debug("id: {}", iter.next().getValue());
-                // next state will be characters.
-                // might be a quote coming - that's handled in the character block below
-                insideSpan = true;
-                spanStart = l.getCharacterOffset();
-              } else if (part.equals("headline")) {
-                insideSpan = true;
-                spanStart = l.getCharacterOffset();
-              }
-            }
-          }
-
-          if (eventType == XMLStreamReader.END_ELEMENT) {
-            EndElement ee = next.asEndElement();
-            QName qn = ee.getName();
-            String part = qn.getLocalPart();
-            LOGGER.debug("QN (end): {}", part);
-            if (part.equals("quote")) {
-              LOGGER.debug("Leaving quote state; updating offset.");
-              spanStart = l.getCharacterOffset();
-              insideQuote = false;
-            }
-
-            // should not hit this - it means that
-            // a post was entered but the content was not
-            // extracted.
-            else if (part.equals("post") && insideSpan) {
-              throw new RuntimeException("Entered a 'post' block, but failed to extract any content.");
-            }
-          }
-
-          if (eventType == XMLStreamReader.CHARACTERS) {
-            Characters chars = next.asCharacters();
-            LOGGER.debug("In characters");
-            if (chars.isWhiteSpace()) {
-              LOGGER.debug("All whitespace.");
-              continue;
-            }
-            String localContent = chars.getData();
-            LOGGER.debug("Len: {}", localContent.length());
-
-            // if len == 1, there will be a quote following this.
-            // not dealing with quoted text now - don't try to get
-            // a textspan - it won't be right anyway.
-            if (insideSpan && !insideQuote && localContent.length() == 1)
-              insideQuote = true;
-            if (insideSpan && !insideQuote) {
-              // sectionable.
-              final int lco = l.getCharacterOffset();
-              LOGGER.debug("Text span: {} {}", spanStart, lco);
-              String subs = content.substring(spanStart, lco);
-              LOGGER.debug("Subs: {}", subs);
-              // these strings are padded with spaces and newlines
-              // for convenience, reduce the textspan so that it
-              // starts with a character.
-              final int leftPadding = this.getLeftSpacesPaddingCount(subs);
-              LOGGER.debug("Left paddding: {}", leftPadding);
-              final int rightPadding = this.getRightSpacesPaddingCount(subs);
-              LOGGER.debug("Right paddding: {}", rightPadding);
-
-              final String newsubs = content.substring(spanStart + leftPadding, lco - rightPadding);
-              LOGGER.debug("New substring: {}", newsubs);
-              ts = new TextSpan(spanStart + leftPadding, lco - rightPadding);
-              try {
-                s = SectionFactory.fromTextSpan(ts, "post");
-
-                // first section is a headline
-                if (!c.isSetSectionList())
-                  s.setKind("headline");
-
-                c.addToSectionList(s);
-              } catch (ConcreteException e) {
-                // won't throw.
-              }
-
-              insideSpan = false;
-            }
-          }
+          List<Section> individualPosts = new ArrayList<>();
+          this.handlePosts(rdr, individualPosts, sectNumber, subSect, rdr.nextEvent().getLocation().getCharacterOffset(), content);
+          individualPosts.forEach(p -> c.addToSectionList(p));
+          sectNumber++;
+          subSect = 0;
         }
 
+//        XMLEvent fp = rdr.nextEvent();
+//        StartElement fpse = fp.asStartElement();
+//        LOGGER.info("First post QN: {}", fpse.getName().getLocalPart());
+//        int fpOff = fpse.getLocation().getCharacterOffset();
+//        LOGGER.debug("Offset: {}", fpOff);
+//        Characters fpChars = rdr.nextEvent().asCharacters();
+//        int fpCharOffset = fpChars.getLocation().getCharacterOffset();
+//        String fpContent = fpChars.getData();
+//        LOGGER.debug("Text of next event: {}", fpContent);
+//        LOGGER.debug("Offset of next event: {}", fpCharOffset);
+//        LOGGER.debug("Text via offsets: {}", content.substring(fpOff, fpContent.length() + fpOff));
+//
+//        TextSpan ts = new TextSpan(fpOff, fpContent.length() + fpOff);
+//        Section s = SectionFactory.fromTextSpan(ts, "post");
+//        List<Integer> intList = new ArrayList<>();
+//        intList.add(sectNumber);
+//        intList.add(subSect);
+//        c.addToSectionList(s);
         return c;
       } catch (XMLStreamException | ConcreteException x) {
         throw new IngestException(x);
