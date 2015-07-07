@@ -192,32 +192,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
       throw new IllegalArgumentException("Unhandled tag: " + part);
   }
 
-  private int iterateToCharacters(final XMLEventReader rdr, final int previousOffsetPtr) throws XMLStreamException {
-    // Peek at the next element.
-    XMLEvent fp = rdr.peek();
-
-    if (fp.isCharacters()) {
-      LOGGER.debug("Next element is characters.");
-      if (fp.asCharacters().isWhiteSpace()) {
-        // whitespace is not desirable. keep moving.
-        LOGGER.debug("Got whitespace chars - continuing.");
-        rdr.nextEvent();
-        return this.iterateToCharacters(rdr, previousOffsetPtr);
-      } else {
-        LOGGER.debug("Iterator now on non-whitespace chars: {}", fp.asCharacters().getData());
-        return previousOffsetPtr;
-      }
-    } else {
-      LOGGER.debug("Next element is not characters.");
-      if (fp.isStartElement()) {
-        int prevOff = this.handleNonPostStartElement(rdr);
-        return this.iterateToCharacters(rdr, prevOff);
-      }
-      else
-        throw new IllegalArgumentException("Not sure what to do with end element: " + fp.asEndElement().getName().getLocalPart());
-    }
-  }
-
   /**
    * Move the iterator so that a call to nextEvent will return the beginning of a post tag.
    *
@@ -241,106 +215,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
       rdr.nextEvent();
 
     this.iterateToPosts(rdr);
-  }
-
-  /**
-   * @param rdr
-   * @param sections
-   * @param sectionNumberPtr
-   * @param subSectionPtr
-   * @param offsetPtr
-   *
-   * @throws XMLStreamException
-   * @throws ConcreteException
-   */
-  private void handlePosts(final XMLEventReader rdr, final List<Section> sections, final int sectionNumberPtr, final int subSectionPtr, final int offsetPtr, final String contentPtr) throws XMLStreamException, ConcreteException {
-    Characters fpChars = rdr.nextEvent().asCharacters();
-    int localOffset = offsetPtr;
-    if (fpChars.isWhiteSpace()) {
-      while (fpChars.isWhiteSpace()) {
-        LOGGER.debug("Got whitespace from next event. Moving iterator.");
-        int newOff = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
-        LOGGER.debug("Moving local offset to: {}", newOff);
-        localOffset = newOff;
-        fpChars = rdr.peek().asCharacters();
-      }
-
-      fpChars = rdr.nextEvent().asCharacters();
-    }
-
-    String fpContent = fpChars.getData();
-    LOGGER.debug("Character based data: {}", fpContent);
-
-    SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
-    final int tsb = localOffset + pads.getKey();
-    final int tse = localOffset + fpContent.length() - pads.getValue();
-    LOGGER.info("Section text: {}", contentPtr.substring(tsb, tse));
-    TextSpan ts = new TextSpan(tsb, tse);
-    Section s = SectionFactory.fromTextSpan(ts, "post");
-    List<Integer> intList = new ArrayList<>();
-    intList.add(sectionNumberPtr);
-    intList.add(subSectionPtr);
-    sections.add(s);
-
-    int newSubSectionPtr = subSectionPtr + 1;
-
-    XMLEvent next = rdr.peek();
-    LOGGER.debug("Peeking at next event.");
-    if (next.isStartElement()) {
-      LOGGER.debug("Got start element: trying to handle it.");
-      int noff = this.handleNonPostStartElement(rdr);
-      this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, noff, contentPtr);
-    } else if (next.isEndElement()) {
-      LOGGER.debug("Next event is an EndElement.");
-      EndElement ee = next.asEndElement();
-      String pn = ee.getName().getLocalPart();
-      if (pn.equals(POST_LOCAL_NAME)) {
-        // Skip the next event, also skip the characters (whitespace) after.
-        rdr.nextEvent();
-        XMLEvent ce = rdr.nextEvent();
-        if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
-          throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
-
-        // Reader should now point to a post.
-        LOGGER.debug("Finished post.");
-        return;
-      }
-    } else if (next.isCharacters() && next.asCharacters().isWhiteSpace()) {
-      LOGGER.debug("Next event is whitespace characters.");
-      // Hyper-peek to see if it's the end.
-      next = rdr.nextEvent();
-      XMLEvent peek = rdr.peek();
-      if (peek.isEndElement()) {
-        next = rdr.nextEvent();
-        // If end of post, return.
-        EndElement ee = next.asEndElement();
-        String pn = ee.getName().getLocalPart();
-        if (pn.equals(POST_LOCAL_NAME)) {
-          // Skip the next event, also skip the characters (whitespace) after.
-          XMLEvent ce = rdr.nextEvent();
-          if (!ce.isCharacters() && !ce.asCharacters().isWhiteSpace())
-            throw new IllegalArgumentException("Non-characters or non-whitespace characters follwed the end of a post - unseen case");
-
-          // Reader should now point to a post.
-          LOGGER.debug("Finished post.");
-          return;
-        }
-      } else {
-        LOGGER.debug("Peeked and iterated, but wasn't the end.");
-        // Move to characters.
-        int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
-        // Non-post element coming up - recurse.
-        LOGGER.debug("Recursing.");
-        this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
-      }
-    } else {
-      LOGGER.debug("Preparing to move to characters.");
-      // Move to characters.
-      int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
-      // Non-post element coming up - recurse.
-      LOGGER.debug("Recursing.");
-      this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
-    }
   }
 
   private int handleQuote(final XMLEventReader rdr) throws XMLStreamException {
@@ -420,20 +294,77 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         // Move iterator to post start element.
         this.iterateToPosts(rdr);
 
+        // Offset pointer.
+        int currOff = -1;
+
         // First post element.
         while (rdr.hasNext()) {
           XMLEvent nextEvent = rdr.nextEvent();
-          // Peek to see if document is going to end.
-          if (rdr.peek().isEndDocument())
+          // currOff = nextEvent.getLocation().getCharacterOffset();
+          // First: see if document is going to end.
+          // If yes: exit.
+          if (nextEvent.isEndDocument())
             break;
-          int initOffset = nextEvent.getLocation().getCharacterOffset();
-          List<Section> individualPosts = new ArrayList<>();
-          this.handlePosts(rdr, individualPosts, sectNumber, subSect, initOffset, content);
-          individualPosts.forEach(p -> c.addToSectionList(p));
-          sectNumber++;
-          subSect = 0;
-        }
 
+          // XMLEvent peeker = rdr.peek();
+
+          // Check if start element.
+          if (nextEvent.isStartElement()) {
+            StartElement se = nextEvent.asStartElement();
+            QName name = se.getName();
+            final String localName = name.getLocalPart();
+
+            // Move past quotes, images, and links.
+            if (localName.equals(QUOTE_LOCAL_NAME)) {
+              currOff = this.handleQuote(rdr);
+              continue;
+            } else if (localName.equals(IMG_LOCAL_NAME)) {
+              currOff = this.handleImg(rdr);
+              continue;
+            } else if (localName.equals(LINK_LOCAL_NAME)) {
+              currOff = this.handleLink(rdr);
+              continue;
+            } else if (localName.equals(POST_LOCAL_NAME)) {
+              // Start of a new post?
+              currOff = se.getLocation().getCharacterOffset();
+            } else {
+              // unseen edge case.
+              throw new IllegalArgumentException("Unsure what to do about start tag: " + localName);
+            }
+          } else if (nextEvent.isCharacters()) {
+            Characters chars = nextEvent.asCharacters();
+            if (chars.isWhiteSpace()) {
+              currOff = chars.getLocation().getCharacterOffset();
+            } else {
+              // content to be captured
+              String fpContent = chars.getData();
+              LOGGER.debug("Character based data: {}", fpContent);
+
+              SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
+              final int tsb = currOff + pads.getKey();
+              final int tse = currOff + fpContent.length() - pads.getValue();
+              LOGGER.info("Section text: {}", content.substring(tsb, tse));
+              TextSpan ts = new TextSpan(tsb, tse);
+              Section s = SectionFactory.fromTextSpan(ts, "post");
+              List<Integer> intList = new ArrayList<>();
+              intList.add(sectNumber);
+              intList.add(subSect);
+              s.setNumberList(intList);
+              c.addToSectionList(s);
+
+              subSect++;
+            }
+          } else if (nextEvent.isEndElement()) {
+            EndElement ee = nextEvent.asEndElement();
+            currOff = ee.getLocation().getCharacterOffset();
+            QName name = ee.getName();
+            String localName = name.getLocalPart();
+            if (localName.equalsIgnoreCase(POST_LOCAL_NAME)) {
+              sectNumber++;
+              subSect = 0;
+            }
+          }
+        }
         return c;
       } catch (XMLStreamException | ConcreteException x) {
         throw new IngestException(x);
