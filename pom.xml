@@ -23,6 +23,7 @@
     <module>ingesters/gigaword</module>
     <module>ingesters/alnc</module>
     <module>ingesters/annotated-nyt</module>
+    <module>ingesters/bolt</module>
     <module>analytics/base</module>
     <module>analytics/simple</module>
   </modules>
