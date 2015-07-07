@@ -72,6 +72,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
    */
   public BoltForumPostIngester() {
     this.inF = XMLInputFactory.newInstance();
+    // this.inF.setProperty(XMLInputFactory.IS_COALESCING, true);
+    // this.inF.setProperty(XMLInputFactory.IS_VALIDATING, false);
   }
 
   /* (non-Javadoc)
@@ -321,6 +323,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
             StartElement se = nextEvent.asStartElement();
             QName name = se.getName();
             final String localName = name.getLocalPart();
+            LOGGER.debug("Hit start element: {}", localName);
 
             // Move past quotes, images, and links.
             if (localName.equals(QUOTE_LOCAL_NAME)) {
@@ -349,6 +352,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               String fpContent = chars.getData();
               LOGGER.debug("Character offset: {}", coff);
               LOGGER.debug("Character based data: {}", fpContent);
+              // LOGGER.debug("Character data via offset diff: {}", content.substring(coff - fpContent.length(), coff));
 
               SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
@@ -369,6 +373,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
             currOff = ee.getLocation().getCharacterOffset();
             QName name = ee.getName();
             String localName = name.getLocalPart();
+            LOGGER.debug("Hit end element: {}", localName);
             if (localName.equalsIgnoreCase(POST_LOCAL_NAME)) {
               sectNumber++;
               subSect = 0;
@@ -376,7 +381,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
           }
         }
         return c;
-      } catch (XMLStreamException | ConcreteException x) {
+      } catch (XMLStreamException | ConcreteException | StringIndexOutOfBoundsException x) {
         throw new IngestException(x);
       } finally {
         if (rdr != null)
@@ -420,13 +425,12 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    if (args.length != 2) {
-      LOGGER.info("Usage: {} {} {}", BoltForumPostIngester.class.getName(), "/path/to/bolt/.xml/file", "/path/to/output/file");
+    if (args.length < 2) {
+      LOGGER.info("Usage: {} {} {} {}", BoltForumPostIngester.class.getName(), "/path/to/output/folder", "/path/to/bolt/.xml/file", "<additional/xml/file/paths>");
       System.exit(1);
     }
 
-    Path inputPath = Paths.get(args[0]);
-    Path outPath = Paths.get(args[1]);
+    Path outPath = Paths.get(args[0]);
     Optional.ofNullable(outPath.getParent()).ifPresent(p -> {
       if (!Files.exists(p))
         try {
@@ -436,12 +440,21 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         }
     });
 
-    try {
-      BoltForumPostIngester ing = new BoltForumPostIngester();
-      Communication c = ing.fromCharacterBasedFile(inputPath);
-      new WritableCommunication(c).writeToFile(outPath, true);
-    } catch (IngestException | ConcreteException e) {
-      LOGGER.error("Caught exception during ingest.", e);
+    if (!Files.isDirectory(outPath)) {
+      LOGGER.error("Output path must be a directory.");
+      System.exit(1);
+    }
+
+    BoltForumPostIngester ing = new BoltForumPostIngester();
+    for (int i = 1; i < args.length; i++) {
+      Path lp = Paths.get(args[i]);
+      LOGGER.info("On path: {}", lp.toString());
+      try {
+        Communication c = ing.fromCharacterBasedFile(lp);
+        new WritableCommunication(c).writeToFile(outPath.resolve(c.getId() + ".comm"), true);
+      } catch (IngestException | ConcreteException e) {
+        LOGGER.error("Caught exception during ingest on file: " + args[i], e);
+      }
     }
   }
 }
