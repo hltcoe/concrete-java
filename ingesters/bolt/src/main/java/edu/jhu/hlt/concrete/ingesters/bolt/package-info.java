@@ -5,4 +5,4 @@
 /**
  * Contains an ingester for BOLT forum post data.
  */
-package edu.jhu.hlt.concrete.bolt;
+package edu.jhu.hlt.concrete.ingesters.bolt;
