@@ -61,6 +61,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
   public static final String POST_LOCAL_NAME = "post";
   public static final String IMG_LOCAL_NAME = "img";
   public static final String QUOTE_LOCAL_NAME = "quote";
+  public static final String LINK_LOCAL_NAME = "a";
 
   private final XMLInputFactory inF;
 
@@ -156,6 +157,17 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     return new SimpleImmutableEntry<Integer, Integer>(leftPadding, rightPadding);
   }
 
+  private int handleLink(final XMLEventReader rdr) throws XMLStreamException {
+    // Links have a start element, characters, and end element.
+    // Method is v. similar to handleQuotes, but may want to actually capture
+    // these characters at some point.
+    XMLEvent linkContent = rdr.nextEvent();
+    if (!linkContent.isCharacters())
+      throw new RuntimeException("Characters did not follow link.");
+    // Skip end of link.
+    return rdr.nextEvent().getLocation().getCharacterOffset();
+  }
+
   /**
    * Moves the rdr "iterator" past any img tags or quote tags.
    *
@@ -172,6 +184,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
       return this.handleQuote(rdr);
     } else if (part.equals(IMG_LOCAL_NAME)) {
       return this.handleImg(rdr);
+    } else if (part.equals(LINK_LOCAL_NAME)) {
+      return this.handleLink(rdr);
     } else
       throw new IllegalArgumentException("Unhandled tag: " + part);
   }
@@ -196,7 +210,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         return this.iterateToCharacters(rdr, prevOff);
       }
       else
-        // ???
         throw new IllegalArgumentException("Not sure what to do with end element: " + fp.asEndElement().getName().getLocalPart());
     }
   }
@@ -252,7 +265,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
     final int tsb = localOffset + pads.getKey();
     final int tse = localOffset + fpContent.length() - pads.getValue();
-    LOGGER.debug("Section text: {}", contentPtr.substring(tsb, tse));
+    LOGGER.info("Section text: {}", contentPtr.substring(tsb, tse));
     TextSpan ts = new TextSpan(tsb, tse);
     Section s = SectionFactory.fromTextSpan(ts, "post");
     List<Integer> intList = new ArrayList<>();
@@ -327,7 +340,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
   private int handleImg(final XMLEventReader rdr) throws XMLStreamException {
     // Images should not have anything between start and end.
     // Throw if it does.
-    LOGGER.debug("Handling image.");
     return rdr.nextEvent().asEndElement().getLocation().getCharacterOffset();
   }
 
