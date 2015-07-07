@@ -196,7 +196,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     // Peek at the next element.
     XMLEvent fp = rdr.peek();
 
-    if (fp.isCharacters())
+    if (fp.isCharacters()) {
+      LOGGER.debug("Next element is characters.");
       if (fp.asCharacters().isWhiteSpace()) {
         // whitespace is not desirable. keep moving.
         LOGGER.debug("Got whitespace chars - continuing.");
@@ -206,7 +207,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         LOGGER.debug("Iterator now on non-whitespace chars: {}", fp.asCharacters().getData());
         return previousOffsetPtr;
       }
-    else {
+    } else {
+      LOGGER.debug("Next element is not characters.");
       if (fp.isStartElement()) {
         int prevOff = this.handleNonPostStartElement(rdr);
         return this.iterateToCharacters(rdr, prevOff);
@@ -255,10 +257,15 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     Characters fpChars = rdr.nextEvent().asCharacters();
     int localOffset = offsetPtr;
     if (fpChars.isWhiteSpace()) {
-      int newOff = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
-      LOGGER.debug("Moving local offset to: {}", newOff);
-      localOffset = newOff;
-      fpChars = rdr.peek().asCharacters();
+      while (fpChars.isWhiteSpace()) {
+        LOGGER.debug("Got whitespace from next event. Moving iterator.");
+        int newOff = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
+        LOGGER.debug("Moving local offset to: {}", newOff);
+        localOffset = newOff;
+        fpChars = rdr.peek().asCharacters();
+      }
+
+      fpChars = rdr.nextEvent().asCharacters();
     }
 
     String fpContent = fpChars.getData();
@@ -279,7 +286,11 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
     XMLEvent next = rdr.peek();
     LOGGER.debug("Peeking at next event.");
-    if (next.isEndElement()) {
+    if (next.isStartElement()) {
+      LOGGER.debug("Got start element: trying to handle it.");
+      int noff = this.handleNonPostStartElement(rdr);
+      this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, noff, contentPtr);
+    } else if (next.isEndElement()) {
       LOGGER.debug("Next event is an EndElement.");
       EndElement ee = next.asEndElement();
       String pn = ee.getName().getLocalPart();
@@ -295,6 +306,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         return;
       }
     } else if (next.isCharacters() && next.asCharacters().isWhiteSpace()) {
+      LOGGER.debug("Next event is whitespace characters.");
       // Hyper-peek to see if it's the end.
       next = rdr.nextEvent();
       XMLEvent peek = rdr.peek();
@@ -322,6 +334,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         this.handlePosts(rdr, sections, sectionNumberPtr, newSubSectionPtr, offset, contentPtr);
       }
     } else {
+      LOGGER.debug("Preparing to move to characters.");
       // Move to characters.
       int offset = this.iterateToCharacters(rdr, fpChars.getLocation().getCharacterOffset());
       // Non-post element coming up - recurse.
@@ -336,7 +349,20 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     if (!quoteContent.isCharacters())
       throw new RuntimeException("Characters did not follow quote.");
     // Skip end of quote.
-    return rdr.nextEvent().getLocation().getCharacterOffset();
+    XMLEvent next = rdr.nextEvent();
+    // Exit loop only when next end quote is hit.
+    boolean hitEndQuoteElement = false;
+    while (!next.isEndElement() && !hitEndQuoteElement) {
+      // Move to next element.
+      next = rdr.nextEvent();
+      // If next element is an end element,
+      // see if it's an end quote.
+      // If so, exit the loop.
+      if (next.isEndElement())
+        hitEndQuoteElement = next.asEndElement().getName().getLocalPart().equals("quote");
+    }
+
+    return next.getLocation().getCharacterOffset();
   }
 
   private int handleImg(final XMLEventReader rdr) throws XMLStreamException {
