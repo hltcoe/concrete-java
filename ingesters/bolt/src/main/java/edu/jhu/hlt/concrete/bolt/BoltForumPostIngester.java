@@ -285,7 +285,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         // to the first post element.
         Section headline = this.handleHeadline(rdr, content);
         c.addToSectionList(headline);
-        LOGGER.info("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
+        LOGGER.debug("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
 
         // Section indices.
         int sectNumber = 1;
@@ -343,7 +343,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
               final int tse = currOff + fpContent.length() - pads.getValue();
-              LOGGER.info("Section text: {}", content.substring(tsb, tse));
+              LOGGER.debug("Section text: {}", content.substring(tsb, tse));
               TextSpan ts = new TextSpan(tsb, tse);
               Section s = SectionFactory.fromTextSpan(ts, "post");
               List<Integer> intList = new ArrayList<>();
