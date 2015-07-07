@@ -32,5 +32,11 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-ingesters-base</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>com.ximpleware</groupId>
+      <artifactId>vtd-xml</artifactId>
+      <version>2.11</version>
+    </dependency>
   </dependencies>
 </project>

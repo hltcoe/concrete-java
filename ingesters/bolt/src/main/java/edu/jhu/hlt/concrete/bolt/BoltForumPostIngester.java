@@ -5,8 +5,10 @@
 package edu.jhu.hlt.concrete.bolt;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -365,7 +367,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
     String content;
     try (InputStream is = Files.newInputStream(path);
-        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 8)) {
+        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 8);) {
       content = IOUtils.toString(bin, StandardCharsets.UTF_8);
       c.setText(content);
     } catch (IOException e) {
@@ -373,16 +375,17 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     }
 
     try (InputStream is = Files.newInputStream(path);
-        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 8);) {
+        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 8);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bin, StandardCharsets.UTF_8));) {
       XMLEventReader rdr = null;
       try {
-        rdr = inF.createXMLEventReader(bin);
+        rdr = inF.createXMLEventReader(reader);
 
         // Below method moves the reader
         // to the first post element.
         Section headline = this.handleHeadline(rdr, content);
         c.addToSectionList(headline);
-        LOGGER.debug("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
+        LOGGER.info("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
 
         // Section indices.
         int sectNumber = 1;
