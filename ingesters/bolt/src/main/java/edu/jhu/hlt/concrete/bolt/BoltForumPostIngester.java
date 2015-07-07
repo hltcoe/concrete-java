@@ -161,13 +161,15 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
   private int handleLink(final XMLEventReader rdr) throws XMLStreamException {
     // Links have a start element, characters, and end element.
-    // Method is v. similar to handleQuotes, but may want to actually capture
-    // these characters at some point.
+    // Alternatively, they have a start and end element.
     XMLEvent linkContent = rdr.nextEvent();
-    if (!linkContent.isCharacters())
+    if (linkContent.isEndElement())
+      return linkContent.getLocation().getCharacterOffset();
+    else if (linkContent.isCharacters())
+      // Skip end of link.
+      return rdr.nextEvent().getLocation().getCharacterOffset();
+    else
       throw new RuntimeException("Characters did not follow link.");
-    // Skip end of link.
-    return rdr.nextEvent().getLocation().getCharacterOffset();
   }
 
   /**
@@ -240,9 +242,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
   }
 
   private int handleImg(final XMLEventReader rdr) throws XMLStreamException {
-    // Images should not have anything between start and end.
-    // Throw if it does.
-    return rdr.nextEvent().asEndElement().getLocation().getCharacterOffset();
+    XMLEvent n = rdr.nextEvent();
+    return n.asEndElement().getLocation().getCharacterOffset();
   }
 
   /* (non-Javadoc)
@@ -300,7 +301,14 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         // First post element.
         while (rdr.hasNext()) {
           XMLEvent nextEvent = rdr.nextEvent();
-          // currOff = nextEvent.getLocation().getCharacterOffset();
+          if (currOff > 0) {
+            int currOffPlus = currOff + 20;
+            int currOffLess = currOff - 20;
+            LOGGER.debug("Offset: {}", currOff);
+            if (currOffPlus < content.length())
+              LOGGER.debug("Surrounding text: {}", content.substring(currOffLess, currOffPlus));
+          }
+
           // First: see if document is going to end.
           // If yes: exit.
           if (nextEvent.isEndDocument())
@@ -333,11 +341,13 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
             }
           } else if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
+            int coff = chars.getLocation().getCharacterOffset();
             if (chars.isWhiteSpace()) {
-              currOff = chars.getLocation().getCharacterOffset();
+              currOff = coff;
             } else {
               // content to be captured
               String fpContent = chars.getData();
+              LOGGER.debug("Character offset: {}", coff);
               LOGGER.debug("Character based data: {}", fpContent);
 
               SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
