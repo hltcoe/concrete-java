@@ -11,11 +11,12 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
- *
+ * An implementation of the {@link ThriftSerializer} interface explicitly
+ * using the {@link Communication} class.
  */
-public interface CommunicationSerializer {
+public interface CommunicationSerializer extends ThriftSerializer<Communication> {
   public Communication fromBytes(byte[] bytes) throws ConcreteException;
+  @Override
   public byte[] toBytes(Communication c) throws ConcreteException;
   public Communication fromPath(Path path) throws ConcreteException;
   public Communication fromPathString(String pathString) throws ConcreteException;

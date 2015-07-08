@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization;
@@ -13,9 +13,8 @@ import org.apache.thrift.TFieldIdEnum;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * Interface for Thrift serializers.
- * 
- * @author max
+ * Interface for de/serialization of 'thrift-like' objects. These objects
+ * are Java classes that are produced from Apache Thrift.
  */
 public interface ThriftSerializer<T extends TBase<T, ? extends TFieldIdEnum>> {
   public T fromBytes(T base, byte[] bytes) throws ConcreteException;

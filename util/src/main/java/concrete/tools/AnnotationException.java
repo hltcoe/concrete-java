@@ -6,9 +6,9 @@
 package concrete.tools;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public class AnnotationException extends Exception {
 
   /**

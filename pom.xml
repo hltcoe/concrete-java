@@ -2,20 +2,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-parent</artifactId>
+    <version>4.6</version>
+  </parent>
+
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.2.3</version>
+  <version>4.6.2</version>
   <packaging>pom</packaging>
   <modules>
-    <module>core</module>
-    <!-- <module>ontology</module> -->
+    <module>safe</module>
     <module>util</module>
+    <module>miscommunication</module>
     <module>validation</module>
+    <module>tift</module>
+    <module>ingesters/base</module>
+    <module>ingesters/simple</module>
+    <module>ingesters/gigaword</module>
+    <module>ingesters/alnc</module>
+    <module>ingesters/annotated-nyt</module>
+    <module>analytics/base</module>
+    <module>analytics/simple</module>
   </modules>
 
   <name>Concrete</name>
   <description>Parent for Concrete - Java libraries.</description>
-  <url>https://github.com/hltcoe/concrete/java</url>
+  <url>https://hltcoe.github.io/concrete-java/</url>
 
   <organization>
     <name>Johns Hopkins University HLTCOE</name>
@@ -36,27 +50,30 @@
   </developers>
 
   <scm>
-    <url>https://github.com/hltcoe/concrete</url>
-    <connection>scm:git:git://test1:/export/common/git/concrete.git</connection>
+    <connection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</developerConnection>
+    <url>https://github.com/hltcoe/concrete-java/</url>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
-    <url>https://github.com/hltcoe/concrete/issues</url>
+    <url>https://github.com/hltcoe/concrete-java/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
   <licenses>
     <license>
       <name>2-clause BSD license</name>
-      <url>http://http://opensource.org/licenses/BSD-2-Clause</url>
+      <url>http://opensource.org/licenses/BSD-2-Clause</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.1</log4j.version>
-    <jackson.version>2.4.4</jackson.version>
+    <log4j.version>2.3</log4j.version>
+    <jackson.version>2.5.4</jackson.version>
+    <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
   <build>
@@ -72,117 +89,53 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-          <version>3.2</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.4</version>
           <executions>
             <execution>
               <id>attach-sources</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.1</version>
-          <configuration>
-            <quiet />
-            <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
-          </configuration>
-          <executions>
-            <execution>
-              <id>attach-javadoc</id>
-              <phase>verify</phase>
               <goals>
                 <goal>jar</goal>
               </goals>
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.5.3</version>
-          <configuration>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- this is used for inheritance merges -->
-              <goals>
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.4</version>
+        <dependencies>
+          <dependency>
+            <groupId>net.trajano.wagon</groupId>
+            <artifactId>wagon-git</artifactId>
+            <version>2.0.2</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-module-markdown</artifactId>
+            <version>1.6</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <additionalparam>-Xdoclint:none</additionalparam>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- Skip javadoc generation by using this profile. -->
-      <id>dev</id>
-      <properties>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-      </properties>
-    </profile>
-  </profiles>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.thrift</groupId>
-        <artifactId>libthrift</artifactId>
-        <version>0.9.1</version>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-safe</artifactId>
+        <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-ontology</artifactId>
-        <version>${project.version}</version>
+        <artifactId>utilt</artifactId>
+        <version>1.4.1</version>
       </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
@@ -190,9 +143,39 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.7</version>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-validation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>miscommunication</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>tift</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-ingesters-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-analytics-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>acute</artifactId>
+        <version>2.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.8.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
@@ -240,15 +223,10 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-releases</name>
-      <url>http://10.162.95.47:8081/artifactory/libs-release-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-snapshots</name>
-      <url>http://10.162.95.47:8081/artifactory/libs-snapshot-local</url>
-    </snapshotRepository>
+    <site>
+      <id>github-project-site</id>
+      <name>Concrete-Java Github Pages</name>
+      <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
+    </site>
   </distributionManagement>
 </project>

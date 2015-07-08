@@ -1,28 +1,26 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization.iterators;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
-import edu.jhu.hlt.acute.tar.TarArchiveEntryByteIterator;
+import edu.jhu.hlt.acute.iterators.tar.TarArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-
+import edu.jhu.hlt.utilt.AutoCloseableIterator;
 /**
- * @author max
  *
  */
-public class TarArchiveEntryCommunicationIterator implements Iterator<Communication> {
+public class TarArchiveEntryCommunicationIterator implements AutoCloseableIterator<Communication> {
 
   private final TarArchiveEntryByteIterator byteIter;
   protected final CommunicationSerializer cs = new CompactCommunicationSerializer();
-  
+
   /**
    * @param is
    * @throws IOException
@@ -58,5 +56,10 @@ public class TarArchiveEntryCommunicationIterator implements Iterator<Communicat
   @Override
   public void remove() {
     throw new UnsupportedOperationException("You can't remove with this iterator.");
+  }
+
+  @Override
+  public void close() throws Exception {
+    this.byteIter.close();
   }
 }

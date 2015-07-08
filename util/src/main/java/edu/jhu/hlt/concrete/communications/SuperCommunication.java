@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
  * <strong>Read-only</strong> wrapper around {@link Communication} to allow advanced functionality.
@@ -46,13 +47,13 @@ import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
  * Be aware that changes to wrapped {@link Communication} objects are not propagated through to the
  * {@link SuperCommunication} object.
  *
- * @author max
+ * @deprecated
  */
+@Deprecated
 public class SuperCommunication implements ConcreteSituationized, ConcreteEntityized {
 
   protected final Communication comm;
   protected final CommunicationSerializer ser;
-  protected final ConcreteUUIDFactory idf = new ConcreteUUIDFactory();
 
   protected Map<UUID, Section> sectionIdToSectionMap;
   protected Map<UUID, Sentence> sentIdToSentenceMap;
@@ -86,7 +87,7 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
     if (!this.comm.isSetText())
       throw new AnnotationException("This method requires the .text field to be set.");
 
-    Section s = new Section(this.idf.getConcreteUUID(), sectionKind);
+    Section s = new Section(UUIDFactory.newUUID(), sectionKind);
     TextSpan ts = new TextSpan(0, this.comm.getText().length());
     s.setTextSpan(ts);
 
@@ -155,7 +156,11 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *          - whether to delete the file at path, if it exists.
    * @throws ConcreteException
    *           if there are {@link IOException}s or {@link TException}s.
+   *
+   * @deprecated
+   * @see WritableCommunication#writeToFile(Path, boolean)
    */
+  @Deprecated
   public void writeToFile(Path path, boolean deleteExisting) throws ConcreteException {
     try {
       if (deleteExisting)
@@ -180,7 +185,10 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
    *          - whether to delete the file at path, if it exists.
    * @throws ConcreteException
    *           if there are {@link IOException}s or {@link TException}s.
+   * @deprecated
+   * @see WritableCommunication#writeToFile(String, boolean)
    */
+  @Deprecated
   public void writeToFile(String pathString, boolean deleteExisting) throws ConcreteException {
     this.writeToFile(Paths.get(pathString), deleteExisting);
   }
@@ -458,5 +466,37 @@ public class SuperCommunication implements ConcreteSituationized, ConcreteEntity
       this.situationIdToSituationMap = map;
       return new LinkedHashMap<>(map);
     }
+  }
+
+  /**
+   * For this {@link Communication}, extract a map of {@link Entity} to
+   * list of {@link EntityMention} objects. The value associated with each
+   * Entity is the relevant EntityMentions of that entity.
+   *
+   * @return a {@link Map} with the appropriate {@link Entity} to
+   * {@link EntityMention} list values
+   */
+  public Map<Entity, List<EntityMention>> getEntityToEntityMentionList() {
+    Map<Entity, List<EntityMention>> toRet = new HashMap<>();
+    Map<UUID, EntityMention> idToMentionMap = new HashMap<>();
+    for (EntityMentionSet ems : this.comm.getEntityMentionSetList()) {
+      for (EntityMention em : ems.getMentionList()) {
+        UUID eid = em.getUuid();
+        idToMentionMap.put(eid, em);
+      }
+    }
+
+    List<EntitySet> esList = this.comm.getEntitySetList();
+    EntitySet fes = esList.get(0);
+    List<Entity> entityList = fes.getEntityList();
+    for (Entity e : entityList) {
+      List<UUID> mentionUuidList = e.getMentionIdList();
+      List<EntityMention> relatedMentionList = new ArrayList<EntityMention>();
+      for (UUID id : mentionUuidList)
+        relatedMentionList.add(idToMentionMap.get(id));
+      toRet.put(e, relatedMentionList);
+    }
+
+    return toRet;
   }
 }

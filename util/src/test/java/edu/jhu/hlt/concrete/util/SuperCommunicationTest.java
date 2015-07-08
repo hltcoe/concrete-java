@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -8,20 +8,22 @@ package edu.jhu.hlt.concrete.util;
 import org.junit.After;
 import org.junit.Before;
 
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
+
 /**
  * @author max
  *
  */
 public class SuperCommunicationTest {
 
-  ConcreteFactory cf;
-  
+  RandomConcreteFactory cf;
+
   /**
    * @throws java.lang.Exception
    */
   @Before
   public void setUp() throws Exception {
-    cf = new ConcreteFactory();
+    cf = new RandomConcreteFactory();
   }
 
   /**
@@ -37,6 +39,6 @@ public class SuperCommunicationTest {
 //    Communication c = new ConcreteFactory().randomCommunication();
 //    EntityMentionSet ems = new EntityMentionSet();
 //    ems.setUuid(new ConcreteUUIDFactory().getConcreteUUID());
-//    
+//
 //  }
 }

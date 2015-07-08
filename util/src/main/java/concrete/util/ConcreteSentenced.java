@@ -11,9 +11,9 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteSentenced extends ConcreteSectioned {
   public Map<UUID, Sentence> generateSentenceIdToSentenceMap();
 }

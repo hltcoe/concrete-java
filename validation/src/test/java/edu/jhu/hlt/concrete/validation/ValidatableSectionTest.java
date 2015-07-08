@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -18,17 +18,16 @@ import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.SuperCommunication;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.concrete.util.ConcreteUUIDFactory;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
- * @author max
  *
  */
 public class ValidatableSectionTest extends AbstractValidationTest {
 
   public Section generateSection() {
     Section s = new Section()
-      .setUuid(new ConcreteUUIDFactory().getConcreteUUID())
+      .setUuid(UUIDFactory.newUUID())
       .setTextSpan(new TextSpan(0, this.comm.getText().length()))
       .setKind("Passage");
     return s;

@@ -15,21 +15,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer;
-import edu.jhu.hlt.concrete.serialization.TarCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarCompactCommunicationSerializer;
 
 public class TarAPITest {
-  
+
   CommunicationSerializer cs = new CompactCommunicationSerializer();
-  ConcreteFactory cf = new ConcreteFactory(1234);
-  Communication comm1 = cf.randomCommunication();
-  Communication comm2 = cf.randomCommunication();
-  
+  RandomConcreteFactory cf = new RandomConcreteFactory(1234);
+  Communication comm1 = cf.communication();
+  Communication comm2 = cf.communication();
+
   Path p1 = Paths.get("target/test1.concrete");
   Path p2 = Paths.get("target/test2.concrete");
-  
+
   @Before
   public void setUp() throws Exception {
   }
@@ -37,7 +38,7 @@ public class TarAPITest {
   @After
   public void tearDown() throws Exception {
   }
-  
+
   @Test
   public void tarAPI () throws Exception {
     Path testPath = Paths.get("target/test-out.tar");
@@ -46,7 +47,7 @@ public class TarAPITest {
     cList.add(comm1);
     cList.add(comm2);
     ts.toTar(cList, testPath);
-    
+
     try (InputStream is = Files.newInputStream(testPath)) {
       Iterator<Communication> commIter = ts.fromTar(is);
       Communication comm1copy = commIter.next();

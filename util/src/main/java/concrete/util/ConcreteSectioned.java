@@ -10,9 +10,9 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteSectioned {
   public Map<UUID, Section> generateSectionIdToSectionMap();
 }

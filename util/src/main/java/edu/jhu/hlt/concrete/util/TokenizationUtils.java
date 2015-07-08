@@ -4,11 +4,11 @@
  */
 package edu.jhu.hlt.concrete.util;
 
-import edu.jhu.hlt.concrete.DependencyParse;
-import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.TokenTagging;
-
 import java.util.List;
+
+import edu.jhu.hlt.concrete.DependencyParse;
+import edu.jhu.hlt.concrete.TokenTagging;
+import edu.jhu.hlt.concrete.Tokenization;
 
 public class TokenizationUtils {
   public static enum TagTypes {

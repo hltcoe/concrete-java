@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -8,22 +8,25 @@ package edu.jhu.hlt.concrete.util;
 import java.util.UUID;
 
 /**
- * 
+ * Will be removed in a future release.
+ *
+ * @deprecated
  */
+@Deprecated
 public class Util {
 
   /**
-   * 
+   *
    */
   private Util() {
 
   }
-  
+
   /**
    * Determine if a string is truly a {@link UUID} string.
-   * 
+   *
    * Unfortunately, an exception will be thrown if it is not valid.
-   * 
+   *
    * @param uuidStr - {@link String} to check
    * @return true if a {@link UUID} string, otherwise false.
    */
@@ -37,10 +40,10 @@ public class Util {
         return true;
       } catch (IllegalArgumentException iae) {
         return false;
-      }      
+      }
     else
       return false;
   }
-  
-  
+
+
 }

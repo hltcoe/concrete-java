@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
@@ -26,7 +26,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
    */
   @Before
   public void setUp() throws Exception {
-    base = new TextSpan(0, this.comm.text.length());
+    base = new TextSpan(0, this.comm.getText().length());
   }
 
   private boolean testValidity () {
@@ -34,7 +34,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void good() {
@@ -42,7 +42,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void negativeStart() {
@@ -51,7 +51,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void negativeEnd() {
@@ -60,7 +60,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void endLessThanStart() {
@@ -70,7 +70,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void endGreaterThanLength() {
@@ -79,7 +79,7 @@ public class ValidatableTextSpanTest extends AbstractValidationTest {
   }
 
   /**
-   * Test method for {@link edu.jhu.hlt.ballast.validation.ValidatableTextSpan#isValidWithComm(edu.jhu.hlt.concrete.Communication)}.
+   * 
    */
   @Test
   public void zeroLength() {

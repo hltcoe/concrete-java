@@ -8,9 +8,9 @@ package concrete.tools;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface AnnotationTool {
   /**
    * Clients should implement a method that returns an appropriate

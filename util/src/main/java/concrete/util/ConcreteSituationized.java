@@ -11,9 +11,9 @@ import edu.jhu.hlt.concrete.Situation;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
- * @author max
- *
+ * @deprecated
  */
+@Deprecated
 public interface ConcreteSituationized extends ConcreteSituationMentionized {
   public Map<UUID, Situation> generateSituationIdToSituationMap();
 }

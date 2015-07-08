@@ -1,29 +1,27 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * This software is released under the 2-clause BSD license.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteFactory;
+import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 
 /**
  *
- *
- * @author max
  *
  */
 public abstract class AbstractValidationTest {
 
   protected Communication comm;
-  protected final ConcreteFactory factory;
+  protected final RandomConcreteFactory factory;
 
   /**
    *
    */
   public AbstractValidationTest() {
-    this.factory = new ConcreteFactory();
-    this.comm = this.factory.randomCommunication();
+    this.factory = new RandomConcreteFactory();
+    this.comm = this.factory.communication();
   }
 }
