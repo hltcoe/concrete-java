@@ -329,27 +329,16 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
             // Move past quotes, images, and links.
             if (localName.equals(QUOTE_LOCAL_NAME)) {
-              currOff = this.handleQuote(rdr);
-              continue;
+              this.handleQuote(rdr);
             } else if (localName.equals(IMG_LOCAL_NAME)) {
-              currOff = this.handleImg(rdr);
-              continue;
+              this.handleImg(rdr);
             } else if (localName.equals(LINK_LOCAL_NAME)) {
-              currOff = this.handleLink(rdr);
-              continue;
-            } else if (localName.equals(POST_LOCAL_NAME)) {
-              // Start of a new post?
-              currOff = se.getLocation().getCharacterOffset();
-            } else {
-              // unseen edge case.
-              throw new IllegalArgumentException("Unsure what to do about start tag: " + localName);
+              this.handleLink(rdr);
             }
           } else if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
             int coff = chars.getLocation().getCharacterOffset();
-            if (chars.isWhiteSpace()) {
-              currOff = coff;
-            } else {
+            if (!chars.isWhiteSpace()) {
               // content to be captured
               String fpContent = chars.getData();
               LOGGER.debug("Character offset: {}", coff);

@@ -1,4 +1,11 @@
 # News
+## Concrete-Java v4.6.3 - 2015-7-8
+Bug fix release: Switch `bolt` ingester to Woodstox API, fixing a few
+underlying issues.
+
+## Concrete-Java v4.6.2 - 2015-7-7
+Add an ingester for BOLT forum posts.
+
 ## Concrete-Java v4.6.1 - 2015-6-30
 Fix up a bad release.
 
