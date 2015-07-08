@@ -2,7 +2,7 @@
  * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.hlt.concrete.ingesters.ldc.web;
+package edu.jhu.hlt.concrete.ingesters.webposts;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -30,6 +30,10 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +56,7 @@ import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
- * Class representing a Concrete ingester for BOLT forum post data.
- *
- * Currently only extracts the headline and posts from the document.
+ * Class representing a Concrete ingester for web post data.
  */
 public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIngester {
 
@@ -72,12 +74,15 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
   public static final String POSTDATE_LOCAL_NAME = "POSTDATE";
 
   private final XMLInputFactory inF;
+  private final DateTimeFormatter dtf;
+
 
   /**
    *
    */
   public WebPostIngester() {
     this.inF = XMLInputFactory.newInstance();
+    this.dtf = ISODateTimeFormat.dateTimeParser();
   }
 
   /* (non-Javadoc)
@@ -155,8 +160,12 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     // Datetime value.
     Characters dtChars = rdr.nextEvent().asCharacters();
     // TODO: parse this
+
     String dtValue = dtChars.getData().trim();
-    cptr.setStartTime(this.getTimestamp());
+    DateTime dt = this.dtf.parseDateTime(dtValue).toDateTime(DateTimeZone.UTC);
+    LOGGER.debug("Got DateTime: {}", dt.toString());
+    long millis = dt.getMillis();
+    cptr.setStartTime(millis / 1000);
 
     // Datetime end.
     rdr.nextEvent();
@@ -166,25 +175,25 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     rdr.nextEvent();
     // WS
     rdr.nextEvent();
+
     // Headline begin.
     XMLEvent hl = rdr.nextEvent();
     StartElement hlse = hl.asStartElement();
     QName hlqn = hlse.getName();
     final String hlPart = hlqn.getLocalPart();
     LOGGER.debug("QN: {}", hlPart);
-    int hlPartOff = hlse.getLocation().getCharacterOffset();
-    LOGGER.debug("HL part offset: {}", hlPartOff);
 
     // Headline text.
     Characters hlChars = rdr.nextEvent().asCharacters();
+    final int charOff = hlChars.getLocation().getCharacterOffset();
     final int clen = hlChars.getData().length();
 
     // Construct section, text span, etc.
-    final int endHlOrigText = hlPartOff + clen;
-    final String hlText = content.substring(hlPartOff, endHlOrigText);
+    final int endTextOffset = charOff + clen;
+    final String hlText = content.substring(charOff, endTextOffset);
 
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(hlText);
-    TextSpan ts = new TextSpan(hlPartOff + pads.getKey(), endHlOrigText - pads.getValue());
+    TextSpan ts = new TextSpan(charOff + pads.getKey(), endTextOffset - pads.getValue());
 
     Section s = SectionFactory.fromTextSpan(ts, "headline");
     List<Integer> intList = new ArrayList<>();
@@ -283,97 +292,42 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
         c.addToSectionList(headline);
         LOGGER.debug("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
 
-        // WS - skip
-        rdr.nextEvent();
-        // headline end
-        rdr.nextEvent();
-        // whitespace - skip
-        rdr.nextEvent();
-        // Text start - skip
-        rdr.nextEvent();
-        // WS - skip
-        rdr.nextEvent();
-        // Post start
-        rdr.nextEvent();
-        // WS - skip
-        rdr.nextEvent();
-        // Poster start
-        rdr.nextEvent();
-        // Poster characters
-        Characters posterChars = rdr.nextEvent().asCharacters();
-        LOGGER.debug("Poster chars: {}", posterChars.getData());
-        // Poster end
-        rdr.nextEvent();
-        // WS
-        rdr.nextEvent();
-        // Postdate
-        rdr.nextEvent();
-        Characters postDateChars = rdr.nextEvent().asCharacters();
-        LOGGER.debug("Post date chars: {}", postDateChars.getData());
-        // End postdate - capture offset ptr.
-        int currOff = rdr.nextEvent().getLocation().getCharacterOffset();
-
-        // Section indices.
         int sectNumber = 1;
         int subSect = 0;
 
+        int currOff = -1;
         // Big amounts of characters.
         while (rdr.hasNext()) {
           XMLEvent nextEvent = rdr.nextEvent();
-          if (currOff > 0) {
-            int currOffPlus = currOff + 20;
-            int currOffLess = currOff - 20;
-            LOGGER.debug("Offset: {}", currOff);
-            if (currOffPlus < content.length())
-              LOGGER.debug("Surrounding text: {}", content.substring(currOffLess, currOffPlus));
-          }
+          currOff = nextEvent.getLocation().getCharacterOffset();
 
           // First: see if document is going to end.
           // If yes: exit.
           if (nextEvent.isEndDocument())
             break;
 
-          // XMLEvent peeker = rdr.peek();
-
           // Check if start element.
-          if (nextEvent.isStartElement()) {
-            StartElement se = nextEvent.asStartElement();
-            QName name = se.getName();
-            final String localName = name.getLocalPart();
-            LOGGER.debug("Hit start element: {}", localName);
-
-            // Move past quotes, images, and links.
-            if (localName.equals(DOCTYPE_LOCAL_NAME)) {
-              currOff = this.handleQuote(rdr);
-              continue;
-            } else if (localName.equals(DOCID_LOCAL_NAME)) {
-              currOff = this.handleImg(rdr);
-              continue;
-            } else if (localName.equals(DATETIME_LOCAL_NAME)) {
-              currOff = this.handleLink(rdr);
-              continue;
-            } else if (localName.equals(DOC_LOCAL_NAME) || localName.equals(POSTDATE_LOCAL_NAME)) {
-              // Start of a new post?
-              currOff = se.getLocation().getCharacterOffset();
-            } else {
-              throw new IngestException("Unsure what to do about start tag: " + localName);
-            }
-          } else if (nextEvent.isCharacters()) {
+          if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
-            int coff = chars.getLocation().getCharacterOffset();
             if (!chars.isWhiteSpace()) {
-              // content to be captured
               String fpContent = chars.getData();
-              LOGGER.debug("Character offset: {}", coff);
+              LOGGER.debug("Character offset: {}", currOff);
               LOGGER.debug("Character based data: {}", fpContent);
-              LOGGER.debug("Character data via offset diff: {}", content.substring(coff - fpContent.length(), coff));
 
               SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
-              final int tsb = currOff + pads.getKey() - 1;
-              final int tse = currOff + fpContent.length() - (pads.getValue() + 1);
+              final int tsb = currOff + pads.getKey();
+              final int tse = currOff + fpContent.length() - (pads.getValue());
               LOGGER.debug("Section text: {}", content.substring(tsb, tse));
               TextSpan ts = new TextSpan(tsb, tse);
-              Section s = SectionFactory.fromTextSpan(ts, "post");
+              String sk;
+              if (subSect == 0)
+                sk = "poster";
+              else if (subSect == 1)
+                sk = "postdate";
+              else
+                sk = "post";
+
+              Section s = SectionFactory.fromTextSpan(ts, sk);
               List<Integer> intList = new ArrayList<>();
               intList.add(sectNumber);
               intList.add(subSect);
@@ -382,8 +336,6 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
 
               subSect++;
             }
-
-            currOff = coff;
           } else if (nextEvent.isEndElement()) {
             EndElement ee = nextEvent.asEndElement();
             currOff = ee.getLocation().getCharacterOffset();
@@ -391,6 +343,7 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
             String localName = name.getLocalPart();
             LOGGER.debug("Hit end element: {}", localName);
             if (localName.equalsIgnoreCase(POST_LOCAL_NAME)) {
+              LOGGER.debug("Switching to new post.");
               sectNumber++;
               subSect = 0;
             } else if (localName.equalsIgnoreCase(TEXT_LOCAL_NAME)) {

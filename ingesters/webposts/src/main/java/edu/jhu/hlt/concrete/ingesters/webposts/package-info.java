@@ -5,4 +5,4 @@
 /**
  *
  */
-package edu.jhu.hlt.concrete.ingesters.ldc;
+package edu.jhu.hlt.concrete.ingesters.webposts;
