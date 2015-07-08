@@ -18,6 +18,3 @@ java -cp target/concrete-ingesters-bolt-4.6.3-jar-with-dependencies.jar \
 
 The ingester minimally takes a path to a forum `.xml` document as the last input.
 It can also support any number of `.xml` files afterwards (e.g. via `xargs`).
-
-## Issues
-Currently a few of the documents are failing ingest. Fix coming soon.
