@@ -130,6 +130,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     // Text of the headline. This would be useful for purely getting
     // the content, but for offsets, it's not that useful.
     Characters cc = rdr.nextEvent().asCharacters();
+    int charOff = cc.getLocation().getCharacterOffset();
     int clen = cc.getData().length();
 
     // The next part is the headline end element. Skip.
@@ -140,11 +141,11 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
     // Reader is now pointing at the first post.
     // Construct section, text span, etc.
-    final int endHlOrigText = hlPartOff + clen;
-    final String hlText = content.substring(hlPartOff, endHlOrigText);
+    final int charOffPlusLen = charOff + clen;
+    final String hlText = content.substring(charOff, charOffPlusLen);
 
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(hlText);
-    TextSpan ts = new TextSpan(hlPartOff + pads.getKey(), endHlOrigText - pads.getValue());
+    TextSpan ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
 
     Section s = SectionFactory.fromTextSpan(ts, "headline");
     List<Integer> intList = new ArrayList<>();
@@ -303,6 +304,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         // First post element.
         while (rdr.hasNext()) {
           XMLEvent nextEvent = rdr.nextEvent();
+          currOff = nextEvent.getLocation().getCharacterOffset();
           if (currOff > 0) {
             int currOffPlus = currOff + 20;
             int currOffLess = currOff - 20;
