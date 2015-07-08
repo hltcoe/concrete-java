@@ -20,9 +20,10 @@ import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 public class CachedSectionedCommunication implements MappedSectionCommunication {
 
   private final Communication cpy;
-  
+
   private final Map<UUID, Section> sectionIdToSectionMap;
-  
+  private final int nSections;
+
   /**
    * @param orig
    * @throws MiscommunicationException
@@ -31,14 +32,15 @@ public class CachedSectionedCommunication implements MappedSectionCommunication 
     if (!orig.isSetSectionList() || orig.getSectionListSize() <= 0)
       throw new MiscommunicationException("Communication did not have sections set or there were zero sections.");
     this.cpy = new Communication(orig);
-    
+
     final Map<UUID, Section> map = new LinkedHashMap<>();
     for (Section s : this.cpy.getSectionList())
       map.put(s.getUuid(), s);
 
     this.sectionIdToSectionMap = map;
+    this.nSections = map.size();
   }
-  
+
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.miscommunication.WrappedCommunication#getRoot()
    */
@@ -61,5 +63,12 @@ public class CachedSectionedCommunication implements MappedSectionCommunication 
   @Override
   public Map<UUID, Section> getUuidToSectionMap() {
     return new LinkedHashMap<>(this.sectionIdToSectionMap);
+  }
+
+  /**
+   * @return the last {@link Section} in this {@link Communication}
+   */
+  public Section lastSection() {
+    return this.getSections().get(this.nSections - 1);
   }
 }
