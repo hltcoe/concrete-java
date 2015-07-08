@@ -1,6 +1,9 @@
 package concrete.tools;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
@@ -20,7 +24,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.serialization.CommunicationTarGzSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 
 /**
  * Computes the space on disk taken up by each of the types in a Concrete thrift
@@ -145,21 +151,50 @@ public class SpaceAudit {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length == 0) {
-			System.err.println("provide some Concrete files");
+			System.err.println("provide some tar.gz Concrete files");
+			System.err.println("e.g. /export/common/data/processed/concrete/3.10.6-post-fnparse/tar-pipeline/1.tar");
+			System.err.println("you can also use \"-n 50\" to limit to the first 50 docs");
 			return;
 		}
-		CompactCommunicationSerializer ser = new CompactCommunicationSerializer();
+		int limit = 0;
+		int offset = 0;
+		if ("-n".equals(args[0])) {
+			limit = Integer.parseInt(args[1]);
+			offset = 2;
+		}
+		CommunicationTarGzSerializer ts = new TarGzCompactCommunicationSerializer();
+		//CompactCommunicationSerializer ser = new CompactCommunicationSerializer();
 		SpaceAudit all = new SpaceAudit();
 		for (String concreteFile : args) {
+			if (offset > 0) {
+				offset--;
+				continue;
+			}
 			System.out.println(concreteFile);
+			if (limit > 0)
+				System.out.println("\tlimiting to " + limit + " Communications");
+			try (InputStream is = Files.newInputStream(Paths.get(concreteFile))) {
+				int i = 0;
+				Iterator<Communication> iter = ts.fromTar(is);
+				while (iter.hasNext() && (limit <= 0 || i++ < limit)) {
+					Communication c = iter.next();
+					all.count(c);
+					System.out.print("*");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println();
+			all.show(10);
+			/*
 			Communication c = ser.fromPathString(concreteFile);
 			SpaceAudit audit = new SpaceAudit();
 			audit.count(c);
 			all.count(c);
 			audit.show(5);
-			System.out.println();
+			*/
 		}
 		System.out.println("all " + args.length + " files");
-		all.show(15);
+		all.show(50);
 	}
 }
