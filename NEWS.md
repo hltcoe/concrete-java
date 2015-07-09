@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.6.4 - 2015-7-9
+First cut at a web post ingester.
+
 ## Concrete-Java v4.6.3 - 2015-7-8
 Bug fix release: Switch `bolt` ingester to Woodstox API, fixing a few
 underlying issues.

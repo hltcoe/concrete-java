@@ -9,9 +9,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>concrete-ingesters-bolt</artifactId>
-  <name>BOLT Forum Post Ingester</name>
-  <description>Library providing ingesters and utilities for converting BOLT forum posts to the Concrete NLP data schema.</description>
+  <artifactId>concrete-ingesters-webposts</artifactId>
+  <name>Web Posts Ingesters</name>
+  <description>Library providing ingesters and utilities for converting LDC "web posts" the Concrete NLP data schema.</description>
 
   <dependencies>
     <dependency>
