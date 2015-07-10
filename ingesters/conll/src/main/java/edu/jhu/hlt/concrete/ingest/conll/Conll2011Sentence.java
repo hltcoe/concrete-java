@@ -243,6 +243,7 @@ public class Conll2011Sentence {
     // POS
     TokenTagging pos = new TokenTagging();
     pos.setUuid(UUIDFactory.newUUID());
+    pos.setTaggingType("POS");
     pos.setMetadata(Conll2011.META_POS);
     for (int i = 0; i < words.size(); i++) {
       Conll2011Row w = words.get(i);
