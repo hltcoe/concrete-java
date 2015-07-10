@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.6.6 - 2015-7-9
+Bugfix release: depend upon fixed `concrete-parent`.
+
 ## Concrete-Java v4.6.5 - 2015-7-9
 Contains [GigawordDocumentBatchConverter](ingesters/gigaword/src/main/java/edu/jhu/hlt/concrete/ingesters/gigaword/GigawordBatchDocumentConverter.java),
 capable of taking output from `xargs` for bulk `.sgml` file ingest.
