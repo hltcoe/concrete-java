@@ -1,5 +1,8 @@
 # News
-## Concrete-Java v4.6.6 - 2015-7-9
+## Concrete-Java v4.6.7 - 2015-7-10
+Bugfix release: truly fix up the `concrete-parent` issue.
+
+## Concrete-Java v4.6.6 - 2015-7-10
 Bugfix release: depend upon fixed `concrete-parent`.
 
 ## Concrete-Java v4.6.5 - 2015-7-9
