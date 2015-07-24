@@ -13,5 +13,5 @@ import edu.jhu.hlt.concrete.miscommunication.tokenized.TokenizedCommunication;
  *
  */
 public interface NamedEntityTaggedCommunication extends TokenizedCommunication {
-  public List<TokenTagging> getNETaggings(); 
+  public List<TokenTagging> getNETaggings();
 }

@@ -348,7 +348,13 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
               final int tse = currOff + fpContent.length() - pads.getValue();
-              LOGGER.debug("Section text: {}", content.substring(tsb, tse));
+              final String subs = content.substring(tsb, tse);
+              if (subs.trim().isEmpty()) {
+                LOGGER.info("Found empty section: skipping.");
+                continue;
+              }
+
+              LOGGER.debug("Section text: {}", subs);
               TextSpan ts = new TextSpan(tsb, tse);
               Section s = SectionFactory.fromTextSpan(ts, "post");
               List<Integer> intList = new ArrayList<>();
