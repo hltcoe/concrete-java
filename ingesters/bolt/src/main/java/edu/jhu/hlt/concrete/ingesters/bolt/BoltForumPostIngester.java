@@ -349,7 +349,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               final int tsb = currOff + pads.getKey();
               final int tse = currOff + fpContent.length() - pads.getValue();
               final String subs = content.substring(tsb, tse);
-              if (subs.replaceAll("\\p{Zs}", "").isEmpty()) {
+              if (subs.replaceAll("\\p{Zs}", "").replaceAll("\\n", "").isEmpty()) {
                 LOGGER.info("Found empty section: skipping.");
                 continue;
               }
