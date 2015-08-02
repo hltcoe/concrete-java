@@ -1,4 +1,8 @@
 # News
+## Concrete-Java v4.6.10 - 2015-8-2
+* Fix an issue with empty sections in BOLT ingester
+* Deprecate `SuperTextSpan` in favor of `TextSpanWrapper`
+
 ## Concrete-Java v4.6.7 - 2015-7-10
 Bugfix release: truly fix up the `concrete-parent` issue.
 
