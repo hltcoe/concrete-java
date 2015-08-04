@@ -10,8 +10,10 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -23,8 +25,7 @@ import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 
 /**
- * Class that is able to process the .gz files associated with the LDC release
- * of English Gigaword v5 into Concrete.
+ * Class that is able to process the .gz files associated with the LDC release of English Gigaword v5 into Concrete.
  */
 public class GigawordGzProcessor {
 
@@ -34,7 +35,6 @@ public class GigawordGzProcessor {
    *
    */
   private GigawordGzProcessor() {
-    // TODO Auto-generated constructor stub
   }
 
   public static void main(String... args) {
@@ -75,8 +75,17 @@ public class GigawordGzProcessor {
         BufferedOutputStream bos = new BufferedOutputStream(os, 1024 * 8 * 16);
         GzipCompressorOutputStream gout = new GzipCompressorOutputStream(bos);
         TarArchiver archiver = new TarArchiver(gout);) {
+      Set<String> gwIdSet = new HashSet<>();
       while (iter.hasNext()) {
         Communication c = iter.next();
+        String cid = c.getId();
+        if (!gwIdSet.add(cid)) {
+          LOGGER.info("Found a duplicate document ID: {}", cid);
+          String newId = cid + ".duplicate";
+          c.setId(newId);
+          if (!gwIdSet.add(newId))
+            throw new RuntimeException("Duplicate ID has been ingested previously.");
+        }
         LOGGER.info("Adding Communication {} [UUID: {}] to archive.", c.getId(), c.getUuid().getUuidString());
         archiver.addEntry(new ArchivableCommunication(c));
       }
