@@ -79,26 +79,8 @@ public class ConcreteServer implements AutoCloseable, Runnable {
     this.serverXport.close();
   }
 
-  protected static final int getPort(String implClass, String... args) {
-    if (args.length != 1) {
-      logger.info("Usage: {} <port-number>", implClass);
-      System.exit(1);
-    }
-
-    int port = 0;
-    try {
-      port = Integer.parseInt(args[0]);
-    } catch (NumberFormatException e) {
-      logger.error("You passed in a port that was a non-integer: {}", args[0]);
-      System.exit(1);
-    }
-
-    return port;
-  }
-
-  public static final void createServer(Annotator.Iface impl, String... args) throws ServerException {
+  public static final void createServer(Annotator.Iface impl, int port) throws ServerException {
     String implClassString = impl.getClass().toString();
-    int port = ConcreteServer.getPort(impl.getClass().toString(), args);
     logger.info("Preparing to start {} on port {}.", implClassString, port);
     try (ConcreteServer srv = new ConcreteServer(impl, port);) {
       srv.start();
