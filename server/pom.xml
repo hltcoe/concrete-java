@@ -8,7 +8,7 @@
     <version>4.8.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>concrete-util</artifactId>
+  <artifactId>concrete-server</artifactId>
   <name>Server</name>
   <description>Library containing implementations of Thrift servers for use with Concrete.</description>
   <url>https://hltcoe.github.io/concrete-java/util/</url>
