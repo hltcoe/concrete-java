@@ -22,7 +22,11 @@ import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
- *
+ * Example implementation of a Concrete Thrift analytic.
+ * <br>
+ * <br>
+ * This analytic simply appends a {@link LanguageIdentification} object
+ * with contents: <pre>"eng" : 1.0d</pre> to the {@link Communication}'s LID list.
  */
 public class EnglishLanguageLIDDemo implements Annotator.Iface, SafeTooledAnnotationMetadata {
 
