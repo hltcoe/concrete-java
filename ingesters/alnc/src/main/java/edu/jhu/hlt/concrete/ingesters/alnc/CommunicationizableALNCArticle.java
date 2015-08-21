@@ -28,14 +28,14 @@ public class CommunicationizableALNCArticle implements Communicationizable, Safe
 
   private final long ts;
   private final ALNCArticleBean bean;
-  
+
   private static final DateTimeFormatter alncDateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-  
+
   public CommunicationizableALNCArticle(ALNCArticleBean bean) {
     this.ts = Timing.currentLocalTime();
     this.bean = bean;
   }
-  
+
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
    */
@@ -49,7 +49,7 @@ public class CommunicationizableALNCArticle implements Communicationizable, Safe
    */
   @Override
   public String getToolName() {
-    return this.getClass().getName() + " [Project: concrete-ingesters-alnc]";
+    return ALNCIngester.class.getName();
   }
 
   /* (non-Javadoc)

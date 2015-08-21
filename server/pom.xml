@@ -8,9 +8,9 @@
     <version>4.8.0</version>
   </parent>
 
-  <artifactId>miscommunication</artifactId>
-  <name>MisCommunication</name>
-  <description>Miscellaneous Concrete Communications interfaces and utilities.</description>
+  <artifactId>concrete-server</artifactId>
+  <name>Server</name>
+  <description>Library containing implementations of Thrift servers for use with Concrete.</description>
   <url>https://hltcoe.github.io/concrete-java/util/</url>
 
   <build>
@@ -79,11 +79,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>tift</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

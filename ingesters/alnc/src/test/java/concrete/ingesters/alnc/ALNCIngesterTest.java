@@ -1,6 +1,7 @@
 package concrete.ingesters.alnc;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,9 +19,9 @@ import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 public class ALNCIngesterTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ALNCIngesterTest.class);
-  
+
   Path p = Paths.get("src/test/resources/fake.json");
-  
+
   @Test
   public void testIterator() throws IngestException {
     try (ALNCIngester ing = new ALNCIngester(p);) {
@@ -32,7 +33,7 @@ public class ALNCIngesterTest {
         LOGGER.info("UUID: {}", c.getUuid());
         AnnotationMetadata md = c.getMetadata();
         LOGGER.info("Got md: {}", md.toString());
-        assertTrue(md.getTool().contains("concrete-ingesters-alnc"));
+        assertTrue(md.getTool().contains("ALNC"));
         LOGGER.info("Got text: {}", c.getText());
         assertEquals("news", c.getType());
         ct++;
