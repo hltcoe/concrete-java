@@ -27,7 +27,7 @@
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>tutils</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
