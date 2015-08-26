@@ -36,7 +36,7 @@ public class Ontonotes5 implements Ingester {
 
   public Ontonotes5(Conll2011 skels, File ontonotesDir, boolean debug) {
     if (!ontonotesDir.isDirectory())
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("not a directory: " + ontonotesDir);
     this.debug = debug;
     // Reading all of these parses takes 5-10 seconds,
     // reading all of the skel files is what takes a lot of time/memory
