@@ -75,6 +75,7 @@ public class Conll2011 implements Ingester {
 
   public Predicate<File> keep;
   public boolean debug = false;
+  public boolean warnOnEmptyCoref = true;
 
   public Conll2011(Predicate<File> keep) {
     this.keep = keep;

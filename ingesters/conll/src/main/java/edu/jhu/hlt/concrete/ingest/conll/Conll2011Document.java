@@ -118,7 +118,7 @@ public class Conll2011Document {
     }
     comm.addToEntitySetList(corefClusters);
     comm.addToEntityMentionSetList(corefMentions);
-    if (addedMentions == 0 || addedEntities == 0) {
+    if (conll2011.warnOnEmptyCoref && (addedMentions == 0 || addedEntities == 0)) {
       Log.warn("addedMentions=" + addedMentions
           + " addedEntities=" + addedEntities
           + " communication=" + comm.getId());
