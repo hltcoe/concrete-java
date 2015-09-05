@@ -9,11 +9,12 @@ import java.util.stream.Stream;
 
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
- *
+ * Utility class for working with Concrete {@link Section} objects.
  */
 public class SectionFactory {
 
@@ -21,6 +22,10 @@ public class SectionFactory {
 
   }
 
+  /**
+   *
+   * @return a {@link Section} with a {@link UUID}
+   */
   public static final Section create() {
     return new Section()
       .setUuid(UUIDFactory.newUUID());
