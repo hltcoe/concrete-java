@@ -10,15 +10,15 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.8.1</version>
+  <version>4.8.2</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
     <module>util</module>
     <module>server</module>
+    <module>tift</module>
     <module>miscommunication</module>
     <module>validation</module>
-    <module>tift</module>
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
     <module>ingesters/alnc</module>
