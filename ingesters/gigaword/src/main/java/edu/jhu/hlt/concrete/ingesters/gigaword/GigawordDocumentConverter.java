@@ -30,6 +30,7 @@ import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.section.SectionFactory;
+import edu.jhu.hlt.concrete.section.SectionWrapper;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -135,7 +136,10 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
     @SuppressWarnings("unchecked")
     List<PersistentArrayMap> sectionList = (List<PersistentArrayMap>) map.get(skw);
     LOGGER.debug("# sects: {}", sectionList.size());
-    sectionList.forEach(pam -> c.addToSectionList(this.fromPAM(pam)));
+    sectionList.stream().map(pam -> this.fromPAM(pam))
+        .filter(SectionWrapper.hasZeroLengthTextSpan().negate())
+        .forEach(s -> c.addToSectionList(s));
+    LOGGER.debug("# sects post filter: {}", c.getSectionListSize());
     return c;
   }
 
