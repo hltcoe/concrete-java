@@ -21,4 +21,13 @@ public class TextSpanWrapper {
       return !ss.trim().isEmpty();
     };
   }
+
+  /**
+   * @return a {@link Predicate} that tests if the {@link TextSpan}
+   * has the same start and end, useful for detecting zero-length
+   * text spans.
+   */
+  public static Predicate<TextSpan> hasZeroLength() {
+    return ts -> ts.getStart() == ts.getEnding();
+  }
 }
