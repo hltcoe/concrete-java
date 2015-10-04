@@ -42,12 +42,12 @@ public class FilterArchiveByCommunicationType {
   private static final Logger LOGGER = LoggerFactory.getLogger(FilterArchiveByCommunicationType.class);
 
   @Parameter
-  private Set<String> paramList = new HashSet<>();
+  private List<String> paramList = new ArrayList<>();
 
   @Parameter(names = "--help", help=true, description = "Print the usage information and exit.")
   private boolean help;
 
-  @Parameter(names = "--types", required=true, description = "A list of strings that represent types to drop from the archive.")
+  @Parameter(names = "--types", required=true, description = "A list of strings that represent types to drop from the archive.", variableArity=true)
   private List<String> typeList = new ArrayList<>();
 
   @Parameter(names = "--input-file", required=true, description = "The input file to filter.")
@@ -69,7 +69,9 @@ public class FilterArchiveByCommunicationType {
       return;
     }
 
-    Predicate<Communication> notOfTypePred = comm -> !m.paramList.contains(comm.getType());
+    final Set<String> toFilterSet = new HashSet<>(m.typeList);
+    toFilterSet.forEach(s -> LOGGER.info("Dropping comms of type: {} from the archive.", s));
+    Predicate<Communication> notOfTypePred = comm -> !toFilterSet.contains(comm.getType());
     try {
       ExistingNonDirectoryFile ef = new ExistingNonDirectoryFile(Paths.get(m.inFile));
       Path p = ef.getPath();
