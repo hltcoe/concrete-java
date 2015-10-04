@@ -1,4 +1,13 @@
 # News
+## Concrete-Java v4.8.3 - 2015-10-4
+* Gigaword ingester: fix an issue where zero-length text
+spans were being propagated through.
+* Util: add some utility predicates to `TextSpanWrapper`
+and `SectionWrapper` for easier filtering of these types.
+* Util: add a utility, `FilterArchiveByCommunicationType`,
+that allows dropping communications of a particular type
+from an archive.
+
 ## Concrete-Java v4.6.10 - 2015-8-2
 * Fix an issue with empty sections in BOLT ingester
 * Deprecate `SuperTextSpan` in favor of `TextSpanWrapper`

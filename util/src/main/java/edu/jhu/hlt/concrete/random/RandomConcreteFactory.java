@@ -10,7 +10,11 @@ import java.util.Random;
 import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.Section;
+import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
+import edu.jhu.hlt.concrete.section.SectionFactory;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
@@ -35,16 +39,23 @@ public class RandomConcreteFactory {
     return COMM_TYPES[this.r.nextInt(COMM_TYPE_SIZE)];
   }
 
+  /**
+   * @return a {@link Communication} with all required fields set
+   * and a random <code>type</code>
+   */
   public Communication communication() {
-    return new Communication()
-      .setUuid(UUIDFactory.newUUID())
-      .setId("corpus_" + this.r.nextInt(Integer.MAX_VALUE))
-      .setText("Some sample text.")
-      .setType(this.communicationType())
-      .setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime()
-          .setTool("RandomConcreteFactory"));
+    return new Communication().setUuid(UUIDFactory.newUUID())
+        .setId("corpus_" + this.r.nextInt(Integer.MAX_VALUE))
+        .setText("Some sample text.")
+        .setType(this.communicationType())
+        .setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime()
+            .setTool("RandomConcreteFactory"));
   }
 
+  /**
+   * @param nMembers the amount of items to generate
+   * @return a {@link Set} of {@link Communication} objects with all required fields set
+   */
   public Set<Communication> communicationSet(int nMembers) {
     Set<Communication> cSet = new HashSet<>(nMembers + 1);
     for (int i = 0; i < nMembers; i++)
@@ -53,5 +64,24 @@ public class RandomConcreteFactory {
     while (cSet.size() < nMembers)
       cSet.add(this.communication());
     return cSet;
+  }
+
+  /**
+   *
+   * @return a {@link Communication} with a single {@link Section} of type
+   * <code>passage</code>
+   *
+   * @see #communication()
+   */
+  public Communication withSection() {
+	  try {
+      final Communication comm = this.communication();
+      final TextSpan ts = new TextSpan(0, comm.getText().length());
+      final Section s = SectionFactory.fromTextSpan(ts, "passage");
+      comm.addToSectionList(s);
+      return comm;
+    } catch (ConcreteException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
