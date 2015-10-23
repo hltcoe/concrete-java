@@ -4,12 +4,35 @@
  */
 package edu.jhu.hlt.concrete.uuid;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAccumulator;
+import java.util.stream.Collectors;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.lang3.time.StopWatch;
+import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+
+import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.DependencyParse;
@@ -24,6 +47,9 @@ import edu.jhu.hlt.concrete.TheoryDependencies;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
+import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
+import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 
 /**
  * A utility for replacing Concrete UUIDs with longs.
@@ -36,13 +62,34 @@ import edu.jhu.hlt.concrete.UUID;
  */
 public class UUIDToLongReplacer {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(UUIDToLongReplacer.class);
+
+  @Parameter
+  private List<String> paramList = new ArrayList<>();
+
+  @Parameter(names = "--help", help=true, description = "Print the usage information and exit.")
+  private boolean help;
+
+  @Parameter(names = "--input-directory", required=true, description = "A path to check for .tar.gz communication archives.")
+  private String inputPathString;
+
+  @Parameter(names = "--output-directory", required=true, description = "A path where converted files will be stored.")
+  private String outFile;
+
+  @Parameter(names = "--threads", description = "Number of IO threads to use.")
+  private int nThreads = 1;
+
   // The necessary ID element. Must be atomic.
   private final AtomicLong al;
   // For statistics.
   private final LongAccumulator nTDUUIDs;
 
   public UUIDToLongReplacer() {
-    this.al = new AtomicLong();
+    this(0L);
+  }
+
+  public UUIDToLongReplacer(long start) {
+    this.al = new AtomicLong(start);
 
     this.nTDUUIDs = new LongAccumulator((a, b) -> a + b, 0L);
   }
@@ -112,7 +159,8 @@ public class UUIDToLongReplacer {
      * @param md the object to replace all UUIDs in
      */
     public void updateMetadata(final AnnotationMetadata md) {
-      this.updateTheoryDependencies(md.getDependencies());
+      if (md.isSetDependencies())
+        this.updateTheoryDependencies(md.getDependencies());
     }
 
     /**
@@ -120,7 +168,7 @@ public class UUIDToLongReplacer {
      *
      * @param td the object whose UUIDs to replace
      */
-    public void updateTheoryDependencies(final TheoryDependencies td) {
+    private void updateTheoryDependencies(final TheoryDependencies td) {
       // ....
       // 1.
       if (td.isSetSectionTheoryList())
@@ -264,11 +312,83 @@ public class UUIDToLongReplacer {
     this.nTDUUIDs.accumulate(wrapper.getNTDUUIDs());
   }
 
+  private class RunnableUUIDToLongReplacer implements Runnable {
+
+    private final Path inpath;
+    private final Path outpath;
+
+    public RunnableUUIDToLongReplacer(final Path inpath, final Path outpath) {
+      this.inpath = inpath;
+      this.outpath = outpath;
+    }
+
+    @Override
+    public void run() {
+      LOGGER.info("Input path: {}", this.inpath.toString());
+      LOGGER.info("Output path: {}", this.outpath.toString());
+      // TODO Auto-generated method stub
+      try (InputStream is = Files.newInputStream(this.inpath);
+          BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8 * 24);
+
+          OutputStream os = Files.newOutputStream(this.outpath);
+          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
+          BufferedOutputStream bos = new BufferedOutputStream(gout, 1024 * 8 * 24);
+          TarArchiver arch = new TarArchiver(bos);) {
+        TarGzArchiveEntryCommunicationIterator iter = new TarGzArchiveEntryCommunicationIterator(bin);
+        while (iter.hasNext()) {
+          Communication n = iter.next();
+          LOGGER.debug("Processing communication: {}", n.getId());
+          replaceAllUUIDsWithAutoIncrementLong(n);
+          arch.addEntry(new ArchivableCommunication(n));
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+	  Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
+    UUIDToLongReplacer m = new UUIDToLongReplacer();
+    JCommander jc = new JCommander(m, args);
+    jc.setProgramName(UUIDToLongReplacer.class.getName());
+    if (m.help) {
+      jc.usage();
+      return;
+    }
 
+    LOGGER.info("Kicking off executor service with {} threads.", m.nThreads);
+    ExecutorService exec = Executors.newFixedThreadPool(m.nThreads);
+    try {
+      LOGGER.info("Conversion beginning.");
+      StopWatch sw = new StopWatch();
+      sw.start();
+      final Path inPath = Paths.get(m.inputPathString);
+      final Path outPath = Paths.get(m.outFile);
+      List<Path> paths = Files.list(inPath).collect(Collectors.toList());
+      for (Path p : paths) {
+        if (!Files.isDirectory(p)) {
+          int nPaths = p.getNameCount();
+          Path fn = p.getName(nPaths - 1);
+          Path outpath = outPath.resolve(fn);
+          exec.execute(m.new RunnableUUIDToLongReplacer(p, outpath));
+        }
+      }
+
+      exec.shutdown();
+      exec.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+      sw.stop();
+      LOGGER.info("Task finished.");
+      LOGGER.info("Total number of UUIDs processed (cache this for re-use): {}", m.al.get());
+      LOGGER.info("Total number of TheoryDependency UUIDs replaced (information only): {}", m.nTDUUIDs.get());
+      Duration d = new Duration(sw.getTime());
+      LOGGER.info("Runtime: approximately {} minutes.", d.toStandardMinutes().getMinutes());
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 	}
 }
