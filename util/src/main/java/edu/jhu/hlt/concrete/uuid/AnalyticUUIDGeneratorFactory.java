@@ -29,15 +29,19 @@ public class AnalyticUUIDGeneratorFactory {
     this.localIDStr = comm.getUuid().getUuidString();
   }
 
-  public AnalyticUUIDGenerator getGenerator() {
+  public AnalyticUUIDGenerator create() {
     return new AnalyticUUIDGenerator(this.localIDStr);
+  }
+
+  public final String getUuidString() {
+    return this.localIDStr;
   }
 
   public static class AnalyticUUIDGenerator {
     private final String xPart;
     private final String yPart;
 
-    private int zPart;
+    private long zPart;
     private int zLen;
     private int zBound;
 
@@ -47,19 +51,18 @@ public class AnalyticUUIDGeneratorFactory {
       this.yPart = generateHexUnif(tuple.p2.length());
 
       String zPartStr = generateHexUnif(tuple.p3.length());
-      this.zPart = Integer.parseUnsignedInt(zPartStr, 16);
+      this.zPart = Long.parseUnsignedLong(zPartStr, 16);
       this.zLen = zPartStr.length();
       this.zBound = (int)Math.pow(2, (4 * this.zLen));
     }
 
-    private String zeroPaddedHex(int k, int pad) {
-      String hexStr = Integer.toHexString(k);
-      int nonHex = Integer.parseInt(hexStr.substring(2));
+    public static String zeroPaddedHex(long k, int pad) {
+      String hexStr = Long.toHexString(k);
       int nZeroes = pad - hexStr.length();
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < nZeroes; i++)
         sb.append("0");
-      sb.append(nonHex);
+      sb.append(hexStr);
       return sb.toString();
     }
 
