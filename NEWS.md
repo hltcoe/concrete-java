@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.8.5 - 2016-01-21
+* Fix an issue with visibility of classes and constructors in utility libraries.
+
 ## Concrete-Java v4.8.4 - 2016-01-21
 Updates to `UUID` generation to better support compression. Now includes a
 [class](util/src/main/java/edu/jhu/hlt/concrete/uuid/AnalyticUUIDGeneratorFactory.java)

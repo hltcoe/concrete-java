@@ -19,7 +19,7 @@ public class TokenTaggingFactory {
   /**
    *
    */
-  private TokenTaggingFactory(final AnalyticUUIDGenerator gen) {
+  public TokenTaggingFactory(final AnalyticUUIDGenerator gen) {
     this.gen = gen;
   }
 
