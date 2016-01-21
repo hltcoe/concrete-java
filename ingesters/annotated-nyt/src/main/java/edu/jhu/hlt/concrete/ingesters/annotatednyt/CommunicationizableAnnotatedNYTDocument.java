@@ -19,7 +19,6 @@ import edu.jhu.hlt.concrete.CommunicationMetadata;
 import edu.jhu.hlt.concrete.NITFInfo;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.ingesters.base.communications.Communicationizable;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
@@ -27,6 +26,8 @@ import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.concrete.validation.ValidatableTextSpan;
 
 /**
@@ -110,7 +111,11 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
       AnnotationMetadata md = TooledMetadataConverter.convert(this);
       CommunicationMetadata cmd = new CommunicationMetadata();
       cmd.setNitfInfo(extractNITFInfo(this.anytd));
-      Communication c = CommunicationFactory.create(localId);
+      AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+      AnalyticUUIDGenerator g = f.create();
+      Communication c = new Communication();
+      c.setUuid(g.next());
+      c.setId(localId);
       c.setMetadata(md);
       c.setCommunicationMetadata(cmd);
       c.setType("news");
@@ -136,8 +141,8 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
           LOGGER.info("TextSpan was not valid for label: {}. Omitting from output.", slabel);
           continue;
         }
-        
-        final Section s = SectionFactory.fromTextSpan(ts, skind);
+
+        final Section s = new SectionFactory(g).fromTextSpan(ts, skind);
         s.setLabel(slabel);
         c.addToSectionList(s);
         ctxt.append(txt);
@@ -167,9 +172,9 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
       if (!str.isEmpty())
         stream.add(StringStringStringTuple.create("Other", "Byline", str));
       else
-        LOGGER.debug("Byline was empty; not adding a zone for it.");      
+        LOGGER.debug("Byline was empty; not adding a zone for it.");
     });
-    
+
     this.anytd.getDateline().ifPresent(str -> stream.add(StringStringStringTuple.create("Other", "Dateline", str)));
     this.anytd.getArticleAbstract().ifPresent(str -> {
       if (!str.isEmpty())

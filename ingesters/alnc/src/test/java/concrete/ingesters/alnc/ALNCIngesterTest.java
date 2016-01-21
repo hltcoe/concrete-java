@@ -15,20 +15,25 @@ import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.alnc.ALNCIngester;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class ALNCIngesterTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ALNCIngesterTest.class);
 
   Path p = Paths.get("src/test/resources/fake.json");
+  CompactCommunicationSerializer cs = new TarGzCompactCommunicationSerializer();
 
   @Test
-  public void testIterator() throws IngestException {
+  public void testIterator() throws IngestException, ConcreteException {
     try (ALNCIngester ing = new ALNCIngester(p);) {
       Iterator<Communication> iter = ing.iterator();
       int ct = 0;
       while (iter.hasNext()) {
         Communication c = iter.next();
+        cs.toBytes(c);
         LOGGER.info("ID: {}", c.getId());
         LOGGER.info("UUID: {}", c.getUuid());
         AnnotationMetadata md = c.getMetadata();

@@ -16,11 +16,13 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 import edu.jhu.hlt.concrete.miscommunication.sentenced.NoEmptySentenceListOrTokenizedCommunication;
+import edu.jhu.hlt.concrete.section.SingleSectionSegmenter;
 import edu.jhu.hlt.concrete.sentence.SentenceFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.tift.Tokenizer;
 
 /**
@@ -37,7 +39,14 @@ public class NoEmptySentenceListOrTokenizedCommunicationTest {
   }
 
   private Communication getNoSentenceCommunication() throws ConcreteException {
-    return CommunicationFactory.create("id_1", "This is a sample test block.", "Passage");
+    Communication c = new Communication();
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator g = f.create();
+    c.setUuid(g.next());
+    c.setText("This is a sample test block.");
+    c.setId("id_1");
+    c.addToSectionList(SingleSectionSegmenter.createSingleSection(c, "Passage"));
+    return c;
   }
 
   private Communication getSentencedCommunication() throws ConcreteException {

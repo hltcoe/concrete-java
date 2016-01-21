@@ -14,6 +14,7 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  * Class that allows for construction of semi-built {@link Communication}
  * objects.
  */
+@Deprecated
 public class CommunicationFactory {
 
   private final AnalyticUUIDGenerator gen;

@@ -23,14 +23,16 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
+import edu.jhu.hlt.concrete.section.SingleSectionSegmenter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
@@ -72,14 +74,21 @@ public class CompleteFileIngester implements UTF8FileIngester {
       ExistingNonDirectoryFile f = new ExistingNonDirectoryFile(path);
       try(InputStream is = Files.newInputStream(f.getPath());) {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
-        Communication c = CommunicationFactory.create(f.getName(), content, "Other");
+        AnalyticUUIDGeneratorFactory fact = new AnalyticUUIDGeneratorFactory();
+        AnalyticUUIDGenerator g = fact.create();
+        Communication c = new Communication();
+        c.setId(f.getName());
+        c.setUuid(g.next());
+        c.setText(content);
         c.setType(this.getKind());
         c.setMetadata(TooledMetadataConverter.convert(this));
+        Section s = SingleSectionSegmenter.createSingleSection(c, "Other");
+        c.addToSectionList(s);
         return c;
       } catch (IOException e) {
         throw new IngestException("Caught exception reading in document.", e);
       } catch (ConcreteException e) {
-        throw new IngestException(e);
+        throw new IngestException("Caught exception reading in document.", e);
       }
     } catch (NoSuchFileException | NotFileException e) {
       throw new IngestException("Path did not exist or was a directory.", e);
