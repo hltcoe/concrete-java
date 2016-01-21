@@ -6,25 +6,23 @@ package edu.jhu.hlt.concrete.tokenization;
 
 import edu.jhu.hlt.concrete.Parse;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  *
  */
 public class ParseFactory {
 
-  /**
-   *
-   */
-  private ParseFactory() {
-    // TODO Auto-generated constructor stub
+  private final AnalyticUUIDGenerator gen;
+
+  public ParseFactory(final AnalyticUUIDGenerator gen) {
+    this.gen = gen;
   }
 
   /**
-   *
    * @return a {@link Parse} with a {@link UUID} set
    */
-  public static final Parse create() {
-    return new Parse().setUuid(UUIDFactory.newUUID());
+  public final Parse create() {
+    return new Parse().setUuid(this.gen.next());
   }
 }

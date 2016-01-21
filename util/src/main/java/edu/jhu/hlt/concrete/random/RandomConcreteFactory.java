@@ -15,6 +15,8 @@ import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
 import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
@@ -77,7 +79,9 @@ public class RandomConcreteFactory {
 	  try {
       final Communication comm = this.communication();
       final TextSpan ts = new TextSpan(0, comm.getText().length());
-      final Section s = SectionFactory.fromTextSpan(ts, "passage");
+      AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(comm);
+      AnalyticUUIDGenerator gen = f.create();
+      final Section s = new SectionFactory(gen).fromTextSpan(ts, "passage");
       comm.addToSectionList(s);
       return comm;
     } catch (ConcreteException e) {

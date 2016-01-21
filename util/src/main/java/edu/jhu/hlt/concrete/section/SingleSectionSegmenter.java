@@ -17,9 +17,12 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
@@ -44,10 +47,11 @@ public class SingleSectionSegmenter {
    * @param sectionKind the kind of the Section
    * @return a {@link Section} with one {@link TextSpan}.
    */
-  public static final Section createSingleSection (String text, String sectionKind) {
+  public static final Section createSingleSection (String text, String sectionKind, UUID sectionUuid) {
     TextSpan ts = new TextSpan(0, text.length());
 
-    Section s = SectionFactory.create();
+    Section s = new Section();
+    s.setUuid(sectionUuid);
     s.setKind(sectionKind);
     s.setTextSpan(ts);
 
@@ -66,8 +70,11 @@ public class SingleSectionSegmenter {
     String ctxt = c.getText();
     if (ctxt.isEmpty())
       throw new ConcreteException("Text was empty.");
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(c);
+    AnalyticUUIDGenerator gen = f.create();
+    UUID next = gen.next();
 
-    return createSingleSection(ctxt, sectionKind);
+    return createSingleSection(ctxt, sectionKind, next);
   }
 
   public static void main(String... args) {

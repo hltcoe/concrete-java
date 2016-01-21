@@ -44,7 +44,7 @@ public class NonSentencedSectionedCommunicationTest {
     new WritableCommunication(c).writeToFile(tf.getRoot().toPath(), true);
     Section s = SingleSectionSegmenter.createSingleSection(c, "Passage");
 
-    Sentence st = SentenceFactory.create();
+    Sentence st = new SentenceFactory(c).create();
     st.setTextSpan(s.getTextSpan());
     s.addToSentenceList(st);
     c.addToSectionList(s);

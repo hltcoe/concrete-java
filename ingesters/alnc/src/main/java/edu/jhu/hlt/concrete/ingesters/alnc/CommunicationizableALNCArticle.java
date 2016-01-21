@@ -13,13 +13,14 @@ import org.joda.time.format.DateTimeFormatter;
 import edu.jhu.hlt.alnc.ALNCArticleBean;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.ingesters.base.communications.Communicationizable;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  * Class that represents an ALNC article that can be converted to a Concrete {@link Communication}.
@@ -78,10 +79,14 @@ public class CommunicationizableALNCArticle implements Communicationizable, Safe
    */
   @Override
   public Communication toCommunication() throws ConcreteException {
-    final Communication c = CommunicationFactory.create(this.bean.extractId(), this.bean.getContent());
+    Communication c = new Communication();
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator g = f.create();
+    c.setUuid(g.next());
+    c.setId(this.bean.extractId());
+    c.setText(this.bean.getContent());
     final AnnotationMetadata md = TooledMetadataConverter.convert(this);
     c.setMetadata(md);
-    c.setText(this.bean.getContent());
     long millis = alncDateFormatter.parseMillis(this.bean.getDate());
     c.setStartTime(millis / 1000);
     c.setType("news");

@@ -22,12 +22,14 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester;
 
 public class DoubleLineBreakFileIngesterTest {
-  
+
   private static final Logger LOGGER = LoggerFactory.getLogger(DoubleLineBreakFileIngesterTest.class);
-  
+
   Path tmpPath;
   String testContent;
 
@@ -56,9 +58,11 @@ public class DoubleLineBreakFileIngesterTest {
   }
 
   @Test
-  public void testFromCharacterBasedFile() throws IngestException {
+  public void testFromCharacterBasedFile() throws IngestException, ConcreteException {
     UTF8FileIngester ing = new DoubleLineBreakFileIngester("other", "other");
     Communication c = ing.fromCharacterBasedFile(tmpPath);
+    TarGzCompactCommunicationSerializer ser = new TarGzCompactCommunicationSerializer();
+    ser.toBytes(c);
     List<Section> sList = c.getSectionList();
     assertEquals(testContent, c.getText());
     assertEquals(3, c.getSectionListSize());

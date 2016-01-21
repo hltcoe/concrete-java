@@ -24,6 +24,8 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.gigaword.GigawordDocumentConverter;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.SuperTextSpan;
 
@@ -59,6 +61,8 @@ public class GigawordIngesterTest {
         BufferedInputStream bis = new BufferedInputStream(is)) {
       String sgml = IOUtils.toString(bis, StandardCharsets.UTF_8);
       Communication pdc = new GigawordDocumentConverter().fromSgmlString(sgml);
+      CompactCommunicationSerializer cs = new TarGzCompactCommunicationSerializer();
+      cs.toBytes(pdc);
       this.testAgainstDogVsMan(pdc);
     }
   }

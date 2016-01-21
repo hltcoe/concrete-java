@@ -25,6 +25,14 @@ import edu.jhu.hlt.concrete.UUID;
  * tt.setUuid(newUUID);
  * ...
  * </pre>
+ *
+ * or, for a new Communication:
+ * <pre>
+ * AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(); // no-arg ctor
+ * AnalyticUUIDGenerator gen = f.create();
+ * Communication c = new Communication();
+ * c.setUuid(gen.next());
+ * </pre>
  */
 public class AnalyticUUIDGeneratorFactory {
 
