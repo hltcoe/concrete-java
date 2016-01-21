@@ -258,7 +258,7 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     if (!Files.exists(path))
       throw new IngestException("No file at: " + path.toString());
 
-    Communication c = CommunicationFactory.create();
+    Communication c = new CommunicationFactory().create();
     c.setType(this.getKind());
     c.setMetadata(TooledMetadataConverter.convert(this));
 

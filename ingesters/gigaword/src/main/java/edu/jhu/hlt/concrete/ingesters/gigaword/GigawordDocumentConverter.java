@@ -107,7 +107,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
 
   private Section fromPAM(final PersistentArrayMap pam) {
     LOGGER.debug("Running on PAM: {}", pam.toString());
-    Section s = SectionFactory.create();
+    Section s = new SectionFactory().create();
     final long begin = (long) pam.get(this.bkw);
     final int bi = (int)begin;
     final long end = (long) pam.get(this.ekw);
@@ -125,7 +125,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
     String id = (String) map.get(Keyword.find("id"));
     long date = (long)map.get(Keyword.find("date"));
 
-    Communication c = CommunicationFactory.create()
+    Communication c = new CommunicationFactory().create()
         .setId(id)
         .setStartTime(date / 1000)
         .setType(kind)

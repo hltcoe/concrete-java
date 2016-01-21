@@ -55,7 +55,7 @@ public class SillySentenceSegmenter implements Analytic<SentencedCommunication> 
       int end = m.end();
 
       TextSpan ts = new TextSpan(start, end);
-      Sentence sent = SentenceFactory.create();
+      Sentence sent = new SentenceFactory().create();
       sent.setTextSpan(ts);
       sentList.add(sent);
     }

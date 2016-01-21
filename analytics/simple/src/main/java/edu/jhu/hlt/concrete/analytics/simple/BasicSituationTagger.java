@@ -28,7 +28,8 @@ import edu.jhu.hlt.concrete.miscommunication.situationed.SituationMentionedCommu
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  * An example of a tool that produces {@link SituationMentionSet}s by tagging any
@@ -52,12 +53,14 @@ public class BasicSituationTagger implements Analytic<SituationMentionedCommunic
   @Override
   public SituationMentionedCommunication annotate (Communication c) throws AnalyticException {
     final Communication cpy = new Communication(c);
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(cpy);
+    AnalyticUUIDGenerator gen = f.create();
     // SuperCommunication sc = new SuperCommunication(cpy);
     try {
       CachedTokenizationCommunication ctc = new CachedTokenizationCommunication(cpy);
       SituationMentionSet sms = new SituationMentionSet();
       sms.setMetadata(TooledMetadataConverter.convert(this));
-      sms.setUuid(UUIDFactory.newUUID());
+      sms.setUuid(gen.next());
 
       List<Tokenization> tokenizations = new ArrayList<>(ctc.getTokenizations());
       for (Tokenization t : tokenizations) {
@@ -73,7 +76,7 @@ public class BasicSituationTagger implements Analytic<SituationMentionedCommunic
             trs.addToTokenIndexList(tk.getTokenIndex());
 
             SituationMention sm = new SituationMention();
-            sm.setUuid(UUIDFactory.newUUID());
+            sm.setUuid(gen.next());
             sm.setConfidence(1.0d);
             sm.setSituationType("Fact");
 

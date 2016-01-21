@@ -42,7 +42,7 @@ public class NoEmptySentenceListOrTokenizedCommunicationTest {
 
   private Communication getSentencedCommunication() throws ConcreteException {
     Communication c = this.getNoSentenceCommunication();
-    Sentence st = SentenceFactory.create();
+    Sentence st = new SentenceFactory(c).create();
     Section ptr = c.getSectionListIterator().next();
     TextSpan ts = new TextSpan(ptr.getTextSpan());
     st.setTextSpan(ts);

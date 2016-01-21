@@ -4,23 +4,30 @@
  */
 package edu.jhu.hlt.concrete.sentence;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Sentence;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  *
  */
 public class SentenceFactory {
 
+  private final AnalyticUUIDGenerator gen;
   /**
-   * 
+   *
    */
-  private SentenceFactory() {
-    // TODO Auto-generated constructor stub
+  public SentenceFactory(final AnalyticUUIDGenerator gen) {
+    this.gen = gen;
   }
-  
-  public static final Sentence create() {
+
+  public SentenceFactory(final Communication comm) {
+    this.gen = new AnalyticUUIDGeneratorFactory(comm).create();
+  }
+
+  public final Sentence create() {
     return new Sentence()
-      .setUuid(UUIDFactory.newUUID());
+      .setUuid(this.gen.next());
   }
 }

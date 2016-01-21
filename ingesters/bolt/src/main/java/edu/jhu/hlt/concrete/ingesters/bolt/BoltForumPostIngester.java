@@ -147,7 +147,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(hlText);
     TextSpan ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
 
-    Section s = SectionFactory.fromTextSpan(ts, "headline");
+    Section s = new SectionFactory().fromTextSpan(ts, "headline");
     List<Integer> intList = new ArrayList<>();
     intList.add(0);
     s.setNumberList(intList);
@@ -257,7 +257,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     if (!Files.exists(path))
       throw new IngestException("No file at: " + path.toString());
 
-    Communication c = CommunicationFactory.create();
+    Communication c = new CommunicationFactory().create();
     c.setType(this.getKind());
     c.setMetadata(TooledMetadataConverter.convert(this));
 
