@@ -17,7 +17,7 @@ public class TokenizationFactory {
   /**
    *
    */
-  private TokenizationFactory(final AnalyticUUIDGenerator gen) {
+  public TokenizationFactory(final AnalyticUUIDGenerator gen) {
     this.gen = gen;
   }
 
