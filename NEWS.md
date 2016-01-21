@@ -1,4 +1,36 @@
 # News
+## Concrete-Java v4.8.4 - 2016-01-21
+Updates to `UUID` generation to better support compression. Now includes a
+[class](util/src/main/java/edu/jhu/hlt/concrete/uuid/AnalyticUUIDGeneratorFactory.java)
+that should be used by analytics to generate `UUID`s.
+
+One factory should be created per communication, and a new generator
+should be created from that factory for each analytic processing the
+communication.  Usually each program represents a single analytic,
+so common usage is:
+
+```java
+Communication c = ... // from an existing Communication
+AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(c); // per-comm
+AnalyticUUIDGenerator gen = f.create(); // per-analytic
+UUID newUUID = gen.next(); // concrete UUID
+TokenTagging tt = new TokenTagging();
+tt.setUuid(newUUID);
+```
+or if you're creating a new communication:
+```java
+AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(); // no-arg ctor
+AnalyticUUIDGenerator gen = f.create();
+Communication c = new Communication();
+c.setUuid(gen.next());
+```
+
+where the annotation objects might be objects of type
+Parse, DependencyParse, TokenTagging, CommunicationTagging, etc.
+
+Additionally, add some serialization calls to ingesters to ensure
+valid `Communication` objects are produced.
+
 ## Concrete-Java v4.8.3 - 2015-10-4
 * Gigaword ingester: fix an issue where zero-length text
 spans were being propagated through.
