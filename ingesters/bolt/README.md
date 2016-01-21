@@ -9,7 +9,7 @@ mvn clean compile assembly:single
 
 Run:
 ```sh
-java -cp target/concrete-ingesters-bolt-4.8.3-jar-with-dependencies.jar \
+java -cp target/concrete-ingesters-bolt-4.8.4-jar-with-dependencies.jar \
     edu.jhu.hlt.concrete.ingesters.bolt.BoltForumPostIngester \
     /path/to/output/folder \
     /path/to/document \
