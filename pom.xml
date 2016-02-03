@@ -22,6 +22,7 @@
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
     <module>ingesters/alnc</module>
+    <module>ingesters/acere</module>
     <module>ingesters/gigaword</module>
     <module>ingesters/annotated-nyt</module>
     <module>ingesters/bolt</module>
