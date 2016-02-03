@@ -1,0 +1,4 @@
+before_script:
+  apt-get update -qq && apt-get install -y -qq openjdk8-jdk maven
+  which java
+  which mvn
