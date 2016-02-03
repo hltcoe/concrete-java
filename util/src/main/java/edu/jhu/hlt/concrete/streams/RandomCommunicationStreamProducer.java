@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
@@ -25,8 +23,6 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  * consumers via e.g. named pipes.
  */
 public class RandomCommunicationStreamProducer {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(RandomCommunicationStreamProducer.class);
 
   /**
    * @param args
