@@ -11,7 +11,7 @@ mvn clean compile assembly:single
 
 Run:
 ```sh
-java -cp target/concrete-ingesters-gigaword-4.6.1-jar-with-dependencies.jar \
+java -cp target/concrete-ingesters-gigaword-4.8.5-jar-with-dependencies.jar \
     edu.jhu.hlt.concrete.ingesters.gigaword.GigawordDocumentConverter \
     /path/to/ldc/sgml/file \
     /path/to/output/file

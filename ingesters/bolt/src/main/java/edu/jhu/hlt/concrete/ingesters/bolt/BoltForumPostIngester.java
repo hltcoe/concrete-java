@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
@@ -45,8 +44,9 @@ import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
 import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
-import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
@@ -108,7 +108,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     return "forum-post";
   }
 
-  private Section handleHeadline(final XMLEventReader rdr, final String content) throws XMLStreamException, ConcreteException {
+  private static Section handleHeadline(final XMLEventReader rdr, final String content) throws XMLStreamException, ConcreteException {
     // The first type is always a document start event. Skip it.
     rdr.nextEvent();
 
@@ -130,6 +130,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     // Text of the headline. This would be useful for purely getting
     // the content, but for offsets, it's not that useful.
     Characters cc = rdr.nextEvent().asCharacters();
+    int charOff = cc.getLocation().getCharacterOffset();
     int clen = cc.getData().length();
 
     // The next part is the headline end element. Skip.
@@ -140,23 +141,25 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
     // Reader is now pointing at the first post.
     // Construct section, text span, etc.
-    final int endHlOrigText = hlPartOff + clen;
-    final String hlText = content.substring(hlPartOff, endHlOrigText);
+    final int charOffPlusLen = charOff + clen;
+    final String hlText = content.substring(charOff, charOffPlusLen);
 
-    SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(hlText);
-    TextSpan ts = new TextSpan(hlPartOff + pads.getKey(), endHlOrigText - pads.getValue());
+    SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
+    TextSpan ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
 
-    Section s = SectionFactory.fromTextSpan(ts, "headline");
+    Section s = new Section();
+    s.setKind("headline");
+    s.setTextSpan(ts);
     List<Integer> intList = new ArrayList<>();
     intList.add(0);
     s.setNumberList(intList);
     return s;
   }
 
-  private SimpleImmutableEntry<Integer, Integer> trimSpacing(final String str) {
-    final int leftPadding = this.getLeftSpacesPaddingCount(str);
+  private static SimpleImmutableEntry<Integer, Integer> trimSpacing(final String str) {
+    final int leftPadding = getLeftSpacesPaddingCount(str);
     LOGGER.trace("Left padding: {}", leftPadding);
-    final int rightPadding = this.getRightSpacesPaddingCount(str);
+    final int rightPadding = getRightSpacesPaddingCount(str);
     LOGGER.trace("Right padding: {}", rightPadding);
     return new SimpleImmutableEntry<Integer, Integer>(leftPadding, rightPadding);
   }
@@ -256,7 +259,10 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     if (!Files.exists(path))
       throw new IngestException("No file at: " + path.toString());
 
-    Communication c = CommunicationFactory.create();
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator gen = f.create();
+    Communication c = new Communication();
+    c.setUuid(gen.next());
     c.setType(this.getKind());
     c.setMetadata(TooledMetadataConverter.convert(this));
 
@@ -286,9 +292,11 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
         // Below method moves the reader
         // to the first post element.
-        Section headline = this.handleHeadline(rdr, content);
+        Section headline = handleHeadline(rdr, content);
+        headline.setUuid(gen.next());
         c.addToSectionList(headline);
-        LOGGER.debug("headline text: {}", new SuperTextSpan(headline.getTextSpan(), c).getText());
+        String htxt = c.getText().substring(headline.getTextSpan().getStart(), headline.getTextSpan().getEnding());
+        LOGGER.debug("headline text: {}", htxt);
 
         // Section indices.
         int sectNumber = 1;
@@ -300,9 +308,12 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         // Offset pointer.
         int currOff = -1;
 
+        SectionFactory sf = new SectionFactory(gen);
+
         // First post element.
         while (rdr.hasNext()) {
           XMLEvent nextEvent = rdr.nextEvent();
+          currOff = nextEvent.getLocation().getCharacterOffset();
           if (currOff > 0) {
             int currOffPlus = currOff + 20;
             int currOffLess = currOff - 20;
@@ -327,39 +338,35 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
             // Move past quotes, images, and links.
             if (localName.equals(QUOTE_LOCAL_NAME)) {
-              currOff = this.handleQuote(rdr);
-              continue;
+              this.handleQuote(rdr);
             } else if (localName.equals(IMG_LOCAL_NAME)) {
-              currOff = this.handleImg(rdr);
-              continue;
+              this.handleImg(rdr);
             } else if (localName.equals(LINK_LOCAL_NAME)) {
-              currOff = this.handleLink(rdr);
-              continue;
-            } else if (localName.equals(POST_LOCAL_NAME)) {
-              // Start of a new post?
-              currOff = se.getLocation().getCharacterOffset();
-            } else {
-              // unseen edge case.
-              throw new IllegalArgumentException("Unsure what to do about start tag: " + localName);
+              this.handleLink(rdr);
             }
           } else if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
             int coff = chars.getLocation().getCharacterOffset();
-            if (chars.isWhiteSpace()) {
-              currOff = coff;
-            } else {
+            if (!chars.isWhiteSpace()) {
               // content to be captured
               String fpContent = chars.getData();
               LOGGER.debug("Character offset: {}", coff);
               LOGGER.debug("Character based data: {}", fpContent);
               // LOGGER.debug("Character data via offset diff: {}", content.substring(coff - fpContent.length(), coff));
 
-              SimpleImmutableEntry<Integer, Integer> pads = this.trimSpacing(fpContent);
+              SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
               final int tse = currOff + fpContent.length() - pads.getValue();
-              LOGGER.debug("Section text: {}", content.substring(tsb, tse));
+              final String subs = content.substring(tsb, tse);
+              if (subs.replaceAll("\\p{Zs}", "").replaceAll("\\n", "").isEmpty()) {
+                LOGGER.info("Found empty section: skipping.");
+                continue;
+              }
+
+              LOGGER.debug("Section text: {}", subs);
               TextSpan ts = new TextSpan(tsb, tse);
-              Section s = SectionFactory.fromTextSpan(ts, "post");
+
+              Section s = sf.fromTextSpan(ts, "post");
               List<Integer> intList = new ArrayList<>();
               intList.add(sectNumber);
               intList.add(subSect);
@@ -397,7 +404,7 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     }
   }
 
-  private int getLeftSpacesPaddingCount(final String str) {
+  private static int getLeftSpacesPaddingCount(final String str) {
     final int len = str.length();
     for (int i = 0; i < len; i++) {
       Character c = str.charAt(i);
@@ -408,15 +415,15 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     return len;
   }
 
-  private boolean isSpaceOrUnixNewline(final Character c) {
+  public static boolean isSpaceOrUnixNewline(final Character c) {
     return c.equals(' ') || c.equals('\n');
   }
 
-  private int getRightSpacesPaddingCount(final String str) {
+  private static int getRightSpacesPaddingCount(final String str) {
     final int lenIdx = str.length() - 1;
     for (int i = 0; i < lenIdx; i++) {
       Character c = str.charAt(lenIdx - i);
-      if (!this.isSpaceOrUnixNewline(c))
+      if (!isSpaceOrUnixNewline(c))
         return i;
     }
 

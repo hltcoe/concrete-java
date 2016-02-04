@@ -46,7 +46,7 @@ public class NonTokenizedSentencedCommunicationTest {
     new WritableCommunication(c).writeToFile(tf.getRoot().toPath(), true);
     Section s = SingleSectionSegmenter.createSingleSection(c, "Passage");
 
-    Sentence st = SentenceFactory.create();
+    Sentence st = new SentenceFactory(c).create();
     st.setTextSpan(s.getTextSpan());
     s.addToSentenceList(st);
     c.addToSectionList(s);
@@ -60,7 +60,7 @@ public class NonTokenizedSentencedCommunicationTest {
     new WritableCommunication(c).writeToFile(tf.getRoot().toPath(), true);
     Section s = SingleSectionSegmenter.createSingleSection(c, "Passage");
 
-    Sentence st = SentenceFactory.create();
+    Sentence st = new SentenceFactory(c).create();
     st.setTextSpan(s.getTextSpan());
 
     Tokenization tkz = Tokenizer.PTB.tokenizeToConcrete(c.getText(), 0);

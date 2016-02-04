@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
@@ -34,6 +33,8 @@ import edu.jhu.hlt.concrete.section.TextSpanKindTuple;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
@@ -81,7 +82,12 @@ public class DoubleLineBreakFileIngester implements UTF8FileIngester {
       ExistingNonDirectoryFile f = new ExistingNonDirectoryFile(path);
       try(InputStream is = Files.newInputStream(path);) {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
-        Communication c = CommunicationFactory.create(f.getName(), content);
+        AnalyticUUIDGeneratorFactory fact = new AnalyticUUIDGeneratorFactory();
+        AnalyticUUIDGenerator g = fact.create();
+        Communication c = new Communication();
+        c.setUuid(g.next());
+        c.setId(f.getName());
+        c.setText(content);
         c.setType(this.commKind);
         c.setMetadata(TooledMetadataConverter.convert(this));
 
@@ -96,13 +102,11 @@ public class DoubleLineBreakFileIngester implements UTF8FileIngester {
           stream.add(new TextSpanKindTuple(ts, this.sectionKindLabel));
         }
 
-        Stream<Section> sections = SectionFactory.fromTextSpanStream(stream.build());
+        Stream<Section> sections = new SectionFactory(g).fromTextSpanStream(stream.build());
         sections.forEach(s -> c.addToSectionList(s));
         return c;
       } catch (IOException e) {
         throw new IngestException("Caught exception reading in document.", e);
-      } catch (ConcreteException e) {
-        throw new IngestException(e);
       }
     } catch (NoSuchFileException | NotFileException e) {
       throw new IngestException("Path did not exist or was a directory.", e);

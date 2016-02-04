@@ -4,6 +4,7 @@
  */
 package edu.jhu.hlt.concrete.uuid;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.UUID;
 
 /**
@@ -16,12 +17,17 @@ public class UUIDFactory {
   }
 
   /**
+   * IMPORTANT: This is a utility method that is used for generating
+   * completely random {@link java.util.UUID}s. In general, the preferred
+   * class for new {@link Communication}s and analytics is {@link AnalyticUUIDGeneratorFactory}.
+   *
    * @return a new Concrete {@link UUID} that wraps a Java {@link java.util.UUID}.
+   * @see AnalyticUUIDGeneratorFactory
    */
   public static UUID newUUID() {
     return new UUID(java.util.UUID.randomUUID().toString());
   }
-  
+
   /**
    * @param uuid a {@link java.util.UUID}
    * @return a Concrete {@link UUID}

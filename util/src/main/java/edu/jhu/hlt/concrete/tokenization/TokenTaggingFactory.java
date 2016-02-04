@@ -9,26 +9,26 @@ import java.util.ArrayList;
 import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  *
  */
 public class TokenTaggingFactory {
-
+  private final AnalyticUUIDGenerator gen;
   /**
    *
    */
-  private TokenTaggingFactory() {
-    // TODO Auto-generated constructor stub
+  public TokenTaggingFactory(final AnalyticUUIDGenerator gen) {
+    this.gen = gen;
   }
 
   /**
    *
    * @return a {@link TokenTagging} with a {@link UUID} set
    */
-  public static final TokenTagging create() {
-    return new TokenTagging().setUuid(UUIDFactory.newUUID())
+  public final TokenTagging create() {
+    return new TokenTagging().setUuid(this.gen.next())
         .setTaggedTokenList(new ArrayList<>());
   }
 
@@ -37,7 +37,7 @@ public class TokenTaggingFactory {
    * @param tokenTaggingType the type that will be set on the produced {@link TaggedToken} object
    * @return a {@link TokenTagging} with both a {@link UUID} and a taggingType set
    */
-  public static final TokenTagging create(final String tokenTaggingType) {
+  public final TokenTagging create(final String tokenTaggingType) {
     return create()
         .setTaggingType(tokenTaggingType);
   }

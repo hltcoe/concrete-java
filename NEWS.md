@@ -1,4 +1,72 @@
 # News
+## Concrete-Java v4.8.5 - 2016-01-21
+* Fix an issue with visibility of classes and constructors in utility libraries.
+
+## Concrete-Java v4.8.4 - 2016-01-21
+Updates to `UUID` generation to better support compression. Now includes a
+[class](util/src/main/java/edu/jhu/hlt/concrete/uuid/AnalyticUUIDGeneratorFactory.java)
+that should be used by analytics to generate `UUID`s.
+
+One factory should be created per communication, and a new generator
+should be created from that factory for each analytic processing the
+communication.  Usually each program represents a single analytic,
+so common usage is:
+
+```java
+Communication c = ... // from an existing Communication
+AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(c); // per-comm
+AnalyticUUIDGenerator gen = f.create(); // per-analytic
+UUID newUUID = gen.next(); // concrete UUID
+TokenTagging tt = new TokenTagging();
+tt.setUuid(newUUID);
+```
+or if you're creating a new communication:
+```java
+AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(); // no-arg ctor
+AnalyticUUIDGenerator gen = f.create();
+Communication c = new Communication();
+c.setUuid(gen.next());
+```
+
+where the annotation objects might be objects of type
+Parse, DependencyParse, TokenTagging, CommunicationTagging, etc.
+
+Additionally, add some serialization calls to ingesters to ensure
+valid `Communication` objects are produced.
+
+## Concrete-Java v4.8.3 - 2015-10-4
+* Gigaword ingester: fix an issue where zero-length text
+spans were being propagated through.
+* Util: add some utility predicates to `TextSpanWrapper`
+and `SectionWrapper` for easier filtering of these types.
+* Util: add a utility, `FilterArchiveByCommunicationType`,
+that allows dropping communications of a particular type
+from an archive.
+
+## Concrete-Java v4.6.10 - 2015-8-2
+* Fix an issue with empty sections in BOLT ingester
+* Deprecate `SuperTextSpan` in favor of `TextSpanWrapper`
+
+## Concrete-Java v4.6.7 - 2015-7-10
+Bugfix release: truly fix up the `concrete-parent` issue.
+
+## Concrete-Java v4.6.6 - 2015-7-10
+Bugfix release: depend upon fixed `concrete-parent`.
+
+## Concrete-Java v4.6.5 - 2015-7-9
+Contains [GigawordDocumentBatchConverter](ingesters/gigaword/src/main/java/edu/jhu/hlt/concrete/ingesters/gigaword/GigawordBatchDocumentConverter.java),
+capable of taking output from `xargs` for bulk `.sgml` file ingest.
+
+## Concrete-Java v4.6.4 - 2015-7-9
+First cut at a web post ingester.
+
+## Concrete-Java v4.6.3 - 2015-7-8
+Bug fix release: Switch `bolt` ingester to Woodstox API, fixing a few
+underlying issues.
+
+## Concrete-Java v4.6.2 - 2015-7-7
+Add an ingester for BOLT forum posts.
+
 ## Concrete-Java v4.6.1 - 2015-6-30
 Fix up a bad release.
 

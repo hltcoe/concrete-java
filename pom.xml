@@ -5,26 +5,29 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-parent</artifactId>
-    <version>4.6</version>
+    <version>4.8</version>
   </parent>
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.6.3-SNAPSHOT</version>
+  <version>4.8.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
     <module>util</module>
+    <module>server</module>
+    <module>tift</module>
     <module>miscommunication</module>
     <module>validation</module>
-    <module>tift</module>
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
-    <module>ingesters/gigaword</module>
     <module>ingesters/alnc</module>
+    <module>ingesters/acere</module>
+    <module>ingesters/gigaword</module>
     <module>ingesters/annotated-nyt</module>
     <module>ingesters/conll</module>
     <module>ingesters/bolt</module>
+    <module>ingesters/webposts</module>
     <module>analytics/base</module>
     <module>analytics/simple</module>
   </modules>
@@ -74,7 +77,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <log4j.version>2.3</log4j.version>
-    <jackson.version>2.5.4</jackson.version>
+    <jackson.version>2.6.1</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
@@ -172,12 +175,17 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>woodstox-core-asl</artifactId>
+        <version>4.4.1</version>
       </dependency>
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.8.1</version>
+        <version>2.8.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
@@ -212,7 +220,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
       <dependency>

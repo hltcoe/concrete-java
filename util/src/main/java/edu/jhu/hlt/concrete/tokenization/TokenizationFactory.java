@@ -5,22 +5,24 @@
 package edu.jhu.hlt.concrete.tokenization;
 
 import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  *
  */
 public class TokenizationFactory {
 
+  private final AnalyticUUIDGenerator gen;
+
   /**
-   * 
+   *
    */
-  private TokenizationFactory() {
-    // TODO Auto-generated constructor stub
+  public TokenizationFactory(final AnalyticUUIDGenerator gen) {
+    this.gen = gen;
   }
-  
-  public static Tokenization create() {
+
+  public Tokenization create() {
     return new Tokenization()
-      .setUuid(UUIDFactory.newUUID());
+      .setUuid(this.gen.next());
   }
 }

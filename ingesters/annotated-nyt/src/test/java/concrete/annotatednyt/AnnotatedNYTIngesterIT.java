@@ -4,7 +4,7 @@
  */
 package concrete.annotatednyt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -31,6 +31,9 @@ import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.annotatednyt.CommunicationizableAnnotatedNYTDocument;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class AnnotatedNYTIngesterIT {
 
@@ -58,6 +61,7 @@ public class AnnotatedNYTIngesterIT {
   @Test
   public void runAcrossAllArchives() throws Exception {
     Map<String, Path> failureMap = new HashMap<>();
+    CompactCommunicationSerializer cs = new TarGzCompactCommunicationSerializer();
     try (Stream<Path> nytTgzPaths = Files.list(dataPath);) {
       nytTgzPaths
         .flatMap(subfolder -> {
@@ -78,6 +82,7 @@ public class AnnotatedNYTIngesterIT {
             NYTCorpusDocument doc = this.parser.fromByteArray(n, false);
             AnnotatedNYTDocument adoc = new AnnotatedNYTDocument(doc);
             Communication c = new CommunicationizableAnnotatedNYTDocument(adoc).toCommunication();
+            cs.toBytes(c);
             final String cid = c.getId();
             LOGGER.debug("Successfully got communication: {}", cid);
             boolean isValid = new CommunicationValidator(c).validate();
@@ -86,9 +91,11 @@ public class AnnotatedNYTIngesterIT {
           }
         } catch (IOException e) {
           throw new RuntimeException(e);
+        } catch (ConcreteException e) {
+          throw new RuntimeException(e);
         }
       });
-      
+
       if (failureMap.size() > 0) {
         LOGGER.warn("There are failures.");
         for (Entry<String, Path> e : failureMap.entrySet()) {
@@ -97,7 +104,7 @@ public class AnnotatedNYTIngesterIT {
           final String part = p.getName(nPaths - 1).toString();
           LOGGER.warn("ID {} is invalid. File: {}", e.getKey(), part);
         }
-        
+
         fail();
       }
     }

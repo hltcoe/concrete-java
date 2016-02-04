@@ -25,14 +25,15 @@ import clojure.lang.PersistentVector;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.communications.CommunicationFactory;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
-import edu.jhu.hlt.concrete.section.SectionFactory;
+import edu.jhu.hlt.concrete.section.SectionWrapper;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  * Java wrapper around Clojure Gigaword API.
@@ -106,7 +107,7 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
 
   private Section fromPAM(final PersistentArrayMap pam) {
     LOGGER.debug("Running on PAM: {}", pam.toString());
-    Section s = SectionFactory.create();
+    Section s = new Section();
     final long begin = (long) pam.get(this.bkw);
     final int bi = (int)begin;
     final long end = (long) pam.get(this.ekw);
@@ -124,8 +125,11 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
     String id = (String) map.get(Keyword.find("id"));
     long date = (long)map.get(Keyword.find("date"));
 
-    Communication c = CommunicationFactory.create()
-        .setId(id)
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator g = f.create();
+    Communication c = new Communication();
+    c.setUuid(g.next());
+    c.setId(id)
         .setStartTime(date / 1000)
         .setType(kind)
         .setText(ldcSgml)
@@ -135,7 +139,11 @@ public class GigawordDocumentConverter implements SafeTooledAnnotationMetadata {
     @SuppressWarnings("unchecked")
     List<PersistentArrayMap> sectionList = (List<PersistentArrayMap>) map.get(skw);
     LOGGER.debug("# sects: {}", sectionList.size());
-    sectionList.forEach(pam -> c.addToSectionList(this.fromPAM(pam)));
+    sectionList.stream().map(pam -> this.fromPAM(pam))
+        .filter(SectionWrapper.hasZeroLengthTextSpan().negate())
+        .map(s -> s.setUuid(g.next()))
+        .forEach(s -> c.addToSectionList(s));
+    LOGGER.debug("# sects post filter: {}", c.getSectionListSize());
     return c;
   }
 

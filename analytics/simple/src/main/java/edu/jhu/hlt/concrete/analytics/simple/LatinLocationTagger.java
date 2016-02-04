@@ -28,7 +28,8 @@ import edu.jhu.hlt.concrete.miscommunication.entitied.EntityMentionedCommunicati
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  * An example of a tool that produces {@link EntityMentionSet}s by tagging any
@@ -53,12 +54,14 @@ public class LatinLocationTagger implements Analytic<EntityMentionedCommunicatio
   @Override
   public EntityMentionedCommunication annotate(Communication original) throws AnalyticException {
     Communication cpy = new Communication(original);
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(cpy);
+    AnalyticUUIDGenerator gen = f.create();
     // SuperCommunication sc = new SuperCommunication(cpy);
     try {
       CachedTokenizationCommunication ctc = new CachedTokenizationCommunication(cpy);
       EntityMentionSet ems = new EntityMentionSet();
       ems.setMetadata(TooledMetadataConverter.convert(this));
-      ems.setUuid(UUIDFactory.newUUID());
+      ems.setUuid(gen.next());
 
       List<Tokenization> tokenizations = new ArrayList<>(ctc.getTokenizations());
       for (Tokenization t : tokenizations) {
@@ -74,7 +77,7 @@ public class LatinLocationTagger implements Analytic<EntityMentionedCommunicatio
             trs.addToTokenIndexList(tk.getTokenIndex());
 
             EntityMention em = new EntityMention();
-            em.setUuid(UUIDFactory.newUUID());
+            em.setUuid(gen.next());
             em.setConfidence(1.0d);
             em.setEntityType("LOC");
             em.setPhraseType("Name");

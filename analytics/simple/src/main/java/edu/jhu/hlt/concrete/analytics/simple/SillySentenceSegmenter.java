@@ -18,10 +18,10 @@ import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunication;
 import edu.jhu.hlt.concrete.miscommunication.sentenced.SentencedCommunication;
-import edu.jhu.hlt.concrete.sentence.SentenceFactory;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
-import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /**
  * An example of how to generate {@link Sentence}s. Probably
@@ -55,7 +55,7 @@ public class SillySentenceSegmenter implements Analytic<SentencedCommunication> 
       int end = m.end();
 
       TextSpan ts = new TextSpan(start, end);
-      Sentence sent = SentenceFactory.create();
+      Sentence sent = new Sentence();
       sent.setTextSpan(ts);
       sentList.add(sent);
     }
@@ -66,6 +66,8 @@ public class SillySentenceSegmenter implements Analytic<SentencedCommunication> 
   @Override
   public SentencedCommunication annotate(Communication comm) throws AnalyticException {
     final Communication cpy = new Communication(comm);
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(comm);
+    AnalyticUUIDGenerator g = f.create();
     List<Section> sectionList = cpy.getSectionList();
     if (sectionList == null || sectionList.isEmpty()) {
       throw new AnalyticException("Communication does not have at least one Section; "
@@ -74,9 +76,9 @@ public class SillySentenceSegmenter implements Analytic<SentencedCommunication> 
 
     for (Section s : sectionList) {
       TextSpan ts = s.getTextSpan();
-      SuperTextSpan sts = new SuperTextSpan(ts, cpy);
-      String sectionText = sts.getText();
+      String sectionText = cpy.getText().substring(ts.getStart(), ts.getEnding());
       List<Sentence> sentList = this.generateSentencesFromText(sectionText);
+      sentList.forEach(st -> st.setUuid(g.next()));
       s.setSentenceList(sentList);
     }
 
