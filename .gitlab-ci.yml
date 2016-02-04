@@ -1,4 +1,10 @@
-image: maven:3-jdk-8
+image: ubuntu:latest
 
-build:
-  script: "mvn verify -B -T1C"
+before_script:
+  - apt-get update -qq && apt-get install -y -qq maven
+  - which java
+  - which mvn
+
+test:
+  script:
+    mvn clean verify -B
