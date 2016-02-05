@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingest;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,17 +10,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhu.hlt.tutils.PennTreeReader;
 import edu.jhu.prim.tuple.Pair;
 
 /**
  * Represents a row in an OntoNotes *.prop file, or an SRL instance.
- *
- * @author travis
  */
 public class OntonotesProposition {
 
-  public static boolean DEBUG = false;
+  private static final Logger LOGGER = LoggerFactory.getLogger(OntonotesProposition.class);
 
   public final String filename;
   public final int sentence;
@@ -32,8 +33,7 @@ public class OntonotesProposition {
   public final List<Proplabel> args;
 
   public OntonotesProposition(String line, boolean match_ON4_manual_exactly) {
-    if (DEBUG)
-      System.out.println("DEBUG: line=\"" + line + "\"");
+    LOGGER.debug("line=\"{}\"", line);
     String[] toks = line.split(" ");
     int i = 0;
     filename = toks[i++];
@@ -212,14 +212,12 @@ public class OntonotesProposition {
         int x = all.get(i);
         int y = leaves.get(s + i);
         if (x != y) {
-          if (DEBUG) {
-            System.out.println(tree.getRoot().getTreeString());
-            for (int j = 0; j < terminal.length; j++) {
-              PennTreeReader.Node n = tree.get(terminal[j], height[j]);
-              System.out.print("piece[" + j + "] = " + terminal[j] + "-" + height[j]);
-              System.out.print("\t first=" + tree.getFirstToken(n));
-              System.out.println(" last=" + tree.getLastToken(n));
-            }
+          LOGGER.debug(tree.getRoot().getTreeString());
+          for (int j = 0; j < terminal.length; j++) {
+            PennTreeReader.Node n = tree.get(terminal[j], height[j]);
+            LOGGER.debug("piece[" + j + "] = " + terminal[j] + "-" + height[j]);
+            LOGGER.debug("\t first=" + tree.getFirstToken(n));
+            LOGGER.debug(" last=" + tree.getLastToken(n));
           }
           return null;
         }
@@ -279,7 +277,8 @@ public class OntonotesProposition {
     System.out.println(new OntonotesProposition(example, true));
 
     int good = 0, bad = 0;
-    File exampleFile = new File("/home/travis/code/fnparse/data/ontonotes-release-4.0/data/files/data/english/annotations/bc/cnn/00/cnn_0000.prop");
+    // Example file: "ontonotes-release-4.0/data/files/data/english/annotations/bc/cnn/00/cnn_0000.prop"
+    File exampleFile = new File(args[0]);
     try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(exampleFile)))) {
       while (r.ready()) {
         String line = r.readLine();

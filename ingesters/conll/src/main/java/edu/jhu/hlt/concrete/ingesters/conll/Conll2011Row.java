@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingest.conll;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 import java.util.ArrayList;
 import java.util.Arrays;

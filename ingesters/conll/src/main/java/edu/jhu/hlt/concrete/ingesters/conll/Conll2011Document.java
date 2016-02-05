@@ -1,9 +1,12 @@
-package edu.jhu.hlt.concrete.ingest.conll;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Entity;
@@ -13,11 +16,13 @@ import edu.jhu.hlt.concrete.EntitySet;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.SituationMentionSet;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
-import edu.jhu.hlt.tutils.Log;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /** Many Sentences comprising a Document */
 public class Conll2011Document {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(Conll2011Document.class);
 
   private final Conll2011 conll2011;
   private String id;
@@ -60,16 +65,18 @@ public class Conll2011Document {
     return sentences;
   }
 
-  public void addCoref(Communication comm) {
+  private void addCoref(Communication comm) {
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(comm);
+    AnalyticUUIDGenerator g = f.create();
     corefMentions = new EntityMentionSet();
-    corefMentions.setUuid(UUIDFactory.newUUID());
+    corefMentions.setUuid(g.next());
     corefMentions.setMetadata(Conll2011.META_COREF);
     corefMentions.setMentionList(new ArrayList<>());
     Map<String, List<EntityMention>> clusters = new HashMap<>();
     int addedMentions = 0;
     for (Conll2011Sentence s : sentences) {
       // Get the entity mentions in this sentence
-      Map<String, List<EntityMention>> c = s.getCoref();
+      Map<String, List<EntityMention>> c = s.getCoref(g);
       //				for (Map.Entry<String, List<EntityMention>> x : c.entrySet()) {
       //					System.out.println(x.getKey() + "\t" + x.getValue());
       //				}
@@ -93,14 +100,14 @@ public class Conll2011Document {
     }
     int addedEntities = 0;
     corefClusters = new EntitySet();
-    corefClusters.setUuid(UUIDFactory.newUUID());
+    corefClusters.setUuid(g.next());
     corefClusters.setMetadata(Conll2011.META_COREF);
     corefClusters.setMentionSetId(corefMentions.getUuid());
     corefClusters.setEntityList(new ArrayList<>());
     for (Map.Entry<String, List<EntityMention>> cluster : clusters.entrySet()) {
       addedEntities++;
       Entity ent = new Entity();
-      ent.setUuid(UUIDFactory.newUUID());
+      ent.setUuid(g.next());
       ent.setConfidence(1);
       for (EntityMention em : cluster.getValue())
         ent.addToMentionIdList(em.getUuid());
@@ -119,7 +126,7 @@ public class Conll2011Document {
     comm.addToEntitySetList(corefClusters);
     comm.addToEntityMentionSetList(corefMentions);
     if (conll2011.warnOnEmptyCoref && (addedMentions == 0 || addedEntities == 0)) {
-      Log.warn("addedMentions=" + addedMentions
+      LOGGER.warn("addedMentions=" + addedMentions
           + " addedEntities=" + addedEntities
           + " communication=" + comm.getId());
     }
@@ -128,9 +135,11 @@ public class Conll2011Document {
   public Communication convertToConcrete() {
     if (comm != null)
       return comm;
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator g = f.create();
     comm = new Communication();
     comm.setId(id);
-    comm.setUuid(UUIDFactory.newUUID());
+    comm.setUuid(g.next());
     comm.setType(communicationType);
     comm.setMetadata(Conll2011.META_GENERAL);
 
@@ -145,23 +154,23 @@ public class Conll2011Document {
         if (section != null)
           comm.addToSectionList(section);
         section = new Section();
-        section.setUuid(UUIDFactory.newUUID());
+        section.setUuid(g.next());
         section.setKind(Conll2011.SECTION_TYPE);
         sectionNum = sent.getPart();
       }
-      section.addToSentenceList(sent.convertToConcrete());
+      section.addToSentenceList(sent.convertToConcrete(g));
     }
     assert section != null;
     comm.addToSectionList(section);
 
     //  SituationMentionSet for the SRL labels
     propBankSrlSituationMentions = new SituationMentionSet();
-    propBankSrlSituationMentions.setUuid(UUIDFactory.newUUID());
+    propBankSrlSituationMentions.setUuid(g.next());
     propBankSrlSituationMentions.setMetadata(Conll2011.META_SRL);
     propBankSrlSituationMentions.setMentionList(new ArrayList<>());
     for (Conll2011Sentence s : sentences) {
       for (int pai = 0; pai < s.getNumPredicates(); pai++) {
-        SituationMention sm = s.getPredArg(pai);
+        SituationMention sm = s.getPredArg(pai, g);
         assert sm.getTokens() != null || sm.getConstituent() != null;
         propBankSrlSituationMentions.addToMentionList(sm);
       }
@@ -174,7 +183,7 @@ public class Conll2011Document {
     // EntityMentionSet for the NER labels
     if (this.conll2011.addNerAsEntityMentionSet) {
       nerEms = new EntityMentionSet();
-      nerEms.setUuid(UUIDFactory.newUUID());
+      nerEms.setUuid(g.next());
       nerEms.setMetadata(Conll2011.META_NER);
       nerEms.setMentionList(new ArrayList<>());
       for (Conll2011Sentence s : sentences)

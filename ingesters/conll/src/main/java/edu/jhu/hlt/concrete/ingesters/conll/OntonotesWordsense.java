@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingest;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 public class OntonotesWordsense {
 

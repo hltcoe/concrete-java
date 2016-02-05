@@ -1,30 +1,32 @@
-package edu.jhu.hlt.concrete.ingest.conll;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import edu.jhu.hlt.concrete.Constituent;
+
 /**
  * Splits the parseBit pieces (also useful for PropBank and NER)
  *
  * NOTE: You cannot use this for coref because coref mentions may overlap.
  */
-public class Parse {
+public class ParseWrapper {
 
-  public static class Constituent {
+  public static class ConstituentWrapper {
 
     public int start, end;        // [inclusive, inclusive]
-    public Constituent parent;
-    private edu.jhu.hlt.concrete.Constituent cons;
-    private Constituent leftChild, rightChild;
+    public ConstituentWrapper parent;
+    private Constituent cons;
+    private ConstituentWrapper leftChild, rightChild;
 
-    public Constituent(int id, String tag, Constituent parent) {
+    public ConstituentWrapper(int id, String tag, ConstituentWrapper parent) {
       this(id, tag, parent, -1, -1);
     }
 
-    public Constituent(int id, String tag, Constituent parent, int start, int end) {
-      this.cons = new edu.jhu.hlt.concrete.Constituent();
+    public ConstituentWrapper(int id, String tag, ConstituentWrapper parent, int start, int end) {
+      this.cons = new Constituent();
       this.cons.setId(id);
       this.cons.setTag(tag);
       this.cons.setChildList(new ArrayList<>());
@@ -34,37 +36,37 @@ public class Parse {
       if (parent != null)
         parent.addChild(this);
     }
-  
-    public void addChild(Constituent c) {
+
+    public void addChild(ConstituentWrapper c) {
       if (leftChild == null)
         leftChild = c;
       rightChild = c;
       cons.addToChildList(c.cons.getId());
     }
-  
+
     public int getStart() {
       if (start < 0)
         start = leftChild.getStart();
       return start;
     }
-  
+
     public int getEnd() {
       if (end < 0)
         end = rightChild.getEnd();
       return end;
     }
-  
+
     public String getTag() {
       return cons.getTag();
     }
-  
-    public edu.jhu.hlt.concrete.Constituent convertToConcrete() {
+
+    public Constituent convertToConcrete() {
       cons.setStart(getStart());
       cons.setEnding(getEnd() + 1);
       return cons;
     }
-  
-    public Constituent getParent() {
+
+    public ConstituentWrapper getParent() {
       return parent;
     }
   }
@@ -72,11 +74,11 @@ public class Parse {
   private List<String> tokens;
   private List<String[]> openTags;
   private List<Integer> numCloseTags;
-  private Deque<Parse.Constituent> stack;
-  private List<Parse.Constituent> nodes;
+  private Deque<ParseWrapper.ConstituentWrapper> stack;
+  private List<ParseWrapper.ConstituentWrapper> nodes;
   private int cid;
 
-  public Parse() {
+  public ParseWrapper() {
     tokens = new ArrayList<>();
     openTags = new ArrayList<>();
     numCloseTags = new ArrayList<>();
@@ -117,17 +119,17 @@ public class Parse {
       numCloseTags.add(0);
 
     for (String tag : getOpenTags()) {
-      Parse.Constituent c = new Parse.Constituent(cid++, tag, stack.peek());
+      ParseWrapper.ConstituentWrapper c = new ParseWrapper.ConstituentWrapper(cid++, tag, stack.peek());
       c.start = i;
       nodes.add(c);
       stack.push(c);
     }
 
     if (word != null)
-      nodes.add(new Parse.Constituent(cid++, word, stack.peek(), i, i));
+      nodes.add(new ParseWrapper.ConstituentWrapper(cid++, word, stack.peek(), i, i));
 
     for (int j = 0; j < getNumCloseTags(); j++) {
-      Parse.Constituent c = stack.pop();
+      ParseWrapper.ConstituentWrapper c = stack.pop();
       c.end = i;
     }
   }
@@ -151,7 +153,7 @@ public class Parse {
 
     for (String tag : getOpenTags()) {
       if (debug) System.out.println("open tag: " + tag);
-      Parse.Constituent c = new Parse.Constituent(cid++, tag, stack.peek());
+      ParseWrapper.ConstituentWrapper c = new ParseWrapper.ConstituentWrapper(cid++, tag, stack.peek());
       c.start = i;
       nodes.add(c);
       stack.push(c);
@@ -159,7 +161,7 @@ public class Parse {
 
     for (int j = 0; j < getNumCloseTags(); j++) {
       if (debug) System.out.println("close tag: " + stack.peek().getTag());
-      Parse.Constituent c = stack.pop();
+      ParseWrapper.ConstituentWrapper c = stack.pop();
       c.end = i;
     }
   }
@@ -180,8 +182,7 @@ public class Parse {
     return numCloseTags.get(i);
   }
 
-  public List<Parse.Constituent> getConstituents() {
+  public List<ParseWrapper.ConstituentWrapper> getConstituents() {
     return nodes;
   }
-
 }

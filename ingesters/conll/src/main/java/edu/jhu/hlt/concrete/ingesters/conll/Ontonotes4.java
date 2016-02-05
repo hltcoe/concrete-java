@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingest;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,9 +25,9 @@ import edu.jhu.hlt.concrete.TokenRefSequence;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
-import edu.jhu.hlt.concrete.ingest.conll.Ontonotes5;
 import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.tutils.PennTreeReader;
 import edu.jhu.prim.bimap.ObjectObjectBimap;
 import edu.jhu.prim.tuple.Pair;
@@ -68,6 +68,7 @@ import edu.jhu.prim.tuple.Pair;
  *
  * @author travis
  */
+@Deprecated
 public class Ontonotes4 {
 
   // e.g. "ontonotes-release-4.0/data/files/data/english/annotations/bc/cnn/00/cnn_0000"
@@ -135,37 +136,38 @@ public class Ontonotes4 {
 
     // Populate the Communication
     Communication comm = new Communication();
-    comm.setUuid(UUIDFactory.newUUID());
+    AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
+    AnalyticUUIDGenerator g = f.create();
+    comm.setUuid(g.next());
     comm.setId(getIdFromBaseName());
     comm.setType(communicationType);
     comm.setMetadata(meta);
 
     Section s = new Section();
-    s.setUuid(UUIDFactory.newUUID());
+    s.setUuid(g.next());
     s.setKind(sectionKind);
     comm.addToSectionList(s);
 
     SituationMentionSet sms = new SituationMentionSet();
-    sms.setUuid(UUIDFactory.newUUID());
+    sms.setUuid(g.next());
     sms.setMetadata(meta);
     sms.setMentionList(new ArrayList<>());
     comm.addToSituationMentionSetList(sms);
 
     for (int i = 0; i < nSent; i++) {
-
       // Build the sentence based on the parse leaves (including POS tags)
       PennTreeReader.Node root = parses.get(i);
       PennTreeReader.Indexer rootIndex = new PennTreeReader.Indexer(root);
-      Sentence sent = makeSentence(rootIndex);
-      sent.setUuid(UUIDFactory.newUUID());
+      Sentence sent = makeSentence(rootIndex, g);
+      sent.setUuid(g.next());
       s.addToSentenceList(sent);
 
       // Add senses
-      addSenses(sent, senses[i]);
+      addSenses(sent, senses[i], g);
 
       // Add parse
       Parse cons = new Parse();
-      cons.setUuid(UUIDFactory.newUUID());
+      cons.setUuid(g.next());
       cons.setMetadata(meta);
       sent.getTokenization().addToParseList(cons);
       ObjectObjectBimap<PennTreeReader.Node, Constituent> cmap =
@@ -177,7 +179,7 @@ public class Ontonotes4 {
 
         // Build the SituationMention
         SituationMention sm = new SituationMention();
-        sm.setUuid(UUIDFactory.newUUID());
+        sm.setUuid(g.next());
         sm.setConfidence(1);
 
         // Add the predicate
@@ -292,11 +294,12 @@ public class Ontonotes4 {
    * Makes a {@link TokenList} out of the leaf nodes in the given tree.
    * Will insert a token for a trace which has no text field set. Also adds POS
    * tags as a {@link TokenTagging}.
+   * @param newParam TODO
    */
-  public Sentence makeSentence(PennTreeReader.Indexer tree) {
+  private Sentence makeSentence(PennTreeReader.Indexer tree, AnalyticUUIDGenerator g) {
     Sentence sent = new Sentence();
     Tokenization tok = new Tokenization();
-    tok.setUuid(UUIDFactory.newUUID());
+    tok.setUuid(g.next());
     tok.setMetadata(meta);
     sent.setTokenization(tok);
     tok.setKind(TokenizationKind.TOKEN_LIST);
@@ -304,7 +307,7 @@ public class Ontonotes4 {
     tok.setTokenList(tkl);
 
     TokenTagging pos = new TokenTagging();
-    pos.setUuid(UUIDFactory.newUUID());
+    pos.setUuid(g.next());
     pos.setMetadata(posMeta);
     pos.setTaggingType("pos");
     tok.addToTokenTaggingList(pos);
@@ -335,10 +338,10 @@ public class Ontonotes4 {
    * e.g. "work-v-1". The {@link TokenTagging} may not cover all the tokens (you
    * must use the tokenIndex field of TaggedToken).
    */
-  public void addSenses(Sentence sent, List<OntonotesWordsense> senses) {
+  private void addSenses(Sentence sent, List<OntonotesWordsense> senses, AnalyticUUIDGenerator g) {
     Tokenization tok = sent.getTokenization();
     TokenTagging tt = new TokenTagging();
-    tt.setUuid(UUIDFactory.newUUID());
+    tt.setUuid(g.next());
     tt.setMetadata(meta);
     tok.addToTokenTaggingList(tt);
     tt.setTaggingType("ontonotes-wordsense");

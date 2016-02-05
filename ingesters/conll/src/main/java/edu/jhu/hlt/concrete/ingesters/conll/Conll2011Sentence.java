@@ -1,6 +1,6 @@
-package edu.jhu.hlt.concrete.ingest.conll;
+package edu.jhu.hlt.concrete.ingesters.conll;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,9 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.MentionArgument;
@@ -19,17 +22,18 @@ import edu.jhu.hlt.concrete.TokenRefSequence;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
-import edu.jhu.hlt.concrete.uuid.UUIDFactory;
-import edu.jhu.hlt.tutils.Log;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
 /** Many Rows (words) comprising a Sentence */
 public class Conll2011Sentence {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(Conll2011Sentence.class);
+
   /** Information for tracking back to a file */
   public static class DebugInfo {
     public final int firstLine, lastLine;
-    public final File source;
-    public DebugInfo(File source, int firstLine, int lastLine) {
+    public final Path source;
+    public DebugInfo(Path source, int firstLine, int lastLine) {
       this.source = source;
       this.firstLine = firstLine;
       this.lastLine = lastLine;
@@ -101,7 +105,7 @@ public class Conll2011Sentence {
    *
    * NOTE: Coref mentions may nest however, e.g. (0 someone who makes (0 his) own luck)
    */
-  public Map<String, List<EntityMention>> getCoref() {
+  public Map<String, List<EntityMention>> getCoref(AnalyticUUIDGenerator g) {
     Map<String, Deque<Integer>> openMentions = new HashMap<>();
     Map<String, List<EntityMention>> corefMentions = new HashMap<>();
     for (int i = 0; i < words.size(); i++) {
@@ -121,7 +125,7 @@ public class Conll2011Sentence {
           openMentions.put(clusterId, stack);
         // Make an EntityMention
         EntityMention em = new EntityMention();
-        em.setUuid(UUIDFactory.newUUID());
+        em.setUuid(g.next());
         em.setConfidence(1);
         TokenRefSequence trs = new TokenRefSequence();
         trs.setTokenizationId(toks.getUuid());
@@ -155,28 +159,28 @@ public class Conll2011Sentence {
   public int getNumPredicates() {
     if (words.isEmpty() ||
         (words.size() == 1 && words.get(0).pos.startsWith("X"))) {
-      Log.warn("special case of empty sentence/no predicates "
+      LOGGER.warn("special case of empty sentence/no predicates "
           + " doc=" + getDocId() + " index=" + index + " part=" + getPart());
       return 0;
     }
     return words.get(0).getNumPredicates();
   }
 
-  public SituationMention getPredArg(int index) {
+  public SituationMention getPredArg(int index, AnalyticUUIDGenerator g) {
     if (index < 0 || index >= getNumPredicates())
       throw new IllegalArgumentException();
     if (toks == null)
       throw new IllegalStateException();
-    Parse helper = new Parse();
+    ParseWrapper helper = new ParseWrapper();
     for (int i = 0; i < words.size(); i++) {
       Conll2011Row w = words.get(i);
       helper.add(w.getPredArg(index), null);
     }
     SituationMention sm = new SituationMention();
-    sm.setUuid(UUIDFactory.newUUID());
+    sm.setUuid(g.next());
     sm.setConfidence(1);
     sm.setArgumentList(new ArrayList<>());
-    for (Parse.Constituent c : helper.getConstituents()) {
+    for (ParseWrapper.ConstituentWrapper c : helper.getConstituents()) {
       if (c.getTag().equals("V")) {
         // Root (target/verb)
         Conll2011Row w = words.get(c.getStart());
@@ -194,7 +198,7 @@ public class Conll2011Sentence {
       } else {
         // Arg
         if (!c.getTag().contains("ARG")) {
-          Log.warn("bad arg name: " + c.getTag()
+          LOGGER.warn("bad arg name: " + c.getTag()
               + " doc=" + getDocId()
               + " sent=" + getIndex()
               + " part=" + getPart()
@@ -216,16 +220,16 @@ public class Conll2011Sentence {
     return sm;
   }
 
-  public edu.jhu.hlt.concrete.Sentence convertToConcrete() {
+  public edu.jhu.hlt.concrete.Sentence convertToConcrete(AnalyticUUIDGenerator g) {
     if (nerEMs != null)
       nerEMs.clear();
 
     edu.jhu.hlt.concrete.Sentence s = new edu.jhu.hlt.concrete.Sentence();
-    s.setUuid(UUIDFactory.newUUID());
+    s.setUuid(g.next());
     if (toks != null)
       System.err.println("double generating Tokenization, may have orphaned SituationMentions!");
     toks = new Tokenization();
-    toks.setUuid(UUIDFactory.newUUID());
+    toks.setUuid(g.next());
     toks.setKind(TokenizationKind.TOKEN_LIST);
     toks.setMetadata(Conll2011.META_GENERAL);
 
@@ -242,7 +246,7 @@ public class Conll2011Sentence {
 
     // POS
     TokenTagging pos = new TokenTagging();
-    pos.setUuid(UUIDFactory.newUUID());
+    pos.setUuid(g.next());
     pos.setTaggingType("POS");
     pos.setMetadata(Conll2011.META_POS);
     for (int i = 0; i < words.size(); i++) {
@@ -256,7 +260,7 @@ public class Conll2011Sentence {
     toks.addToTokenTaggingList(pos);
 
     // Constituency parse
-    Parse parseHelper = new Parse();
+    ParseWrapper parseHelper = new ParseWrapper();
     for (int i = 0; i < words.size(); i++) {
       Conll2011Row w = words.get(i);
       // Option 1: Detect when children are a mix of terminals and non-terminals
@@ -269,9 +273,9 @@ public class Conll2011Sentence {
       }
     }
     edu.jhu.hlt.concrete.Parse p = new edu.jhu.hlt.concrete.Parse();
-    p.setUuid(UUIDFactory.newUUID());
+    p.setUuid(g.next());
     p.setMetadata(Conll2011.META_PARSE);
-    for (Parse.Constituent c : parseHelper.getConstituents())
+    for (ParseWrapper.ConstituentWrapper c : parseHelper.getConstituents())
       p.addToConstituentList(c.convertToConcrete());
     toks.addToParseList(p);
 
@@ -281,7 +285,7 @@ public class Conll2011Sentence {
       TokenTagging nerTT = null;
       if (this.conll2011.addNerAsTokenTagging) {
         nerTT = new TokenTagging();
-        nerTT.setUuid(UUIDFactory.newUUID());
+        nerTT.setUuid(g.next());
         nerTT.setMetadata(Conll2011.META_NER);
         nerTT.setTaggingType("NER");
       }
@@ -312,7 +316,7 @@ public class Conll2011Sentence {
         if (nc > 0) {
           if (nerEMs != null) {
             EntityMention em = new EntityMention();
-            em.setUuid(UUIDFactory.newUUID());
+            em.setUuid(g.next());
             em.setConfidence(1);
             em.setEntityType(tag);
             TokenRefSequence trs = new TokenRefSequence();
@@ -320,7 +324,6 @@ public class Conll2011Sentence {
             for (int ii = start; ii <= i; ii++)
               trs.addToTokenIndexList(ii);
             em.setTokens(trs);
-//            System.out.println(em);
             nerEMs.add(em);
           }
           tag = null;
