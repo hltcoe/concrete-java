@@ -25,6 +25,7 @@
     <module>ingesters/acere</module>
     <module>ingesters/gigaword</module>
     <module>ingesters/annotated-nyt</module>
+    <module>ingesters/conll</module>
     <module>ingesters/bolt</module>
     <module>ingesters/webposts</module>
     <module>analytics/base</module>
