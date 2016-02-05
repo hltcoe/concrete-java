@@ -107,30 +107,14 @@
             <artifactId>doxia-module-markdown</artifactId>
             <version>1.6</version>
           </dependency>
+          <dependency>
+            <groupId>net.trajano.wagon</groupId>
+            <artifactId>wagon-git</artifactId>
+            <version>2.0.4</version>
+          </dependency>
         </dependencies>
         <configuration>
-          <skipDeploy>true</skipDeploy>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.12</version>
-        <configuration>
-          <message>Creating site for ${project.version}</message>
-          <path>latest</path>
-          <server>github</server>
-          <repositoryName>concrete-java</repositoryName>
-          <repositoryOwner>hltcoe</repositoryOwner>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>site</goal>
-            </goals>
-            <phase>site-deploy</phase>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
@@ -242,6 +226,7 @@
       <id>github-project-site</id>
       <name>Concrete-Java Github Pages</name>
       <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
+      <!-- <url>github:http://hltcoe.github.io/concrete-java/</url> -->
     </site>
   </distributionManagement>
 </project>
