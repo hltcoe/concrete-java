@@ -59,7 +59,8 @@ import edu.stanford.nlp.ie.machinereading.domains.ace.reader.RobustTokenizer.Wor
  *
  * This code was designed for and tested on the .apf.xml and .sgm files from ACE 2005.
  *
- * Note: The AceDomReader discards any <relation_mention_argument/> with a ROLE that is not an
+ * Note: The AceDomReader discards any
+ * <code>relation_mention_argument/</code> with a ROLE that is not an
  * entity mention (e.g. "Time-Within"). So this code does the same.
  */
 public class AceApf2Concrete {
@@ -452,7 +453,7 @@ public class AceApf2Concrete {
    * <pre>java edu.jhu.hlt.concrete.ingesters.acere.AceApf2Concrete
    *     data/ace2005_domains/nw
    *     out.zip
-   * <pre>
+   * </pre>
    */
   public static void main(String[] args) throws Exception {
     String apfPrefix = args[0];
