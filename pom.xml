@@ -25,6 +25,7 @@
     <module>ingesters/acere</module>
     <module>ingesters/gigaword</module>
     <module>ingesters/annotated-nyt</module>
+    <module>ingesters/conll</module>
     <module>ingesters/bolt</module>
     <module>ingesters/webposts</module>
     <module>analytics/base</module>
@@ -78,6 +79,7 @@
     <log4j.version>2.3</log4j.version>
     <jackson.version>2.6.1</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
+    <github.global.server>github</github.global.server>
   </properties>
 
   <build>
@@ -101,16 +103,34 @@
         <version>3.4</version>
         <dependencies>
           <dependency>
-            <groupId>net.trajano.wagon</groupId>
-            <artifactId>wagon-git</artifactId>
-            <version>2.0.2</version>
-          </dependency>
-          <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-module-markdown</artifactId>
             <version>1.6</version>
           </dependency>
         </dependencies>
+        <configuration>
+          <skipDeploy>true</skipDeploy>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.12</version>
+        <configuration>
+          <message>Creating site for ${project.version}</message>
+          <path>latest</path>
+          <server>github</server>
+          <repositoryName>concrete-java</repositoryName>
+          <repositoryOwner>hltcoe</repositoryOwner>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>site-deploy</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
