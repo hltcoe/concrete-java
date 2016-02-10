@@ -1,6 +1,9 @@
 # News
 ## Concrete-Java v4.8.6
-* Add support for CoNLL in the `ingesters/conll` package.
+* Add support for CoNLL in the `ingesters/conll` package. See the
+[README](ingesters/conll/README.md) for details.
+* Add support for ACERE in the `ingesters/acere` package. See the
+[README](ingesters/acere/README.md) for details.
 
 ## Concrete-Java v4.8.5 - 2016-01-21
 * Fix an issue with visibility of classes and constructors in utility libraries.
