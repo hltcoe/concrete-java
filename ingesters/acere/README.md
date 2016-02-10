@@ -13,3 +13,6 @@ Additionally, ensure you have Java 1.8 and Maven installed.
 LDC_PATH=/path/to/your/LDC2006T06
 sh run.sh $LDC_PATH
 ```
+
+## License
+This project is licensed under GPLv3. See [LICENSE](LICENSE).
