@@ -18,7 +18,7 @@ Takes 3 arguments:
 
 ```sh
 java -cp target/concrete-ingesters-simple-4.8.6-jar-with-dependencies.jar \
-    edu.jhu.hlt.ingesters.simple.CompleteFileIngester \
+    edu.jhu.hlt.concrete.ingesters.simple.CompleteFileIngester \
     /path/to/utf8/text/file \
     communication-type \
     /output/dir
@@ -37,7 +37,7 @@ Takes 4 arguments:
 
 ```sh
 java -cp target/concrete-ingesters-simple-4.8.6-jar-with-dependencies.jar \
-    edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester \
+    edu.jhu.hlt.concrete.ingesters.simple.DoubleLineBreakFileIngester \
     utf8-file-with-double-newlines.txt \
     communication-type \
     section-type \

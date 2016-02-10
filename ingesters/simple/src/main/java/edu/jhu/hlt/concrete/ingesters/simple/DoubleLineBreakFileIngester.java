@@ -3,7 +3,7 @@
  * See LICENSE in the project root directory.
  */
 
-package edu.jhu.hlt.ingesters.simple;
+package edu.jhu.hlt.concrete.ingesters.simple;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -27,7 +28,8 @@ import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
-import edu.jhu.hlt.concrete.section.SingleSectionSegmenter;
+import edu.jhu.hlt.concrete.section.SectionFactory;
+import edu.jhu.hlt.concrete.section.TextSpanKindTuple;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
@@ -38,30 +40,36 @@ import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
  * Implementation of {@link UTF8FileIngester} whose {@link UTF8FileIngester#fromCharacterBasedFile(Path)}
- * implementation converts the entire contents of a
+ * implementation converts the contents of a
  * character-based file to a {@link Communication} object.
  * <ul>
  *  <li>
  *   The file name is used as the ID of the Communication.
  *  </li>
  *  <li>
- *   The Communication will contain one {@link Section} with one {@link TextSpan}.
+ *   The Communication will contain one {@link Section} for each double-newline
+ *   in the document. For example, on *nix systems, if the contents contain one
+ *   instance of '\n\n', the Communication will have two Sections.
  *  </li>
  * </ul>
  */
-public class CompleteFileIngester implements UTF8FileIngester {
+public class DoubleLineBreakFileIngester implements UTF8FileIngester {
 
-  private static final Logger logger = LoggerFactory.getLogger(CompleteFileIngester.class);
+  private static final Logger logger = LoggerFactory.getLogger(DoubleLineBreakFileIngester.class);
 
-  private final String kind;
+  private final String sectionKindLabel;
+  private final String lineSep = System.lineSeparator();
+  private final String doubleLineSep = lineSep + lineSep;
 
+  private final String commKind;
   private final long ts;
 
   /**
-   * @param kind the kind of produced {@link Communication} objects
+   * Expect UTF-8 documents.
    */
-  public CompleteFileIngester(String kind) {
-    this.kind = kind;
+  public DoubleLineBreakFileIngester(String commKind, String sectionKindLabel) {
+    this.commKind = commKind;
+    this.sectionKindLabel = sectionKindLabel;
     this.ts = Timing.currentLocalTime();
   }
 
@@ -72,27 +80,46 @@ public class CompleteFileIngester implements UTF8FileIngester {
   public Communication fromCharacterBasedFile(Path path) throws IngestException {
     try {
       ExistingNonDirectoryFile f = new ExistingNonDirectoryFile(path);
-      try(InputStream is = Files.newInputStream(f.getPath());) {
+      try(InputStream is = Files.newInputStream(path);) {
         String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         AnalyticUUIDGeneratorFactory fact = new AnalyticUUIDGeneratorFactory();
         AnalyticUUIDGenerator g = fact.create();
         Communication c = new Communication();
-        c.setId(f.getName());
         c.setUuid(g.next());
+        c.setId(f.getName());
         c.setText(content);
-        c.setType(this.getKind());
+        c.setType(this.commKind);
         c.setMetadata(TooledMetadataConverter.convert(this));
-        Section s = SingleSectionSegmenter.createSingleSection(c, "Other");
-        c.addToSectionList(s);
+
+        String[] split2xNewline = content.split(doubleLineSep);
+        Stream.Builder<TextSpanKindTuple> stream = Stream.builder();
+        int charCtr = 0;
+        for (String s : split2xNewline) {
+          final int len = s.length();
+          final int sum = len + charCtr;
+          TextSpan ts = new TextSpan(charCtr, sum);
+          charCtr = sum + 2;
+          stream.add(new TextSpanKindTuple(ts, this.sectionKindLabel));
+        }
+
+        Stream<Section> sections = new SectionFactory(g).fromTextSpanStream(stream.build());
+        sections.forEach(s -> c.addToSectionList(s));
         return c;
       } catch (IOException e) {
-        throw new IngestException("Caught exception reading in document.", e);
-      } catch (ConcreteException e) {
         throw new IngestException("Caught exception reading in document.", e);
       }
     } catch (NoSuchFileException | NotFileException e) {
       throw new IngestException("Path did not exist or was a directory.", e);
     }
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.ingesters.base.Ingester#getKind()
+   */
+  @Override
+  public String getKind() {
+    return this.commKind;
   }
 
   /**
@@ -101,16 +128,18 @@ public class CompleteFileIngester implements UTF8FileIngester {
    * @param args
    */
   public static void main(String[] args) {
-    if (args.length != 3) {
+    if (args.length != 4) {
       System.err.println("This program converts a character-based file to a .concrete file.");
       System.err.println("The text file must contain UTF-8 encoded characters.");
+      System.err.println("If the file contains any double-newlines, the file will be split into sections where those double-newlines occur.");
       System.err.println("The .concrete file will share the same name as the input file, including the extension.");
-      System.err.println("This program takes 3 arguments.");
+      System.err.println("This program takes 4 arguments.");
       System.err.println("Argument 1: path/to/a/character/based/file");
       System.err.println("Argument 2: type of Communication to generate [e.g., tweet]");
-      System.err.println("Argument 3: path/to/output/folder");
+      System.err.println("Argument 3: type of Sections to generate [e.g., passage]");
+      System.err.println("Argument 4: path/to/out/concrete/file");
       System.err.println("Example usage: " + CompleteFileIngester.class.getName()
-          + " /my/text/file story /my/output/folder");
+          + " /my/text/file story passage /my/output/folder");
       System.exit(1);
     }
 
@@ -119,7 +148,8 @@ public class CompleteFileIngester implements UTF8FileIngester {
     try {
       ExistingNonDirectoryFile ef = new ExistingNonDirectoryFile(inPath);
       Optional<String> commType = Optional.ofNullable(args[1]);
-      Optional<String> outPathStr = Optional.ofNullable(args[2]);
+      Optional<String> sectionType = Optional.ofNullable(args[2]);
+      Optional<String> outPathStr = Optional.ofNullable(args[3]);
 
       Path ep = ef.getPath();
       String fn = ef.getName();
@@ -150,7 +180,7 @@ public class CompleteFileIngester implements UTF8FileIngester {
       }
 
       try {
-        UTF8FileIngester ing = new CompleteFileIngester(commType.get());
+        UTF8FileIngester ing = new DoubleLineBreakFileIngester(commType.get(), sectionType.get());
         Communication comm = ing.fromCharacterBasedFile(ep);
         new WritableCommunication(comm).writeToFile(outFile, false);
       } catch (IngestException e) {
@@ -167,15 +197,6 @@ public class CompleteFileIngester implements UTF8FileIngester {
       logger.error("Path {} is a directory.", inPathStr);
       System.exit(1);
     }
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.ingesters.base.Ingester#getKind()
-   */
-  @Override
-  public String getKind() {
-    return this.kind;
   }
 
   /*
@@ -212,7 +233,8 @@ public class CompleteFileIngester implements UTF8FileIngester {
   @Override
   public List<String> getToolNotes() {
     List<String> sl = new ArrayList<String>();
-    sl.add("Communication kind: " + this.kind);
+    sl.add("Communication kind: " + this.commKind);
+    sl.add("Section kinds: " + this.sectionKindLabel);
     return sl;
   }
 }
