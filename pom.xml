@@ -10,7 +10,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.8.6-SNAPSHOT</version>
+  <version>4.8.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
@@ -79,6 +79,7 @@
     <log4j.version>2.3</log4j.version>
     <jackson.version>2.6.1</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
+    <github.global.server>github</github.global.server>
   </properties>
 
   <build>
@@ -115,16 +116,18 @@
         <version>3.4</version>
         <dependencies>
           <dependency>
-            <groupId>net.trajano.wagon</groupId>
-            <artifactId>wagon-git</artifactId>
-            <version>2.0.2</version>
-          </dependency>
-          <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-module-markdown</artifactId>
             <version>1.6</version>
           </dependency>
+          <dependency>
+            <groupId>net.trajano.wagon</groupId>
+            <artifactId>wagon-git</artifactId>
+            <version>2.0.4</version>
+          </dependency>
         </dependencies>
+        <configuration>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -237,6 +240,7 @@
       <id>github-project-site</id>
       <name>Concrete-Java Github Pages</name>
       <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
+      <!-- <url>github:http://hltcoe.github.io/concrete-java/</url> -->
     </site>
   </distributionManagement>
 </project>

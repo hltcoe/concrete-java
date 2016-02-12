@@ -22,9 +22,9 @@ import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
+import edu.jhu.hlt.concrete.ingesters.simple.DoubleLineBreakFileIngester;
 import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
-import edu.jhu.hlt.ingesters.simple.DoubleLineBreakFileIngester;
 
 public class DoubleLineBreakFileIngesterTest {
 

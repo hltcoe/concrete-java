@@ -59,7 +59,7 @@ public class Sgml2Concrete {
    * Reads an SGML file and gets a Concrete communication. This method treats
    * the input as a raw sequence of UTF-8 characters, and therefore handles
    * malformed XML. The ACE .sgm files fall into this category since they
-   * contain unescaped ampersands (e.g. '&'). The ACE .apf.xml files also assume
+   * contain unescaped ampersands. The ACE .apf.xml files also assume
    * that the properly escaped ampersands (i.e. '&amp;') will be left unescaped.
    */
   public Communication sgmlFile2Comm(Path xmlFile) throws FactoryConfigurationError, XMLStreamException, IOException {
