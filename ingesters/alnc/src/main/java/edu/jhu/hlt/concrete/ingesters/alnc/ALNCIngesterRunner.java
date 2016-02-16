@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class ALNCIngesterRunner {
         new ExistingNonDirectoryFile(p);
         try (ALNCIngester ing = new ALNCIngester(p);
             OutputStream os = Files.newOutputStream(outpath.resolve(p.getFileName() + ".gz"));
-            GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
+            BZip2CompressorOutputStream gout = new BZip2CompressorOutputStream(os);
             TarArchiver arch = new TarArchiver(gout)) {
           Iterator<Communication> iter = ing.iterator();
           while (iter.hasNext()) {
