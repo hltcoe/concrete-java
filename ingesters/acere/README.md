@@ -1,7 +1,7 @@
 # Concrete ACERE Ingester
 Concrete ingester supporting ACERE data.
 
-### Quick start
+## Quick start
 This project uses the
 [ACE 2005 Multilingual Training Corpus](https://catalog.ldc.upenn.edu/LDC2006T06)
 from the LDC. Before beginning, ensure you have extracted the files

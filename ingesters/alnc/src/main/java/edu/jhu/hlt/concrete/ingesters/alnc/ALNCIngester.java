@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
 import edu.jhu.hlt.alnc.ALNCArticleBean;
 import edu.jhu.hlt.alnc.ALNCFileConverter;
 import edu.jhu.hlt.concrete.Communication;
@@ -34,7 +36,10 @@ public class ALNCIngester implements IteratorBasedStreamIngester, AutoCloseable 
     this.ts = Timing.currentLocalTime();
     this.path = path;
     try {
-      this.conv = new ALNCFileConverter(Files.newInputStream(this.path));
+      if (Files.probeContentType(this.path).contains("bzip"))
+        this.conv = new ALNCFileConverter(new BZip2CompressorInputStream(Files.newInputStream(this.path)));
+      else
+        this.conv = new ALNCFileConverter(Files.newInputStream(this.path));
     } catch (IOException e) {
       throw new IngestException(e);
     }
