@@ -2,14 +2,13 @@
  * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.hlt.concrete.ingesters.alnc;
+package edu.jhu.hlt.concrete.ingesters.webposts;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -28,32 +27,26 @@ import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
- * Class used for bulk conversion of the ALNC corpus.
+ * Class used for bulk conversion of web post documents found
+ * in various LDC corpora.
  *
  * @see #main(String...)
  */
-public class ALNCIngesterRunner {
+public class WebPostIngesterRunner {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ALNCIngesterRunner.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebPostIngesterRunner.class);
 
   @ParametersDelegate
   private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
-
-  /**
-   *
-   */
-  public ALNCIngesterRunner() {
-
-  }
 
   /**
    * @param args
    */
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    ALNCIngesterRunner run = new ALNCIngesterRunner();
+    WebPostIngesterRunner run = new WebPostIngesterRunner();
     JCommander jc = new JCommander(run, args);
-    jc.setProgramName(ALNCIngesterRunner.class.getSimpleName());
+    jc.setProgramName(WebPostIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
     }
@@ -61,34 +54,31 @@ public class ALNCIngesterRunner {
     try {
       Path outpath = Paths.get(run.delegate.outputPath);
       IngesterParameterDelegate.prepare(outpath);
+      WebPostIngester ing = new WebPostIngester();
+      Path outWithExt = outpath.resolve("webposts.tar.gz");
 
-      for (String pstr : run.delegate.paths) {
-        LOGGER.debug("Running on file: {}", pstr);
-        Path p = Paths.get(pstr);
-        new ExistingNonDirectoryFile(p);
-        Path outWithExt = outpath.resolve(p.getFileName() + ".tar.gz");
-
-        if (Files.exists(outWithExt)) {
-          if (!run.delegate.overwrite) {
-            LOGGER.info("File: {} exists and overwrite disabled. Not running.", outWithExt.toString());
-            continue;
-          } else {
-            Files.delete(outWithExt);
-          }
+      if (Files.exists(outWithExt)) {
+        if (!run.delegate.overwrite) {
+          LOGGER.info("File: {} exists and overwrite disabled. Not running.", outWithExt.toString());
+          return;
+        } else {
+          Files.delete(outWithExt);
         }
+      }
 
-        try (ALNCIngester ing = new ALNCIngester(p);
-            OutputStream os = Files.newOutputStream(outWithExt);
-            GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
-            TarArchiver arch = new TarArchiver(gout)) {
-          Iterator<Communication> iter = ing.iterator();
-          while (iter.hasNext()) {
-            Communication c = iter.next();
-            LOGGER.debug("Got comm: {}", c.getId());
-            arch.addEntry(new ArchivableCommunication(c));
+      try (OutputStream os = Files.newOutputStream(outWithExt);
+          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
+          TarArchiver arch = new TarArchiver(gout)) {
+        for (String pstr : run.delegate.paths) {
+          LOGGER.debug("Running on file: {}", pstr);
+          Path p = Paths.get(pstr);
+          new ExistingNonDirectoryFile(p);
+          try {
+            Communication next = ing.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + pstr, e);
           }
-        } catch (IngestException e) {
-          LOGGER.error("Caught exception processing path: " + pstr, e);
         }
       }
     } catch (NotFileException | IOException e) {

@@ -23,7 +23,7 @@ public class IngesterParameterDelegate {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IngesterParameterDelegate.class);
 
-  @Parameter(required=true, names="--outputPath", description="The path to place output files.")
+  @Parameter(required=true, names="--output-path", description="The path to place output files.")
   public String outputPath;
 
   @Parameter(names = "--help", help = true, description="Print usage information and exit.")

@@ -1,8 +1,4 @@
-/*
- * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
- * See LICENSE in the project root directory.
- */
-package edu.jhu.hlt.concrete.ingesters.alnc;
+package edu.jhu.hlt.concrete.ingesters.gigaword;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,40 +16,27 @@ import com.beust.jcommander.ParametersDelegate;
 
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
-/**
- * Class used for bulk conversion of the ALNC corpus.
- *
- * @see #main(String...)
- */
-public class ALNCIngesterRunner {
+public class GigawordIngesterRunner {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ALNCIngesterRunner.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GigawordIngesterRunner.class);
 
   @ParametersDelegate
   private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
-
-  /**
-   *
-   */
-  public ALNCIngesterRunner() {
-
-  }
 
   /**
    * @param args
    */
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    ALNCIngesterRunner run = new ALNCIngesterRunner();
+    GigawordIngesterRunner run = new GigawordIngesterRunner();
     JCommander jc = new JCommander(run, args);
-    jc.setProgramName(ALNCIngesterRunner.class.getSimpleName());
+    jc.setProgramName(GigawordIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
     }
@@ -62,11 +45,12 @@ public class ALNCIngesterRunner {
       Path outpath = Paths.get(run.delegate.outputPath);
       IngesterParameterDelegate.prepare(outpath);
 
+      GigawordDocumentConverter conv = new GigawordDocumentConverter();
       for (String pstr : run.delegate.paths) {
         LOGGER.debug("Running on file: {}", pstr);
         Path p = Paths.get(pstr);
         new ExistingNonDirectoryFile(p);
-        Path outWithExt = outpath.resolve(p.getFileName() + ".tar.gz");
+        Path outWithExt = outpath.resolve(p.getFileName().toString().split("\\.")[0] + ".tar.gz");
 
         if (Files.exists(outWithExt)) {
           if (!run.delegate.overwrite) {
@@ -77,18 +61,13 @@ public class ALNCIngesterRunner {
           }
         }
 
-        try (ALNCIngester ing = new ALNCIngester(p);
-            OutputStream os = Files.newOutputStream(outWithExt);
+        try(OutputStream os = Files.newOutputStream(outWithExt);
             GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
             TarArchiver arch = new TarArchiver(gout)) {
-          Iterator<Communication> iter = ing.iterator();
+          Iterator<Communication> iter = conv.gzToStringIterator(p);
           while (iter.hasNext()) {
-            Communication c = iter.next();
-            LOGGER.debug("Got comm: {}", c.getId());
-            arch.addEntry(new ArchivableCommunication(c));
+            arch.addEntry(new ArchivableCommunication(iter.next()));
           }
-        } catch (IngestException e) {
-          LOGGER.error("Caught exception processing path: " + pstr, e);
         }
       }
     } catch (NotFileException | IOException e) {

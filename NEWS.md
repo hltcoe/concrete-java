@@ -1,5 +1,6 @@
 # News
 ## Concrete-Java v4.8.7
+* Improved most ingesters with scripts and better READMEs.
 * Fix an issue with the `simple-ingesters` package, where it did
 not have the proper package name. The package has been moved from
 

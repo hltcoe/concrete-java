@@ -1,5 +1,7 @@
 # Concrete Forum Ingester
-Concrete ingester supporting forum data.
+Concrete ingester supporting forum data, such as those found from
+`LDC2014E13` corpus from
+[TAC '14](http://www.nist.gov/tac/2014/KBP/data.html).
 
 ## Quick start
 From `ingesters/bolt`, run:
@@ -7,14 +9,15 @@ From `ingesters/bolt`, run:
 mvn clean compile assembly:single
 ```
 
-Run:
-```sh
-java -cp target/concrete-ingesters-bolt-4.8.6-jar-with-dependencies.jar \
-    edu.jhu.hlt.concrete.ingesters.bolt.BoltForumPostIngester \
-    /path/to/output/folder \
-    /path/to/document \
-    <path/to/other/document>
+### Ingesting many BOLT forum posts
+``` shell
+BOLT_POSTS=/path/to/many/bolt/.xml
+sh ingest-bolt.sh $BOLT_POSTS output/
 ```
 
-The ingester minimally takes a path to a forum `.xml` document as the last input.
-It can also support any number of `.xml` files afterwards (e.g. via `xargs`).
+The ingester minimally takes a path to a forum `.xml` document as the
+last inputs.  It can also support any number of `.xml` files
+afterwards (e.g. via `xargs`).
+
+This ingester creates a single `.tar.gz` that contains all
+BOLT forum posts that are found in the given path.

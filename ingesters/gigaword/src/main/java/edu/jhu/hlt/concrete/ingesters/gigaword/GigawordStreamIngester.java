@@ -109,8 +109,4 @@ public class GigawordStreamIngester implements IteratorBasedStreamIngester,
   public Iterator<Communication> iterator() throws IngestException {
     return this.conv.gzToStringIterator(this.p);
   }
-
-  public static GigawordStreamIngester factory(Path p) {
-    return new GigawordStreamIngester(p);
-  }
 }
