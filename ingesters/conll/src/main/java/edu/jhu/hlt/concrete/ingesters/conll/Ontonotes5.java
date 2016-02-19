@@ -1,6 +1,10 @@
 package edu.jhu.hlt.concrete.ingesters.conll;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.stream.StreamBasedStreamIngester;
+import edu.jhu.hlt.concrete.ingesters.conll.Conll2011;
+import edu.jhu.hlt.concrete.ingesters.conll.Conll2011Document;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.tutils.PennTreeReader;
@@ -55,17 +61,26 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
     int files = 0;
     this.skels = skels;
     this.sentId2Parse = new HashMap<>();
-    Stream<Path> targetPaths = Files.list(ontonotesDir)
-        .filter(x -> x.endsWith(".parse"));
-    for (Path pf : targetPaths.collect(Collectors.toList())) {
+    for (File pff : Conll2011.find2(ontonotesDir.toFile(), f -> f.getName().endsWith(".parse"))) {
+    	Path pf = pff.toPath();
       Matcher m = ANNOTATIONS_PARSE_PATTERN.matcher(pf.toString());
       m.find();
       if (!m.matches())
         continue;
       files++;
       LOGGER.debug("pf={}", pf.toString());
+      if (debug)
+    	  System.out.println("pf=" + pf);
       String docId = m.group(1);
-      List<String> lines = Files.lines(pf).collect(Collectors.toList());
+
+      List<String> lines = new ArrayList<>();
+      try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(pff)))) {
+    	  for (String line = r.readLine(); line != null; line = r.readLine())
+    		  lines.add(line);
+      } catch (Exception e) {
+    	  throw new RuntimeException(e);
+      }
+
       StringBuilder sb = new StringBuilder();
       int sent = 0;
       for (int i = 0; i < lines.size(); i++) {
@@ -85,6 +100,8 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
     }
 
     LOGGER.info("done, read in {} parses in {} documents", sentId2Parse.size(), files);
+    if (debug)
+    	System.out.printf("done, read in %d parses in %d documents", sentId2Parse.size(), files);
   }
 
   /**
@@ -174,24 +191,24 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
 
   @Override
   public Stream<Communication> stream() throws IngestException {
-    try {
-      return skels.preIngest()
-          .map(lcd -> {
-            // Run setwords on each Conll2011Sentence;
-            // retrieved from each Conll2011Document.
-            lcd.forEach(doc -> {
-              doc.getSentences().stream().forEach(s -> setWords(s));
-            });
-            return lcd;
-          })
-          // Map each document to concrete communication
-          .map(s -> s.map(cd -> cd.convertToConcrete()))
-          // Transform into list, as underlying method is not easily streamable
-          .map(sc -> sc.collect(Collectors.toList()))
-          // Run mergeCommunicationAsSections on each list
-          .map(Conll2011::mergeCommunicationsAsSections);
-    } catch (IOException e) {
-      throw new IngestException(e);
-    }
+	  try {
+		  Stream<List<Conll2011Document>> a = skels.preIngest();
+		  Stream<List<Conll2011Document>> b = a.map(lcd -> {
+			  for (Conll2011Document doc : lcd)
+				  for (Conll2011Sentence s : doc.getSentences())
+					  setWords(s);
+			  return lcd;
+		  });
+		  Stream<List<Communication>> c = b.map(lcd -> {
+			  List<Communication> comms = new ArrayList<>();
+			  for (Conll2011Document cd : lcd)
+				  comms.add(cd.convertToConcrete());
+			  return comms;
+		  });
+		  Stream<Communication> d = c.map(Conll2011::mergeCommunicationsAsSections);
+		  return d;
+	  } catch (IOException e) {
+		  throw new IngestException(e);
+	  }
   }
 }

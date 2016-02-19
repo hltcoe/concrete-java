@@ -1,5 +1,6 @@
 package edu.jhu.hlt.concrete.ingesters.conll;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +34,7 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.stream.StreamBasedStreamIngester;
+import edu.jhu.hlt.concrete.ingesters.conll.Conll2011Document;
 import edu.jhu.hlt.concrete.serialization.CommunicationTarGzSerializer;
 import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
@@ -168,22 +170,51 @@ public class Conll2011 implements StreamBasedStreamIngester {
    * to merge them into a single {@link Communication} using {@link Section}s.
    * @throws IOException
    */
-  public Stream<Stream<Conll2011Document>> preIngest() throws IOException {
-    return Files.list(this.ingestPath)
+  public Stream<List<Conll2011Document>> preIngest() throws IOException {
+	  if (debug) {
+		  for (Path f : find(this.ingestPath, keep)) {
+			  System.out.println("ingestPath contains: " + f);
+		  };
+		  System.out.println("done listing files in " + this.ingestPath);
+	  }
+    return find(this.ingestPath, keep).stream()
         .filter(this.keep)
-        .map(this::readDocuments)
-        .map(l -> l.stream());
+        .map(this::readDocuments);
   }
+
+  public static List<Path> find(Path root, Predicate<Path> keep) throws IOException {
+	  return find2(root.toFile(), f -> keep.test(f.toPath())).stream().map(File::toPath).collect(Collectors.toList());
+  }
+  public static List<File> find2(File root, Predicate<File> keep) {
+	  List<File> all = new ArrayList<>();
+	  findHelper2(root, keep, all);
+	  return all;
+  }
+  private static void findHelper2(File root, Predicate<File> keep, List<File> addTo) {
+	  if (keep.test(root))
+		  addTo.add(root);
+	  File[] files = root.listFiles();
+	  if (files == null)
+		  return;
+	  for (File f : files)
+		  findHelper2(f, keep, addTo);
+  }
+
 
   private List<Conll2011Document> readDocuments(Path f) {
     LOGGER.debug("reading from {}", f.toString());
     try {
-      List<String> lines = Files.lines(f, StandardCharsets.UTF_8)
-          .collect(Collectors.toList());
+      List<String> lines;
+      try (Stream<String> l = Files.lines(f, StandardCharsets.UTF_8)) {
+    	  lines = l.collect(Collectors.toList());
+      }
       List<Conll2011Document> documents = new ArrayList<>();
       for (int i = 0; i < lines.size(); i = readDocument(f, lines, i, documents)) {
         if (i < 0)
           throw new RuntimeException();
+      }
+      if (debug) {
+    	  System.out.println("read " + documents.size() + " documents from "+ f);
       }
       return documents;
     } catch (IOException e) {
@@ -319,9 +350,12 @@ public class Conll2011 implements StreamBasedStreamIngester {
       return this.preIngest()
           // have Stream<Stream<Conll2011Document>>
           // Convert each conll doc to communication
-          .map(lcd -> lcd.map(cd -> cd.convertToConcrete())
-              // switch to list for merge method
-              .collect(Collectors.toList()))
+    	  .map(lcd -> {
+    		  List<Communication> comms = new ArrayList<>();
+    		  for (Conll2011Document cd : lcd)
+    			  comms.add(cd.convertToConcrete());
+    		  return comms;
+    	  })
           // now have Stream<List<Comm>>
           // apply mergeCommunicationsAsSections
           .map(Conll2011::mergeCommunicationsAsSections)
