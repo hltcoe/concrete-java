@@ -24,11 +24,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -273,6 +271,19 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
           if (nextEvent.isEndDocument())
             break;
 
+          //region
+          // enables ingestion of quotes inside a usenet webpost.
+          // by Tongfei Chen
+          if (nextEvent.isStartElement() && nextEvent.asStartElement().getName().equals(QName.valueOf("QUOTE"))) {
+            Attribute attrQuote = nextEvent.asStartElement().getAttributeByName(QName.valueOf("PREVIOUSPOST"));
+            String quote = StringEscapeUtils.escapeXml(attrQuote.getValue());
+            int location = attrQuote.getLocation().getCharacterOffset() + "<QUOTE PREVIOUSPOST=\"".length();
+            Section quoteSection = new Section(g.next(), "quote")
+                    .setTextSpan(new TextSpan(location, location + quote.length()));
+            c.addToSectionList(quoteSection);
+          }
+          //endregion
+
           // Check if start element.
           if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
@@ -283,7 +294,16 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
 
               SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
-              final int tse = currOff + fpContent.length() - (pads.getValue());
+
+              final int tse = currOff +
+                      fpContent.replace("\"", "&quot;")
+                               .replace("<", "&lt;")
+                               .replace(">", "&gt;").length() - (pads.getValue());
+              // MAINTAIN CORRECT TEXT SPAN
+              // CANNOT USE StringEscapeUtils.escapeXml because it will escape "'", which
+              // is not escaped in the data
+              // @tongfei
+
               LOGGER.debug("Section text: {}", content.substring(tsb, tse));
               TextSpan ts = new TextSpan(tsb, tse);
               String sk;
