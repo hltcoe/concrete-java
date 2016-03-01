@@ -171,35 +171,36 @@ public class Conll2011 implements StreamBasedStreamIngester {
    * @throws IOException
    */
   public Stream<List<Conll2011Document>> preIngest() throws IOException {
-	  if (debug) {
-		  for (Path f : find(this.ingestPath, keep)) {
-			  System.out.println("ingestPath contains: " + f);
-		  };
-		  System.out.println("done listing files in " + this.ingestPath);
-	  }
-    return find(this.ingestPath, keep).stream()
-        .filter(this.keep)
-        .map(this::readDocuments);
+    if (debug) {
+      for (Path f : find(this.ingestPath, keep)) {
+        System.out.println("ingestPath contains: " + f);
+      };
+    System.out.println("done listing files in " + this.ingestPath);
+  }
+  return find(this.ingestPath, keep).stream()
+      .filter(this.keep)
+      .map(this::readDocuments);
   }
 
   public static List<Path> find(Path root, Predicate<Path> keep) throws IOException {
-	  return find2(root.toFile(), f -> keep.test(f.toPath())).stream().map(File::toPath).collect(Collectors.toList());
-  }
-  public static List<File> find2(File root, Predicate<File> keep) {
-	  List<File> all = new ArrayList<>();
-	  findHelper2(root, keep, all);
-	  return all;
-  }
-  private static void findHelper2(File root, Predicate<File> keep, List<File> addTo) {
-	  if (keep.test(root))
-		  addTo.add(root);
-	  File[] files = root.listFiles();
-	  if (files == null)
-		  return;
-	  for (File f : files)
-		  findHelper2(f, keep, addTo);
+    return find2(root.toFile(), f -> keep.test(f.toPath())).stream().map(File::toPath).collect(Collectors.toList());
   }
 
+  public static List<File> find2(File root, Predicate<File> keep) {
+    List<File> all = new ArrayList<>();
+    findHelper2(root, keep, all);
+    return all;
+  }
+
+  private static void findHelper2(File root, Predicate<File> keep, List<File> addTo) {
+    if (keep.test(root))
+      addTo.add(root);
+    File[] files = root.listFiles();
+    if (files == null)
+      return;
+    for (File f : files)
+      findHelper2(f, keep, addTo);
+  }
 
   private List<Conll2011Document> readDocuments(Path f) {
     LOGGER.debug("reading from {}", f.toString());
@@ -208,13 +209,15 @@ public class Conll2011 implements StreamBasedStreamIngester {
       try (Stream<String> l = Files.lines(f, StandardCharsets.UTF_8)) {
     	  lines = l.collect(Collectors.toList());
       }
+
       List<Conll2011Document> documents = new ArrayList<>();
       for (int i = 0; i < lines.size(); i = readDocument(f, lines, i, documents)) {
         if (i < 0)
           throw new RuntimeException();
       }
+
       if (debug) {
-    	  System.out.println("read " + documents.size() + " documents from "+ f);
+    	System.out.println("read " + documents.size() + " documents from "+ f);
       }
       return documents;
     } catch (IOException e) {

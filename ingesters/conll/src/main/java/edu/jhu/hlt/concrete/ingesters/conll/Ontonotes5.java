@@ -191,24 +191,24 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
 
   @Override
   public Stream<Communication> stream() throws IngestException {
-	  try {
-		  Stream<List<Conll2011Document>> a = skels.preIngest();
-		  Stream<List<Conll2011Document>> b = a.map(lcd -> {
-			  for (Conll2011Document doc : lcd)
-				  for (Conll2011Sentence s : doc.getSentences())
-					  setWords(s);
-			  return lcd;
-		  });
-		  Stream<List<Communication>> c = b.map(lcd -> {
-			  List<Communication> comms = new ArrayList<>();
-			  for (Conll2011Document cd : lcd)
-				  comms.add(cd.convertToConcrete());
-			  return comms;
-		  });
-		  Stream<Communication> d = c.map(Conll2011::mergeCommunicationsAsSections);
-		  return d;
-	  } catch (IOException e) {
-		  throw new IngestException(e);
-	  }
+    try {
+      Stream<List<Conll2011Document>> a = skels.preIngest();
+      Stream<List<Conll2011Document>> b = a.map(lcd -> {
+        for (Conll2011Document doc : lcd)
+          for (Conll2011Sentence s : doc.getSentences())
+            setWords(s);
+        return lcd;
+        });
+      Stream<List<Communication>> c = b.map(lcd -> {
+          List<Communication> comms = new ArrayList<>();
+          for (Conll2011Document cd : lcd)
+            comms.add(cd.convertToConcrete());
+          return comms;
+      });
+      Stream<Communication> d = c.map(Conll2011::mergeCommunicationsAsSections);
+      return d;
+    } catch (IOException e) {
+      throw new IngestException(e);
+    }
   }
 }
