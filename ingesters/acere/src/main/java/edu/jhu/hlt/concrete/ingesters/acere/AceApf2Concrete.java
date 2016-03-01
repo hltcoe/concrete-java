@@ -451,35 +451,24 @@ public class AceApf2Concrete {
    * <br>
    * <br>
    * <pre>java edu.jhu.hlt.concrete.ingesters.acere.AceApf2Concrete
-   *     data/ace2005_domains/nw
-   *     out.zip
+   *     CNN_CF_20030303.1900.00.apf.xml
+   *     CNN_CF_20030303.1900.00.comm
    * </pre>
    */
   public static void main(String[] args) throws Exception {
-    String apfPrefix = args[0];
-    if (args[1].endsWith(".zip")) {
-      // Write out to a zip file.
-      Path zipFile = Paths.get(args[1]);
-      try (FileSystem zipfs = ConcreteUtils.getNewZipFileSystem(zipFile)) {
-        AceApf2Concrete a2c = new AceApf2Concrete();
-        Path inPath = Paths.get(apfPrefix);
-        List<Path> apfXmlFilesList = Files.list(inPath).filter(p -> p.toString().endsWith(".apf.xml"))
-            .collect(Collectors.toList());
-
-        // List<File> apfXmlFiles =
-        // edu.jhu.util.files.Files.getMatchingFiles(new File(apfPrefix),
-        // ".*\\.apf\\.xml");
-        log.info(String.format("Found %d apf.xml files", apfXmlFilesList.size()));
-        for (Path aceApfFile : apfXmlFilesList) {
-          Path sgmFile = toSgmFile(aceApfFile);
-          Path commFile = zipfs.getPath(sgmFile.getFileName().toString().replace(".sgm", ".comm"));
-          a2c.aceApfFile2CommFile(aceApfFile, sgmFile, commFile);
-        }
-        log.info(String.format("#entities=%d #e-mentions=%d #relations=%d #r-mentions=%d", a2c.numEnts,
-            a2c.numEntMentions, a2c.numRels, a2c.numRelMentions));
-      }
+    if (!Files.isDirectory(Paths.get(args[0]))) {
+      // Process one file.
+      String apfXmlFile = args[0]; // Input .apf.xml file.
+      String commFile = args[1]; // Output .comm file.
+      AceApf2Concrete a2c = new AceApf2Concrete();
+      Path aceApfPath = Paths.get(apfXmlFile);
+      Path sgmPath = toSgmFile(aceApfPath);
+      Path commPath = Paths.get(commFile);
+      a2c.aceApfFile2CommFile(aceApfPath, sgmPath, commPath);
+      log.info(String.format("#entities=%d #e-mentions=%d #relations=%d #r-mentions=%d", a2c.numEnts, a2c.numEntMentions, a2c.numRels, a2c.numRelMentions));
     } else {
-      // Write out to a directory.
+      // Process matching files in a directory.
+      String apfPrefix = args[0];
       Path outDir = Paths.get(args[1]);
       if (!Files.exists(outDir)) {
         Files.createDirectory(outDir);

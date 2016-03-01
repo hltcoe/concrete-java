@@ -77,9 +77,6 @@ public class Conll2011Document {
     for (Conll2011Sentence s : sentences) {
       // Get the entity mentions in this sentence
       Map<String, List<EntityMention>> c = s.getCoref(g);
-      //				for (Map.Entry<String, List<EntityMention>> x : c.entrySet()) {
-      //					System.out.println(x.getKey() + "\t" + x.getValue());
-      //				}
       // Add these mentions to the EntityMentionSet
       for (List<EntityMention> ems : c.values()) {
         for (EntityMention em : ems) {
@@ -112,16 +109,6 @@ public class Conll2011Document {
       for (EntityMention em : cluster.getValue())
         ent.addToMentionIdList(em.getUuid());
       corefClusters.addToEntityList(ent);
-      //				// Debugging
-      //				for (EntityMention em : cluster.getValue()) {
-      //					TokenRefSequence trs = em.getTokens();
-      //					Sentence s = getSentenceFor(trs);
-      //					StringBuilder sb = new StringBuilder();
-      //					for (int i : trs.getTokenIndexList())
-      //						sb.append(" " + s.words.get(i).word);
-      //					System.err.println(cluster.getKey() + sb.toString());
-      //				}
-      //				System.err.println();
     }
     comm.addToEntitySetList(corefClusters);
     comm.addToEntityMentionSetList(corefMentions);

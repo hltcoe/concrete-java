@@ -5,14 +5,13 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-project</artifactId>
-    <version>4.8.7-SNAPSHOT</version>
+    <version>4.8.7</version>
   </parent>
 
   <artifactId>concrete-util</artifactId>
   <name>Utility</name>
   <description>Utility library for use with Concrete-Java</description>
   <url>https://hltcoe.github.io/concrete-java/util/</url>
-
 
   <build>
     <plugins>
