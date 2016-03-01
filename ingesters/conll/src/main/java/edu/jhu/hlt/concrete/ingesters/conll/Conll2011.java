@@ -207,7 +207,7 @@ public class Conll2011 implements StreamBasedStreamIngester {
     try {
       List<String> lines;
       try (Stream<String> l = Files.lines(f, StandardCharsets.UTF_8)) {
-    	  lines = l.collect(Collectors.toList());
+        lines = l.collect(Collectors.toList());
       }
 
       List<Conll2011Document> documents = new ArrayList<>();
@@ -217,7 +217,7 @@ public class Conll2011 implements StreamBasedStreamIngester {
       }
 
       if (debug) {
-    	System.out.println("read " + documents.size() + " documents from "+ f);
+        System.out.println("read " + documents.size() + " documents from "+ f);
       }
       return documents;
     } catch (IOException e) {
@@ -353,12 +353,12 @@ public class Conll2011 implements StreamBasedStreamIngester {
       return this.preIngest()
           // have Stream<Stream<Conll2011Document>>
           // Convert each conll doc to communication
-    	  .map(lcd -> {
-    		  List<Communication> comms = new ArrayList<>();
-    		  for (Conll2011Document cd : lcd)
-    			  comms.add(cd.convertToConcrete());
-    		  return comms;
-    	  })
+          .map(lcd -> {
+              List<Communication> comms = new ArrayList<>();
+              for (Conll2011Document cd : lcd)
+                comms.add(cd.convertToConcrete());
+              return comms;
+          })
           // now have Stream<List<Comm>>
           // apply mergeCommunicationsAsSections
           .map(Conll2011::mergeCommunicationsAsSections)

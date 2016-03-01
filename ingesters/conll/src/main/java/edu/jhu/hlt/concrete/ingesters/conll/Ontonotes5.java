@@ -62,7 +62,7 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
     this.skels = skels;
     this.sentId2Parse = new HashMap<>();
     for (File pff : Conll2011.find2(ontonotesDir.toFile(), f -> f.getName().endsWith(".parse"))) {
-    	Path pf = pff.toPath();
+      Path pf = pff.toPath();
       Matcher m = ANNOTATIONS_PARSE_PATTERN.matcher(pf.toString());
       m.find();
       if (!m.matches())
@@ -70,15 +70,15 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
       files++;
       LOGGER.debug("pf={}", pf.toString());
       if (debug)
-    	  System.out.println("pf=" + pf);
+        System.out.println("pf=" + pf);
       String docId = m.group(1);
 
       List<String> lines = new ArrayList<>();
       try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(pff)))) {
-    	  for (String line = r.readLine(); line != null; line = r.readLine())
-    		  lines.add(line);
+        for (String line = r.readLine(); line != null; line = r.readLine())
+          lines.add(line);
       } catch (Exception e) {
-    	  throw new RuntimeException(e);
+        throw new RuntimeException(e);
       }
 
       StringBuilder sb = new StringBuilder();
@@ -101,7 +101,7 @@ public class Ontonotes5 implements StreamBasedStreamIngester {
 
     LOGGER.info("done, read in {} parses in {} documents", sentId2Parse.size(), files);
     if (debug)
-    	System.out.printf("done, read in %d parses in %d documents", sentId2Parse.size(), files);
+      System.out.printf("done, read in %d parses in %d documents", sentId2Parse.size(), files);
   }
 
   /**
