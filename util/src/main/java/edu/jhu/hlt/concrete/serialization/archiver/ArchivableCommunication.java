@@ -4,6 +4,9 @@
  */
 package edu.jhu.hlt.concrete.serialization.archiver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhu.hlt.acute.archivers.Archivable;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
@@ -13,6 +16,8 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * Wrapper around {@link Communication} that implements {@link Archivable}.
  */
 public class ArchivableCommunication implements Archivable {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ArchivableCommunication.class);
 
   private final Communication comm;
   // Cache id and serializer.
@@ -35,7 +40,14 @@ public class ArchivableCommunication implements Archivable {
    */
   @Override
   public String getFileName() {
-    return this.id + ext;
+    if (this.id.length() > 95) {
+      LOGGER.info("Truncating filename: {}", this.id);
+      String trunc = this.id.substring(0, 95);
+      String fn = trunc + ext;
+      LOGGER.info("New filename: {}", fn);
+      return fn;
+    } else
+      return this.id + ext;
   }
 
   /* (non-Javadoc)
