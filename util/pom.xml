@@ -13,7 +13,6 @@
   <description>Utility library for use with Concrete-Java</description>
   <url>https://hltcoe.github.io/concrete-java/util/</url>
 
-
   <build>
     <plugins>
       <plugin>
