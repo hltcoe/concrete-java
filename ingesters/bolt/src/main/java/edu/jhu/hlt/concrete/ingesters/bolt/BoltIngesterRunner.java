@@ -75,15 +75,14 @@ public class BoltIngesterRunner {
       try (OutputStream os = Files.newOutputStream(outWithExt);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
-        for (String pstr : run.delegate.paths) {
-          LOGGER.debug("Running on file: {}", pstr);
-          Path p = Paths.get(pstr);
+        for (Path p : run.delegate.findFilesInPaths()) {
+          LOGGER.debug("Running on file: {}", p);
           new ExistingNonDirectoryFile(p);
           try {
             Communication next = ing.fromCharacterBasedFile(p);
             arch.addEntry(new ArchivableCommunication(next));
           } catch (IngestException e) {
-            LOGGER.error("Error processing file: " + pstr, e);
+            LOGGER.error("Error processing file: " + p, e);
           }
         }
       }
