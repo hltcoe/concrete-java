@@ -4,9 +4,6 @@
  */
 package edu.jhu.hlt.concrete.serialization.archiver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.jhu.hlt.acute.archivers.Archivable;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
@@ -17,12 +14,10 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  */
 public class ArchivableCommunication implements Archivable {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ArchivableCommunication.class);
-
   private final Communication comm;
   // Cache id and serializer.
   private final String id;
-  private final CompactCommunicationSerializer cs;
+  private static final CompactCommunicationSerializer cs = new CompactCommunicationSerializer();
 
   private static final String ext = ".comm";
 
@@ -32,7 +27,6 @@ public class ArchivableCommunication implements Archivable {
   public ArchivableCommunication(Communication comm) {
     this.comm = comm;
     this.id = comm.getId();
-    this.cs = new CompactCommunicationSerializer();
   }
 
   /* (non-Javadoc)
@@ -40,14 +34,7 @@ public class ArchivableCommunication implements Archivable {
    */
   @Override
   public String getFileName() {
-    if (this.id.length() > 95) {
-      LOGGER.info("Truncating filename: {}", this.id);
-      String trunc = this.id.substring(0, 94);
-      String fn = trunc + ext;
-      LOGGER.info("New filename: {}", fn);
-      return fn;
-    } else
-      return this.id + ext;
+    return this.id + ext;
   }
 
   /* (non-Javadoc)
@@ -56,7 +43,7 @@ public class ArchivableCommunication implements Archivable {
   @Override
   public byte[] getBytes() {
     try {
-      return this.cs.toBytes(this.comm);
+      return cs.toBytes(this.comm);
     } catch (ConcreteException e) {
       throw new RuntimeException(e);
     }
