@@ -42,7 +42,7 @@ public class ArchivableCommunication implements Archivable {
   public String getFileName() {
     if (this.id.length() > 95) {
       LOGGER.info("Truncating filename: {}", this.id);
-      String trunc = this.id.substring(0, 95);
+      String trunc = this.id.substring(0, 94);
       String fn = trunc + ext;
       LOGGER.info("New filename: {}", fn);
       return fn;
