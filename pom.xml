@@ -5,12 +5,12 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-parent</artifactId>
-    <version>4.8</version>
+    <version>4.8-hc</version>
   </parent>
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.8.7</version>
+  <version>4.8.8</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
@@ -178,7 +178,7 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.2</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.woodstox</groupId>
