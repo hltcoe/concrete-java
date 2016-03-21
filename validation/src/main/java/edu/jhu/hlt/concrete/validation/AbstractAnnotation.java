@@ -18,8 +18,6 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 /**
  * Abstract validation class. Focusing on immutable values, attempt to
  * easily provide validation methods that can be used in downstream tools.
- *
- * @author max
  */
 public abstract class AbstractAnnotation<T extends TBase<T, ? extends TFieldIdEnum>> {
 
