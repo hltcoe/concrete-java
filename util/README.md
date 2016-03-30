@@ -4,8 +4,6 @@ reserved. See LICENSE in the project root directory.
 concrete-util
 ========
 ![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/concrete-util/badge.svg)
-
-## Javadoc
 [![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/concrete-util/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-util/)
 
 API

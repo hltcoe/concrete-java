@@ -1,4 +1,7 @@
 # Concrete Annotated New York Times Ingester
+![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/concrete-ingesters-annotated-nyt/badge.svg)
+[![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/concrete-ingesters-annotated-nyt/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-ingesters-annotated-nyt/)
+
 Library used to convert the
 [Annotated New York Times corpus](https://catalog.ldc.upenn.edu/LDC2008T19)
 to Concrete.
