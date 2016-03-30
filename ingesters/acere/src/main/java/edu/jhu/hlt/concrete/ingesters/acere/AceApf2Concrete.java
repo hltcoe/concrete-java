@@ -451,7 +451,7 @@ public class AceApf2Concrete {
    * <br>
    * <br>
    * <pre>java edu.jhu.hlt.concrete.ingesters.acere.AceApf2Concrete
-   *     CNN_CF_20030303.1900.00.apf.xml 
+   *     CNN_CF_20030303.1900.00.apf.xml
    *     CNN_CF_20030303.1900.00.comm
    * </pre>
    */
@@ -465,7 +465,7 @@ public class AceApf2Concrete {
       Path sgmPath = toSgmFile(aceApfPath);
       Path commPath = Paths.get(commFile);
       a2c.aceApfFile2CommFile(aceApfPath, sgmPath, commPath);
-      log.info(String.format("#entities=%d #e-mentions=%d #relations=%d #r-mentions=%d", a2c.numEnts, a2c.numEntMentions, a2c.numRels, a2c.numRelMentions));        
+      log.info(String.format("#entities=%d #e-mentions=%d #relations=%d #r-mentions=%d", a2c.numEnts, a2c.numEntMentions, a2c.numRels, a2c.numRelMentions));
     } else {
       // Process matching files in a directory.
       String apfPrefix = args[0];

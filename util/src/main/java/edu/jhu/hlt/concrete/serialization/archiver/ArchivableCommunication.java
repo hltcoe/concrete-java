@@ -17,7 +17,7 @@ public class ArchivableCommunication implements Archivable {
   private final Communication comm;
   // Cache id and serializer.
   private final String id;
-  private final CompactCommunicationSerializer cs;
+  private static final CompactCommunicationSerializer cs = new CompactCommunicationSerializer();
 
   private static final String ext = ".comm";
 
@@ -27,7 +27,6 @@ public class ArchivableCommunication implements Archivable {
   public ArchivableCommunication(Communication comm) {
     this.comm = comm;
     this.id = comm.getId();
-    this.cs = new CompactCommunicationSerializer();
   }
 
   /* (non-Javadoc)
@@ -44,7 +43,7 @@ public class ArchivableCommunication implements Archivable {
   @Override
   public byte[] getBytes() {
     try {
-      return this.cs.toBytes(this.comm);
+      return cs.toBytes(this.comm);
     } catch (ConcreteException e) {
       throw new RuntimeException(e);
     }

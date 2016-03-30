@@ -1,4 +1,6 @@
 # Simple Concrete Ingesters
+![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/concrete-ingesters-simple/badge.svg)
+[![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/concrete-ingesters-simple/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-ingesters-simple/)
 
 Simple ingesters supporting the [Concrete](https://github.com/hltcoe/concrete) library.
 
@@ -17,7 +19,7 @@ Takes 3 arguments:
 * `/output/dir` - A directory where the file will be written.
 
 ```sh
-java -cp target/concrete-ingesters-simple-4.8.6-jar-with-dependencies.jar \
+java -cp target/concrete-ingesters-simple-4.8.8-jar-with-dependencies.jar \
     edu.jhu.hlt.concrete.ingesters.simple.CompleteFileIngester \
     /path/to/utf8/text/file \
     communication-type \
@@ -36,7 +38,7 @@ Takes 4 arguments:
 * `/output/dir` - A directory where the file will be written.
 
 ```sh
-java -cp target/concrete-ingesters-simple-4.8.6-jar-with-dependencies.jar \
+java -cp target/concrete-ingesters-simple-4.8.8-jar-with-dependencies.jar \
     edu.jhu.hlt.concrete.ingesters.simple.DoubleLineBreakFileIngester \
     utf8-file-with-double-newlines.txt \
     communication-type \

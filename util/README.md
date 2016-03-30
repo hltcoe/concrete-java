@@ -1,9 +1,10 @@
-Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights
-reserved.  This software is released under the 2-clause BSD license.
-See LICENSE in the project root directory.
+Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights
+reserved. See LICENSE in the project root directory.
 
 concrete-util
 ========
+![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/concrete-util/badge.svg)
+[![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/concrete-util/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-util/)
 
 API
 ------------

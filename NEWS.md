@@ -1,7 +1,11 @@
 # News
+## Concrete-Java v4.8.8 - 2016-03-13
+* Added quality hashcode methods to Concrete objects.
+* Fix exceptions that occurred when long file names were added to archives.
 
-## Concrete-Java v4.8.7
+## Concrete-Java v4.8.7 - 2016-03-01
 * Improved most ingesters with scripts and better READMEs.
+* Bugfixes to `acere` and `conll` ingesters.
 * Fix an issue with the `simple-ingesters` package, where it did
 not have the proper package name. The package has been moved from
 

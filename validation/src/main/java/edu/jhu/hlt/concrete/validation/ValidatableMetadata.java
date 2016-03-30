@@ -1,6 +1,5 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
- * This software is released under the 2-clause BSD license.
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.validation;
@@ -9,7 +8,6 @@ import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
- * @author max
  *
  */
 public class ValidatableMetadata extends AbstractAnnotation<AnnotationMetadata> {
@@ -29,7 +27,6 @@ public class ValidatableMetadata extends AbstractAnnotation<AnnotationMetadata> 
 
   @Override
   public boolean isValid() {
-    // Rebar requires tool names and timestamps.
     return this.printStatus("Tool must be set", this.annotation.isSetTool())
         && this.printStatus("Timestamp must be set", this.annotation.isSetTimestamp());
   }

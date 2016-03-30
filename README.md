@@ -1,6 +1,5 @@
-Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights
-reserved.  This software is released under the 2-clause BSD license.
-See LICENSE in the project root directory.
+Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights
+reserved. See LICENSE in the project root directory.
 
 Concrete Java
 ========
@@ -16,7 +15,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-safe</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```
 
@@ -24,7 +23,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-util</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```
 
@@ -32,7 +31,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-validation</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```
 
@@ -40,7 +39,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-simple</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```
 
@@ -48,7 +47,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-gigaword</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```
 
@@ -56,6 +55,6 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-alnc</artifactId>
-  <version>4.8.6</version>
+  <version>4.8.7</version>
 </dependency>
 ```

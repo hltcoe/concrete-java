@@ -1,4 +1,9 @@
 # miscommunication, adding typedness to Concrete Communications
+![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/miscommunication/badge.svg)
+
+### Javadoc
+[![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/miscommunication/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/miscommunication/)
+
 Concrete `Communication`s are huge and can be unwieldy. Accessing deeply nested
 `Tokenization`s, for example, requires a lot of duplicated code to be written to
 loop across nested structures.

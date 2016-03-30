@@ -1,4 +1,7 @@
 # Concrete Gigaword Ingester
+![Maven Badges](https://maven-badges.herokuapp.com/maven-central/edu.jhu.hlt/concrete-ingesters-gigaword/badge.svg)
+[![javadoc.io](https://javadocio-badges.herokuapp.com/edu.jhu.hlt/concrete-ingesters-gigaword/badge.svg)](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-ingesters-gigaword/)
+
 Concrete ingester supporting the
 [Gigaword](https://catalog.ldc.upenn.edu/LDC2003T05) corpus.  This
 library provides the ability to ingest to ingest LDC SGML/XML
