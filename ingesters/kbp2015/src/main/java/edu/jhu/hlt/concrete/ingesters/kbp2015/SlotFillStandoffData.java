@@ -261,7 +261,13 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     }
   }
 
-  private Map<String, AnnotationHolder> id2comm = new HashMap<>();
+  private Map<String, AnnotationHolder> id2comm;
+  private Args cliArgs;
+
+  public SlotFillStandoffData(Args cliArgs) {
+    this.cliArgs = cliArgs;
+    this.id2comm = new HashMap<>();
+  }
 
   /**
    * @param comms is a set of ingested {@link Communication}s comprising the
@@ -286,14 +292,14 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     }
   }
 
-  public void addAnnotations(File assessmentFile, boolean skipOverMissingComms) throws IOException {
+  public void addAnnotations(File assessmentFile) throws IOException {
     System.out.println("reading assessment annotations from " + assessmentFile.getPath()
-        + " skipOverMissingCommunications=" + skipOverMissingComms);
+        + " skipOverMissingCommunications=" + cliArgs.skipMissingCommunications);
     if (!assessmentFile.isFile())
       throw new IllegalArgumentException("not a file: " + assessmentFile.getPath());
     try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(assessmentFile)))) {
       for (String line = r.readLine(); line != null; line = r.readLine()) {
-        addAnnotations(line, skipOverMissingComms);
+        addAnnotations(line);
       }
     }
   }
@@ -302,11 +308,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
    * Finds query and slot evidence which are in the same document and adds them
    * to the corresponding {@link Communication} (provided at construction) as
    * a new {@link SituationMention}.
-   *
-   * @param skipOverMissingComms if false, will throw an exception if we cannot
-   * find the {@link Communication} described in this annotation row.
    */
-  public void addAnnotations(String line, boolean skipOverMissingComms) {
+  public void addAnnotations(String line) {
     AssessmentFileLine afl = new AssessmentFileLine(line);
     if (afl.labelRelationProvidence != 'C' || afl.labelSlotFill != 'C')
       return;
@@ -316,7 +319,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       String docId = AssessmentFileLine.getDocFromProvidence(queryEntProv);
       AnnotationHolder a = id2comm.get(docId);
       if (a == null) {
-        if (skipOverMissingComms) {
+        if (cliArgs.skipMissingCommunications) {
           continue;
         } else {
           throw new RuntimeException("found docId=" + docId
@@ -325,8 +328,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       }
       SituationMention sm = new SituationMention();
       sm.setUuid(a.uuidGen.next());
-      MentionArgument queryEntArg = makeMentionArgument(queryEntProv, "queryEntity", sm);
-      MentionArgument slotFillArg = makeMentionArgument(slotFillProv, "slotFiller", sm);
+      MentionArgument queryEntArg = makeMentionArgument(queryEntProv, "queryEntity", sm, a.comm);
+      MentionArgument slotFillArg = makeMentionArgument(slotFillProv, "slotFiller", sm, a.comm);
       sm.setSituationType("kbp2015-coldstart-slotfill");
       sm.setSituationKind(afl.slot);
       sm.addToArgumentList(queryEntArg);
@@ -335,12 +338,17 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     }
   }
 
-  private static MentionArgument makeMentionArgument(String providence, String role, SituationMention sm) {
+  private MentionArgument makeMentionArgument(String providence, String role, SituationMention sm, Communication c) {
     TextSpan loc = AssessmentFileLine.getLocationFromProvidence(providence);
-    TokenRefSequence trs = new TokenRefSequence();
+    TokenRefSequence trs;
+    if (cliArgs.inputIsTokenized) {
+      trs = TextSpanToTokens.resolve(loc, c);
+    } else {
+      trs = new TokenRefSequence();
+      trs.setTokenIndexList(Collections.emptyList());
+      trs.setTokenizationId(new UUID("invalid"));
+    }
     trs.setTextSpan(loc);
-    trs.setTokenizationId(new UUID("not valid"));     // TODO
-    trs.setTokenIndexList(Collections.emptyList());   // TODO Get this after concrete-stanford?
     MentionArgument arg = new MentionArgument();
     arg.setRole(role);
     arg.setTokens(trs);
@@ -375,6 +383,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     String inputAssessmentFile;
     @Parameter(names={"--input"}, description="Input file containing all raw Communications", required=true)
     String inputCommunicationFile;
+    @Parameter(names={"--inputIsTokenized"}, description="If true, resolve TextSpans to TokenRefSequence")
+    boolean inputIsTokenized = false;
     @Parameter(names={"--output"}, description="File to write all annotated Communications to", required=true)
     String outputCommunicationFile;
     @Parameter(names={"--skipMissing"}, description="Skip annotations whose document can't be found")
@@ -384,9 +394,9 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
   public static void main(String[] args) throws Exception {
     Args a = new Args();
     new JCommander(a, args);
-    SlotFillStandoffData sfsd = new SlotFillStandoffData();
+    SlotFillStandoffData sfsd = new SlotFillStandoffData(a);
     sfsd.readRawCommunications(new File(a.inputCommunicationFile));
-    sfsd.addAnnotations(new File(a.inputAssessmentFile), a.skipMissingCommunications);
+    sfsd.addAnnotations(new File(a.inputAssessmentFile));
     sfsd.writeCommunications(new File(a.outputCommunicationFile));
   }
 }
