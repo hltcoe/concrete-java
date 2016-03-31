@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,7 @@ import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.SituationMentionSet;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.TokenRefSequence;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
@@ -40,7 +42,7 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  *   tac_kbp_2015_cold_start_evaluation_assessment_results_batches_00-05.tab
  *
  * Works by reading in all of raw communications (with option to add sharding if
- * needed), then add a {@link SituationMention} for every row in the assesment
+ * needed), then add a {@link SituationMention} for every row in the assessment
  * file where both the relation and query entity providence are deemed correct.
  *
  * @see data/LDC2015E100/LDC2015E100_TAC_KBP_2015_English_Cold_Start_Evaluation_Assessment_Results_V3.1/README.txt
@@ -158,12 +160,12 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
                 S - Inexact (Short)
                 W - Wrong 
 
-    Column 8: NIST Equivalence class ID; Query ID concatonated 
-              with LDC's equivalence class ID, seperated by a colon, 
+    Column 8: NIST Equivalence class ID; Query ID concatenated
+              with LDC's equivalence class ID, separated by a colon,
               for responses in which column 6 is Correct or Inexact.
-                          Note that equivalence classes are not cross-query,therefore
-                          there are some cases of duplicate strings that have unique
-                          equivalence class IDS.
+              Note that equivalence classes are not cross-query,therefore
+              there are some cases of duplicate strings that have unique
+              equivalence class IDS.
    * e.g.
    * CSSF15_ENG_11632007cb_0_001     CSSF15_ENG_11632007cb:gpe:births_in_country     ENG_NW_001278_20130214_F00011JDX:1448-1584      Agriculture     ENG_NW_001278_20130214_F00011JDX:1505-1515      W       W       0
    */
@@ -244,6 +246,9 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       meta.setTimestamp(timestamp);
       meta.setTool("TAC KBP 2015 Cold Start Slot Filling");
       this.situations.setMetadata(meta);
+    }
+    public int getNumMentions() {
+      return situations.getMentionListSize();
     }
     public void add(SituationMention s) {
       situations.addToMentionList(s);
@@ -334,6 +339,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     TextSpan loc = AssessmentFileLine.getLocationFromProvidence(providence);
     TokenRefSequence trs = new TokenRefSequence();
     trs.setTextSpan(loc);
+    trs.setTokenizationId(new UUID("not valid"));     // TODO
+    trs.setTokenIndexList(Collections.emptyList());   // TODO Get this after concrete-stanford?
     MentionArgument arg = new MentionArgument();
     arg.setRole(role);
     arg.setTokens(trs);
@@ -342,15 +349,25 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
   }
 
   public void writeCommunications(File f) throws Exception {
+    long start = System.currentTimeMillis();
     System.out.println("writing " + id2comm.size() + " Communications to " + f.getPath());
+    int noAnno = 0, succ = 0;
     try (OutputStream os = new FileOutputStream(f);
         GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
         TarArchiver arch = new TarArchiver(gout)) {
       for (AnnotationHolder a : id2comm.values()) {
-        Communication withAnnos = a.buildCommunication();
-        arch.addEntry(new ArchivableCommunication(withAnnos));
+        if (a.getNumMentions() > 0) {
+          succ++;
+          Communication withAnnos = a.buildCommunication();
+          arch.addEntry(new ArchivableCommunication(withAnnos));
+        } else {
+          noAnno++;
+          System.err.println("didn't observe any annotations in: " + a.comm.getId());
+        }
       }
     }
+    double time = (System.currentTimeMillis() - start) / 1000d;
+    System.out.printf("wrote out %d communications, %d had no annotations and weren't output, took %.1f seconds\n", succ, noAnno, time);
   }
 
   static class Args {
