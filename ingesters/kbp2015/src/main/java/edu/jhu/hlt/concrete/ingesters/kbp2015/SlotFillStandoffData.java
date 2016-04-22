@@ -282,6 +282,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       AnnotationHolder a = new AnnotationHolder(c, timestamp);
       AnnotationHolder old = id2comm.put(id, a);
       assert old == null;
+      if (id2comm.size() % 500 == 0)
+        System.out.println("read " + id2comm.size() + " communications in " + (System.currentTimeMillis()/1000d-timestamp) + " sec");
     }
   }
   public void readRawCommunications(File f) throws FileNotFoundException, IOException {
@@ -328,6 +330,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       }
       SituationMention sm = new SituationMention();
       sm.setUuid(a.uuidGen.next());
+      sm.setConfidence(1);
       MentionArgument queryEntArg = makeMentionArgument(queryEntProv, "queryEntity", sm, a.comm);
       MentionArgument slotFillArg = makeMentionArgument(slotFillProv, "slotFiller", sm, a.comm);
       sm.setSituationType("kbp2015-coldstart-slotfill");
@@ -350,6 +353,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     }
     trs.setTextSpan(loc);
     MentionArgument arg = new MentionArgument();
+    arg.setConfidence(1);
     arg.setRole(role);
     arg.setTokens(trs);
     arg.setSituationMentionId(sm.getUuid());
@@ -375,7 +379,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       }
     }
     double time = (System.currentTimeMillis() - start) / 1000d;
-    System.out.printf("wrote out %d communications, %d had no annotations and weren't output, took %.1f seconds\n", succ, noAnno, time);
+    System.out.printf("wrote out %d communications to %s, %d had no annotations and weren't output, took %.1f seconds\n", succ, f.getPath(), noAnno, time);
   }
 
   static class Args {

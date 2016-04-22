@@ -14,10 +14,12 @@ import edu.jhu.hlt.concrete.Tokenization;
  * @author travis
  */
 public class TextSpanToTokens {
+  public static boolean DEBUG = false;
 
   private static class Argmin<T> {
     private T bestItem;
     private double bestScore;
+    int offers = 0;
     public void offer(T item, double score) {
       if (item == null || Double.isInfinite(score) || Double.isNaN(score))
         throw new IllegalArgumentException();
@@ -25,10 +27,14 @@ public class TextSpanToTokens {
         bestItem = item;
         bestScore = score;
       }
+      offers++;
     }
     public T get() {
       assert bestItem != null;
       return bestItem;
+    }
+    public String toString() {
+      return "<ArgMin bestScore=" + bestScore + " bestItem="  + bestItem + ">";
     }
   }
 
@@ -39,6 +45,9 @@ public class TextSpanToTokens {
       this.tok = tok;
       this.index = index;
     }
+    public String toString() {
+      return "<TokPtr " + index + " " + tok.getUuid() + ">";
+    }
   }
 
   /**
@@ -48,6 +57,11 @@ public class TextSpanToTokens {
    * sentence.
    */
   public static TokenRefSequence resolve(TextSpan ts, Communication c) {
+    if (DEBUG) {
+      System.out.println("looking for: " + ts);
+      System.out.println("text: " + c.getText().substring(ts.getStart(), ts.getEnding()));
+//      System.out.println("orig text: " + c.getOriginalText().substring(ts.getStart(), ts.getEnding()));
+    }
     Argmin<TokPtr> start = new Argmin<>();
     Argmin<TokPtr> end = new Argmin<>();
     for (Section sect : c.getSectionList()) {
@@ -55,10 +69,16 @@ public class TextSpanToTokens {
         Tokenization tok = sent.getTokenization();
         for (Token t : tok.getTokenList().getTokenList()) {
           TextSpan tss = t.getTextSpan();
-          double errStart = Math.pow(tss.getStart() - ts.getStart(), 2);
+//          if (DEBUG)
+//            System.out.println("testing: " + tss);
+
+          double errStart = Math.sqrt(Math.abs(tss.getStart() - ts.getStart()));
           start.offer(new TokPtr(tok, tss.getStart()), errStart);
-          double errEnd = Math.pow(tss.getEnding() - ts.getEnding(), 2);
-          start.offer(new TokPtr(tok, tss.getEnding()), errEnd);
+
+          double errEnd = Math.sqrt(Math.abs(tss.getEnding() - ts.getEnding()));
+          if (start.offers > 0 && tok != start.get().tok)
+            errEnd += 100;
+          end.offer(new TokPtr(tok, tss.getEnding()), errEnd);
         }
       }
     }
@@ -67,6 +87,12 @@ public class TextSpanToTokens {
     TokPtr e = end.get();
     if (s == null || e == null)
       throw new RuntimeException("empty Communication?");
+    if (DEBUG) {
+      System.out.println("found: " + s.index + "," + e.index);
+      System.out.println("start: " + start);
+      System.out.println("end: " + end);
+      System.out.println("text: " + c.getText().substring(s.index, e.index));
+    }
     if (s.tok != e.tok)
       throw new RuntimeException("start and end are in different sentences");
     if (s.index >= e.index)

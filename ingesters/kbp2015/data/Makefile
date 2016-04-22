@@ -16,5 +16,6 @@ LDC2015E81:
 # Ingested data Tongfei
 pre-standoff-communications:
 	mkdir pre-standoff-communications
-	scp test1b:/expts/projects/tchen/data/tac2015/LDC2015E77/*.tar.gz pre-standoff-communications
+	#scp test1b:/expts/projects/tchen/data/tac2015/LDC2015E77/*.tar.gz pre-standoff-communications
+	rsync -avz test1b:/expts/projects/tchen/data/tac2015/LDC2015E77/ pre-standoff-communications
 
