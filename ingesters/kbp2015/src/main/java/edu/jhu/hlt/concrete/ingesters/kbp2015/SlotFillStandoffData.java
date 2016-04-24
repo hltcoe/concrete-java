@@ -315,6 +315,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     AssessmentFileLine afl = new AssessmentFileLine(line);
     if (afl.labelRelationProvidence != 'C' || afl.labelSlotFill != 'C')
       return;
+    int succ = 0, fail = 0;
     for (Pair<Integer, Integer> ij : afl.commonDocumentProvidence()) {
       String queryEntProv = afl.queryEntityProvidence[ij.getLeft()];
       String slotFillProv = afl.slotFillerProvidence[ij.getRight()];
@@ -328,17 +329,24 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
               + " with no corresponding Communication, source: " + line);
         }
       }
-      SituationMention sm = new SituationMention();
-      sm.setUuid(a.uuidGen.next());
-      sm.setConfidence(1);
-      MentionArgument queryEntArg = makeMentionArgument(queryEntProv, "queryEntity", sm, a.comm);
-      MentionArgument slotFillArg = makeMentionArgument(slotFillProv, "slotFiller", sm, a.comm);
-      sm.setSituationType("kbp2015-coldstart-slotfill");
-      sm.setSituationKind(afl.slot);
-      sm.addToArgumentList(queryEntArg);
-      sm.addToArgumentList(slotFillArg);
-      a.add(sm);
+      try {
+        SituationMention sm = new SituationMention();
+        sm.setUuid(a.uuidGen.next());
+        sm.setConfidence(1);
+        MentionArgument queryEntArg = makeMentionArgument(queryEntProv, "queryEntity", sm, a.comm);
+        MentionArgument slotFillArg = makeMentionArgument(slotFillProv, "slotFiller", sm, a.comm);
+        sm.setSituationType("kbp2015-coldstart-slotfill");
+        sm.setSituationKind(afl.slot);
+        sm.addToArgumentList(queryEntArg);
+        sm.addToArgumentList(slotFillArg);
+        a.add(sm);
+        succ++;
+      } catch (Exception e) {
+        e.printStackTrace();
+        fail++;
+      }
     }
+//    System.out.println("[addAnnotations] succ=" + succ + " fail=" + fail);
   }
 
   private MentionArgument makeMentionArgument(String providence, String role, SituationMention sm, Communication c) {

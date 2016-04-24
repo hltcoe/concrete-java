@@ -34,7 +34,7 @@ public class TextSpanToTokens {
       return bestItem;
     }
     public String toString() {
-      return "<ArgMin bestScore=" + bestScore + " bestItem="  + bestItem + ">";
+      return "<ArgMin bestScore=" + bestScore + " bestItem="  + bestItem + " offers=" + offers + ">";
     }
   }
 
@@ -93,10 +93,14 @@ public class TextSpanToTokens {
       System.out.println("end: " + end);
       System.out.println("text: " + c.getText().substring(s.index, e.index));
     }
-    if (s.tok != e.tok)
-      throw new RuntimeException("start and end are in different sentences");
-    if (s.index >= e.index)
-      throw new RuntimeException("thought that empty seq was optimal");
+    if (s.tok != e.tok) {
+      throw new RuntimeException("start and end are in different sentences,"
+          + " ts=" + ts + " start=" + start + " end=" + end);
+    }
+    if (s.index >= e.index) {
+      throw new RuntimeException("selected empty token seq as optimal,"
+          + " ts=" + ts + " start=" + start + " end=" + end);
+    }
     TokenRefSequence trs = new TokenRefSequence();
     trs.setTokenizationId(s.tok.getUuid());
     for (int i = s.index; i <= e.index; i++)
