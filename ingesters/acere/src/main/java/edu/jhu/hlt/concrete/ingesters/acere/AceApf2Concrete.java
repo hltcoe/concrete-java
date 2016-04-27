@@ -1,6 +1,5 @@
 package edu.jhu.hlt.concrete.ingesters.acere;
 
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,9 +35,9 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
+import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
-import edu.jhu.hlt.concrete.util.InvalidUUIDException;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.prim.set.IntHashSet;
@@ -141,7 +140,7 @@ public class AceApf2Concrete {
         Tokenization cTokenization = new Tokenization();
         cTokenization.setUuid(g.next());
         cTokenization.setKind(TokenizationKind.TOKEN_LIST);
-        cTokenization.setMetadata(ConcreteUtils.metadata(toolname));
+        cTokenization.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
         TokenList cTokenList = new TokenList();
         for (int j = 0; j < aSent.size(); j++) {
           WordToken aTok = aSent.get(j);
@@ -183,11 +182,11 @@ public class AceApf2Concrete {
     EntitySet cEs = new EntitySet();
     cEs.setUuid(g.next());
     cEs.setEntityList(new ArrayList<Entity>());
-    cEs.setMetadata(ConcreteUtils.metadata(toolname));
+    cEs.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
     EntityMentionSet cEms = new EntityMentionSet();
     cEms.setUuid(g.next());
-    cEms.setMentionList(new ArrayList<EntityMention>());
-    cEms.setMetadata(ConcreteUtils.metadata(toolname));
+    cEms.setMentionList(new ArrayList<>());
+    cEms.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
 
     for (String aEntityId : apfDoc.getKeySetEntities()) {
       AceEntity aEntity = apfDoc.getEntity(aEntityId);
@@ -234,12 +233,12 @@ public class AceApf2Concrete {
     // Add the Relation annotations.
     SituationSet cSs = new SituationSet();
     cSs.setUuid(g.next());
-    cSs.setSituationList(new ArrayList<Situation>());
-    cSs.setMetadata(ConcreteUtils.metadata(toolname));
+    cSs.setSituationList(new ArrayList<>());
+    cSs.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
     SituationMentionSet cSms = new SituationMentionSet();
     cSms.setUuid(g.next());
-    cSms.setMentionList(new ArrayList<SituationMention>());
-    cSms.setMetadata(ConcreteUtils.metadata(toolname));
+    cSms.setMentionList(new ArrayList<>());
+    cSms.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
 
     for (AceRelation aRel : getAllRelations(apfDoc)) {
       Situation cRel = new Situation();

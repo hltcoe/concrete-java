@@ -4,13 +4,20 @@
  */
 package edu.jhu.hlt.concrete.ingesters.annotatednyt;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.nytlabs.corpus.NYTCorpusDocument;
 
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
@@ -44,56 +51,135 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     this.anytd = anytd;
   }
 
+  public static AnnotatedNYTDocument fromConcrete(NITFInfo nitf) throws ConcreteException {
+    NYTCorpusDocument nd = new NYTCorpusDocument();
+    try {
+      Optional<String> ourl = Optional.ofNullable(nitf.getAlternateURL());
+      if (ourl.isPresent())
+        nd.setAlternateURL(new URL(ourl.get()));
+      Optional.ofNullable(nitf.getArticleAbstract()).ifPresent(nd::setArticleAbstract);
+      Optional.ofNullable(nitf.getAuthorBiography()).ifPresent(nd::setAuthorBiography);
+      Optional.ofNullable(nitf.getBanner()).ifPresent(nd::setBanner);
+      Optional.ofNullable(nitf.getBiographicalCategoryList())
+          .ifPresent(nd::setBiographicalCategories);
+      Optional.ofNullable(nitf.getColumnName()).ifPresent(nd::setColumnName);
+      if (nitf.isSetColumnNumber())
+        nd.setColumnNumber(nitf.getColumnNumber());
+      if (nitf.isSetCorrectionDate())
+        nd.setCorrectionDate(new Date(nitf.getCorrectionDate()));
+      Optional.ofNullable(nitf.getCorrectionText()).ifPresent(nd::setCorrectionText);
+      Optional.ofNullable(nitf.getCredit()).ifPresent(nd::setCredit);
+      Optional.ofNullable(nitf.getDayOfWeek()).ifPresent(nd::setDayOfWeek);
+      Optional.ofNullable(nitf.getDescriptorList()).ifPresent(nd::setDescriptors);
+      Optional.ofNullable(nitf.getFeaturePage()).ifPresent(nd::setFeaturePage);
+      Optional.ofNullable(nitf.getGeneralOnlineDescriptorList()).ifPresent(nd::setGeneralOnlineDescriptors);
+      if (nitf.isSetGuid())
+        nd.setGuid(nitf.getGuid());
+
+      Optional.ofNullable(nitf.getKicker()).ifPresent(nd::setKicker);
+      // newline split
+      Optional.ofNullable(nitf.getLeadParagraphList()).ifPresent(lpl -> {
+        nd.setLeadParagraph(Joiner.on("\n").join(lpl));
+      });
+
+      Optional.ofNullable(nitf.getLocationList()).ifPresent(nd::setLocations);
+      Optional.ofNullable(nitf.getNameList()).ifPresent(nd::setNames);
+      Optional.ofNullable(nitf.getNewsDesk()).ifPresent(nd::setNewsDesk);
+      Optional.ofNullable(nitf.getNormalizedByline()).ifPresent(nd::setNormalizedByline);
+      Optional.ofNullable(nitf.getOnlineDescriptorList()).ifPresent(nd::setOnlineDescriptors);
+      Optional.ofNullable(nitf.getOnlineHeadline()).ifPresent(nd::setOnlineHeadline);
+      Optional.ofNullable(nitf.getOnlineLeadParagraph()).ifPresent(nd::setOnlineLeadParagraph);
+      Optional.ofNullable(nitf.getOnlineLocationList()).ifPresent(nd::setOnlineLocations);
+      Optional.ofNullable(nitf.getOnlineOrganizationList()).ifPresent(nd::setOnlineOrganizations);
+      Optional.ofNullable(nitf.getOnlinePeople()).ifPresent(nd::setOnlinePeople);
+      // these are split by '; '. so join them up.
+      Optional.ofNullable(nitf.getOnlineSectionList()).ifPresent(s -> {
+        nd.setOnlineSection(Joiner.on("; ").join(s));
+      });
+
+      Optional.ofNullable(nitf.getOnlineTitleList()).ifPresent(nd::setOnlineTitles);
+      Optional.ofNullable(nitf.getOrganizationList()).ifPresent(nd::setOrganizations);
+      if (nitf.isSetPage())
+        nd.setPage(nitf.getPage());
+
+      Optional.ofNullable(nitf.getPeopleList()).ifPresent(nd::setPeople);
+      if (nitf.isSetPublicationDate())
+        nd.setPublicationDate(new Date(nitf.getPublicationDate()));
+      if (nitf.isSetPublicationDayOfMonth())
+        nd.setPublicationDayOfMonth(nitf.getPublicationDayOfMonth());
+      if (nitf.isSetPublicationMonth())
+        nd.setPublicationMonth(nitf.getPublicationMonth());
+      if (nitf.isSetPublicationYear())
+        nd.setPublicationYear(nitf.getPublicationYear());
+      if (nitf.isSetSection())
+        nd.setSection(nitf.getSection());
+
+      Optional.ofNullable(nitf.getSeriesName()).ifPresent(nd::setSeriesName);
+      Optional.ofNullable(nitf.getSlug()).ifPresent(nd::setSlug);
+      Optional.ofNullable(nitf.getTaxonomicClassifierList()).ifPresent(nd::setTaxonomicClassifiers);
+      Optional.ofNullable(nitf.getTitleList()).ifPresent(nd::setTitles);
+      Optional.ofNullable(nitf.getTypesOfMaterialList()).ifPresent(nd::setTypesOfMaterial);
+      if (nitf.isSetUrl())
+        nd.setUrl(new URL(nitf.getUrl()));
+      if (nitf.isSetWordCount())
+        nd.setWordCount(nitf.getWordCount());
+    } catch (MalformedURLException e) {
+      throw new ConcreteException(e);
+    }
+
+    return new AnnotatedNYTDocument(nd);
+  }
+
   public static NITFInfo extractNITFInfo(AnnotatedNYTDocument cDoc) {
     final NITFInfo ni = new NITFInfo();
 
     cDoc.getAlternateURL().ifPresent(url -> ni.setAlternateURL(url.toString()));
-    cDoc.getArticleAbstract().ifPresent(a -> ni.setArticleAbstract(a));
-    cDoc.getAuthorBiography().ifPresent(ab -> ni.setAuthorBiography(ab));
-    cDoc.getBanner().ifPresent(i -> ni.setBanner(i));
+    cDoc.getArticleAbstract().ifPresent(ni::setArticleAbstract);
+    cDoc.getAuthorBiography().ifPresent(ni::setAuthorBiography);
+    cDoc.getBanner().ifPresent(ni::setBanner);
     ni.setBiographicalCategoryList(cDoc.getBiographicalCategories());
-    cDoc.getColumnName().ifPresent(i -> ni.setColumnName(i));
-    cDoc.getColumnNumber().ifPresent(i -> ni.setColumnNumber(i));
+    cDoc.getColumnName().ifPresent(ni::setColumnName);
+    cDoc.getColumnNumber().ifPresent(ni::setColumnNumber);
     cDoc.getCorrectionDate().ifPresent(dt -> ni.setCorrectionDate(dt.getTime()));
 
-    cDoc.getCorrectionText().ifPresent(i -> ni.setCorrectionText(i));
+    cDoc.getCorrectionText().ifPresent(ni::setCorrectionText);
     ni.setCredit(cDoc.getCredit());
 
-    cDoc.getDayOfWeek().ifPresent(i -> ni.setDayOfWeek(i));
+    cDoc.getDayOfWeek().ifPresent(ni::setDayOfWeek);
     ni.setDescriptorList(cDoc.getDescriptors());
-    cDoc.getFeaturePage().ifPresent(i -> ni.setFeaturePage(i));
+    cDoc.getFeaturePage().ifPresent(ni::setFeaturePage);
     ni.setGeneralOnlineDescriptorList(cDoc.getGeneralOnlineDescriptors());
     ni.setGuid(cDoc.getGuid());
-    cDoc.getKicker().ifPresent(i -> ni.setKicker(i));
+    cDoc.getKicker().ifPresent(ni::setKicker);
     ni.setLeadParagraphList(cDoc.getLeadParagraphAsList());
     ni.setLocationList(cDoc.getLocations());
     ni.setNameList(cDoc.getNames());
-    cDoc.getNewsDesk().ifPresent(i -> ni.setNewsDesk(i));
-    cDoc.getNormalizedByline().ifPresent(i -> ni.setNormalizedByline(i));
+    cDoc.getNewsDesk().ifPresent(ni::setNewsDesk);
+    cDoc.getNormalizedByline().ifPresent(ni::setNormalizedByline);
     ni.setOnlineDescriptorList(cDoc.getOnlineDescriptors());
-    cDoc.getOnlineHeadline().ifPresent(i -> ni.setOnlineHeadline(i));
-    cDoc.getOnlineLeadParagraph().ifPresent(i -> ni.setOnlineLeadParagraph(i));
+    cDoc.getOnlineHeadline().ifPresent(ni::setOnlineHeadline);
+    cDoc.getOnlineLeadParagraph().ifPresent(ni::setOnlineLeadParagraph);
     ni.setOnlineLocationList(cDoc.getOnlineLocations());
     ni.setOnlineOrganizationList(cDoc.getOnlineOrganizations());
     ni.setOnlinePeople(cDoc.getOnlinePeople());
     ni.setOnlineSectionList(cDoc.getOnlineSectionAsList());
     ni.setOnlineTitleList(cDoc.getOnlineTitles());
     ni.setOrganizationList(cDoc.getOrganizations());
-    cDoc.getPage().ifPresent(p -> ni.setPage(p));
+    cDoc.getPage().ifPresent(ni::setPage);
     ni.setPeopleList(cDoc.getPeople());
     cDoc.getPublicationDate().ifPresent(d -> ni.setPublicationDate(d.getTime()));
-    cDoc.getPublicationDayOfMonth().ifPresent(p -> ni.setPublicationDayOfMonth(p));
-    cDoc.getPublicationMonth().ifPresent(p -> ni.setPublicationMonth(p));
-    cDoc.getPublicationYear().ifPresent(p -> ni.setPublicationYear(p));
-    cDoc.getSection().ifPresent(i -> ni.setSection(i));
-    cDoc.getSeriesName().ifPresent(i -> ni.setSeriesName(i));
-    cDoc.getSlug().ifPresent(i -> ni.setSlug(i));
+    cDoc.getPublicationDayOfMonth().ifPresent(ni::setPublicationDayOfMonth);
+    cDoc.getPublicationMonth().ifPresent(ni::setPublicationMonth);
+    cDoc.getPublicationYear().ifPresent(ni::setPublicationYear);
+    cDoc.getSection().ifPresent(ni::setSection);
+    cDoc.getSeriesName().ifPresent(ni::setSeriesName);
+    cDoc.getSlug().ifPresent(ni::setSlug);
     ni.setTaxonomicClassifierList(cDoc.getTaxonomicClassifiers());
     ni.setTitleList(cDoc.getTitles());
     ni.setTypesOfMaterialList(cDoc.getTypesOfMaterial());
 
     cDoc.getUrl().ifPresent(url -> ni.setUrl(url.toString()));
-    cDoc.getWordCount().ifPresent(wc -> ni.setWordCount(wc));
+    cDoc.getWordCount().ifPresent(ni::setWordCount);
 
     return ni;
   }

@@ -6,15 +6,11 @@
 package edu.jhu.hlt.concrete.validation;
 
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Entity;
-import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.EntitySet;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  * @author max
@@ -34,18 +30,7 @@ public class ValidatableEntitySet extends AbstractAnnotation<EntitySet> {
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    SuperCommunication sc = new SuperCommunication(c);
-    Map<UUID, EntityMention> idToMenMap = sc.generateEntityMentionIdToEntityMentionMap();
-    Set<UUID> emsIdSet = idToMenMap.keySet();
-    
     boolean valid = true;
-    Iterator<Entity> entIter = this.annotation.getEntityListIterator();
-    while (valid && entIter.hasNext()) {
-      Entity e = entIter.next();
-      UUID eId = e.getUuid();
-      valid = this.printStatus("Entity " + eId.toString() + " must be valid.", new ValidatableEntity(e, emsIdSet).validate(c));
-    }
-
     return valid;
   }
 
@@ -63,9 +48,9 @@ public class ValidatableEntitySet extends AbstractAnnotation<EntitySet> {
       while (valid && entIter.hasNext()) {
         Entity e = entIter.next();
         UUID eId = e.getUuid();
-        valid = this.printStatus("Entity " + eId.toString() + " must be valid", new ValidatableEntity(e).isValid()); 
+        valid = this.printStatus("Entity " + eId.toString() + " must be valid", new ValidatableEntity(e).isValid());
       }
-      
+
       return valid;
     } else
       return false;

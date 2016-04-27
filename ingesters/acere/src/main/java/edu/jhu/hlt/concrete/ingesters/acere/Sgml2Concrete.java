@@ -24,6 +24,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
+import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
@@ -167,7 +168,7 @@ public class Sgml2Concrete {
     comm.setUuid(g.next());
     comm.setId(id);
     comm.setType(type);
-    comm.setMetadata(ConcreteUtils.metadata(toolname));
+    comm.setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime(toolname));
 
     // Set the source text fields.
     comm.setText(rawText);

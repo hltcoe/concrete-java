@@ -7,14 +7,11 @@ package edu.jhu.hlt.concrete.validation;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Entity;
-import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.communications.SuperCommunication;
 
 /**
  *
@@ -43,13 +40,6 @@ public class ValidatableEntity extends AbstractAnnotation<Entity> {
    */
   @Override
   protected boolean isValidWithComm(Communication c) {
-    if (this.entityMentionUUIDSet.isEmpty()) {
-      SuperCommunication sc = new SuperCommunication(c);
-      Map<UUID, EntityMention> idToMenMap = sc.generateEntityMentionIdToEntityMentionMap();
-      Set<UUID> emsIdSet = idToMenMap.keySet();
-      this.entityMentionUUIDSet.addAll(emsIdSet);
-    }
-
     Iterator<UUID> mentionUUIDIter = this.annotation.getMentionIdListIterator();
     boolean valid = true;
     while (valid && mentionUUIDIter.hasNext()) {

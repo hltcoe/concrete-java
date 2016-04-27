@@ -8,7 +8,6 @@ package edu.jhu.hlt.concrete.metadata.tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.jhu.hlt.concrete.Digest;
 import edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata;
 
 /**
@@ -25,10 +24,10 @@ public interface SafeTooledAnnotationMetadata extends SafeAnnotationMetadata, Me
   default String getToolName() {
     return this.getClass().getName();
   }
-  
+
   /**
    * By default, use {@link NewlineMetadataToolBuilder#generateToolString(MetadataTool)}
-   * to generate a parseable Tool string. 
+   * to generate a parseable Tool string.
    * <br>
    * <br>
    * Implementers should generally not override this implementation.
@@ -45,17 +44,9 @@ public interface SafeTooledAnnotationMetadata extends SafeAnnotationMetadata, Me
     sb.append(this.getToolVersion());
     return sb.toString();
   }
-  
-  /**
-   * @return a {@link Digest} with the string list field populated
-   * with notes about the tool.
-   */
-  default Digest getToolNotesDigest() {
-    return new Digest().setStringList(this.getToolNotes());
-  }
-  
+
   @Override
   default List<String> getToolNotes() {
-    return new ArrayList<String>();
+    return new ArrayList<>();
   }
 }

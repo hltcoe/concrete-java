@@ -35,4 +35,9 @@ public class AnnotationMetadataFactory {
     return new AnnotationMetadata()
       .setTimestamp(Timing.currentLocalTime());
   }
+
+  public static final AnnotationMetadata fromCurrentLocalTime(String tool) {
+    return fromCurrentLocalTime()
+        .setTool(tool);
+  }
 }

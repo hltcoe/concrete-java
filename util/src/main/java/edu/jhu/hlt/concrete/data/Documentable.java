@@ -6,10 +6,8 @@
 package edu.jhu.hlt.concrete.data;
 
 /**
- * Small interface that acts as an minimum description for underlying 
- * documents that might be transformed to Concrete. 
- * 
- * @author max
+ * Small interface that acts as an minimum description for underlying
+ * documents that might be transformed to Concrete.
  */
 public interface Documentable {
   /**
@@ -21,23 +19,23 @@ public interface Documentable {
    * @return the representation of the underlying document as a byte array.
    */
   public byte[] getBytes();
-  
+
   /**
-   * @return the character encoding of the underlying document. 
+   * @return the character encoding of the underlying document.
    */
   public String getEncoding();
-  
+
   /**
    * @return the corpus associated with the underlying document
    */
   public String getCorpusName();
-  
+
   /**
    * @return the path, on disk, where this document (or archive containing it)
    * exists.
    */
   public String getPath();
-  
+
   /**
    * @return a notional type of this document (tweet, etc.).
    */

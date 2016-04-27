@@ -6,7 +6,6 @@
 package edu.jhu.hlt.concrete.metadata.tools;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
-import edu.jhu.hlt.concrete.Digest;
 import edu.jhu.hlt.concrete.TheoryDependencies;
 import edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata;
 
@@ -33,11 +32,9 @@ public class TooledMetadataConverter {
         .setTool(md.getTool())
         .setTimestamp(md.getTimestamp());
   }
-  
+
   public static final AnnotationMetadata convert(SafeTooledAnnotationMetadata md) {
-    Digest d = md.getToolNotesDigest();
     return new AnnotationMetadata()
-        .setDigest(d)
         .setTool(md.getTool())
         .setTimestamp(md.getTimestamp());
   }
