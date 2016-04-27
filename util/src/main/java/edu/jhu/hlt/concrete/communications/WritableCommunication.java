@@ -21,10 +21,6 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 /**
  * Small wrapper around {@link Communication} that allows trivial writing to a {@link Path}
  * for saving to disk.
- * <br>
- * <br>
- * As of version 11, this is intended as a drop-in replacement for now-deprecated {@link SuperCommunication#writeToFile(Path, boolean)}
- * and similar, which will be removed in a later release.
  */
 public class WritableCommunication {
 

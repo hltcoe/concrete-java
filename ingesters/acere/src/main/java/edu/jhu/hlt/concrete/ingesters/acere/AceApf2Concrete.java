@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,6 @@ import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.communications.WritableCommunication;
 import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
-import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
-import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.prim.set.IntHashSet;
@@ -88,7 +87,7 @@ public class AceApf2Concrete {
    * Reads an ACE .apf.xml file and its corresponding .sgm file and gets a
    * Concrete communication.
    *
-   * @throws InvalidUUIDException
+   * @throws Exception
    */
   public Communication aceApfFile2Comm(Path apfFile, Path sgmFile) throws Exception {
     // Get the .sgm file as a Communication.
@@ -388,15 +387,13 @@ public class AceApf2Concrete {
 
   // Super slow, but useful for trace logging.
   private Tokenization getTokenization(Communication comm, UUID tokenizationId) {
-    try {
-      CachedTokenizationCommunication tc = new CachedTokenizationCommunication(comm);
-      return tc.getUuidToTokenizationMap().get(tokenizationId);
-    } catch (MiscommunicationException e) {
-      // Could throw if there are no tokenizations, but
-      // there will definitely be tokenizations.
-      // Throw an RTE if something goes amiss.
-      throw new RuntimeException("No tokenizations in communication: " + comm.getUuid());
-    }
+    Stream<Tokenization> stream = comm.getSectionList()
+        .stream()
+        .flatMap(sect -> sect.getSentenceList().stream())
+        .map(Sentence::getTokenization);
+    Map<String, Tokenization> idToTkzMap = new HashMap<>();
+    stream.forEach(k -> idToTkzMap.put(k.getUuid().getUuidString(), k));
+    return idToTkzMap.get(tokenizationId.getUuidString());
   }
 
   private String getTypeSubtype(AceEntity aEntity) {
