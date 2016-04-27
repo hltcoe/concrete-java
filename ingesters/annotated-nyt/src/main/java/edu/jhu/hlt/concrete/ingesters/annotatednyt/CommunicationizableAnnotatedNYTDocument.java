@@ -51,7 +51,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     this.anytd = anytd;
   }
 
-  public static AnnotatedNYTDocument fromConcrete(NITFInfo nitf) throws ConcreteException {
+  public static NYTCorpusDocument fromConcrete(NITFInfo nitf) throws ConcreteException {
     NYTCorpusDocument nd = new NYTCorpusDocument();
     try {
       Optional<String> ourl = Optional.ofNullable(nitf.getAlternateURL());
@@ -127,7 +127,7 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
       throw new ConcreteException(e);
     }
 
-    return new AnnotatedNYTDocument(nd);
+    return nd;
   }
 
   public static NITFInfo extractNITFInfo(AnnotatedNYTDocument cDoc) {
@@ -182,6 +182,10 @@ public class CommunicationizableAnnotatedNYTDocument implements Communicationiza
     cDoc.getWordCount().ifPresent(ni::setWordCount);
 
     return ni;
+  }
+
+  public static NITFInfo extractNITFInfo(NYTCorpusDocument doc) {
+    return extractNITFInfo(new AnnotatedNYTDocument(doc));
   }
 
   /*
