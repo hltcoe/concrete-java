@@ -48,8 +48,6 @@ public class RunnableCommunicationFileLoader implements Runnable {
   /**
    * @param f an {@link ExistingNonDirectoryFile} <code>.tar.gz</code> of {@link Communication} objects
    * @param q the {@link ArrayBlockingQueue} to push communications on to
-   *
-   * @see #RunnableCommunicationFileLoader(Path, ArrayBlockingQueue)
    */
   public RunnableCommunicationFileLoader(ExistingNonDirectoryFile f, BlockingQueue<Communication> q) {
     this.p = f;
