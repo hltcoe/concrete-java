@@ -296,8 +296,8 @@ public enum Tokenizer {
           System.out.print(toks.get(0));
           for (int i = 1; i < toks.size(); i++)
             System.out.print(" " + toks.get(i));
-          System.out.println();
         }
+        System.out.println();
       }
     }
   }
