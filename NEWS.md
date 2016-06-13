@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.9.0 - 2016-06-16
+* Upgraded to concrete `4.9`.
+
 ## Concrete-Java v4.8.8 - 2016-03-13
 * Added quality hashcode methods to Concrete objects.
 * Fix exceptions that occurred when long file names were added to archives.
