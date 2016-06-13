@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.9.1 - 2016-06-16
+* Point to the correct parent project.
+
 ## Concrete-Java v4.9.0 - 2016-06-16
 * Upgraded to concrete `4.9`.
 * Upgrade supporting libraries to latest versions.
