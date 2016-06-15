@@ -6,15 +6,13 @@
 
 package edu.jhu.hlt.tift;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import edu.jhu.hlt.tift.PatternStringTuple;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Enumeration of available "text rewriting" tools. 
+ * Enumeration of available "text rewriting" tools.
  */
 public enum Rewriter {
   PTB {
@@ -83,13 +81,13 @@ public enum Rewriter {
         // 2744 \u2018 ' single left quotation
         // 2722 \u2661 <3 white heart
         // 2690 \u2605 star-symbol black star
-        // 2534 \u2600 sun-symbol BLACK SUN WITH RAYS 
+        // 2534 \u2600 sun-symbol BLACK SUN WITH RAYS
         // 2346 \u2550 = BOX DRAWINGS DOUBLE HORIZONTAL
         // 2094 \u0305 - COMBINING OVERLINE
 
         String[] p = {
                 "\u201c", "\"",
-                "\u201d", "\"", 
+                "\u201d", "\"",
                 "\u2665", "<3",
                 "\u2014", "-",
                 "\u263a", ":)",
@@ -176,9 +174,9 @@ public enum Rewriter {
 
     /**
      * Based on inspection of:
-     * 
+     *
      * http://www.cis.upenn.edu/~treebank/tokenizer.sed
-     * 
+     *
      * The header of which identifies the author as:
      * "Robert MacIntyre, University of Pennsylvania, late 1995".
      */
@@ -257,11 +255,11 @@ public enum Rewriter {
     }
 
   private static Set<PatternStringTuple> convertStringArrayPatternsToTupleSet(String[] patternArray) {
-    Set<PatternStringTuple> patterns = new HashSet<PatternStringTuple>(patternArray.length);
+    ImmutableSet.Builder<PatternStringTuple> patterns = new ImmutableSet.Builder<>();
     for (int i = 0; i < patternArray.length - 1; i += 2)
       patterns.add(new PatternStringTuple(Pattern.compile(patternArray[i], Pattern.MULTILINE), patternArray[i + 1]));
 
-    return Collections.unmodifiableSet(patterns);
+    return patterns.build();
   }
 
   private static String rewrite(String text, Set<PatternStringTuple> patterns) {

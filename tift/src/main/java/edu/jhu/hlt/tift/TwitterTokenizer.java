@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+
 /**
  * Recognizes various Twitter related tokens, runs PTB tokenization on the rest.
  */
@@ -72,6 +77,9 @@ import java.util.regex.Pattern;
  * - Jason Baldridge (jasonbaldridge@gmail.com) June 2011
  */
 public class TwitterTokenizer {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(TwitterTokenizer.class);
+
   private static final List<PatternStringTuple> tupleList = new ArrayList<>();
 
   private static final String START = "(?<=^|\\s)";
@@ -79,8 +87,6 @@ public class TwitterTokenizer {
   private static final String START_W_PAREN_DBQUOTE = "(?<=^|\\s|\\(|\"|\u201c|\u201d|\u201e|\u201f|\u275d|\u275e)";
   private static final String END = "(?=$|\\s)";
   private static final String END_W_PAREN = "(?=$|\\s|\\))";
-
-  private static boolean rw = false;
 
   static {
     try {
@@ -101,7 +107,8 @@ public class TwitterTokenizer {
     tupleList.add(getEasternEmoticonPatterns());
     tupleList.add(getMiscEmoticonPatterns());
     tupleList.add(getHeartPatterns());
-    tupleList.add(getHashtagPatterns());
+    // tupleList.add(getHashtagPatterns());
+    tupleList.add(new PatternStringTuple(HashTagTagger.HASHTAG_PATTERN, "HASHTAG"));
     tupleList.add(getLeftArrowPatterns());
     tupleList.add(getRightArrowPatterns());
     tupleList.addAll(getRepeatedPatterns());
@@ -209,14 +216,6 @@ public class TwitterTokenizer {
     return new PatternStringTuple(START + "((\\\\m/)|(\\\\o/))" + END, "MISC_EMOTICON");
   }
 
-  public static PatternStringTuple getHashtagPatterns() {
-    // Potts: "(\\#+[\\w_]+[\\w\\'_\\-]*[\\w_]+)"
-    // twokenize: #[a-zA-Z0-9_]+
-    // comment from twokenize:
-    // "also gets #1 #40 which probably aren't hashtags .. but good as tokens"
-    return new PatternStringTuple(START + "(\\#+[\\w_]+[\\w\\'_\\-]*[\\w_]+)" + END, "HASHTAG");
-  }
-
   public static PatternStringTuple getLeftArrowPatterns() {
     // twokenize: """(<*[-=]*>+|<+[-=]*>*)"""
     // this is more conservative
@@ -299,7 +298,7 @@ public class TwitterTokenizer {
     }
 
   public static List<PatternStringTuple> getUnicodePatterns() throws IOException {
-    List<PatternStringTuple> tupleList = new ArrayList<>();
+    ImmutableList.Builder<PatternStringTuple> tupleList = new ImmutableList.Builder<>();
     try (InputStreamReader isr = new InputStreamReader(TwitterTokenizer.class.getClassLoader().getResourceAsStream("unicode.csv"), StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(isr);) {
       String line;
@@ -317,7 +316,7 @@ public class TwitterTokenizer {
         tupleList.add(new PatternStringTuple(Pattern.compile(regexp), toks[1]));
       }
 
-      return tupleList;
+      return tupleList.build();
     }
   }
 
@@ -336,7 +335,7 @@ public class TwitterTokenizer {
 
     for (int i = 0; i < x.size(); i++) {
       y[0][i] = x.get(i).getToken();
-      y[1][i] = x.get(i).getTag();
+      y[1][i] = x.get(i).getTag().orElse(null);
     }
     int[] z = Tokenizer.getOffsets(text, y[0]);
     for (int i = 0; i < z.length; i++)
@@ -357,72 +356,60 @@ public class TwitterTokenizer {
     List<TokenTagTuple> x = recursiveTokenize(text.trim(), 0, tokenization);
 
     String[] y = new String[x.size()];
-    if (!rw) {
-      for (int i = 0; i < x.size(); i++)
-        y[i] = x.get(i).getToken();
-    } else {
-      for (int i = 0; i < x.size(); i++) {
-        if (x.get(i).getTag() != null)
-          y[i] = "[" + x.get(i).getTag() + "]";
-        else
-          y[i] = x.get(i).getToken();
-      }
-    }
+    for (int i = 0; i < x.size(); i++)
+      y[i] = x.get(i).getToken();
     return y;
   }
 
   private static List<TokenTagTuple> recursiveTokenize(String text, int index, Tokenizer tokenization) {
+    LOGGER.trace("Called w/ text: {}", text);
     if (index < tupleList.size()) {
       PatternStringTuple pst = tupleList.get(index);
+      if (pst.getEntry().equals("HASHTAG"))
+        LOGGER.debug("Preparing to fire Hashtag rules.");
       Pattern pattern = pst.getPattern();
       String tag = pst.getEntry();
-      Matcher matcher;
-      matcher = pattern.matcher(text);
-      int groupCount = matcher.groupCount();
-      String textFragment = "";
-      if (groupCount > 0) {
-        List<List<TokenTagTuple>> arrays = new ArrayList<>();
-        int lastEnd = 0;
-        while (matcher.find()) {
-          if (matcher.start() > lastEnd) {
-            textFragment = text.substring(lastEnd, matcher.start()).trim();
-            if (textFragment.length() > 0) // possible could have
-                                           // started all as
-                                           // whitespace
-              arrays.add(recursiveTokenize(textFragment, index + 1, tokenization));
-          }
-          // System.out.println("[" + matcher.group() + "] " +
-          // matcher.start() + " " + matcher.end());
-          List<TokenTagTuple> tmpList = new ArrayList<>();
-          tmpList.add(new TokenTagTuple(matcher.group(), tag));
-          arrays.add(tmpList);
-          lastEnd = matcher.end();
-        }
-        if (lastEnd < text.length())
-          arrays.add(recursiveTokenize(text.substring(lastEnd, text.length()).trim(), index + 1, tokenization));
+      LOGGER.trace("On tag: {}", tag);
+      Matcher matcher = pattern.matcher(text);
 
-        return concatAll(arrays);
-      } else {
-        return recursiveTokenize(text.trim(), index + 1, tokenization);
+      List<List<TokenTagTuple>> arrays = new ArrayList<>();
+      int lastEnd = 0;
+      while (matcher.find()) {
+        if (matcher.start() > lastEnd) {
+          String textFragment = text.substring(lastEnd, matcher.start()).trim();
+          LOGGER.trace("Got text fragment: {}", textFragment);
+          if (textFragment.length() > 0) // possible could have
+                                         // started all as
+                                         // whitespace
+            arrays.add(recursiveTokenize(textFragment, index + 1, tokenization));
+        }
+        // System.out.println("[" + matcher.group() + "] " +
+        // matcher.start() + " " + matcher.end());
+        List<TokenTagTuple> tmpList = new ArrayList<>();
+        final String g = matcher.group();
+        LOGGER.debug("Preparing to add new TTT: {}: {}", g, tag);
+        tmpList.add(new TokenTagTuple(g, tag));
+        arrays.add(tmpList);
+        lastEnd = matcher.end();
       }
+      if (lastEnd < text.length())
+        arrays.add(recursiveTokenize(text.substring(lastEnd, text.length()).trim(), index + 1, tokenization));
+
+      return concatAll(arrays);
     } else {
       List<String> tokenList = tokenization.tokenize(text);
-      List<TokenTagTuple> y = new ArrayList<>(tokenList.size());
+      ImmutableList.Builder<TokenTagTuple> y = new ImmutableList.Builder<>();
       for (String token : tokenList)
-        y.add(new TokenTagTuple(token, null));
-      return y;
+        y.add(new TokenTagTuple(token));
+      return y.build();
     }
   }
 
-  public static List<TokenTagTuple> concatAll(List<List<TokenTagTuple>> arrays) {
-    int totalLength = 0;
+  private static List<TokenTagTuple> concatAll(List<List<TokenTagTuple>> arrays) {
+    ImmutableList.Builder<TokenTagTuple> ttlb = new ImmutableList.Builder<>();
     for (List<TokenTagTuple> array : arrays)
-      totalLength += array.size();
+      ttlb.addAll(array);
 
-    List<TokenTagTuple> result = new ArrayList<>(totalLength);
-    for (List<TokenTagTuple> array : arrays)
-      result.addAll(array);
-
-    return result;
+    return ttlb.build();
   }
 }

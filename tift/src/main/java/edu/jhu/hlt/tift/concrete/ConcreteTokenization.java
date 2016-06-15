@@ -1,12 +1,10 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
- * This software is released under the 2-clause BSD license.
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
-package edu.jhu.hlt.concrete.tift;
+package edu.jhu.hlt.tift.concrete;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
@@ -40,28 +38,11 @@ public class ConcreteTokenization {
     return new AnnotationMetadata(tiftMetadata);
   }
 
-  /**
-     *
-     */
   private ConcreteTokenization() {
-    // TODO Auto-generated constructor stub
   }
 
-  /**
-   * Wrapper around {@link #generateConcreteTokenization(List, int[], int)} that takes an array of Strings (tokens).
-   *
-   * @see #generateConcreteTokenization(List, int[], int)
-   *
-   * @param tokens
-   *          - an array of tokens (Strings)
-   * @param offsets
-   *          - an array of integers (offsets)
-   * @param startPos
-   *          - starting position of the text
-   * @return a {@link Tokenization} object with correct tokenization
-   */
-  public static Tokenization generateConcreteTokenization(String[] tokens, int[] offsets, int startPos) {
-    return generateConcreteTokenization(Arrays.asList(tokens), offsets, startPos);
+  public static Tokenization generateConcreteTokenization(List<String> tokens, int[] offsets, int startPos) {
+    return generateConcreteTokenization(tokens.toArray(new String[tokens.size()]), offsets, startPos);
   }
 
   /**
@@ -75,7 +56,7 @@ public class ConcreteTokenization {
    *          - starting position of the text
    * @return a {@link Tokenization} object with correct tokenization
    */
-  public static Tokenization generateConcreteTokenization(List<String> tokens, int[] offsets, int startPos) {
+  public static Tokenization generateConcreteTokenization(String[] tokens, int[] offsets, int startPos) {
     Tokenization tkz = new Tokenization();
     tkz.setKind(TokenizationKind.TOKEN_LIST);
     tkz.setMetadata(new AnnotationMetadata(tiftMetadata));
@@ -83,8 +64,8 @@ public class ConcreteTokenization {
 
     TokenList tl = new TokenList();
     // Note: we use token index as token id.
-    for (int tokenId = 0; tokenId < tokens.size(); ++tokenId) {
-      String token = tokens.get(tokenId);
+    for (int tokenId = 0; tokenId < tokens.length; ++tokenId) {
+      String token = tokens[tokenId];
       int start = startPos + offsets[tokenId];
       int end = start + token.length();
       TextSpan ts = new TextSpan(start, end);
@@ -95,23 +76,6 @@ public class ConcreteTokenization {
 
     tkz.setTokenList(tl);
     return tkz;
-  }
-
-  /**
-   * Wrapper for {@link #generateConcreteTokenization(List, int[], int)} that takes a {@link List} of {@link Integer} objects.
-   *
-   * @see #generateConcreteTokenization(List, int[], int)
-   *
-   * @param tokens
-   *          - a {@link List} of tokens (Strings)
-   * @param offsets
-   *          a {@link List} of offsets (Integer objects)
-   * @param startPos
-   *          - starting position of the text
-   * @return a {@link Tokenization} object with correct tokenization
-   */
-  public static Tokenization generateConcreteTokenization(List<String> tokens, List<Integer> offsets, int startPos) {
-    return generateConcreteTokenization(tokens, convertIntegers(offsets), startPos);
   }
 
   /**
@@ -130,17 +94,17 @@ public class ConcreteTokenization {
    *          - starting position of the text
    * @return a {@link Tokenization} object with correct tokenization and token tagging
    */
-  public static Tokenization generateConcreteTokenization(List<String> tokens, List<String> tokenTags, int[] offsets, int startPos) {
+  public static Tokenization generateConcreteTokenization(String[] tokens, String[] tokenTags, int[] offsets, int startPos) {
     Tokenization tokenization = generateConcreteTokenization(tokens, offsets, startPos);
     TokenTagging tt = new TokenTagging();
     tt.setUuid(UUIDFactory.newUUID());
     tt.setTaggingType("POS");
     tt.setMetadata(new AnnotationMetadata(tiftMetadata));
-    for (int i = 0; i < tokens.size(); i++) {
-      String tag = tokenTags.get(i);
+    for (int i = 0; i < tokens.length; i++) {
+      String tag = tokenTags[i];
       if (tag != null) {
         TaggedToken tok = new TaggedToken();
-        tok.setTokenIndex(i).setTag(tokenTags.get(i));
+        tok.setTokenIndex(i).setTag(tokenTags[i]);
         tt.addToTaggedTokenList(tok);
       }
     }
@@ -153,24 +117,6 @@ public class ConcreteTokenization {
   }
 
   public static Tokenization generateConcreteTokenization(TaggedTokenizationOutput tto) {
-    return generateConcreteTokenization(tto.getTokens(), tto.getTokenTags(), convertIntegers(tto.getOffsets()), 0);
-  }
-
-  /**
-   * Convert a {@link List} of {@link Integer} objects to an integer array primitive.
-   *
-   * Will throw a {@link NullPointerException} if any element in the list is null.
-   *
-   * @param integers
-   *          a {@link List} of {@link Integer} objects, none of which are <code>null</code>
-   * @return a primitive array of ints
-   */
-  public static int[] convertIntegers(List<Integer> integers) {
-    int[] ret = new int[integers.size()];
-    Iterator<Integer> iterator = integers.iterator();
-    for (int i = 0; i < ret.length; i++)
-      ret[i] = iterator.next().intValue();
-
-    return ret;
+    return generateConcreteTokenization(tto.getTokens(), tto.getTokenTags(), tto.getOffsets(), 0);
   }
 }
