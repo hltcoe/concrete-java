@@ -33,6 +33,15 @@ public class EndOfTweetHashtagsTest {
   }
 
   @Test
+  public void unicodeEllipses() {
+    final String target = "Foo #foo…";
+    List<String> tokens = Tokenizer.TWITTER.tokenize(target);
+    String secondToLast = tokens.get(tokens.size() - 2);
+    assertEquals("Expected " + "#foo" + " but did not get it.", "#foo", secondToLast);
+    tokens.forEach(System.out::println);
+  }
+
+  @Test
   public void tagWEllipses() {
     final String target = "hello world #Foo bar......";
     List<String> tokens = Tokenizer.TWITTER.tokenize(target);

@@ -33,8 +33,17 @@ public class HashTagPatternTest {
     final String fakeWEnd = "hola q tal " + subWEllipsis;
 
     final Matcher om = HASHTAG_PATTERN.matcher(fakeWEnd);
-    this.checkPositiveMatch(om, subWEllipsis);
+    this.checkPositiveMatch(om, sub);
     assertFalse(om.find());
+  }
+
+  @Test
+  public void unicodeEllipse() {
+    final String multi = "hello world #programming #pyth…";
+    final Matcher tm = HASHTAG_PATTERN.matcher(multi);
+    this.checkPositiveMatch(tm, "#programming");
+    this.checkPositiveMatch(tm, "#pyth");
+    assertFalse(tm.find());
   }
 
   @Test
@@ -42,7 +51,7 @@ public class HashTagPatternTest {
     final String multi = "hello world #programming #pyth...";
     final Matcher tm = HASHTAG_PATTERN.matcher(multi);
     this.checkPositiveMatch(tm, "#programming");
-    this.checkPositiveMatch(tm, "#pyth...");
+    this.checkPositiveMatch(tm, "#pyth");
     assertFalse(tm.find());
   }
 

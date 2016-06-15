@@ -360,14 +360,14 @@ public class TwitterTokenizer {
   }
 
   private static List<TokenTagTuple> recursiveTokenize(String text, int index, Tokenizer tokenization) {
-    LOGGER.debug("Called w/ text: {}", text);
+    LOGGER.trace("Called w/ text: {}", text);
     if (index < tupleList.size()) {
       PatternStringTuple pst = tupleList.get(index);
       if (pst.getEntry().equals("HASHTAG"))
         LOGGER.debug("Preparing to fire Hashtag rules.");
       Pattern pattern = pst.getPattern();
       String tag = pst.getEntry();
-      LOGGER.debug("On tag: {}", tag);
+      LOGGER.trace("On tag: {}", tag);
       Matcher matcher = pattern.matcher(text);
 
       List<List<TokenTagTuple>> arrays = new ArrayList<>();
@@ -375,7 +375,7 @@ public class TwitterTokenizer {
       while (matcher.find()) {
         if (matcher.start() > lastEnd) {
           String textFragment = text.substring(lastEnd, matcher.start()).trim();
-          LOGGER.debug("Got text fragment: {}", textFragment);
+          LOGGER.trace("Got text fragment: {}", textFragment);
           if (textFragment.length() > 0) // possible could have
                                          // started all as
                                          // whitespace
