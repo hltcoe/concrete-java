@@ -5,4 +5,4 @@
 /**
  * Concrete related Tift classes.
  */
-package edu.jhu.hlt.concrete.tift;
+package edu.jhu.hlt.tift.concrete;

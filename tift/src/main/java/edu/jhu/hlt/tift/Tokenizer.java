@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.tift.ConcreteTokenization;
+import edu.jhu.hlt.tift.concrete.ConcreteTokenization;
 
 /**
  * Enumeration of supported tokenizations.
@@ -79,7 +81,7 @@ public enum Tokenizer {
 
     @Override
     public List<String> tokenize(String text) {
-      return TwitterTokenizer.tokenize(text).getTokens();
+      return ImmutableList.copyOf(TwitterTokenizer.tokenize(text).getTokens());
     }
 
     @Override
