@@ -70,7 +70,9 @@ public class TokenizerTest {
         .findFirst();
     assertTrue(tt.isPresent());
     for (TaggedToken t : tt.get().getTaggedTokenList()) {
-      logger.info("Got tagging: {} on token: {}", t.getTag(), t.getTokenIndex());
+      int idx = t.getTokenIndex();
+      logger.info("Got tagging: {} on token: {}", t.getTag(), idx);
+      assertEquals(4, idx);
     }
   }
 
@@ -80,7 +82,7 @@ public class TokenizerTest {
     List<String> tokens = Tokenizer.BASIC.tokenize(text);
     assertEquals(4, tokens.size());
   }
-  
+
   @Test
   public void thriftReadWrite() throws ConcreteException {
     String text = "hello world test tokens";

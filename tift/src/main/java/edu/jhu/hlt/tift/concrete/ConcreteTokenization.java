@@ -16,6 +16,8 @@ import edu.jhu.hlt.concrete.TokenList;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
+import edu.jhu.hlt.concrete.util.ProjectConstants;
+import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 import edu.jhu.hlt.tift.TaggedTokenizationOutput;
 
@@ -28,8 +30,8 @@ public class ConcreteTokenization {
 
   static {
     AnnotationMetadata am = new AnnotationMetadata();
-    am.setTimestamp(System.currentTimeMillis());
-    am.setTool("Tift Tokenizer v4.4.0");
+    am.setTimestamp(Timing.currentLocalTime());
+    am.setTool("Tift " + ProjectConstants.VERSION);
     tiftMetadata = new AnnotationMetadata(am);
   }
 
@@ -120,7 +122,7 @@ public class ConcreteTokenization {
       String tag = tokenTags[i];
       if (tag != null) {
         TaggedToken tok = new TaggedToken();
-        tok.setTokenIndex(offsets[i]).setTag(tokenTags[i]);
+        tok.setTokenIndex(i).setTag(tokenTags.get(i));
         tt.addToTaggedTokenList(tok);
       }
     }
