@@ -17,6 +17,8 @@ import edu.jhu.hlt.concrete.TokenList;
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
+import edu.jhu.hlt.concrete.util.ProjectConstants;
+import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 import edu.jhu.hlt.tift.TaggedTokenizationOutput;
 
@@ -29,17 +31,17 @@ public class ConcreteTokenization {
 
   static {
     AnnotationMetadata am = new AnnotationMetadata();
-    am.setTimestamp(System.currentTimeMillis());
-    am.setTool("Tift Tokenizer v4.4.0");
+    am.setTimestamp(Timing.currentLocalTime());
+    am.setTool("Tift " + ProjectConstants.VERSION);
     tiftMetadata = new AnnotationMetadata(am);
   }
-  
+
   public static final AnnotationMetadata getMetadata() {
     return new AnnotationMetadata(tiftMetadata);
   }
 
   /**
-     * 
+     *
      */
   private ConcreteTokenization() {
     // TODO Auto-generated constructor stub
@@ -47,9 +49,9 @@ public class ConcreteTokenization {
 
   /**
    * Wrapper around {@link #generateConcreteTokenization(List, int[], int)} that takes an array of Strings (tokens).
-   * 
+   *
    * @see #generateConcreteTokenization(List, int[], int)
-   * 
+   *
    * @param tokens
    *          - an array of tokens (Strings)
    * @param offsets
@@ -64,7 +66,7 @@ public class ConcreteTokenization {
 
   /**
    * Generate a {@link Tokenization} object from a list of tokens, list of offsets, and start position of the text (e.g., first text character in the text).
-   * 
+   *
    * @param tokens
    *          - a {@link List} of tokens (Strings)
    * @param offsets
@@ -78,7 +80,7 @@ public class ConcreteTokenization {
     tkz.setKind(TokenizationKind.TOKEN_LIST);
     tkz.setMetadata(new AnnotationMetadata(tiftMetadata));
     tkz.setUuid(UUIDFactory.newUUID());
-    
+
     TokenList tl = new TokenList();
     // Note: we use token index as token id.
     for (int tokenId = 0; tokenId < tokens.size(); ++tokenId) {
@@ -97,9 +99,9 @@ public class ConcreteTokenization {
 
   /**
    * Wrapper for {@link #generateConcreteTokenization(List, int[], int)} that takes a {@link List} of {@link Integer} objects.
-   * 
+   *
    * @see #generateConcreteTokenization(List, int[], int)
-   * 
+   *
    * @param tokens
    *          - a {@link List} of tokens (Strings)
    * @param offsets
@@ -115,11 +117,11 @@ public class ConcreteTokenization {
   /**
    * Generate a {@link Tokenization} object from a list of tokens, list of tags, list of offsets, and start position of the text (e.g., first text character in
    * the text). Assumes tags are part of speech tags.
-   * 
+   *
    * Invokes {@link #generateConcreteTokenization(List, int[], int)} then adds tagging.
-   * 
+   *
    * @see #generateConcreteTokenization(List, int[], int)
-   * 
+   *
    * @param tokens
    *          - a {@link List} of tokens (Strings)
    * @param offsets
@@ -138,15 +140,15 @@ public class ConcreteTokenization {
       String tag = tokenTags.get(i);
       if (tag != null) {
         TaggedToken tok = new TaggedToken();
-        tok.setTokenIndex(offsets[i]).setTag(tokenTags.get(i));
+        tok.setTokenIndex(i).setTag(tokenTags.get(i));
         tt.addToTaggedTokenList(tok);
       }
     }
-    
+
     // Do not set the pos tags if everything was "null".
     if (tt.isSetTaggedTokenList())
       tokenization.addToTokenTaggingList(tt);
-    
+
     return tokenization;
   }
 
@@ -156,9 +158,9 @@ public class ConcreteTokenization {
 
   /**
    * Convert a {@link List} of {@link Integer} objects to an integer array primitive.
-   * 
+   *
    * Will throw a {@link NullPointerException} if any element in the list is null.
-   * 
+   *
    * @param integers
    *          a {@link List} of {@link Integer} objects, none of which are <code>null</code>
    * @return a primitive array of ints
