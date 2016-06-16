@@ -56,6 +56,13 @@ public class HashTagPatternTest {
   }
 
   @Test
+  public void unicode() {
+    final String multi = "#desperté y mi #hermano me empezó";
+    final Matcher tm = HASHTAG_PATTERN.matcher(multi);
+    this.checkPositiveMatch(tm, "#desperté");
+  }
+
+  @Test
   public void negative() {
     final String number = "quxbarfoo zzz31313 #1 bar";
     final String end = "quxbarfoo zzz31313 #1...";
