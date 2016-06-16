@@ -122,7 +122,7 @@ public class ConcreteTokenization {
       String tag = tokenTags[i];
       if (tag != null) {
         TaggedToken tok = new TaggedToken();
-        tok.setTokenIndex(i).setTag(tokenTags.get(i));
+        tok.setTokenIndex(i).setTag(tokenTags[i]);
         tt.addToTaggedTokenList(tok);
       }
     }
