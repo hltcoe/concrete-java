@@ -4,7 +4,6 @@
  */
 package edu.jhu.hlt.tift.concrete;
 
-import java.util.Arrays;
 import java.util.List;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;

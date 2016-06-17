@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * 2-tuple that contains a token and an {@link Optional} tag.
  */
-public class TokenTagTuple {
+class TokenTagTuple {
 
   private final String token;
   private final Optional<String> tag;

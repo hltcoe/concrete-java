@@ -8,14 +8,11 @@ package edu.jhu.hlt.tift;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.tift.concrete.ConcreteTokenization;
 
 /**
@@ -26,28 +23,18 @@ public enum Tokenizer {
   PTB {
     @Override
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
-      return generateConcreteTokenization(this, text, textStartPosition);
+      return generateConcreteTokenization(text, textStartPosition);
     }
 
     @Override
     public List<String> tokenize(String text) {
       return ImmutableList.copyOf(Rewriter.PTB.rewrite(text).split("\\s+"));
     }
-
-    @Override
-    public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
-      return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
-    }
   },
   WHITESPACE {
     @Override
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
-      return generateConcreteTokenization(this, text, textStartPosition);
-    }
-
-    @Override
-    public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
-      return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
+      return generateConcreteTokenization(text, textStartPosition);
     }
 
     @Override
@@ -58,17 +45,12 @@ public enum Tokenizer {
   TWITTER_PETROVIC {
     @Override
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
-      return generateConcreteTokenization(this, text, textStartPosition);
+      return generateConcreteTokenization(text, textStartPosition);
     }
 
     @Override
     public List<String> tokenize(String text) {
       return tokenizeTweetPetrovic(text);
-    }
-
-    @Override
-    public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
-      return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
     }
   },
   TWITTER {
@@ -82,40 +64,53 @@ public enum Tokenizer {
     public List<String> tokenize(String text) {
       return ImmutableList.copyOf(TwitterTokenizer.tokenize(text).getTokens());
     }
-
-    @Override
-    public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
-      return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
-    }
   },
   BASIC {
     @Override
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
-      return generateConcreteTokenization(this, text, textStartPosition);
+      return generateConcreteTokenization(text, textStartPosition);
     }
 
     @Override
     public List<String> tokenize(String text) {
-      return Arrays.asList(Rewriter.BASIC.rewrite(text).split("\\s+"));
-    }
-
-    @Override
-    public Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid) {
-      return generateConcreteTokenization(this, text, textStartPosition, sentUuid);
+      return ImmutableList.copyOf(Rewriter.BASIC.rewrite(text).split("\\s+"));
     }
   };
 
-  //
+  //////////////////////////////////////////////////
   // Contract methods.
-  //
+  //////////////////////////////////////////////////
+  /**
+   * Tokenize a {@link String}, given a character offset.
+   *
+   * @param text a {@link String} to tokenize
+   * @param textStartPosition used to denote offsets with respect to the entire document.
+   * For example, if you wish to tokenize the second sentence from the following text:
+   * <pre>
+   * He left. He returned later.
+   * </pre>
+   * call this method with parameters <code>He will return later.</code> and <code>9</code>.
+   * @return a {@link Tokenization} corresponding to this {@link Tokenizer} instance
+   *
+   * @see #tokenizeToConcrete(String)
+   */
   public abstract Tokenization tokenizeToConcrete(String text, int textStartPosition);
-  public abstract Tokenization tokenizeSentence(String text, int textStartPosition, UUID sentUuid);
 
   public abstract List<String> tokenize(String text);
 
-  //
-  // Patterns & sets of patterns.
-  //
+  /**
+   * Tokenize a string.
+   * <br><br>
+   * For maintaining character offsets, see {@link #tokenizeToConcrete(String, int)}.
+   *
+   * @param text a {@link String} to tokenize
+   * @return a {@link Tokenization} corresponding to this {@link Tokenizer} instance
+   *
+   * @see #tokenizeToConcrete(String, int)
+   */
+  public final Tokenization tokenizeToConcrete(String text) {
+    return this.tokenizeToConcrete(text, 0);
+  }
 
   //
   // Static methods.
@@ -128,7 +123,7 @@ public enum Tokenizer {
    * @param tokens
    * @return an integer array of offsets
    */
-  public static int[] getOffsets(String text, String[] tokens) {
+  static int[] getOffsets(String text, String[] tokens) {
     int[] r = new int[tokens.length];
     int x = 0;
     for (int i = 0; i < tokens.length; i++) {
@@ -157,7 +152,7 @@ public enum Tokenizer {
     char c;
     int cType;
     boolean update = false;
-    List<String> content = new ArrayList<String>();
+    ImmutableList.Builder<String> content = new ImmutableList.Builder<>();
 
     // My (vandurme) one change was to add UPPERCASE_LETTER as another
     // option alongside LOWER_CASE_LETTER
@@ -246,13 +241,13 @@ public enum Tokenizer {
         break;
       }
 
-      if (update || ((i == (length - 1)) && (!token.equals("")))) {
+      if (update || ((i == (length - 1)) && (!token.isEmpty()))) {
         content.add(token);
         update = false;
       }
     }
 
-    return content;
+    return content.build();
   }
 
   /**
@@ -261,22 +256,17 @@ public enum Tokenizer {
    * @see #getOffsets(String, String[])
    *
    * @param text
-   *          - text that was tokenized
+   *          text that was tokenized
    * @param tokenList
-   *          - a {@link List} of tokenized text
+   *          a {@link List} of tokenized text
    * @return an array of integers that represent offsets
    */
-  public static int[] getOffsets(String text, List<String> tokenList) {
+  static int[] getOffsets(String text, List<String> tokenList) {
     return getOffsets(text, tokenList.toArray(new String[0]));
   }
 
-  public static Tokenization generateConcreteTokenization(Tokenizer tokenizationType, String text, int startPosition, UUID sentUuid) {
-    return generateConcreteTokenization(tokenizationType, text, startPosition)
-        .setUuid(sentUuid);
-  }
-
-  public static Tokenization generateConcreteTokenization(Tokenizer tokenizationType, String text, int startPosition) {
-    List<String> tokenList = tokenizationType.tokenize(text);
+  Tokenization generateConcreteTokenization(String text, int startPosition) {
+    List<String> tokenList = this.tokenize(text);
     int[] offsets = getOffsets(text, tokenList);
     return ConcreteTokenization.generateConcreteTokenization(tokenList, offsets, startPosition);
   }
