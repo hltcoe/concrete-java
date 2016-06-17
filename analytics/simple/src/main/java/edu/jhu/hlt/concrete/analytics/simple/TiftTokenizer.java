@@ -10,6 +10,7 @@ import java.util.List;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.analytics.base.Analytic;
 import edu.jhu.hlt.concrete.analytics.base.AnalyticException;
@@ -19,7 +20,6 @@ import edu.jhu.hlt.concrete.miscommunication.sentenced.CachedSentencedCommunicat
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.TokenizedCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
-import edu.jhu.hlt.concrete.util.SuperTextSpan;
 import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.tift.Tokenizer;
 
@@ -55,9 +55,9 @@ public class TiftTokenizer implements Analytic<TokenizedCommunication> {
       // backing map is a LinkedHashMap - ordering should be OK
       List<Sentence> sentences = new ArrayList<>(csc.getSentences());
       for (Sentence st : sentences) {
-        SuperTextSpan sts = new SuperTextSpan(st.getTextSpan(), cp);
-        String sentenceText = sts.getText();
-        Tokenization t = this.tokenizer.tokenizeSentence(sentenceText, 0, st.getUuid());
+        TextSpan sts = st.getTextSpan();
+        final String stText = cp.getText().substring(sts.getStart(), sts.getEnding());
+        Tokenization t = this.tokenizer.tokenizeToConcrete(stText);
         // override metadata (should be patched later)
         t.setMetadata(TooledMetadataConverter.convert(this));
         st.setTokenization(t);
