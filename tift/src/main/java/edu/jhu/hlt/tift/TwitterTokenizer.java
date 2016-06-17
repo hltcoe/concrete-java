@@ -114,97 +114,98 @@ public class TwitterTokenizer {
     tupleList.addAll(getRepeatedPatterns());
     tupleList.addAll(getUnicodePatterns());
     tupleList.add(getNumberPatterns());
+    // this snags http stuff at the end. need to make sure it's run after
+    // the unicode pattern, however. it could be run earlier with some
+    // messing with the groups and such.
+    tupleList.add(new PatternStringTuple(EndOfTweetURLTagger.END_URL, "URL"));
   }
 
-    public static List<PatternStringTuple> getURLPatterns() {
-        // "p:" gets picked up by the emoticon pattern, so order of patterns is
-        // important. Matching <, > pairs without verifying both are present.
-        List<PatternStringTuple> tupleList = new ArrayList<>();
-        tupleList.add(new PatternStringTuple(START + "(" + "(https?:|www\\.)\\S+" + "|" +
-        // inspired by twokenize
-                "[^\\s@]+\\.(com|co\\.uk|org|net|info|ca|ly|mp|edu|gov)(/(\\S*))?" + ")" + END, "URL"));
-        tupleList.add(new PatternStringTuple("(?<=\\(|<)" + "(" + "(https?:|www\\.)\\S+" + "|" +
-        // inspired by twokenize
-                "[^\\s@]+\\.(com|co\\.uk|org|net|info|ca|ly|mp|edu|gov)(/(\\S*))?" + ")" + "(?=\\)|>)", "URL"));
-        return tupleList;
+  public static List<PatternStringTuple> getURLPatterns() {
+    // "p:" gets picked up by the emoticon pattern, so order of patterns is
+    // important. Matching <, > pairs without verifying both are present.
+    List<PatternStringTuple> tupleList = new ArrayList<>();
+    tupleList.add(new PatternStringTuple(START + "(" + "(https?:|www\\.)\\S+" + "|" +
+    // inspired by twokenize
+            "[^\\s@]+\\.(com|co\\.uk|org|net|info|ca|ly|mp|edu|gov)(/(\\S*))?" + ")" + END, "URL"));
+    tupleList.add(new PatternStringTuple("(?<=\\(|<)" + "(" + "(https?:|www\\.)\\S+" + "|" +
+    // inspired by twokenize
+            "[^\\s@]+\\.(com|co\\.uk|org|net|info|ca|ly|mp|edu|gov)(/(\\S*))?" + ")" + "(?=\\)|>)", "URL"));
+    return tupleList;
+  }
 
-    }
+  // emoticons: (here just for misc reference, not all nec. supported)
+  // http://www.urbandictionary.com/define.php?term=emoticon
+  //
+  // :) smile
+  // :( frown
+  // ;) wink
+  // :P or :
+  // Public tongue sticking out: joke, sarcasm or disgusting
+  // 8) has sunglasses: looking cool
+  // :O surprised
+  // :S confused
+  // :'( shedding a tear
+  // XD laughing, eyes shut (LOL)
+  // XP Tongue out, eyes shut
+  // ^_^ smiley
+  // ^.^ see above, but rather than a wide, closed mouth, a small mouth is
+  // present
+  // ^_~ wink
+  // >_< angry, frustrated
+  // =_= bored
+  // -_- annoyed
+  // -_-' or ^_^' or ^_^;; nervousness, sweatdrop or embarrassed.
+  //
+  // I have observed :3 as semi-frequent, but could be either emoticon, or,
+  // e.g.: 2:30
+  public static PatternStringTuple getWesternEmoticonPatterns() {
+    // Light modification of Potts
 
-    // emoticons: (here just for misc reference, not all nec. supported)
-    // http://www.urbandictionary.com/define.php?term=emoticon
-    //
-    // :) smile
-    // :( frown
-    // ;) wink
-    // :P or :
-    // Public tongue sticking out: joke, sarcasm or disgusting
-    // 8) has sunglasses: looking cool
-    // :O surprised
-    // :S confused
-    // :'( shedding a tear
-    // XD laughing, eyes shut (LOL)
-    // XP Tongue out, eyes shut
-    // ^_^ smiley
-    // ^.^ see above, but rather than a wide, closed mouth, a small mouth is
-    // present
-    // ^_~ wink
-    // >_< angry, frustrated
-    // =_= bored
-    // -_- annoyed
-    // -_-' or ^_^' or ^_^;; nervousness, sweatdrop or embarrassed.
-    //
-    // I have observed :3 as semi-frequent, but could be either emoticon, or,
-    // e.g.: 2:30
-    public static PatternStringTuple getWesternEmoticonPatterns() {
-        // Light modification of Potts
+    String eyebrows = "[<>]";
+    String eyes = "[:;=8xX]";
+    String nose = "[\\-oO\\*\\']";
+    // * can be a nose: :*)
+    // or a mouth, for "kisses" : :*
+    String mouth = "[\\*\\)\\]\\(\\[$sSdDpP/\\}\\{@\\|\\\\]";
 
-        String eyebrows = "[<>]";
-        String eyes = "[:;=8xX]";
-        String nose = "[\\-oO\\*\\']";
-        // * can be a nose: :*)
-        // or a mouth, for "kisses" : :*
-        String mouth = "[\\*\\)\\]\\(\\[$sSdDpP/\\}\\{@\\|\\\\]";
+    return new PatternStringTuple(START + "((" + eyebrows + "?" + eyes + nose + "?" + mouth + "+" + ")|(" +
+    // reverse
+            mouth + "+" + nose + "?" + eyes + eyebrows + "?" + "))" + END, "WEST_EMOTICON");
+  }
 
-        return new PatternStringTuple(START + "((" + eyebrows + "?" + eyes + nose + "?" + mouth + "+" + ")|(" +
-        // reverse
-                mouth + "+" + nose + "?" + eyes + eyebrows + "?" + "))" + END, "WEST_EMOTICON");
-    }
-
-    public static PatternStringTuple getEasternEmoticonPatterns() {
-        return new PatternStringTuple(START + "((-_-)|(\\^_\\^)|(=_=)|(\\^\\.\\^)|(\\._\\.)|(>_<)|(\\*-\\*)|(\\*_\\*))" + END,
-                "EAST_EMOTICON");
-    }
+  public static PatternStringTuple getEasternEmoticonPatterns() {
+    return new PatternStringTuple(START + "((-_-)|(\\^_\\^)|(=_=)|(\\^\\.\\^)|(\\._\\.)|(>_<)|(\\*-\\*)|(\\*_\\*))" + END,
+            "EAST_EMOTICON");
+  }
 
   public static PatternStringTuple getNumberPatterns() {
     // times, dates, money, ...
     return new PatternStringTuple("(\\d+([:,\\./]\\d+)+)", "NUMBER");
   }
 
-    public static PatternStringTuple getPhoneNumberPatterns() {
-        // From Potts
+  public static PatternStringTuple getPhoneNumberPatterns() {
+    // From Potts
 
-        // Phone numbers:
-        // (?:
-        // (?: # (international)
-        // \+?[01]
-        // [\-\s.]*
-        // )?
-        // (?: # (area code)
-        // [\(]?
-        // \d{3}
-        // [\-\s.\)]*
-        // )?
-        // \d{3} # exchange
-        // [\-\s.]*
-        // \d{4} # base
-        return new PatternStringTuple(START + "((\\+?[01][\\-\\s.]*)?([\\(]?\\d{3}[\\-\\s.\\)]*)?\\d{3}[\\-\\s.]*\\d{4})" + END,
-                "PhoneNumber");
-    }
+    // Phone numbers:
+    // (?:
+    // (?: # (international)
+    // \+?[01]
+    // [\-\s.]*
+    // )?
+    // (?: # (area code)
+    // [\(]?
+    // \d{3}
+    // [\-\s.\)]*
+    // )?
+    // \d{3} # exchange
+    // [\-\s.]*
+    // \d{4} # base
+    return new PatternStringTuple(START + "((\\+?[01][\\-\\s.]*)?([\\(]?\\d{3}[\\-\\s.\\)]*)?\\d{3}[\\-\\s.]*\\d{4})" + END,
+            "PhoneNumber");
+  }
 
   public static PatternStringTuple getMentionPatterns() {
-    // return Pattern.compile(START + "(@[_A-Za-z0-9]+)" + "(?=$|\\s|:)");
     return new PatternStringTuple(START_W_PAREN_DBQUOTE + "(@[_A-Za-z0-9]+)", "MENTION");
-    // return getPairs("(?<=^|\\s|\\()" + "(@[_A-Za-z0-9]+)", "MENTION");
   }
 
   public static PatternStringTuple getHeartPatterns() {
@@ -228,19 +229,19 @@ public class TwitterTokenizer {
     return new PatternStringTuple(START + "([-=]+(>|(&gt))+)", "RIGHT_ARROW");
   }
 
-    /**
-     * Best to run these patterns before mentionPattern
-     */
-    public static PatternStringTuple getEmailPatterns() {
-        // modified from twokenize
-        return new PatternStringTuple(START_W_PAREN +
-        // added the [^.] guard: much more likely to catch punctuation ahead of
-        // an
-        // @-mention then an email address that ends in '.'
-        // That guard also requires email address to be at least 2 characters
-        // long
-                "([a-zA-Z0-9\\._%+-]+[^\\.\\!\\?\\:\\;\\s]@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4})" + END_W_PAREN, "EMAIL");
-    }
+  /**
+   * Best to run these patterns before mentionPattern
+   */
+  public static PatternStringTuple getEmailPatterns() {
+    // modified from twokenize
+    return new PatternStringTuple(START_W_PAREN +
+    // added the [^.] guard: much more likely to catch punctuation ahead of
+    // an
+    // @-mention then an email address that ends in '.'
+    // That guard also requires email address to be at least 2 characters
+    // long
+            "([a-zA-Z0-9\\._%+-]+[^\\.\\!\\?\\:\\;\\s]@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4})" + END_W_PAREN, "EMAIL");
+  }
 
     public static List<PatternStringTuple> getRepeatedPatterns() {
         List<PatternStringTuple> tupleList = new ArrayList<>();
@@ -378,9 +379,9 @@ public class TwitterTokenizer {
         if (matcher.start() > lastEnd) {
           String textFragment = text.substring(lastEnd, matcher.start()).trim();
           LOGGER.trace("Got text fragment: {}", textFragment);
-          if (textFragment.length() > 0) // possible could have
-                                         // started all as
-                                         // whitespace
+          if (!textFragment.isEmpty()) // possible could have
+                                       // started all as
+                                       // whitespace
             arrays.add(recursiveTokenize(textFragment, index + 1, tokenization));
         }
         // System.out.println("[" + matcher.group() + "] " +

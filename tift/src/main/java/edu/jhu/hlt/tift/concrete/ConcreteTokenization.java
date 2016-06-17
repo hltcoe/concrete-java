@@ -97,7 +97,7 @@ public class ConcreteTokenization {
     Tokenization tokenization = generateConcreteTokenization(tokens, offsets, startPos);
     TokenTagging tt = new TokenTagging();
     tt.setUuid(UUIDFactory.newUUID());
-    tt.setTaggingType("POS");
+    tt.setTaggingType("twitter");
     tt.setMetadata(new AnnotationMetadata(tiftMetadata));
     for (int i = 0; i < tokens.length; i++) {
       String tag = tokenTags[i];
