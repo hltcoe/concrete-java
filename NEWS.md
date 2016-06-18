@@ -1,4 +1,8 @@
 # News
+## Concrete-Java v4.9.2 - 2016-06-18
+* Several updates to Tift, including cleaning up the API and adding
+  superior capture of twitter-specific tokens.
+
 ## Concrete-Java v4.9.1 - 2016-06-16
 * Point to the correct parent project.
 
