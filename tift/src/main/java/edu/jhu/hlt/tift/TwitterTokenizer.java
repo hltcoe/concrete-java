@@ -120,7 +120,7 @@ public class TwitterTokenizer {
     tupleList.add(new PatternStringTuple(EndOfTweetURLTagger.END_URL, "URL"));
   }
 
-  public static List<PatternStringTuple> getURLPatterns() {
+  static List<PatternStringTuple> getURLPatterns() {
     // "p:" gets picked up by the emoticon pattern, so order of patterns is
     // important. Matching <, > pairs without verifying both are present.
     List<PatternStringTuple> tupleList = new ArrayList<>();
@@ -158,7 +158,7 @@ public class TwitterTokenizer {
   //
   // I have observed :3 as semi-frequent, but could be either emoticon, or,
   // e.g.: 2:30
-  public static PatternStringTuple getWesternEmoticonPatterns() {
+  static PatternStringTuple getWesternEmoticonPatterns() {
     // Light modification of Potts
 
     String eyebrows = "[<>]";
@@ -173,17 +173,17 @@ public class TwitterTokenizer {
             mouth + "+" + nose + "?" + eyes + eyebrows + "?" + "))" + END, "WEST_EMOTICON");
   }
 
-  public static PatternStringTuple getEasternEmoticonPatterns() {
+  static PatternStringTuple getEasternEmoticonPatterns() {
     return new PatternStringTuple(START + "((-_-)|(\\^_\\^)|(=_=)|(\\^\\.\\^)|(\\._\\.)|(>_<)|(\\*-\\*)|(\\*_\\*))" + END,
             "EAST_EMOTICON");
   }
 
-  public static PatternStringTuple getNumberPatterns() {
+  static PatternStringTuple getNumberPatterns() {
     // times, dates, money, ...
     return new PatternStringTuple("(\\d+([:,\\./]\\d+)+)", "NUMBER");
   }
 
-  public static PatternStringTuple getPhoneNumberPatterns() {
+  static PatternStringTuple getPhoneNumberPatterns() {
     // From Potts
 
     // Phone numbers:
@@ -204,26 +204,26 @@ public class TwitterTokenizer {
             "PhoneNumber");
   }
 
-  public static PatternStringTuple getMentionPatterns() {
+  static PatternStringTuple getMentionPatterns() {
     return new PatternStringTuple(START_W_PAREN_DBQUOTE + "(@[_A-Za-z0-9]+)", "MENTION");
   }
 
-  public static PatternStringTuple getHeartPatterns() {
+  static PatternStringTuple getHeartPatterns() {
     // grabbed from twokenize
     return new PatternStringTuple(START + "((<)|(&lt))+/?3+" + END, "HEART");
   }
 
-  public static PatternStringTuple getMiscEmoticonPatterns() {
+  static PatternStringTuple getMiscEmoticonPatterns() {
     return new PatternStringTuple(START + "((\\\\m/)|(\\\\o/))" + END, "MISC_EMOTICON");
   }
 
-  public static PatternStringTuple getLeftArrowPatterns() {
+  static PatternStringTuple getLeftArrowPatterns() {
     // twokenize: """(<*[-=]*>+|<+[-=]*>*)"""
     // this is more conservative
     return new PatternStringTuple("((<|(&lt))+[-=]+)" + END, "LEFT_ARROW");
   }
 
-  public static PatternStringTuple getRightArrowPatterns() {
+  static PatternStringTuple getRightArrowPatterns() {
     // twokenize: """(<*[-=]*>+|<+[-=]*>*)"""
     // this is more conservative
     return new PatternStringTuple(START + "([-=]+(>|(&gt))+)", "RIGHT_ARROW");
@@ -232,7 +232,7 @@ public class TwitterTokenizer {
   /**
    * Best to run these patterns before mentionPattern
    */
-  public static PatternStringTuple getEmailPatterns() {
+  static PatternStringTuple getEmailPatterns() {
     // modified from twokenize
     return new PatternStringTuple(START_W_PAREN +
     // added the [^.] guard: much more likely to catch punctuation ahead of
@@ -243,7 +243,7 @@ public class TwitterTokenizer {
             "([a-zA-Z0-9\\._%+-]+[^\\.\\!\\?\\:\\;\\s]@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4})" + END_W_PAREN, "EMAIL");
   }
 
-    public static List<PatternStringTuple> getRepeatedPatterns() {
+    static List<PatternStringTuple> getRepeatedPatterns() {
         List<PatternStringTuple> tupleList = new ArrayList<>();
 
         Object[] x = {
@@ -298,7 +298,7 @@ public class TwitterTokenizer {
         return tupleList;
     }
 
-  public static List<PatternStringTuple> getUnicodePatterns() throws IOException {
+  static List<PatternStringTuple> getUnicodePatterns() throws IOException {
     ImmutableList.Builder<PatternStringTuple> tupleList = new ImmutableList.Builder<>();
     try (InputStreamReader isr = new InputStreamReader(TwitterTokenizer.class.getClassLoader().getResourceAsStream("unicode.csv"), StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(isr);) {
@@ -326,7 +326,7 @@ public class TwitterTokenizer {
    *
    * tokenization tokenzation tags code point offsets
    */
-  public static String[][] tokenizeToArray(String text) {
+  static String[][] tokenizeToArray(String text) {
     List<TokenTagTuple> x = recursiveTokenize(text.trim(), 0, Tokenizer.BASIC);
 
     String[][] y = new String[3][];
@@ -345,15 +345,15 @@ public class TwitterTokenizer {
     return y;
   }
 
-  public static TaggedTokenizationOutput tokenize(String text) {
+  static TaggedTokenizationOutput tokenize(String text) {
     return new TaggedTokenizationOutput(tokenizeToArray(text));
   }
 
-  public static String[] tokenizeTweet(String text) {
+  static String[] tokenizeTweet(String text) {
     return tokenizeTweet(text, Tokenizer.BASIC);
   }
 
-  public static String[] tokenizeTweet(String text, Tokenizer tokenization) {
+  static String[] tokenizeTweet(String text, Tokenizer tokenization) {
     List<TokenTagTuple> x = recursiveTokenize(text.trim(), 0, tokenization);
 
     String[] y = new String[x.size()];

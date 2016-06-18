@@ -23,7 +23,7 @@ public class TaggedTokenizationOutput {
   private final String[] tokenTags;
   private final int[] offsets;
 
-  public TaggedTokenizationOutput(String[][] twitterTokenizerOutput) {
+  TaggedTokenizationOutput(String[][] twitterTokenizerOutput) {
     this.tokens = twitterTokenizerOutput[0];
     this.tokenTags = twitterTokenizerOutput[1];
     String[] offsetStrings = twitterTokenizerOutput[2];

@@ -1,6 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
- * This software is released under the 2-clause BSD license.
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.tift;
@@ -10,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Wrapper for mass <code>SimpleImmutableEntry[Pattern, String]</code> in TwitterTokenizer.
  */
-public class PatternStringTuple {
+class PatternStringTuple {
   private final Pattern pattern;
   private final String entry;
 
@@ -20,7 +19,7 @@ public class PatternStringTuple {
    * @param pattern the pattern
    * @param entry the entry
    */
-  public PatternStringTuple(Pattern pattern, String entry) {
+  PatternStringTuple(Pattern pattern, String entry) {
     this.pattern = pattern;
     this.entry = entry;
   }
@@ -31,7 +30,7 @@ public class PatternStringTuple {
    * @param pattern
    * @param entry
    */
-  public PatternStringTuple(String pattern, String entry) {
+  PatternStringTuple(String pattern, String entry) {
     this.pattern = Pattern.compile(pattern);
     this.entry = entry;
   }
@@ -39,14 +38,14 @@ public class PatternStringTuple {
   /**
    * @return the pattern
    */
-  public Pattern getPattern() {
+  Pattern getPattern() {
     return pattern;
   }
 
   /**
    * @return the entry
    */
-  public String getEntry() {
+  String getEntry() {
     return entry;
   }
 }

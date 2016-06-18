@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.tift.concrete.ConcreteTokenization;
 
 /**
@@ -57,7 +58,12 @@ public enum Tokenizer {
     @Override
     public Tokenization tokenizeToConcrete(String text, int textStartPosition) {
       TaggedTokenizationOutput tto = TwitterTokenizer.tokenize(text);
-      return ConcreteTokenization.generateConcreteTokenization(tto);
+      Tokenization tkz = ConcreteTokenization.generateConcreteTokenization(tto);
+      final String tool = "Tift TwitterTokenizer " + ProjectConstants.VERSION;
+      tkz.getMetadata().setTool("Tift TwitterTokenizer " + ProjectConstants.VERSION);
+      if (tkz.isSetTokenTaggingList())
+        tkz.getTokenTaggingListIterator().next().getMetadata().setTool(tool + " Tweet Tags");
+      return tkz;
     }
 
     @Override

@@ -25,15 +25,16 @@ import edu.jhu.hlt.tift.TaggedTokenizationOutput;
 public class ConcreteTokenization {
 
   private static final AnnotationMetadata tiftMetadata;
+  private static final String toolname = "Tift " + ProjectConstants.VERSION;
 
   static {
     AnnotationMetadata am = new AnnotationMetadata();
     am.setTimestamp(Timing.currentLocalTime());
-    am.setTool("Tift " + ProjectConstants.VERSION);
+    am.setTool(toolname);
     tiftMetadata = new AnnotationMetadata(am);
   }
 
-  public static final AnnotationMetadata getMetadata() {
+  static final AnnotationMetadata getMetadata() {
     return new AnnotationMetadata(tiftMetadata);
   }
 
@@ -108,7 +109,7 @@ public class ConcreteTokenization {
       }
     }
 
-    // Do not set the pos tags if everything was "null".
+    // Do not set the tags if everything was "null".
     if (tt.isSetTaggedTokenList())
       tokenization.addToTokenTaggingList(tt);
 
