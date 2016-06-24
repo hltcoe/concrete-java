@@ -1,4 +1,8 @@
 # News
+
+## Concrete-Java v4.10.0 - 2016-06-24
+* Update to thrift `0.9.3` via new concrete parent version, `4.10`.
+
 ## Concrete-Java v4.9.2 - 2016-06-18
 * Several updates to Tift, including cleaning up the API and adding
   superior capture of twitter-specific tokens.

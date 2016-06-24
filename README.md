@@ -11,6 +11,8 @@ Consult the [README.md](ingesters/simple/README.md) for the simple ingesters pro
 Maven Dependencies
 ----------
 
+See subprojects for latest versions.
+
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
