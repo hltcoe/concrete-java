@@ -11,9 +11,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,10 +27,15 @@ import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.MentionArgument;
+import edu.jhu.hlt.concrete.Section;
+import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.SituationMention;
 import edu.jhu.hlt.concrete.SituationMentionSet;
+import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.TokenRefSequence;
+import edu.jhu.hlt.concrete.TokenTagging;
+import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
@@ -236,29 +243,126 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     Communication comm;
     AnalyticUUIDGenerator uuidGen;
     SituationMentionSet situations;
+    AnnotationMetadata meta;
+
     /** Doesn't modify given {@link Communication} */
     public AnnotationHolder(Communication c, long timestamp) {
       this.comm = c;
       this.uuidGen = new AnalyticUUIDGeneratorFactory(c).create();
       this.situations = new SituationMentionSet();
       this.situations.setUuid(uuidGen.next());
-      AnnotationMetadata meta = new AnnotationMetadata();
-      meta.setTimestamp(timestamp);
-      meta.setTool("TAC KBP 2015 Cold Start Slot Filling");
+      this.meta = new AnnotationMetadata();
+      this.meta.setTimestamp(timestamp);
+      this.meta.setTool("TAC KBP 2015 Cold Start Slot Filling");
       this.situations.setMetadata(meta);
     }
+
     public int getNumMentions() {
       return situations.getMentionListSize();
     }
+
     public void add(SituationMention s) {
       situations.addToMentionList(s);
     }
+
     /** returns a new {@link Communication} with a new {@link SituationMentionSet} */
-    public Communication buildCommunication() {
+    public Communication buildCommunication(boolean includeNer) {
       Communication c = new Communication(comm);
       c.addToSituationMentionSetList(situations);
+
+      if (includeNer) {
+        outer:
+        for (SituationMention m : situations.getMentionList()) {
+          assert m.getArgumentListSize() == 2;
+
+          // Query is not a part of the output, just the filler
+//          MentionArgument queryEnt = m.getArgumentList().get(0);
+          MentionArgument slotFill = m.getArgumentList().get(1);
+
+//          if (!queryEnt.getTokens().getTokenizationId()
+//              .equals(slotFill.getTokens().getTokenizationId())) {
+//            // Query and slot filler are not in the same sentence
+//            N_NER_SKIP_DIFF_SENT++;
+//            continue;
+//          }
+
+          // Get the Tokenization that holds these mentions
+          Tokenization t = findByUUID(c, slotFill.getTokens().getTokenizationId());
+          int n = t.getTokenList().getTokenListSize();
+
+          TokenTagging tt = new TokenTagging();
+          for (int i = 0; i < n; i++) {
+//            boolean q = in(i, queryEnt.getTokens());
+//            boolean s = in(i, slotFill.getTokens());
+//            if (q && s) {
+//              // Query and slot filler overlap, throw out this example
+//              TextSpan qs = queryEnt.getTokens().getTextSpan();
+//              TextSpan ss = slotFill.getTokens().getTextSpan();
+//              System.out.println("k: " + m.getSituationKind());
+//              System.out.println("q: " + c.getText().substring(qs.getStart(), qs.getEnding()+1));
+//              System.out.println("s: " + c.getText().substring(ss.getStart(), ss.getEnding()+1));
+//              N_NER_SKIP_OVERLAP++;
+//              continue outer;
+//            }
+            String tag = "O";
+//            if (q) {
+//              tag = m.getSituationKind() + "/" + queryEnt.getRole();
+//            } else if (s) {
+//              tag = m.getSituationKind() + "/" + slotFill.getRole();
+//            }
+            TaggedToken tok = new TaggedToken();
+            tok.setTag(tag);
+            tok.setTokenIndex(i);
+            tt.addToTaggedTokenList(tok);
+          }
+          String tag = m.getSituationKind();
+          int pTok = -1;
+          for (int tok : slotFill.getTokens().getTokenIndexList()) {
+            assert tok >= 0 && tok < tt.getTaggedTokenListSize();
+            assert "O".equals(tt.getTaggedTokenList().get(tok).getTag())
+              : "overlap at " + tok + ": " + tt.getTaggedTokenList();
+            if (pTok < 0) {
+              tt.getTaggedTokenList().get(tok).setTag("B-" + tag);
+            } else {
+              tt.getTaggedTokenList().get(tok).setTag("I-" + tag);
+            }
+            pTok = tok;
+          }
+          tt.setUuid(uuidGen.next());
+          tt.setTaggingType("NER");
+          tt.setMetadata(this.meta);
+          t.addToTokenTaggingList(tt);
+          N_NER_OUTPUT++;
+        }
+      }
       return c;
     }
+  }
+
+  static int N_NER_OUTPUT = 0;
+  static int N_NER_SKIP_OVERLAP = 0;
+  static int N_NER_SKIP_DIFF_SENT = 0;
+
+  static int N_DOCS_KEPT = 0;
+  static int N_DOCS_SKIPPED = 0;
+
+  static boolean in(int tokenIndex, TokenRefSequence trs) {
+    int w = trs.getTokenIndexListSize();
+    int s = trs.getTokenIndexList().get(0);
+    int e = trs.getTokenIndexList().get(w - 1);
+    assert (e - s) + 1 == w : "discontiguous?";
+    return tokenIndex >= s && tokenIndex <= e;
+  }
+
+  static Tokenization findByUUID(Communication c, UUID tokUUID) {
+    for (Section s : c.getSectionList()) {
+      for (Sentence sent : s.getSentenceList()) {
+        Tokenization t = sent.getTokenization();
+        if (t.getUuid().equals(tokUUID))
+          return t;
+      }
+    }
+    return null;  // not found
   }
 
   private Map<String, AnnotationHolder> id2comm;
@@ -275,15 +379,25 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
    */
   public void addRawCommunications(Iterator<Communication> comms) {
     long timestamp = System.currentTimeMillis() / 1000;
-    this.id2comm = new HashMap<>();
+    int i = 0;
     while (comms.hasNext()) {
+      i++;
       Communication c = comms.next();
       String id = c.getId();
-      AnnotationHolder a = new AnnotationHolder(c, timestamp);
-      AnnotationHolder old = id2comm.put(id, a);
-      assert old == null;
-      if (id2comm.size() % 500 == 0)
-        System.out.println("read " + id2comm.size() + " communications in " + (System.currentTimeMillis()/1000d-timestamp) + " sec");
+      if (!id2comm.containsKey(id)) {
+        // Not needed, as deemed by a dry run of addAnnotations
+        N_DOCS_SKIPPED++;
+      } else {
+        N_DOCS_KEPT++;
+        AnnotationHolder a = new AnnotationHolder(c, timestamp);
+        AnnotationHolder old = id2comm.put(id, a);
+        assert old == null;
+      }
+      if (i % 2500 == 0) {
+        System.out.println("read " + i + " communications in "
+            + (System.currentTimeMillis()/1000d-timestamp)
+            + " sec, kept=" + N_DOCS_KEPT);
+      }
     }
   }
   public void readRawCommunications(File f) throws FileNotFoundException, IOException {
@@ -294,32 +408,65 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     }
   }
 
-  public void addAnnotations(File assessmentFile) throws IOException {
+  public void addAnnotations(File assessmentFile, boolean dryRun) throws IOException {
     System.out.println("reading assessment annotations from " + assessmentFile.getPath()
         + " skipOverMissingCommunications=" + cliArgs.skipMissingCommunications);
     if (!assessmentFile.isFile())
       throw new IllegalArgumentException("not a file: " + assessmentFile.getPath());
+    succ = fail = 0;
+    annoLinesIncorrectProv = annoLinesIncorrectFill = annoLinesKept = 0;
+    uniqAnno = new HashSet<>();
     try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(assessmentFile)))) {
-      for (String line = r.readLine(); line != null; line = r.readLine()) {
-        addAnnotations(line);
-      }
+      for (String line = r.readLine(); line != null; line = r.readLine())
+        addAnnotations(line, dryRun);
     }
+    System.out.println("[addAnnotations] kept " + annoLinesKept + " lines,"
+        + " incorrectProv=" + annoLinesIncorrectProv
+        + " incorrectFill=" + annoLinesIncorrectFill
+        + " dups=" + annoLinesDup);
+    System.out.println("[addAnnotations] succ=" + succ + " fail=" + fail);
+    System.out.println("[addAnnotations] dryRun=" + dryRun + " id2comm.size=" + id2comm.size());
   }
+
+  private int annoLinesKept = 0;
+  private int annoLinesIncorrectProv = 0;
+  private int annoLinesIncorrectFill = 0;
+  private int annoLinesDup = 0;
+  private int succ = 0, fail = 0;
+  private Set<String> uniqAnno;
 
   /**
    * Finds query and slot evidence which are in the same document and adds them
    * to the corresponding {@link Communication} (provided at construction) as
    * a new {@link SituationMention}.
+   *
+   * @param dryRun if true, then just add a docId -> null mapping into id2comm
+   * and don't actually build any situations.
    */
-  public void addAnnotations(String line) {
+  public void addAnnotations(String line, boolean dryRun) {
     AssessmentFileLine afl = new AssessmentFileLine(line);
-    if (afl.labelRelationProvidence != 'C' || afl.labelSlotFill != 'C')
+    if (afl.labelRelationProvidence != 'C') {
+      annoLinesIncorrectProv++;
       return;
-    int succ = 0, fail = 0;
+    }
+    if (afl.labelSlotFill != 'C') {
+      annoLinesIncorrectFill++;
+      return;
+    }
+////    if (!uniqAnno.add(afl.slot)) {
+//    if (!uniqAnno.add(afl.nistEquivClassId)) {
+//      annoLinesDup++;
+//      return;
+//    }
+    annoLinesKept++;
     for (Pair<Integer, Integer> ij : afl.commonDocumentProvidence()) {
       String queryEntProv = afl.queryEntityProvidence[ij.getLeft()];
       String slotFillProv = afl.slotFillerProvidence[ij.getRight()];
       String docId = AssessmentFileLine.getDocFromProvidence(queryEntProv);
+      if (dryRun) {
+        id2comm.putIfAbsent(docId, null);
+        return;
+      }
       AnnotationHolder a = id2comm.get(docId);
       if (a == null) {
         if (cliArgs.skipMissingCommunications) {
@@ -345,8 +492,13 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
         e.printStackTrace();
         fail++;
       }
+
+      if ((succ + fail) % 1000 == 0) {
+        System.out.println("succ=" + succ + " fail=" + fail
+            + " TextSpanToTokens.N_RESOLVE_EXACT=" + TextSpanToTokens.N_RESOLVE_EXACT
+            + " TextSpanToTokens.N_RESOLVE_FUZZY=" + TextSpanToTokens.N_RESOLVE_FUZZY);
+      }
     }
-//    System.out.println("[addAnnotations] succ=" + succ + " fail=" + fail);
   }
 
   private MentionArgument makeMentionArgument(String providence, String role, SituationMention sm, Communication c) {
@@ -370,15 +522,24 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
 
   public void writeCommunications(File f) throws Exception {
     long start = System.currentTimeMillis();
-    System.out.println("writing " + id2comm.size() + " Communications to " + f.getPath());
+    System.out.println("writing Communications to " + f.getPath());
     int noAnno = 0, succ = 0;
     try (OutputStream os = new FileOutputStream(f);
         GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
         TarArchiver arch = new TarArchiver(gout)) {
-      for (AnnotationHolder a : id2comm.values()) {
+      for (Map.Entry<String, AnnotationHolder> x : id2comm.entrySet()) {
+        AnnotationHolder a = x.getValue();
+        if (a == null) {
+          if (cliArgs.skipMissingCommunications) {
+            continue;
+          } else {
+            throw new RuntimeException("found docId=" + x.getKey()
+                + " with no corresponding Communication");
+          }
+        }
         if (a.getNumMentions() > 0) {
           succ++;
-          Communication withAnnos = a.buildCommunication();
+          Communication withAnnos = a.buildCommunication(cliArgs.outputNer);
           arch.addEntry(new ArchivableCommunication(withAnnos));
         } else {
           noAnno++;
@@ -387,7 +548,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       }
     }
     double time = (System.currentTimeMillis() - start) / 1000d;
-    System.out.printf("wrote out %d communications to %s, %d had no annotations and weren't output, took %.1f seconds\n", succ, f.getPath(), noAnno, time);
+    System.out.printf("wrote out %d Communications to %s, %d had no annotations"
+        + " and weren't output, took %.1f seconds\n", succ, f.getPath(), noAnno, time);
   }
 
   static class Args {
@@ -396,19 +558,28 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     @Parameter(names={"--input"}, description="Input file containing all raw Communications", required=true)
     String inputCommunicationFile;
     @Parameter(names={"--inputIsTokenized"}, description="If true, resolve TextSpans to TokenRefSequence")
-    boolean inputIsTokenized = false;
+    boolean inputIsTokenized = true;
     @Parameter(names={"--output"}, description="File to write all annotated Communications to", required=true)
     String outputCommunicationFile;
     @Parameter(names={"--skipMissing"}, description="Skip annotations whose document can't be found")
     boolean skipMissingCommunications = false;
+    @Parameter(names={"--outputNer"}, description="Output fillers a TokenTagging, using the SF relation in a BIO scheme")
+    boolean outputNer = false;
   }
 
   public static void main(String[] args) throws Exception {
     Args a = new Args();
     new JCommander(a, args);
     SlotFillStandoffData sfsd = new SlotFillStandoffData(a);
+    sfsd.addAnnotations(new File(a.inputAssessmentFile), true);
     sfsd.readRawCommunications(new File(a.inputCommunicationFile));
-    sfsd.addAnnotations(new File(a.inputAssessmentFile));
+    sfsd.addAnnotations(new File(a.inputAssessmentFile), false);
     sfsd.writeCommunications(new File(a.outputCommunicationFile));
+    System.out.println("N_DOCS_KEPT=" + N_DOCS_KEPT + " N_DOCS_SKIPPED=" + N_DOCS_SKIPPED);
+    if (a.outputNer) {
+      System.out.println("N_NER_OUTPUT=" + N_NER_OUTPUT
+          + " N_NER_SKIP_DIFF_SENT=" + N_NER_SKIP_DIFF_SENT
+          + " N_NER_SKIP_OVERLAP=" + N_NER_SKIP_OVERLAP);
+    }
   }
 }
