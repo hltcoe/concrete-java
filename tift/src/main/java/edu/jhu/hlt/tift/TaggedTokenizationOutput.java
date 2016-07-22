@@ -5,67 +5,51 @@
  */
 package edu.jhu.hlt.tift;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * A data structure that has the following elements:
- * 
+ *
  * <pre>
  * List of tokens
  * List of token tags
  * List of offsets
  * </pre>
- * 
+ *
  * Initially created as a wrapper around the data structure returned by the twitter tokenizer.
- * 
- * @author max
- * 
+ *
  */
 public class TaggedTokenizationOutput {
 
-  private final List<String> tokens;
-  private final List<String> tokenTags;
-  private final List<Integer> offsets;
+  private final String[] tokens;
+  private final String[] tokenTags;
+  private final int[] offsets;
 
-  /**
-     * 
-     */
-  public TaggedTokenizationOutput(List<String> tokens, List<String> tokenTags, List<Integer> offsets) {
-    this.tokens = tokens;
-    this.tokenTags = tokenTags;
-    this.offsets = offsets;
-  }
-
-  public TaggedTokenizationOutput(String[][] twitterTokenizerOutput) {
-    this.tokens = Arrays.asList(twitterTokenizerOutput[0]);
-    this.tokenTags = Arrays.asList(twitterTokenizerOutput[1]);
+  TaggedTokenizationOutput(String[][] twitterTokenizerOutput) {
+    this.tokens = twitterTokenizerOutput[0];
+    this.tokenTags = twitterTokenizerOutput[1];
     String[] offsetStrings = twitterTokenizerOutput[2];
-    this.offsets = new ArrayList<>(offsetStrings.length);
-    for (String offset : offsetStrings)
-      this.offsets.add(Integer.parseInt(offset));
+    this.offsets = new int[offsetStrings.length];
+    for (int i = 0; i < offsetStrings.length; i++)
+      this.offsets[i] = Integer.parseInt(offsetStrings[i]);
   }
 
   /**
    * @return the tokens
    */
-  public List<String> getTokens() {
+  public String[] getTokens() {
     return tokens;
   }
 
   /**
    * @return the tokenTags
    */
-  public List<String> getTokenTags() {
+  public String[] getTokenTags() {
     return tokenTags;
   }
 
   /**
    * @return the offsets
    */
-  public List<Integer> getOffsets() {
+  public int[] getOffsets() {
     return offsets;
   }
-
 }

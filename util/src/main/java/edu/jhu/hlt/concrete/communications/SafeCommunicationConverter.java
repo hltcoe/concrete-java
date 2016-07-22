@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.communications;
@@ -23,10 +23,10 @@ public class SafeCommunicationConverter {
   public static Communication toCommunication(SafeCommunication sc) {
     SafeAnnotationMetadata md = sc.getMetadata();
     AnnotationMetadata cmd = TooledMetadataConverter.convert(md);
-    
+
     Communication cc = new Communication()
         .setId(sc.getId())
-        .setUuid(UUIDFactory.fromJavaUUID(sc.getUuid()))
+        .setUuid(UUIDFactory.fromJavaUUID(sc.getUUID()))
         .setType(sc.getType())
         .setMetadata(cmd);
     return cc;

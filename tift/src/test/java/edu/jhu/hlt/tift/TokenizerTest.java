@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -66,11 +67,13 @@ public class TokenizerTest {
 
     Optional<TokenTagging> tt = ct.getTokenTaggingList()
         .stream()
-        .filter(tl -> tl.getTaggingType().equalsIgnoreCase("POS"))
+        .filter(tl -> tl.getTaggingType().equalsIgnoreCase("twitter"))
         .findFirst();
     assertTrue(tt.isPresent());
     for (TaggedToken t : tt.get().getTaggedTokenList()) {
-      logger.info("Got tagging: {} on token: {}", t.getTag(), t.getTokenIndex());
+      int idx = t.getTokenIndex();
+      logger.info("Got tagging: {} on token: {}", t.getTag(), idx);
+      assertEquals(4, idx);
     }
   }
 
@@ -80,7 +83,7 @@ public class TokenizerTest {
     List<String> tokens = Tokenizer.BASIC.tokenize(text);
     assertEquals(4, tokens.size());
   }
-  
+
   @Test
   public void thriftReadWrite() throws ConcreteException {
     String text = "hello world test tokens";
@@ -89,6 +92,34 @@ public class TokenizerTest {
     byte[] bytez = ser.toBytes(t);
     Tokenization dT = ser.fromBytes(bytez);
     assertEquals(4, dT.getTokenList().getTokenListSize());
+  }
+
+  @Test
+  public void testEndURL() {
+    final String test = "'La traición vendrá de un general de alto rango que generará un gran caos' - http://t.co/MgLypirfTV http://…";
+    Tokenization t = Tokenizer.TWITTER.tokenizeToConcrete(test);
+    assertTrue(t.isSetTokenTaggingList());
+    List<TokenTagging> ttl = t.getTokenTaggingList();
+    assertEquals(1, ttl.size());
+    TokenTagging tt = ttl.get(0);
+    assertEquals("twitter", tt.getTaggingType());
+    List<TaggedToken> tagTL = tt.getTaggedTokenList().stream()
+        .filter(tagtok -> tagtok.getTag().equals("URL"))
+        .collect(Collectors.toList());
+    logger.debug("Tags:");
+    tagTL.stream()
+        .map(TaggedToken::getTag)
+        .forEach(logger::debug);
+    assertEquals(2, tagTL.size());
+    TaggedToken last = tagTL.get(tagTL.size() - 1);
+    assertTrue(t.isSetTokenList());
+    List<Token> tl = t.getTokenList().getTokenList();
+    logger.debug("tokens:");
+    tl.stream()
+      .map(Token::getText)
+      .forEach(logger::debug);
+    assertEquals("Should get 'http://' as text for last token.", "http://…", tl.get(last.getTokenIndex()).getText());
+    assertEquals("Type of last token should be 'URL'.", "URL", last.getTag());
   }
 
   static String readFile(String path, Charset encoding) throws IOException {

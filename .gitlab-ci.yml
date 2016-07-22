@@ -4,5 +4,3 @@ test:
     mvn clean verify -B
   tags:
     - docker
-
-

@@ -11,11 +11,13 @@ Consult the [README.md](ingesters/simple/README.md) for the simple ingesters pro
 Maven Dependencies
 ----------
 
+See subprojects for latest versions.
+
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-safe</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```
 
@@ -23,7 +25,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-util</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```
 
@@ -31,7 +33,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-validation</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```
 
@@ -39,7 +41,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-simple</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```
 
@@ -47,7 +49,7 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-gigaword</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```
 
@@ -55,6 +57,6 @@ Maven Dependencies
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-ingesters-alnc</artifactId>
-  <version>4.8.9</version>
+  <version>x.y.z</version>
 </dependency>
 ```

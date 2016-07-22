@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.serialization;
@@ -24,12 +24,11 @@ import edu.jhu.hlt.concrete.serialization.iterators.TarArchiveEntryCommunication
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
  *
  */
-public class TarCompactCommunicationSerializer extends CompactCommunicationSerializer 
+public class TarCompactCommunicationSerializer extends CompactCommunicationSerializer
     implements CommunicationTarSerializer {
-  
+
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.serialization.CommunicationTarSerializer#toTar(java.util.Collection, java.nio.file.Path)
    */
@@ -48,7 +47,7 @@ public class TarCompactCommunicationSerializer extends CompactCommunicationSeria
           tos.closeArchiveEntry();
         }
       }
-      
+
     } catch (IOException e) {
       throw new ConcreteException(e);
     }

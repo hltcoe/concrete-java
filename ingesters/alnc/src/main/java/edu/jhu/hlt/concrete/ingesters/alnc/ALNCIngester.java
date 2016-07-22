@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
@@ -36,7 +37,9 @@ public class ALNCIngester implements IteratorBasedStreamIngester, AutoCloseable 
     this.ts = Timing.currentLocalTime();
     this.path = path;
     try {
-      if (Files.probeContentType(this.path).contains("bzip"))
+      Optional<String> inferredType = Optional.ofNullable(Files.probeContentType(this.path));
+      String ft = inferredType.orElse("unk");
+      if (ft.contains("bzip"))
         this.conv = new ALNCFileConverter(new BZip2CompressorInputStream(Files.newInputStream(this.path)));
       else
         this.conv = new ALNCFileConverter(Files.newInputStream(this.path));
