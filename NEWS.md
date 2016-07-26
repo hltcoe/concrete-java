@@ -1,5 +1,8 @@
 # News
 
+## Concrete-Java v4.10.1 - 2016-07-21
+* Update to `4.10-rework` concrete, which removes the annotator service.
+
 ## Concrete-Java v4.10.0 - 2016-06-24
 * Update to thrift `0.9.3` via new concrete parent version, `4.10`.
 
