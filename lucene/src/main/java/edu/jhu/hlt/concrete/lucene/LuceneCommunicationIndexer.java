@@ -9,6 +9,8 @@ public interface LuceneCommunicationIndexer extends AutoCloseable {
 
   public void add(MiscCommunication mc) throws IOException;
 
+  public void commit() throws IOException;
+
   default public void add(Communication c) throws IOException {
     this.add(MiscCommunication.create(c));
   }
