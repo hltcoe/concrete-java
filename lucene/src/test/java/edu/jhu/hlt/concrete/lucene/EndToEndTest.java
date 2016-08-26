@@ -3,7 +3,11 @@ package edu.jhu.hlt.concrete.lucene;
 import static org.junit.Assert.*;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.TopDocs;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -99,6 +103,15 @@ public class EndToEndTest {
       assertEquals(2, td.totalHits);
       td = search.search("silly AND author-id:4321", 5);
       assertEquals(1, td.totalHits);
+
+      List<Document> dl = search.searchDocuments("silly", 5);
+      Set<String> ids = dl.stream()
+          .map(d -> d.get(ConcreteLuceneConstants.COMM_ID_FIELD))
+          .collect(Collectors.toSet());
+      assertTrue(ids.contains("bar"));
+      assertTrue(ids.contains("baz"));
+
+      assertEquals(1, search.searchDocuments("silly", 4321L, 5).size());
     }
   }
 }
