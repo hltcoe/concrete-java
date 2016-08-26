@@ -77,8 +77,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.6</log4j.version>
-    <jackson.version>2.7.3</jackson.version>
+    <log4j.version>2.6.2</log4j.version>
+    <jackson.version>2.8.1</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
     <github.global.server>github</github.global.server>
   </properties>
