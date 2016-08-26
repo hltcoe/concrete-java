@@ -1,6 +1,23 @@
-test:
-  image: maven:3-jdk-8
+stages:
+  - build-unit-test
+  - deploy
+
+compile:
+  stage: build-unit-test
+  image: r8n01:5000/coe-maven-centos:latest
   script:
-    mvn clean verify -B
+    - mvn clean test -B
+    - mvn clean -B
   tags:
     - docker
+
+deploy:
+  stage: deploy
+  image: r8n01:5000/coe-maven-centos:latest
+  script:
+    - mvn clean deploy -B
+    - mvn clean -B
+  tags:
+    - docker
+  only:
+    - master
