@@ -258,6 +258,16 @@
   </dependencyManagement>
 
   <distributionManagement>
+    <repository>
+      <id>coe-mvn</id>
+      <name>coe-mvn-releases</name>
+      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>coe-mvn</id>
+      <name>coe-mvn-snapshots</name>
+      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
     <site>
       <id>github-project-site</id>
       <name>Concrete-Java Github Pages</name>

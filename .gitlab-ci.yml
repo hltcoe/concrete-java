@@ -10,3 +10,14 @@ compile:
     - mvn clean -B
   tags:
     - docker
+
+deploy:
+  stage: deploy
+  image: r8n01:5000/coe-maven-centos:latest
+  script:
+    - mvn clean deploy -B
+    - mvn clean -B
+  tags:
+    - docker
+  only:
+    - master
