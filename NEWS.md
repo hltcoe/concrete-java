@@ -1,5 +1,11 @@
 # News
 
+## Concrete-Java v4.10.2 - 2016-08-26
+* Contains a new submodule, `lucene`, for
+  building Lucene indexes over Communication objects.
+* Added functionality to Miscommunication.
+* Miscellaneous fixes and improvements.
+
 ## Concrete-Java v4.10.1 - 2016-07-21
 * Update to `4.10-rework` concrete, which removes the annotator service.
 
