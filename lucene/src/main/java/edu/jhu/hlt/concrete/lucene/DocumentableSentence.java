@@ -10,9 +10,16 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.inferred.freebuilder.FreeBuilder;
 
+import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.miscommunication.MiscSentence;
 import edu.jhu.hlt.concrete.miscommunication.MiscTextSpan;
 
+/**
+ * Implementation of {@link LuceneDocumentable} that represents
+ * a Concrete {@link Sentence} objects.
+ *
+ * @see MiscSentence
+ */
 @FreeBuilder
 public abstract class DocumentableSentence implements MiscSentence, LuceneDocumentable {
 
@@ -26,6 +33,10 @@ public abstract class DocumentableSentence implements MiscSentence, LuceneDocume
     return ft;
   }
 
+  /*
+   * (non-Javadoc)
+   * @see edu.jhu.hlt.concrete.lucene.LuceneDocumentable#getDocument()
+   */
   @Override
   public final Document getDocument() {
     final Document d = new Document();

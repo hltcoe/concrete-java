@@ -29,6 +29,9 @@ import com.google.common.collect.ImmutableList;
 
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 
+/**
+ * A utility class that allows searching over a pre-built Lucene index.
+ */
 public class ConcreteLuceneSearcher implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ConcreteLuceneSearcher.class);
