@@ -14,7 +14,15 @@ mvn clean compile assembly:single
 
 ### Create an index
 
-Given a `.tar.gz` file of Communication objects, run the following:
+The `NaiveConcreteLuceneIndexer` requires `Communication` objects
+with the following:
+
+* a set `text` field
+* `Section`s
+* `Sentence`s with valid `TextSpan`s
+
+Given a `.tar.gz` file of Communication objects that satisfy the
+above, run the following:
 
 ``` shell
 java -cp target/*.jar \

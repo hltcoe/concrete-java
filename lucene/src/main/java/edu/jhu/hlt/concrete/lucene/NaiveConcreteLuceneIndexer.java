@@ -16,8 +16,37 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.TwitterUser;
 import edu.jhu.hlt.concrete.miscommunication.MiscCommunication;
 
+/**
+ * This class builds a Lucene index based on Concrete {@link Sentence} objects.
+ * It uses the {@link TextSpan}s of the sentence objects, along with the
+ * {@link Communication#getText()} method, to create sentences with text.
+ * Along with the {@link Communication#getId()} of the sentence, this allows a client
+ * to query relevant Concrete sentences for retrieval alongside their parent
+ * Communications.
+ * <br><br>
+ * Necessarily, this class requires communication objects with the following:
+ * <ul>
+ * <li>communications with the <code>text</code> field set</li>
+ * <li>sections</li>
+ * <li>sentences with valid text spans</li>
+ * </ul>
+ * <br><br>
+ * This class optionally uses the {@link TwitterUser#getId()} field for
+ * author-based lookups. This field is not required, but will be used
+ * if present.
+ * <br><br>
+ * Finally, it is important to note that the {@link StandardAnalyzer}
+ * powers this index. As a result, clients and search implementations
+ * should also use the same analyzer.
+ *
+ * @see LuceneCommunicationIndexer
+ */
 public class NaiveConcreteLuceneIndexer implements AutoCloseable, LuceneCommunicationIndexer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NaiveConcreteLuceneIndexer.class);
