@@ -4,7 +4,7 @@
 
 Concrete ingester supporting the
 [Gigaword](https://catalog.ldc.upenn.edu/LDC2003T05) corpus.  This
-library provides the ability to ingest to ingest LDC SGML/XML
+library provides the ability to ingest LDC SGML/XML
 documents into Concrete Communication objects.
 
 ## Quick start
