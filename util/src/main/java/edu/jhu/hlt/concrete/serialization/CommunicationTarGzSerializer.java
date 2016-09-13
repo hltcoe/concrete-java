@@ -62,36 +62,4 @@ public interface CommunicationTarGzSerializer extends CommunicationTarSerializer
    *           on I/O error
    */
   public Iterator<Communication> fromTarGz(InputStream is) throws ConcreteException, IOException;
-
-  /**
-   * Default implementation. Calls {@link #fromTarGz(InputStream)}.
-   *
-   * @see #fromTarGz(InputStream)
-   * @param in
-   *          a {@link GZIPInputStream} representing a .tar.gz archive of {@link Communication} objects
-   * @return an {@link Iterator} of {@link Communication} objects
-   * @throws ConcreteException
-   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
-   * @throws IOException
-   *           on I/O error
-   */
-  default Iterator<Communication> fromTarGz(GZIPInputStream in) throws ConcreteException, IOException {
-    return this.fromTarGz(in);
-  }
-
-  /**
-   * Default implementation. Calls {@link #fromTarGz(InputStream)}.
-   *
-   * @see #fromTarGz(InputStream)
-   * @param in
-   *          a {@link GzipCompressorInputStream} representing a .tar.gz archive of {@link Communication} objects
-   * @return an {@link Iterator} of {@link Communication} objects
-   * @throws ConcreteException
-   *           on serialization error (e.g., if a {@link Communication} is missing required fields)
-   * @throws IOException
-   *           on I/O error
-   */
-  default Iterator<Communication> fromTarGz(GzipCompressorInputStream in) throws ConcreteException, IOException {
-    return this.fromTarGz(in);
-  }
 }

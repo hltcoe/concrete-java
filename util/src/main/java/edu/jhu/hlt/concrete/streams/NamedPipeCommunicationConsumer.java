@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.transport.TSimpleFileTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

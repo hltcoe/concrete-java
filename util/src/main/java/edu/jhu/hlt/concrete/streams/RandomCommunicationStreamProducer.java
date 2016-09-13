@@ -44,7 +44,7 @@ public class RandomCommunicationStreamProducer {
     AnalyticUUIDGenerator g = f.create();
     while (true) {
       Communication nc = new Communication(root);
-      String idstr = "communication" + Math.abs(r.nextInt());
+      String idstr = "communication" + r.nextInt(Integer.MAX_VALUE);
       nc.setId(idstr);
       nc.setUuid(g.next());
       nc.setText("typical twitter stuff");
