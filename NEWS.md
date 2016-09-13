@@ -1,5 +1,9 @@
 # News
 
+## Concrete-Java v4.10.2 - 2016-09-13
+* Fix dependency issues in `CoNLL` ingester
+* Delete some buggy and deprecated code
+
 ## Concrete-Java v4.10.2 - 2016-08-26
 * Contains a new submodule, `lucene`, for
   building Lucene indexes over Communication objects.
