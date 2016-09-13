@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.collect.HashBiMap;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
@@ -28,9 +31,6 @@ import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
-import edu.jhu.hlt.tutils.PennTreeReader;
-import edu.jhu.prim.bimap.ObjectObjectBimap;
-import edu.jhu.prim.tuple.Pair;
 
 /**
  * Ingests Ontonotes 4 data, currently only storing:
@@ -170,8 +170,7 @@ public class Ontonotes4 {
       cons.setUuid(g.next());
       cons.setMetadata(meta);
       sent.getTokenization().addToParseList(cons);
-      ObjectObjectBimap<PennTreeReader.Node, Constituent> cmap =
-          new ObjectObjectBimap<>();  // Needed for props
+      HashBiMap<PennTreeReader.Node, Constituent> cmap = HashBiMap.create();
       addConstituents(cons, root, cmap, rootIndex);
 
       // Add propositions
@@ -185,7 +184,7 @@ public class Ontonotes4 {
         // Add the predicate
         sm.setSituationKind(p.getPredicateString());
         OntonotesProposition.Proplabel pred = p.predicate;
-        Pair<Integer, Integer> predBounds = pred.getSplitsAsContiguousSpan(rootIndex);
+        SimpleImmutableEntry<Integer, Integer> predBounds = pred.getSplitsAsContiguousSpan(rootIndex);
         if (predBounds == null) {
           System.err.println("can't handle non-contiguous predicates: " + pred);
           continue;
@@ -206,7 +205,7 @@ public class Ontonotes4 {
             int t = a.getTerminal(si);
             int h = a.getHeight(si);
             PennTreeReader.Node anode = rootIndex.get(t, h);
-            Constituent acons = cmap.lookup1(anode);
+            Constituent acons = cmap.get(anode);
 
             String role = a.getLabel();
             if (i > 0)  // Continuation role
@@ -225,8 +224,8 @@ public class Ontonotes4 {
     return Arrays.asList(comm);
   }
 
-  public static TokenRefSequence getTrs(Pair<Integer, Integer> inclusivePair, Sentence sent) {
-    return getTrs(inclusivePair.get1(), inclusivePair.get2(), sent);
+  public static TokenRefSequence getTrs(SimpleImmutableEntry<Integer, Integer> inclusivePair, Sentence sent) {
+    return getTrs(inclusivePair.getKey(), inclusivePair.getValue(), sent);
   }
 
   public static TokenRefSequence getTrs(int startInclusive, int endInclusive, Sentence sent) {
@@ -254,11 +253,11 @@ public class Ontonotes4 {
   public static Constituent findNode(
       OntonotesProposition.Proplabel node,
       PennTreeReader.Indexer tree,
-      ObjectObjectBimap<PennTreeReader.Node, Constituent> node2cons) {
+      HashBiMap<PennTreeReader.Node, Constituent> node2cons) {
     if (node.isSplit())
       throw new IllegalArgumentException("not allowed");
     PennTreeReader.Node n = tree.get(node.getTerminal(), node.getHeight());
-    Constituent cnode = node2cons.lookup1(n);
+    Constituent cnode = node2cons.get(n);
     assert cnode != null : "not a constituent?";
     return cnode;
   }
@@ -270,7 +269,7 @@ public class Ontonotes4 {
   public static Constituent addConstituents(
       Parse p,
       PennTreeReader.Node root,
-      ObjectObjectBimap<PennTreeReader.Node, Constituent> bimap,
+      HashBiMap<PennTreeReader.Node, Constituent> bimap,
       PennTreeReader.Indexer indexer) {
     Constituent c = new Constituent();
     c.setId(p.getConstituentListSize());

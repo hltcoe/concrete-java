@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +13,6 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.jhu.hlt.tutils.PennTreeReader;
-import edu.jhu.prim.tuple.Pair;
 
 /**
  * Represents a row in an OntoNotes *.prop file, or an SRL instance.
@@ -186,12 +184,12 @@ public class OntonotesProposition {
      * then return return a inclusive pair of [start,end] token indices (not
      * constituent indices). Returns null otherwise.
      */
-    public Pair<Integer, Integer> getSplitsAsContiguousSpan(PennTreeReader.Indexer tree) {
+    public SimpleImmutableEntry<Integer, Integer> getSplitsAsContiguousSpan(PennTreeReader.Indexer tree) {
       if (terminal.length == 1) {
         PennTreeReader.Node n = tree.get(getTerminal(), getHeight());
         int s = tree.getFirstToken(n);
         int e = tree.getLastToken(n);
-        return new Pair<>(s, e);
+        return new SimpleImmutableEntry<>(s, e);
       }
 
       // Get a list of ids for this split-arg
@@ -226,7 +224,7 @@ public class OntonotesProposition {
       PennTreeReader.Node last = tree.getById(all.get(all.size() - 1));
       assert tree.getFirstToken(first) == tree.getLastToken(first);
       assert tree.getFirstToken(last) == tree.getLastToken(last);
-      return new Pair<>(tree.getFirstToken(first), tree.getLastToken(last));
+      return new SimpleImmutableEntry<>(tree.getFirstToken(first), tree.getLastToken(last));
     }
     private void addAllTerms(PennTreeReader.Node node, List<Integer> addTo) {
       if (node.isLeaf()) {

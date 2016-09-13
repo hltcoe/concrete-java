@@ -34,7 +34,6 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.stream.StreamBasedStreamIngester;
-import edu.jhu.hlt.concrete.ingesters.conll.Conll2011Document;
 import edu.jhu.hlt.concrete.serialization.CommunicationTarGzSerializer;
 import edu.jhu.hlt.concrete.serialization.TarGzCompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ProjectConstants;

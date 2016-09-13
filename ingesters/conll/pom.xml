@@ -27,11 +27,6 @@
   <dependencies>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
-      <artifactId>tutils</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
     </dependency>
     <dependency>
@@ -41,7 +36,6 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>18.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -55,7 +49,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.4</version>
         <executions>
           <execution>
             <id>attach-sources</id>

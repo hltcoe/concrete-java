@@ -23,11 +23,8 @@ import org.slf4j.LoggerFactory;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.stream.StreamBasedStreamIngester;
-import edu.jhu.hlt.concrete.ingesters.conll.Conll2011;
-import edu.jhu.hlt.concrete.ingesters.conll.Conll2011Document;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
-import edu.jhu.hlt.tutils.PennTreeReader;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 
 /**
