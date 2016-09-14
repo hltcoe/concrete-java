@@ -1,6 +1,10 @@
 # News
 
-## Concrete-Java v4.10.2 - 2016-09-13
+## Concrete-Java v4.10.4 - 2016-09-14
+* Contains numerous fixes for BOLT and Webposts ingesters (thanks
+  @tongfei)
+
+## Concrete-Java v4.10.3 - 2016-09-13
 * Fix dependency issues in `CoNLL` ingester
 * Delete some buggy and deprecated code
 
