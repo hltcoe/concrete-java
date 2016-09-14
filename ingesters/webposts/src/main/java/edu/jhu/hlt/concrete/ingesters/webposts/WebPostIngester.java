@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -75,24 +76,34 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
   private final XMLInputFactory inF;
   private final DateTimeFormatter dtf;
 
-
   /**
    *
    */
   public WebPostIngester() {
     this.inF = XMLInputFactory.newInstance();
-    this.dtf = ISODateTimeFormat.dateTimeParser();
+    this.dtf = ISODateTimeFormat.dateTimeParser().withZoneUTC();
+    // UTC time!
+    // Local time will cause the DST switch exception:
+    // 2009-03-08T02:00:02: this instant does not exist under America/NewYork
+    // time zone, hence an exception raised
+    // To fix this, consider all time as UTC.
+    // @tongfei
   }
 
-  /* (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * edu.jhu.hlt.concrete.safe.metadata.SafeAnnotationMetadata#getTimestamp()
    */
   @Override
   public long getTimestamp() {
     return Timing.currentLocalTime();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   *
    * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolName()
    */
   @Override
@@ -100,7 +111,9 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     return WebPostIngester.class.getSimpleName();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   *
    * @see edu.jhu.hlt.concrete.metadata.tools.MetadataTool#getToolVersion()
    */
   @Override
@@ -108,7 +121,9 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     return ProjectConstants.VERSION;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   *
    * @see edu.jhu.hlt.concrete.ingesters.base.Ingester#getKind()
    */
   @Override
@@ -116,7 +131,8 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     return "web";
   }
 
-  private Section handleBeginning(final XMLEventReader rdr, final String content, final Communication cptr) throws XMLStreamException, ConcreteException {
+  private Section handleBeginning(final XMLEventReader rdr, final String content, final Communication cptr)
+      throws XMLStreamException, ConcreteException {
     // The first type is always a document start event. Skip it.
     rdr.nextEvent();
 
@@ -162,6 +178,7 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     // TODO: parse this
 
     String dtValue = dtChars.getData().trim();
+
     DateTime dt = this.dtf.parseDateTime(dtValue).toDateTime(DateTimeZone.UTC);
     LOGGER.debug("Got DateTime: {}", dt.toString());
     long millis = dt.getMillis();
@@ -212,8 +229,12 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     return new SimpleImmutableEntry<Integer, Integer>(leftPadding, rightPadding);
   }
 
-  /* (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester#fromCharacterBasedFile(java.nio.file.Path)
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester#fromCharacterBasedFile
+   * (java.nio.file.Path)
    */
   @Override
   public Communication fromCharacterBasedFile(final Path path) throws IngestException {
@@ -273,6 +294,31 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
           if (nextEvent.isEndDocument())
             break;
 
+          // region
+          // enables ingestion of quotes inside a usenet webpost.
+          // by Tongfei Chen
+          if (nextEvent.isStartElement() && nextEvent.asStartElement().getName().equals(QName.valueOf("QUOTE"))) {
+            Attribute attrQuote = nextEvent.asStartElement().getAttributeByName(QName.valueOf("PREVIOUSPOST"));
+            String quote = attrQuote.getValue().replace("\"", "&quot;") // DO
+                                                                        // NOT
+                                                                        // DO
+                                                                        // THIS
+                                                                        // FOR
+                                                                        // CHINESE
+                                                                        // WEBPOSTS
+                .replace("<", "&lt;").replace(">", "&gt;"); // CANNOT USE
+                                                            // StringUtils.escapeXML
+                                                            // because Webposts
+                                                            // data do not
+                                                            // follow standard
+                                                            // XML escaping
+            int location = attrQuote.getLocation().getCharacterOffset() + "<QUOTE PREVIOUSPOST=\"".length();
+            Section quoteSection = new Section(g.next(), "quote")
+                .setTextSpan(new TextSpan(location, location + quote.length()));
+            c.addToSectionList(quoteSection);
+          }
+          // endregion
+
           // Check if start element.
           if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
@@ -283,7 +329,21 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
 
               SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
-              final int tse = currOff + fpContent.length() - (pads.getValue());
+
+              final int tse = currOff + fpContent.replace("\"", "&quot;") // DO
+                                                                          // NOT
+                                                                          // DO
+                                                                          // THIS
+                                                                          // FOR
+                                                                          // CHINESE
+                                                                          // WEBPOSTS
+                  .replace("<", "&lt;").replace(">", "&gt;").length() - (pads.getValue());
+              // MAINTAIN CORRECT TEXT SPAN
+              // CANNOT USE StringEscapeUtils.escapeXml because it will escape
+              // "'", which
+              // is not escaped in the data
+              // @tongfei
+
               LOGGER.debug("Section text: {}", content.substring(tsb, tse));
               TextSpan ts = new TextSpan(tsb, tse);
               String sk;
@@ -370,7 +430,8 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
     if (args.length < 2) {
-      LOGGER.info("Usage: {} {} {} {}", WebPostIngester.class.getName(), "/path/to/output/folder", "/path/to/web/.xml/file", "<additional/xml/file/paths>");
+      LOGGER.info("Usage: {} {} {} {}", WebPostIngester.class.getName(), "/path/to/output/folder",
+          "/path/to/web/.xml/file", "<additional/xml/file/paths>");
       System.exit(1);
     }
 

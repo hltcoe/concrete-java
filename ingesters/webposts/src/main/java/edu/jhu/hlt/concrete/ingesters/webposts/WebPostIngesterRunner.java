@@ -27,8 +27,8 @@ import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
 import edu.jhu.hlt.utilt.io.NotFileException;
 
 /**
- * Class used for bulk conversion of web post documents found
- * in various LDC corpora.
+ * Class used for bulk conversion of web post documents found in various LDC
+ * corpora.
  *
  * @see #main(String...)
  */

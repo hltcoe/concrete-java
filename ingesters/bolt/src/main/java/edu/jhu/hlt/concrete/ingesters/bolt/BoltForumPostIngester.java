@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -295,7 +296,10 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
         Section headline = handleHeadline(rdr, content);
         headline.setUuid(gen.next());
         c.addToSectionList(headline);
-        String htxt = c.getText().substring(headline.getTextSpan().getStart(), headline.getTextSpan().getEnding());
+        int start = headline.getTextSpan().getStart();
+        int ending = headline.getTextSpan().getEnding();
+        if (ending < start) ending = start; // @tongfei: handle empty headlines
+        String htxt = c.getText().substring(start, ending);
         LOGGER.debug("headline text: {}", htxt);
 
         // Section indices.
@@ -336,6 +340,32 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
             final String localName = name.getLocalPart();
             LOGGER.debug("Hit start element: {}", localName);
 
+            //region
+            // Add sections for authors and datetimes for each bolt post
+            // by Tongfei Chen
+            Attribute attrAuthor = se.getAttributeByName(QName.valueOf("author"));
+            Attribute attrDateTime = se.getAttributeByName(QName.valueOf("datetime"));
+
+            if (attrAuthor != null && attrDateTime != null) {
+
+              int loc = attrAuthor.getLocation().getCharacterOffset();
+
+              int sectAuthorBeginningOffset = loc + "<post author=\"".length();
+
+              Section sectAuthor = sf.fromTextSpan(new TextSpan(
+                      sectAuthorBeginningOffset, sectAuthorBeginningOffset + attrAuthor.getValue().length()
+              ), "author");
+              c.addToSectionList(sectAuthor);
+
+              int sectDateTimeBeginningOffset = sectAuthorBeginningOffset + attrAuthor.getValue().length() + " datetime=".length();
+
+              Section sectDateTime = sf.fromTextSpan(new TextSpan(
+                      sectDateTimeBeginningOffset, sectDateTimeBeginningOffset + attrDateTime.getValue().length()
+              ), "datetime");
+              c.addToSectionList(sectDateTime);
+            }
+            //endregion
+
             // Move past quotes, images, and links.
             if (localName.equals(QUOTE_LOCAL_NAME)) {
               this.handleQuote(rdr);
@@ -344,6 +374,10 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
             } else if (localName.equals(LINK_LOCAL_NAME)) {
               this.handleLink(rdr);
             }
+
+
+
+            // not a start element
           } else if (nextEvent.isCharacters()) {
             Characters chars = nextEvent.asCharacters();
             int coff = chars.getLocation().getCharacterOffset();
