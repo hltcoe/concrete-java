@@ -38,7 +38,7 @@ try (InputStream is = Files.newInputStream(Paths.get("/my/tar/file"));
 // read from a .tar.gz file
 try (InputStream is = Files.newInputStream(Paths.get("/my/tar/gz/file"));
      BufferedInputStream bis = new BufferedInputStream(is, 1024 * 2 * 128)) {
-  Iterator<Communication iter = ts.fromTarGz(bis);
+  Iterator<Communication> iter = ts.fromTarGz(bis);
 }
 ```
 
