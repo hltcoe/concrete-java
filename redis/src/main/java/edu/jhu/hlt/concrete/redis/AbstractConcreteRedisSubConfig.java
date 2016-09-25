@@ -56,4 +56,8 @@ abstract class AbstractConcreteRedisSubConfig {
   public final String getKey() {
     return this.cfg.getString("key");
   }
+
+  public final String getContainer() {
+    return this.cfg.getString("container");
+  }
 }

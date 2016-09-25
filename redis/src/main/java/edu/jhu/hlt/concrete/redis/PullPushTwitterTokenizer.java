@@ -27,6 +27,7 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
   private final int pushLimit;
   private final byte[] pullKey;
   private final byte[] pushKey;
+  private final boolean isPullContainerSet;
 
   private final JedisPool pullJp;
   private final JedisPool pushJp;
@@ -40,6 +41,7 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
     ConcreteRedisPullConfig pullCfg = cfg.getPullConfig();
     this.pullJp = pullCfg.getJedisPool();
     this.pullKey = pullCfg.getKey().getBytes();
+    this.isPullContainerSet = pullCfg.getContainer().equalsIgnoreCase("set");
 
     ConcreteRedisPushConfig pushCfg = cfg.getPushConfig();
     this.pushJp = pushCfg.getJedisPool();
@@ -51,7 +53,7 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
   }
 
   public long pullTokenizePush() throws InterruptedException, ConcreteException {
-    byte[] pulled = pull.lpop(this.pullKey);
+    byte[] pulled = this.isPullContainerSet ? pull.spop(this.pullKey) : pull.lpop(this.pullKey);
     if (pulled != null) {
       Communication c = cs.fromBytes(pulled);
       Tokenizer.TWITTER.addSectionSentenceTokenizationInPlace(c);
