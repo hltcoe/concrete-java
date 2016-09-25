@@ -12,8 +12,18 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.jhu.hlt.concrete.AnnotationMetadata;
+import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.Section;
+import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.TheoryDependencies;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.section.SingleSectionSegmenter;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
+import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.tift.concrete.ConcreteTokenization;
 
 /**
@@ -116,6 +126,43 @@ public enum Tokenizer {
    */
   public final Tokenization tokenizeToConcrete(String text) {
     return this.tokenizeToConcrete(text, 0);
+  }
+
+  /**
+   * Mutates a {@link Communication} by adding a {@link Section}, {@link Sentence},
+   * and {@link Tokenization}. Assumes that the passed communication has a set
+   * <code>text</code> field.
+   * <br><br>
+   * The created section has kind == "content".
+   * <br><br>
+   * If the communication has sections, nothing is done.
+   *
+   * @param comm a {@link Communication} with no {@link Section}s
+   * @throws ConcreteException
+   */
+  public final void addSectionSentenceTokenizationInPlace(Communication comm) throws ConcreteException {
+    if (!comm.isSetSectionList()) {
+      AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory(comm);
+      AnalyticUUIDGenerator g = f.create();
+      Section s = SingleSectionSegmenter.createSingleSection(comm, "content");
+      s.setUuid(g.next());
+
+      final UUID stu = new UUID(g.next());
+      Sentence st = new Sentence()
+          .setTextSpan(s.getTextSpan())
+          .setUuid(stu);
+      s.addToSentenceList(st);
+
+      Tokenization tkz = this.tokenizeToConcrete(comm.getText(), 0);
+      tkz.setUuid(g.next());
+      TheoryDependencies td = new TheoryDependencies();
+      td.addToSentenceTheoryList(stu);
+      AnnotationMetadata ptr = tkz.getMetadata();
+      ptr.setDependencies(td);
+      st.setTokenization(tkz);
+
+      comm.addToSectionList(s);
+    }
   }
 
   //
