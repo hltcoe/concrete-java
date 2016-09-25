@@ -56,6 +56,8 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
     byte[] pulled = this.isPullContainerSet ? pull.spop(this.pullKey) : pull.lpop(this.pullKey);
     if (pulled != null) {
       Communication c = cs.fromBytes(pulled);
+      if (c.isSetOriginalText())
+        c.unsetOriginalText();
       Tokenizer.TWITTER.addSectionSentenceTokenizationInPlace(c);
       while (push.llen(this.pushKey) > this.pushLimit)
         Thread.sleep(sleepTime);
