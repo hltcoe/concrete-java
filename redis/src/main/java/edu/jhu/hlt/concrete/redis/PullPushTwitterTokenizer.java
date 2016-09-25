@@ -82,9 +82,16 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
   public static void main (String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
 
+    long ctr = 0;
+    final long mod = 10 * 1000;
     try (PullPushTwitterTokenizer tt = new PullPushTwitterTokenizer()) {
-      while (true)
+      while (true) {
         tt.pullTokenizePush();
+        ctr++;
+
+        if (ctr % mod == 0)
+          LOGGER.info("Processed {} communications.", ctr);
+      }
 
     } catch (URISyntaxException e) {
       LOGGER.error("URI is invalid: {}", e.getMessage());
