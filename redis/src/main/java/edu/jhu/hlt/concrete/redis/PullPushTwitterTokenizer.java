@@ -56,13 +56,17 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
     byte[] pulled = this.isPullContainerSet ? pull.spop(this.pullKey) : pull.lpop(this.pullKey);
     if (pulled != null) {
       Communication c = cs.fromBytes(pulled);
-      if (c.isSetOriginalText())
-        c.unsetOriginalText();
-      Tokenizer.TWITTER.addSectionSentenceTokenizationInPlace(c);
-      while (push.llen(this.pushKey) > this.pushLimit)
-        Thread.sleep(sleepTime);
+      try {
+        if (c.isSetOriginalText())
+          c.unsetOriginalText();
+        Tokenizer.TWITTER.addSectionSentenceTokenizationInPlace(c);
+        while (push.llen(this.pushKey) > this.pushLimit)
+          Thread.sleep(sleepTime);
 
-      return push.lpush(this.pushKey, cs.toBytes(c));
+        return push.lpush(this.pushKey, cs.toBytes(c));
+      } catch (ConcreteException ex) {
+        throw new ConcreteException("Caught Exception on document ID: " + c.getId(), ex);
+      }
     } else {
       Thread.sleep(this.sleepTime);
       return push.llen(this.pushKey);
@@ -88,19 +92,21 @@ public class PullPushTwitterTokenizer implements AutoCloseable {
     final long mod = 10 * 1000;
     try (PullPushTwitterTokenizer tt = new PullPushTwitterTokenizer()) {
       while (true) {
-        tt.pullTokenizePush();
-        ctr++;
+        try {
+          tt.pullTokenizePush();
+          ctr++;
 
-        if (ctr % mod == 0)
-          LOGGER.info("Processed {} communications.", ctr);
+          if (ctr % mod == 0)
+            LOGGER.info("Processed {} communications.", ctr);
+        } catch (ConcreteException e) {
+          LOGGER.error("Caught ConcreteException.", e);
+        }
       }
 
     } catch (URISyntaxException e) {
       LOGGER.error("URI is invalid: {}", e.getMessage());
     } catch (InterruptedException e) {
       LOGGER.error("Interrupted.", e);
-    } catch (ConcreteException e) {
-      LOGGER.error("Caught ConcreteException.", e);
     }
   }
 }
