@@ -1,4 +1,6 @@
 # News
+## Concrete-Java v4.10.5 - 2016-09-27
+* Contains a new submodule, `sql`, for SQL-based tasks.
 
 ## Concrete-Java v4.10.4 - 2016-09-14
 * Contains numerous fixes for BOLT and Webposts ingesters (thanks
