@@ -10,7 +10,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.10.5</version>
+  <version>4.10.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>
