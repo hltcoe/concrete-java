@@ -20,6 +20,7 @@
     <module>miscommunication</module>
     <module>validation</module>
     <module>redis</module>
+    <module>sql</module>
     <module>lucene</module>
     <module>ingesters/base</module>
     <module>ingesters/simple</module>
