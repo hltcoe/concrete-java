@@ -12,7 +12,9 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.SQLException
+import java.util.HashSet
 import java.util.Optional
+import java.util.Set
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -27,6 +29,7 @@ class SQLiteImpl implements AutoCloseable {
 	final Path p
 	final Connection conn
 	final PreparedStatement ps
+	final Set<String> idSet
 	
 	new (String pathStr) {
 		this(Paths.get(pathStr))
@@ -49,6 +52,7 @@ class SQLiteImpl implements AutoCloseable {
 		
 		this.conn.autoCommit = false
 		this.ps = this.conn.prepareStatement("INSERT INTO concrete VALUES (?, ?, ?)")
+		this.idSet = new HashSet<String>
 	}
 	
 	def init() {
@@ -86,7 +90,16 @@ class SQLiteImpl implements AutoCloseable {
 	}
 	
 	def add(Communication c) {
-		this.ps.setString(1, c.getId)
+		val oid = c.id
+		val cid = if (this.idSet.contains(oid)) {
+			LOGGER.info("{} already ingested; appending duplicate.", oid)
+			oid + ".duplicate"
+		} else oid
+		
+		if (!this.idSet.add(cid)) 
+			throw new IllegalArgumentException("somehow already added: " + cid)
+		
+		this.ps.setString(1, cid)
 		this.ps.setString(2, c.getType)
 		this.ps.setBytes(3, cs.toBytes(c))
 		
