@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.10.6 - 2016-10-18
+* Removes the `log4j2.json` file from the `util` submodule.
+
 ## Concrete-Java v4.10.5 - 2016-09-27
 * Contains a new submodule, `sql`, for SQL-based tasks.
 
