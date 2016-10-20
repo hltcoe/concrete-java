@@ -1,4 +1,8 @@
 # News
+
+## Concrete-Java v4.10.7 - 2016-10-20
+* Folds in the `dictum` submodule.
+
 ## Concrete-Java v4.10.6 - 2016-10-18
 * Removes the `log4j2.json` file from the `util` submodule.
 

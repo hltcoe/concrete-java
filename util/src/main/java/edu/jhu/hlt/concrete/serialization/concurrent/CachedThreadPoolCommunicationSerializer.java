@@ -50,7 +50,7 @@ public class CachedThreadPoolCommunicationSerializer implements AsyncCommunicati
    */
   @Override
   public Future<byte[]> toBytes(Communication c) throws ConcreteException {
-    return this.bcs.submit(new CallableCommunicationToBytes(c, this.cs));
+    return this.bcs.submit(new CallableCommunicationToBytes(c));
   }
 
   /* (non-Javadoc)

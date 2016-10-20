@@ -9,12 +9,17 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.CommunicationTagging;
+import edu.jhu.hlt.concrete.LanguageIdentification;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.metadata.AnnotationMetadataFactory;
 import edu.jhu.hlt.concrete.section.SectionFactory;
 import edu.jhu.hlt.concrete.util.ConcreteException;
+import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
@@ -52,6 +57,48 @@ public class RandomConcreteFactory {
         .setType(this.communicationType())
         .setMetadata(AnnotationMetadataFactory.fromCurrentLocalTime()
             .setTool("RandomConcreteFactory"));
+  }
+
+  public Communication tweet() {
+    Communication c = new Communication();
+    String txt = "foo @bar http://foo.com hello! #test cool";
+    String maxLen = Integer.toString(Integer.MAX_VALUE);
+    String nextId = Integer.toString(r.nextInt(Integer.MAX_VALUE));
+    final int maxLenLen = maxLen.length();
+    final int nextLen = nextId.length();
+    if (nextLen < maxLenLen) {
+      int diff = maxLenLen - nextLen;
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < diff; i++) {
+        sb.append("0");
+      }
+
+      nextId = sb.toString() + nextId;
+    }
+
+    c.setId(nextId)
+        .setUuid(new UUID(java.util.UUID.randomUUID().toString()))
+        .setText(txt)
+        .setType("tweet");
+    AnnotationMetadata amd = new AnnotationMetadata()
+        .setTimestamp(Timing.currentLocalTime())
+        .setTool("Faker Comm Tagger");
+    c.setMetadata(amd.setTool("Fake ingester"));
+
+    CommunicationTagging ct = new CommunicationTagging();
+    ct.setUuid(new UUID(java.util.UUID.randomUUID().toString()));
+    ct.setTaggingType("bar");
+    ct.setMetadata(amd);
+    ct.addToConfidenceList(1.0d);
+    ct.addToTagList("quxbaz");
+    c.addToCommunicationTaggingList(ct);
+
+    LanguageIdentification lid = new LanguageIdentification();
+    lid.setUuid(new UUID(java.util.UUID.randomUUID().toString()));
+    lid.setMetadata(new AnnotationMetadata(amd).setTool("Twitter LID"));
+    lid.putToLanguageToProbabilityMap("eng", this.r.nextDouble());
+    c.addToLidList(lid);
+    return c;
   }
 
   /**

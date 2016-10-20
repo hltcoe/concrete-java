@@ -12,20 +12,19 @@ import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
  *
  */
 public class CallableBytesToCommunication implements Callable<Communication> {
 
-  private final CommunicationSerializer cs = new CompactCommunicationSerializer();
+  private static final CommunicationSerializer cs = new CompactCommunicationSerializer();
   private final byte[] bytes;
-  
+
   public CallableBytesToCommunication (byte[] bytes) {
     this.bytes = bytes;
   }
-  
+
   @Override
   public Communication call() throws ConcreteException {
-    return this.cs.fromBytes(this.bytes);
+    return cs.fromBytes(this.bytes);
   }
 }

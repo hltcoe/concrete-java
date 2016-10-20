@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-project</artifactId>
+    <version>4.10.7</version>
+  </parent>
+
+  <artifactId>concrete-dictum</artifactId>
+  <name>Dictum</name>
+  <description>Yet another wrapper around Concrete</description>
+  <packaging>jar</packaging>
+
+  <developers>
+    <developer>
+      <email>max@maxthomas.io</email>
+      <name>Max Thomas</name>
+      <url>https://github.com/maxthomas</url>
+      <id>maxthomas</id>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${javac.version.src}</source>
+          <target>${javac.version.target}</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
+        <version>3.5.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <forkCount>1C</forkCount>
+          <argLine>-Xms512m -Xmx3G</argLine>
+          <testFailureIgnore>false</testFailureIgnore>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.inferred</groupId>
+      <artifactId>freebuilder</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.12</version>
+	</dependency>
+    
+    <dependency>
+      <groupId>com.pholser</groupId>
+      <artifactId>junit-quickcheck-core</artifactId>
+      <version>0.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.quicktheories</groupId>
+      <artifactId>quicktheories</artifactId>
+      <version>0.12</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+  </dependencies>
+</project>

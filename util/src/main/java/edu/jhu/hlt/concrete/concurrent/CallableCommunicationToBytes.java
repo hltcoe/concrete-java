@@ -8,23 +8,23 @@ import java.util.concurrent.Callable;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
- * @author max
  *
  */
 public class CallableCommunicationToBytes implements Callable<byte[]> {
 
-  private final CommunicationSerializer cs;
+  private static final CommunicationSerializer cs = new CompactCommunicationSerializer();
+
   private final Communication c;
-  
+
   /**
-   * 
+   *
    */
-  public CallableCommunicationToBytes(Communication c, CommunicationSerializer cs) {
+  public CallableCommunicationToBytes(Communication c) {
     this.c = c;
-    this.cs = cs;
   }
 
   /* (non-Javadoc)
@@ -32,6 +32,6 @@ public class CallableCommunicationToBytes implements Callable<byte[]> {
    */
   @Override
   public byte[] call() throws ConcreteException {
-    return this.cs.toBytes(this.c);
+    return cs.toBytes(this.c);
   }
 }

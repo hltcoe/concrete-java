@@ -21,40 +21,38 @@ import java.util.concurrent.TimeUnit;
 import edu.jhu.hlt.concrete.Communication;
 
 /**
- * This class can be used to load {@link Communication} objects from disk in parallel.  
- * 
- * @author max
+ * This class can be used to load {@link Communication} objects from disk in parallel.
  */
 public class ConcurrentCommunicationLoader implements AutoCloseable {
 
   private final ExecutorService runner;
   private final CompletionService<Communication> bytesToCommService;
-  
+
   /**
-   * Single arg ctor: pass in the desired number of threads. 
+   * Single arg ctor: pass in the desired number of threads.
    */
   public ConcurrentCommunicationLoader(int nThreads) {
     this.runner = Executors.newFixedThreadPool(nThreads);
-    this.bytesToCommService = new ExecutorCompletionService<Communication>(this.runner);
+    this.bytesToCommService = new ExecutorCompletionService<>(this.runner);
   }
-  
+
   /**
    * No arg ctor: use {@link Runtime} to determine number of threads to use via call to availableProcessors().
    */
   public ConcurrentCommunicationLoader() {
     this(Runtime.getRuntime().availableProcessors());
   }
-  
+
   /**
-   * Deserialize {@link Communication} objects in parallel. 
+   * Deserialize {@link Communication} objects in parallel.
    * <br>
    * <br>
-   * The {@link ExecutorCompletionService} guarantees that the objects are returned in the order that they are queued. 
-   * In other words, one can safely iterate over the returned object and wait without truly blocking. 
-   * 
+   * The {@link ExecutorCompletionService} guarantees that the objects are returned in the order that they are queued.
+   * In other words, one can safely iterate over the returned object and wait without truly blocking.
+   *
    * @param pathToCommFiles - path to a text file containing paths on disk to serialized {@link Communication} files.
-   * @return a {@link List} of {@link Future} objects with a {@link Communication} expected. 
-   * @throws FileNotFoundException if the passed in {@link Path} does not exist on disk. 
+   * @return a {@link List} of {@link Future} objects with a {@link Communication} expected.
+   * @throws FileNotFoundException if the passed in {@link Path} does not exist on disk.
    */
   public List<Future<Communication>> bulkLoad(Path pathToCommFiles) throws FileNotFoundException {
     List<Path> paths = new ArrayList<>();
@@ -62,7 +60,7 @@ public class ConcurrentCommunicationLoader implements AutoCloseable {
       while (sc.hasNextLine())
         paths.add(Paths.get(sc.nextLine()));
     }
-    
+
     CompletionService<Communication> srv = new ExecutorCompletionService<>(this.runner);
     List<Future<Communication>> commList = new ArrayList<>();
     for (Path p : paths) {
@@ -72,11 +70,11 @@ public class ConcurrentCommunicationLoader implements AutoCloseable {
 
     return commList;
   }
-  
+
   public List<Future<Communication>> bulkLoad(String pathToCommFilesString) throws FileNotFoundException {
     return this.bulkLoad(Paths.get(pathToCommFilesString));
   }
-  
+
   public Future<Communication> fromBytes(byte[] bytes) {
     return this.bytesToCommService.submit(new CallableBytesToCommunication(bytes));
   }
