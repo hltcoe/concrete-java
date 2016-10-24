@@ -6,26 +6,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
 
+import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.utilt.AutoCloseableIterator;
 
 /**
- * Accepts {@link Communication}s and dumps to CoNLL-X files.
+ * Accepts {@link Communication}s and dumps to CoNLL-X files. Accepts either a
+ * TGZ (many documents) or a single .comm file. If the input is a TGZ, the
+ * output must be a directory, into which <commId>.conll files will be put.
  * 
- * TODO Output numberList/sectionMeta info in side file!
+ * Optionally outputs an aux file which specifies where each conll sentence
+ * belongs in the original {@link Communication}, which is necessary for zipping
+ * back up conll annotations into a {@link Communication})
+ * @see CoNLLX which accepts this aux file
+ *
  *
  * NOTE: This description is taken from the Google Syntaxnet (aka parsey mcparseface)
  * documentation: bazel-syntaxnet/syntaxnet/text_formats.cc
@@ -69,14 +80,40 @@ public class ConcreteToCoNLLX {
   
   String outputPosToolname = null;  // null means just output words
   
-  public void dump(File communicationIn, File conllOut, File sectionMetaInfoOut) throws TException, IOException {
+  private static void dirArg(File f) {
+    if (f == null)
+      return;
+    if (f.isFile())
+      throw new IllegalArgumentException("must be a directory: " + f.getPath());
+    if (!f.isDirectory())
+      f.mkdirs();
+  }
+  
+  public void dump(File communicationIn, File conllOut, File sectionMetaInfoOut) throws Exception {
     if (VERBOSE)
       System.out.println("reading communication from " + communicationIn.getPath());
-    Communication c = new Communication();
-    try (BufferedInputStream b = new BufferedInputStream(new FileInputStream(communicationIn))) {
-      c.read(new TCompactProtocol(new TIOStreamTransport(b)));
+    String s = communicationIn.getName().toLowerCase();
+    if (s.endsWith(".tgz") || s.endsWith(".tar.gz")) {
+      // Read multiple communications
+      dirArg(conllOut);
+      dirArg(sectionMetaInfoOut);
+      CommunicationSerializer ser = new CompactCommunicationSerializer();
+      try (InputStream is = Files.newInputStream(communicationIn.toPath());
+          BufferedInputStream bis = new BufferedInputStream(is, 1024 * 8 * 24);
+          AutoCloseableIterator<byte[]> iter = new TarGzArchiveEntryByteIterator(bis)) {
+        while (iter.hasNext()) {
+          Communication n = ser.fromBytes(iter.next());
+          dump(n, conllOut, sectionMetaInfoOut);
+        }
+      }
+    } else {
+      // Read one communication
+      Communication c = new Communication();
+      try (BufferedInputStream b = new BufferedInputStream(new FileInputStream(communicationIn))) {
+        c.read(new TCompactProtocol(new TIOStreamTransport(b)));
+      }
+      dump(c, conllOut, sectionMetaInfoOut);
     }
-    dump(c, conllOut, sectionMetaInfoOut);
   }
   
   /**
@@ -104,6 +141,8 @@ public class ConcreteToCoNLLX {
         if (VERBOSE)
           System.out.println("section " + sectionIdx);
         Section section = commIn.getSectionList().get(sectionIdx);
+        if (!section.isSetSentenceList() || section.getSentenceListSize() == 0)
+          continue;
         
         String meta = null;
         if (sectionMetaInfoOut != null) {
@@ -170,7 +209,7 @@ public class ConcreteToCoNLLX {
     }
   }
 
-  public static void main(String[] args) throws TException, IOException {
+  public static void main(String[] args) throws Exception {
     if (args.length != 2 && args.length != 3) {
       System.err.println("please provide:");
       System.err.println("1) an input Communication file");
