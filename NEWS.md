@@ -1,5 +1,8 @@
 # News
 
+## Concrete-Java v4.10.8 - 2016-10-26
+* Contains utilities for CoNLL conversion and merging communications.
+
 ## Concrete-Java v4.10.7 - 2016-10-20
 * Folds in the `dictum` submodule.
 
