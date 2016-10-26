@@ -5,12 +5,12 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-parent</artifactId>
-    <version>4.10-rework</version>
+    <version>4.11</version>
   </parent>
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.10.9-SNAPSHOT</version>
+  <version>4.11.0</version>
   <packaging>pom</packaging>
   <modules>
     <module>safe</module>

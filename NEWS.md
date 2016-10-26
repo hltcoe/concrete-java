@@ -1,4 +1,6 @@
 # News
+## Concrete-Java v4.11.0 - 2016-10-26
+* Depends upon concrete `4.11`.
 
 ## Concrete-Java v4.10.8 - 2016-10-26
 * Contains utilities for CoNLL conversion and merging communications.
