@@ -3,7 +3,6 @@ package edu.jhu.hlt.concrete.ingesters.conll;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,10 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.transport.TIOStreamTransport;
-
-import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
@@ -25,13 +20,14 @@ import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.serialization.CommunicationSerializer;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
 import edu.jhu.hlt.utilt.AutoCloseableIterator;
 
 /**
  * Accepts {@link Communication}s and dumps to CoNLL-X files. Accepts either a
  * TGZ (many documents) or a single .comm file. If the input is a TGZ, the
  * output must be a directory, into which <commId>.conll files will be put.
- * 
+ *
  * Optionally outputs an aux file which specifies where each conll sentence
  * belongs in the original {@link Communication}, which is necessary for zipping
  * back up conll annotations into a {@link Communication})
@@ -77,9 +73,11 @@ import edu.jhu.hlt.utilt.AutoCloseableIterator;
  */
 public class ConcreteToCoNLLX {
   public static boolean VERBOSE = false;
-  
+
+  private static final CommunicationSerializer ser = new CompactCommunicationSerializer();
+
   String outputPosToolname = null;  // null means just output words
-  
+
   private static void dirArg(File f) {
     if (f == null)
       return;
@@ -88,7 +86,7 @@ public class ConcreteToCoNLLX {
     if (!f.isDirectory())
       f.mkdirs();
   }
-  
+
   public void dump(File communicationIn, File conllOut, File sectionMetaInfoOut) throws Exception {
     if (VERBOSE)
       System.out.println("reading communication from " + communicationIn.getPath());
@@ -97,25 +95,21 @@ public class ConcreteToCoNLLX {
       // Read multiple communications
       dirArg(conllOut);
       dirArg(sectionMetaInfoOut);
-      CommunicationSerializer ser = new CompactCommunicationSerializer();
       try (InputStream is = Files.newInputStream(communicationIn.toPath());
           BufferedInputStream bis = new BufferedInputStream(is, 1024 * 8 * 24);
-          AutoCloseableIterator<byte[]> iter = new TarGzArchiveEntryByteIterator(bis)) {
+          AutoCloseableIterator<Communication> iter = new TarGzArchiveEntryCommunicationIterator(bis)) {
         while (iter.hasNext()) {
-          Communication n = ser.fromBytes(iter.next());
+          Communication n = iter.next();
           dump(n, conllOut, sectionMetaInfoOut);
         }
       }
     } else {
       // Read one communication
-      Communication c = new Communication();
-      try (BufferedInputStream b = new BufferedInputStream(new FileInputStream(communicationIn))) {
-        c.read(new TCompactProtocol(new TIOStreamTransport(b)));
-      }
+      Communication c = ser.fromPath(communicationIn.toPath());
       dump(c, conllOut, sectionMetaInfoOut);
     }
   }
-  
+
   /**
    * @param commIn
    * @param conllOut
@@ -126,7 +120,7 @@ public class ConcreteToCoNLLX {
       System.out.println("writing conll to " + conllOut.getPath());
 
     String TAB_NIL = "\t_";
-    
+
     if (conllOut.isDirectory())
       conllOut = new File(conllOut, commIn.getId() + ".conll");
     if (sectionMetaInfoOut.isDirectory())
@@ -143,7 +137,7 @@ public class ConcreteToCoNLLX {
         Section section = commIn.getSectionList().get(sectionIdx);
         if (!section.isSetSentenceList() || section.getSentenceListSize() == 0)
           continue;
-        
+
         String meta = null;
         if (sectionMetaInfoOut != null) {
           // Produce a section-uniq metadata string which each sentence will receive
@@ -168,7 +162,7 @@ public class ConcreteToCoNLLX {
         for (Sentence sentence : section.getSentenceList()) {
           Tokenization toks = sentence.getTokenization();
           List<Token> tokens = toks.getTokenList().getTokenList();
-          
+
           if (VERBOSE)
             System.out.println("sentence " + sentIdx++);
 
@@ -190,13 +184,13 @@ public class ConcreteToCoNLLX {
             w.newLine();
           }
           w.newLine();  // empty line after a sentence
-          
+
           if (sectionMetaInfoOut != null)
             metaBySent.add(meta);
         }
       }
     }
-    
+
     if (sectionMetaInfoOut != null) {
       if (VERBOSE)
         System.err.println("writing sentence-section meta information to " + sectionMetaInfoOut.getPath());

@@ -1,19 +1,15 @@
 package edu.jhu.hlt.concrete.ingesters.conll;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.transport.TIOStreamTransport;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
@@ -28,13 +24,14 @@ import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.communications.WritableCommunication;
+import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
-import edu.jhu.prim.tuple.Pair;
 
 /**
  * Reads CoNLL-X formatted input to produce Communications.
- * 
+ *
  * Since CoNLL-X doesn't know about anything other than sentences, this offers
  * the ability to include side info file mapping sentence -> section.
  *
@@ -108,7 +105,7 @@ public class CoNLLX {
     this.featsTool = toolName;
     this.depTool = toolName;
     this.pdepTool = toolName + "/projective";
-    this.timestamp = System.currentTimeMillis() / 1000;
+    this.timestamp = Timing.currentLocalTime();
   }
 
   public static boolean isDash(String d) {
@@ -234,7 +231,7 @@ public class CoNLLX {
     return t;
   }
 
-  public static Pair<CoNLLX, Communication> readCommunication(String commId, File inputConll, String toolName, boolean showTiming) throws Exception {
+  public static SimpleImmutableEntry<CoNLLX, Communication> readCommunication(String commId, File inputConll, String toolName, boolean showTiming) throws Exception {
     if (VERBOSE)
       System.out.println("reading conll from " + inputConll.getPath());
     Communication c = new Communication();
@@ -294,9 +291,9 @@ public class CoNLLX {
       section.addToSentenceList(snt);
     }
 
-    return new Pair<>(conll, c);
+    return new SimpleImmutableEntry<>(conll, c);
   }
-  
+
   public void groupBySections(Communication c, File numberListsFile) throws IOException {
     if (VERBOSE)
       System.out.println("reading sentence meta information from " + numberListsFile.getPath());
@@ -320,7 +317,7 @@ public class CoNLLX {
       throw new IllegalArgumentException("number of sentences don't match:"
           + " concrete=" + s.getSentenceListSize() + " meta=" + sectionMetaInfo.size());
     }
-    
+
     // Group by section meta info
     Deque<Section> ns = new ArrayDeque<>();
     String prevMeta = null;
@@ -355,11 +352,11 @@ public class CoNLLX {
         ss.setNumberList(nl);
         ns.add(ss);
       }
-      
+
       ns.peekLast().addToSentenceList(sent);
       prevMeta = meta;
     }
-    
+
     System.out.println("grouped " + sectionMetaInfo.size() + " sentences into " + ns.size() + " sections");
     c.setSectionList(new ArrayList<>(ns));
   }
@@ -387,12 +384,12 @@ public class CoNLLX {
     File outputConcrete = new File(args[3]);
 
     boolean showTiming = true;
-    Pair<CoNLLX, Communication> cc = readCommunication(commId, inputConll, toolName, showTiming);
-    Communication c = cc.get2();
-    
+    SimpleImmutableEntry<CoNLLX, Communication> cc = readCommunication(commId, inputConll, toolName, showTiming);
+    Communication c = cc.getValue();
+
     if (args.length == 5) {
       // Need a CoNLLX instance for the UUID generator
-      CoNLLX cx = cc.get1();
+      CoNLLX cx = cc.getKey();
       cx.groupBySections(c, new File(args[4]));
     }
 
@@ -402,11 +399,7 @@ public class CoNLLX {
     if (outputConcrete.isDirectory())
       outputConcrete = new File(outputConcrete, c.getId() + ".comm");
     System.err.println("writing Communication to " + outputConcrete.toString());
-    try (BufferedOutputStream b = new BufferedOutputStream(new FileOutputStream(outputConcrete))) {
-      c.write(new TCompactProtocol(new TIOStreamTransport(b)));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    new WritableCommunication(c).writeToFile(outputConcrete.toPath(), true);
     int sec = (int) ((System.currentTimeMillis() - start) / 1000);
     System.err.println("done writing in " + sec + " seconds");
   }
