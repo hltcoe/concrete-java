@@ -2,12 +2,15 @@ stages:
   - build-unit-test
   - deploy
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
 compile:
   stage: build-unit-test
   image: r8n01:5000/coe-maven-centos:latest
   script:
-    - mvn clean test -B
-    - mvn clean -B
+    - mvn $MAVEN_CLI_OPTS clean test
   tags:
     - docker
 
@@ -15,8 +18,7 @@ deploy:
   stage: deploy
   image: r8n01:5000/coe-maven-centos:latest
   script:
-    - mvn clean deploy -B
-    - mvn clean -B
+    - mvn $MAVEN_CLI_OPTS clean deploy
   tags:
     - docker
   only:
