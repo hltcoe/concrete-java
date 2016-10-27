@@ -19,13 +19,12 @@ java \
     -XX:+CMSClassUnloadingEnabled \
     -Xmx3G \
     -Dconfig.file=/export/common/max/conf/concrete-redis.conf \
-    -Dlog4j.configurationFile=/export/common/max/conf/qsub-socket.xml \
+    -Dlog4j.configurationFile=/export/common/max/conf/log4j2-warn.json \
     -cp $JARP \
-    edu.jhu.hlt.concrete.redis.PullPushTwitterTokenizer \
-# edu.jhu.hlt.scion.concrete.ingest.TTwitterRedisIngester \
-# --redis-port 33033 \
-# --redis-host r8n09.cm.cluster \
-# --key 'coe-twitter:list-queue'
+    edu.jhu.hlt.concrete.redis.PullPushTwitterTokenizer
+
+### for max's recollection
+# -Dlog4j.configurationFile=/export/common/max/conf/qsub-socket.xml \
 
 if [[ $? -ne 0 ]]; then
     echo "Tokenizer job failed."
