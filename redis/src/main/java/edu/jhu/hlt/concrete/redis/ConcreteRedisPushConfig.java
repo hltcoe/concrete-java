@@ -6,6 +6,7 @@
 package edu.jhu.hlt.concrete.redis;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 
 /**
  *
@@ -16,7 +17,15 @@ public final class ConcreteRedisPushConfig extends AbstractConcreteRedisSubConfi
     super(cfg, "push");
   }
 
+  public ConcreteRedisPushConfig() {
+    this(ConfigFactory.load());
+  }
+
   public final int getLimit() {
     return this.cfg.getInt("limit");
+  }
+
+  public final int getPollInterval() {
+    return this.cfg.getInt("poll-interval");
   }
 }

@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Load a .json file of ISO3 languages. Syntax is as follows:
@@ -72,5 +74,13 @@ public class ValidISO3Languages {
    */
   public static final Optional<String> getName(final String abbr) {
     return isValidISO3Abbreviation(abbr) ? Optional.of(iso3AbbrNameMap.get(abbr)) : Optional.empty();
+  }
+
+  public static final Set<String> getAbbreviationSet() {
+    return iso3AbbrNameMap.keySet();
+  }
+
+  public static final Set<String> getNameSet() {
+    return ImmutableSet.copyOf(iso3AbbrNameMap.values());
   }
 }

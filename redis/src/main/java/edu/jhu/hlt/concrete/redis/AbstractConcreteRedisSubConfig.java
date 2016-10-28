@@ -60,4 +60,8 @@ abstract class AbstractConcreteRedisSubConfig {
   public final String getContainer() {
     return this.cfg.getString("container");
   }
+
+  public final int getBatchSize() {
+    return this.cfg.getInt("batch-size");
+  }
 }
