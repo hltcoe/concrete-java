@@ -16,7 +16,7 @@ Basic wrappers can be found in the [miscommunication](src/main/java/edu/jhu/hlt/
 package, which include types for many popular use cases.
 
 # Quick start
-Support you have a `Communication` object that you are certain pre-hoc contains `Sentence` objects.
+Suppose you have a `Communication` object that you are certain pre-hoc contains `Sentence` objects.
 Normally, to access these, you write a nested loop, iterating over each `Section` and then each
 `Sentence`.
 
