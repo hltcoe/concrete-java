@@ -18,8 +18,8 @@ java \
     -XX:-UseGCOverheadLimit \
     -XX:+CMSClassUnloadingEnabled \
     -Xmx7G \
-    -Dconfig.file=/export/common/max/conf/concrete-redis.conf \
-    -Dlog4j.configurationFile=/export/common/max/conf/log4j2-warn.json \
+    -Dconfig.file=/export/common/max/public/concrete-redis.conf \
+    -Dlog4j.configurationFile=/export/common/max/public/log4j2-warn.json \
     -cp $JARP \
     edu.jhu.hlt.concrete.redis.PullPushTwitterTokenizer
 
