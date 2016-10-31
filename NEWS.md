@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.11.1 - 2016-10-30
+* Fixes some issues with `redis` submodule.
+
 ## Concrete-Java v4.11.0 - 2016-10-26
 * Depends upon concrete `4.11`.
 
