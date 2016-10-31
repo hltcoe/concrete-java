@@ -6,18 +6,13 @@
 package edu.jhu.hlt.concrete.redis;
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 /**
  *
  */
 public final class ConcreteRedisPullConfig extends AbstractConcreteRedisSubConfig {
 
-  public ConcreteRedisPullConfig(Config cfg) {
+  ConcreteRedisPullConfig(Config cfg) {
     super(cfg, "pull");
-  }
-
-  public ConcreteRedisPullConfig() {
-    this(ConfigFactory.load());
   }
 }

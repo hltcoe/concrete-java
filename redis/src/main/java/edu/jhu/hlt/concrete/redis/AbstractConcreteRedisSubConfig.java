@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigRenderOptions;
 
 import redis.clients.jedis.JedisPool;
 
@@ -27,9 +28,13 @@ abstract class AbstractConcreteRedisSubConfig {
   private final RedisWrapper wrapper;
 
   protected AbstractConcreteRedisSubConfig(Config cfg, String key) {
+    ConfigRenderOptions rOpts = ConfigRenderOptions.defaults()
+        .setOriginComments(false)
+        .setComments(false)
+        .setJson(false);
     cfg.checkValid(ConfigFactory.defaultReference(), key);
     this.cfg = cfg.getConfig(key);
-    LOGGER.debug("Running with config: {}", this.cfg.toString());
+    LOGGER.debug("Running with config: {}", this.cfg.root().render(rOpts));
     this.wrapper = new RedisWrapper(this.getHost(), this.getPort());
   }
 
@@ -62,6 +67,10 @@ abstract class AbstractConcreteRedisSubConfig {
   }
 
   public final int getBatchSize() {
+    return this.cfg.getInt("batch-size");
+  }
+
+  public final int getSleepInterval() {
     return this.cfg.getInt("batch-size");
   }
 }
