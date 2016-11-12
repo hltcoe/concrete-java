@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
@@ -36,6 +37,7 @@ public class ValidISO3Languages {
   public static final ObjectMapper om = new ObjectMapper();
 
   private static final ImmutableMap<String, String> iso3AbbrNameMap;
+  private static final Set<ISO6393Abbreviation> abbrSet;
   static {
     try (InputStream is = ClassLoader.getSystemResourceAsStream(isoFileNameStr);
         GzipCompressorInputStream gin = new GzipCompressorInputStream(is);) {
@@ -45,6 +47,9 @@ public class ValidISO3Languages {
         for (ISO3AbbreviationNameBean b : beanList)
           mb.put(b.code, b.name);
         iso3AbbrNameMap = mb.build();
+        abbrSet = ImmutableSet.copyOf(iso3AbbrNameMap.keySet().stream()
+            .map(ISO6393Abbreviation::fromAbbreviationUnchecked)
+            .collect(Collectors.toSet()));
       } catch (IOException e) {
         // unlikely to throw given resource does not change.
         throw new RuntimeException("Failed to deserialize resource.");
@@ -76,8 +81,8 @@ public class ValidISO3Languages {
     return isValidISO3Abbreviation(abbr) ? Optional.of(iso3AbbrNameMap.get(abbr)) : Optional.empty();
   }
 
-  public static final Set<String> getAbbreviationSet() {
-    return iso3AbbrNameMap.keySet();
+  public static final Set<ISO6393Abbreviation> getAbbreviationSet() {
+    return abbrSet;
   }
 
   public static final Set<String> getNameSet() {

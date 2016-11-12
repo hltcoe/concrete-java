@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.11.2 - 2016-11-12
+* Adds some typedness to the `lid` package inside dictum.
+
 ## Concrete-Java v4.11.1 - 2016-10-30
 * Fixes some issues with `redis` submodule.
 
