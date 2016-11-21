@@ -33,7 +33,7 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  * Reads CoNLL-X formatted input to produce Communications.
  *
  * Since CoNLL-X doesn't know about anything other than sentences, this offers
- * the ability to include side info file mapping sentence -> section.
+ * the ability to include side info file mapping sentence to section.
  *
  * NOTE: This description is taken from the Google Syntaxnet (aka parsey mcparseface)
  * documentation: bazel-syntaxnet/syntaxnet/text_formats.cc

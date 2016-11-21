@@ -26,7 +26,7 @@ import edu.jhu.hlt.utilt.AutoCloseableIterator;
 /**
  * Accepts {@link Communication}s and dumps to CoNLL-X files. Accepts either a
  * TGZ (many documents) or a single .comm file. If the input is a TGZ, the
- * output must be a directory, into which <commId>.conll files will be put.
+ * output must be a directory, into which [commId].conll files will be put.
  *
  * Optionally outputs an aux file which specifies where each conll sentence
  * belongs in the original {@link Communication}, which is necessary for zipping
