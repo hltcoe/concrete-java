@@ -1,0 +1,15 @@
+*~
+*.diff
+*.class
+*#
+.classpath
+.project
+.settings
+.*.swp
+target
+application.conf
+*.iml
+*.pyc
+pom.xml.versionsBackup
+xtend-gen/
+*.db
