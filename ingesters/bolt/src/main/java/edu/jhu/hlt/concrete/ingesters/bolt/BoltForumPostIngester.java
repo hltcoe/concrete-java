@@ -61,6 +61,8 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BoltForumPostIngester.class);
 
+  public static boolean STRIP_WHITESPACE_OFF_HEADLINE = true;
+
   public static final String POST_LOCAL_NAME = "post";
   public static final String IMG_LOCAL_NAME = "img";
   public static final String QUOTE_LOCAL_NAME = "quote";
@@ -143,10 +145,17 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     // Reader is now pointing at the first post.
     // Construct section, text span, etc.
     final int charOffPlusLen = charOff + clen;
-    final String hlText = content.substring(charOff, charOffPlusLen);
 
-    SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
-    TextSpan ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
+    // Strip whitespace off
+    TextSpan ts;
+    if (STRIP_WHITESPACE_OFF_HEADLINE) {
+      final String hlText = content.substring(charOff, charOffPlusLen);
+      SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
+      ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
+    } else {
+      ts = new TextSpan(charOff, charOffPlusLen);
+    }
+    assert ts.getStart() <= ts.getEnding() : "ts=" + ts;
 
     Section s = new Section();
     s.setKind("headline");
@@ -438,30 +447,31 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
     }
   }
 
+  /**
+   * Length of longest whitespace prefix.
+   */
   private static int getLeftSpacesPaddingCount(final String str) {
     final int len = str.length();
     for (int i = 0; i < len; i++) {
-      Character c = str.charAt(i);
-      if (!isSpaceOrUnixNewline(c))
+      char c = str.charAt(i);
+      if (!Character.isWhitespace(c))
         return i;
     }
-
     return len;
   }
 
-  public static boolean isSpaceOrUnixNewline(final Character c) {
-    return c.equals(' ') || c.equals('\n');
-  }
-
+  /**
+   * Number of whitespace characters that follow a non-whitespace charachter
+   * (if the given string is all whitespace, this returns 0).
+   */
   private static int getRightSpacesPaddingCount(final String str) {
     final int lenIdx = str.length() - 1;
     for (int i = 0; i < lenIdx; i++) {
-      Character c = str.charAt(lenIdx - i);
-      if (!isSpaceOrUnixNewline(c))
+      char c = str.charAt(lenIdx - i);
+      if (!Character.isWhitespace(c))
         return i;
     }
-
-    return lenIdx + 1;
+    return 0;
   }
 
   public static void main(String... args) {

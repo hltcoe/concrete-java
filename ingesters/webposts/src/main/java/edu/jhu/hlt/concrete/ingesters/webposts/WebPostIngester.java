@@ -30,6 +30,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -299,22 +300,10 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
           // by Tongfei Chen
           if (nextEvent.isStartElement() && nextEvent.asStartElement().getName().equals(QName.valueOf("QUOTE"))) {
             Attribute attrQuote = nextEvent.asStartElement().getAttributeByName(QName.valueOf("PREVIOUSPOST"));
-            String quote = attrQuote.getValue().replace("\"", "&quot;") // DO
-                                                                        // NOT
-                                                                        // DO
-                                                                        // THIS
-                                                                        // FOR
-                                                                        // CHINESE
-                                                                        // WEBPOSTS
-                .replace("<", "&lt;").replace(">", "&gt;"); // CANNOT USE
-                                                            // StringUtils.escapeXML
-                                                            // because Webposts
-                                                            // data do not
-                                                            // follow standard
-                                                            // XML escaping
+            String quote = StringEscapeUtils.escapeXml(attrQuote.getValue());
             int location = attrQuote.getLocation().getCharacterOffset() + "<QUOTE PREVIOUSPOST=\"".length();
             Section quoteSection = new Section(g.next(), "quote")
-                .setTextSpan(new TextSpan(location, location + quote.length()));
+                    .setTextSpan(new TextSpan(location, location + quote.length()));
             c.addToSectionList(quoteSection);
           }
           // endregion
@@ -330,17 +319,12 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
               SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
 
-              final int tse = currOff + fpContent.replace("\"", "&quot;") // DO
-                                                                          // NOT
-                                                                          // DO
-                                                                          // THIS
-                                                                          // FOR
-                                                                          // CHINESE
-                                                                          // WEBPOSTS
-                  .replace("<", "&lt;").replace(">", "&gt;").length() - (pads.getValue());
+              final int tse = currOff +
+                      fpContent.replace("\"", "&quot;")
+                               .replace("<", "&lt;")
+                               .replace(">", "&gt;").length() - (pads.getValue());
               // MAINTAIN CORRECT TEXT SPAN
-              // CANNOT USE StringEscapeUtils.escapeXml because it will escape
-              // "'", which
+              // CANNOT USE StringEscapeUtils.escapeXml because it will escape "'", which
               // is not escaped in the data
               // @tongfei
 

@@ -8,6 +8,9 @@ Java libraries for the [Concrete](https://github.com/hltcoe/concrete) HLT data s
 ## How do I run the simple ingesters?
 Consult the [README.md](ingesters/simple/README.md) for the simple ingesters project.
 
+## Building
+Ensure that you run maven commands with 'clean', otherwise things may fail.
+
 Maven Dependencies
 ----------
 
