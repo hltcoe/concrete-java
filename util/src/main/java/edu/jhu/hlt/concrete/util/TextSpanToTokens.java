@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingesters.kbp2015;
+package edu.jhu.hlt.concrete.util;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,15 +12,15 @@ import edu.jhu.hlt.concrete.TokenRefSequence;
 import edu.jhu.hlt.concrete.Tokenization;
 
 /**
- * Try to match a {@link TextSpan} up to a {@link Tokenization}.
+ * Try to match a {@link TextSpan} up to a {@link Tokenization}
+ * using character distance and string edit distance.
  *
  * @author travis
  */
 public class TextSpanToTokens {
-  public static boolean DEBUG = false;
-
-  static int N_RESOLVE_EXACT = 0;
-  static int N_RESOLVE_FUZZY = 0;
+  public boolean debug = false;
+  public int nResolveExact = 0;
+  public int nResolveFuzzy = 0;
 
   private static class Argmin<T> {
     private T bestItem;
@@ -68,8 +68,8 @@ public class TextSpanToTokens {
    * indices). Throws an exception if start and end don't appear in the same
    * sentence.
    */
-  public static TokenRefSequence resolve(TextSpan ts, Communication c) {
-    if (DEBUG) {
+  public TokenRefSequence resolve(TextSpan ts, Communication c) {
+    if (debug) {
       System.out.println();
       System.out.println("looking for: " + ts);
       System.out.println("text: " + c.getText().substring(ts.getStart(), ts.getEnding()+1));
@@ -95,13 +95,13 @@ public class TextSpanToTokens {
           trs.setTokenizationId(tok.getUuid());
           for (int i = startIdx; i <= endIdx; i++)
             trs.addToTokenIndexList(i);
-          N_RESOLVE_EXACT++;
+          nResolveExact++;
           return trs;
         }
       }
     }
 
-    N_RESOLVE_FUZZY++;
+    nResolveFuzzy++;
     String needle = c.getText().substring(ts.getStart(), ts.getEnding()+1);
 
     Argmin<TokPtr> start = new Argmin<>();
@@ -163,7 +163,7 @@ public class TextSpanToTokens {
     TokPtr e = end.get();
     if (s == null || e == null)
       throw new RuntimeException("empty Communication?");
-    if (DEBUG || s.tok != e.tok || s.index > e.index) {
+    if (debug || s.tok != e.tok || s.index > e.index) {
       System.out.println();
       System.out.println("found: " + s.index + "," + e.index);
       System.out.println("start: " + start);

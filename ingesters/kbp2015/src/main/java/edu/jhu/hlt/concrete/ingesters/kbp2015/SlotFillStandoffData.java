@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -39,6 +38,7 @@ import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
+import edu.jhu.hlt.concrete.util.TextSpanToTokens;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
 
@@ -57,6 +57,31 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  * @author travis
  */
 public class SlotFillStandoffData {
+  
+  public static class Pair<L, R> {
+    public final L left;
+    public final R right;
+    public Pair(L left, R right) {
+      this.left = left;
+      this.right = right;
+    }
+    @Override
+    public int hashCode() {
+      int h1 = left == null ? 42 : left.hashCode();
+      int h2 = right == null ? 9001 : right.hashCode();
+      return 31 * h1 + h2;
+    }
+    @Override
+    public boolean equals(Object other) {
+      if (other instanceof Pair) {
+        Pair<?, ?> p = (Pair<?, ?>) other;
+        boolean le = left == null ? p.left == null : left.equals(p.left);
+        boolean re = right == null ? p.right == null : right.equals(p.right);
+        return le && re;
+      }
+      return false;
+    }
+  }
 
 /*
  * I'm going to make one Situation per row in:
@@ -215,7 +240,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
         for (int j = 0; j < slotFillerProvidence.length; j++) {
           String dj = getDocFromProvidence(slotFillerProvidence[j]);
           if (di.equals(dj))
-            lp.add(Pair.of(i, j));
+            lp.add(new Pair<>(i, j));
         }
       }
       return lp;
@@ -367,6 +392,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
 
   private Map<String, AnnotationHolder> id2comm;
   private Args cliArgs;
+  private TextSpanToTokens ts2toks = new TextSpanToTokens();
 
   public SlotFillStandoffData(Args cliArgs) {
     this.cliArgs = cliArgs;
@@ -460,8 +486,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
 //    }
     annoLinesKept++;
     for (Pair<Integer, Integer> ij : afl.commonDocumentProvidence()) {
-      String queryEntProv = afl.queryEntityProvidence[ij.getLeft()];
-      String slotFillProv = afl.slotFillerProvidence[ij.getRight()];
+      String queryEntProv = afl.queryEntityProvidence[ij.left];
+      String slotFillProv = afl.slotFillerProvidence[ij.right];
       String docId = AssessmentFileLine.getDocFromProvidence(queryEntProv);
       if (dryRun) {
         id2comm.putIfAbsent(docId, null);
@@ -495,8 +521,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
 
       if ((succ + fail) % 1000 == 0) {
         System.out.println("succ=" + succ + " fail=" + fail
-            + " TextSpanToTokens.N_RESOLVE_EXACT=" + TextSpanToTokens.N_RESOLVE_EXACT
-            + " TextSpanToTokens.N_RESOLVE_FUZZY=" + TextSpanToTokens.N_RESOLVE_FUZZY);
+            + " TextSpanToTokens.N_RESOLVE_EXACT=" + ts2toks.nResolveExact
+            + " TextSpanToTokens.N_RESOLVE_FUZZY=" + ts2toks.nResolveFuzzy);
       }
     }
   }
@@ -505,7 +531,7 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     TextSpan loc = AssessmentFileLine.getLocationFromProvidence(providence);
     TokenRefSequence trs;
     if (cliArgs.inputIsTokenized) {
-      trs = TextSpanToTokens.resolve(loc, c);
+      trs = ts2toks.resolve(loc, c);
     } else {
       trs = new TokenRefSequence();
       trs.setTokenIndexList(Collections.emptyList());
