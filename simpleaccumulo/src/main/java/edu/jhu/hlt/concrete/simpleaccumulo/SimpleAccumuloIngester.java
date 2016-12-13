@@ -73,7 +73,7 @@ public class SimpleAccumuloIngester {
           double rateAvgGlobal = stored / tm.secondsSinceFirstMark();
           storedPrev = stored;
           System.err.printf(
-              "stored=%d communications cur_row=%s\trateRecent=%.1f comm/sec rateAll=%.1f comm/sec",
+              "stored=%d communications cur_row=%s\trateRecent=%.1f comm/sec rateAll=%.1f comm/sec\n",
               stored, c.getId(), rateAvgLocal, rateAvgGlobal);
         }
       }
