@@ -52,7 +52,7 @@ public class SimpleAccumuloIngester {
     TimeMarker tm = new TimeMarker();
     int stored = 0;
     int storedPrev = 0;
-    double interval = 5;
+    double interval = 10;
     double rateAvgLocal = 50;
     SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);    
     System.err.println("using " + saConf);
@@ -68,13 +68,15 @@ public class SimpleAccumuloIngester {
         ingester.store(c);
         stored++;
         if (tm.enoughTimePassed(interval)) {
+          double mins = tm.secondsSinceFirstMark() / 60.0;
           double rate = (stored - storedPrev) / interval;
-          rateAvgLocal = 0.9 * rate + 0.1 * rateAvgLocal;
+          double k = 0.9;
+          rateAvgLocal = k * rate + (1-k) * rateAvgLocal;
           double rateAvgGlobal = stored / tm.secondsSinceFirstMark();
           storedPrev = stored;
           System.err.printf(
-              "stored=%d communications cur_row=%s\trateRecent=%.1f comm/sec rateAll=%.1f comm/sec\n",
-              stored, c.getId(), rateAvgLocal, rateAvgGlobal);
+              "storedComms=%d\tcurRow=%s\tmins=%.1f\trateEma=%.1f comm/sec\trateAvg=%.1f comm/sec\n",
+              stored, c.getId(), mins, rateAvgLocal, rateAvgGlobal);
         }
       }
     }
