@@ -4,24 +4,23 @@
 
   <parent>
     <groupId>edu.jhu.hlt</groupId>
-    <artifactId>concrete-project</artifactId>
-    <version>4.11.3-SNAPSHOT</version>
+    <!-- <artifactId>concrete-project</artifactId>
+    <version>4.11.3-SNAPSHOT</version> -->
+    <artifactId>concrete-parent</artifactId>
+    <version>4.11</version>
   </parent>
 
   <artifactId>concrete-simpleaccumulo</artifactId>
   <name>simpleaccumulo</name>
+  <version>4.11.3</version>
   <description>Store and Fetch Communications stored in accumulo</description>
   <url>https://hltcoe.github.io/concrete-java/simpleaccumulo/</url>
-
-  <properties>
-    <accumulo.version>1.8.0</accumulo.version>
-  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.accumulo</groupId>
       <artifactId>accumulo-core</artifactId>
-      <version>${accumulo.version}</version>
+      <version>1.8.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
