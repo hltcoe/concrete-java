@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-project</artifactId>
+    <version>4.11.3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>concrete-simpleaccumulo</artifactId>
+  <name>simpleaccumulo</name>
+  <description>Store and Fetch Communications stored in accumulo</description>
+  <url>https://hltcoe.github.io/concrete-java/simpleaccumulo/</url>
+
+  <properties>
+    <accumulo.version>1.8.0</accumulo.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.accumulo</groupId>
+      <artifactId>accumulo-core</artifactId>
+      <version>${accumulo.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-services-core</artifactId>
+      <version>4.10.7</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+      <version>4.10.7</version>
+    </dependency>
+  </dependencies>
+
+</project>
