@@ -45,7 +45,7 @@ Think of accumulo@COE like a home directory: it is fast and space limited.
 ### Merging Annotations and Other Features
 This library does not handle merging annotations and takes a very naive view of
 storing annotations: it just stores the same bytes which would be stored on
-disk. If you have a taks where you have annotations `A,B,C` for some communications
+disk. If you have a task where you have annotations `A,B,C` for some communications
 and would like to merge in annotations `D,E`, this is not your tool.
 If accumulo has annotations `A,B,C` and you want to go faster by only sending
 annotations `B` over the wire, this is not your tool.
