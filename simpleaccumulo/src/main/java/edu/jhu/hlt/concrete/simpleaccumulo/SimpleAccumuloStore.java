@@ -28,11 +28,13 @@ import edu.jhu.hlt.concrete.services.ServicesException;
 public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunicationService.Iface, AutoCloseable {
 
   private BatchWriter writer;
+  private Text colFam;
   private int numThreads;
 
   public SimpleAccumuloStore(SimpleAccumuloConfig config, int numThreads) {
     super(config);
     this.numThreads = numThreads;
+    this.colFam = new Text(config.namespace);
   }
 
   @Override
@@ -47,7 +49,6 @@ public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunic
         throw new RuntimeException(e);
       }
     }
-    Text colFam = new Text(config.namespace);
     Value value = new Value(commSer.serialize(c));
     Mutation mutation = new Mutation(c.getId());
     mutation.put(colFam, COMM_COL_QUALIFIER, value);
