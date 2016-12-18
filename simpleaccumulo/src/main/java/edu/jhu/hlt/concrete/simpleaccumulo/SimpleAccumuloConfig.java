@@ -29,6 +29,14 @@ public class SimpleAccumuloConfig implements Serializable {
   public final String zookeepers;     // e.g. "r8n04.cm.cluster:2181,r8n05.cm.cluster:2181,r8n06.cm.cluster:2181"
   
   public SimpleAccumuloConfig(String namespace, String table, String instanceName, String zookeepers) {
+    if (namespace == null)
+      throw new IllegalArgumentException("you must provide a namespace");
+    if (table == null || table.isEmpty())
+      throw new IllegalArgumentException("table is null or empty: " + table);
+    if (instanceName == null)
+      throw new IllegalArgumentException("you must provide an instanceName");
+    if (zookeepers == null || zookeepers.isEmpty())
+      throw new IllegalArgumentException("zookeepers is null or empty: " + zookeepers);
     this.namespace = namespace;
     this.table = table;
     this.instanceName = instanceName;

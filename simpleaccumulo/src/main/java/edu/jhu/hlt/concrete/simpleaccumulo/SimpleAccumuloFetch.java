@@ -12,6 +12,7 @@ import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
+import org.apache.hadoop.io.Text;
 import org.apache.thrift.TException;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TServer.Args;
@@ -28,6 +29,10 @@ import edu.jhu.hlt.concrete.services.ServicesException;
 /**
  * Simple single-table {@link FetchCommunicationService} using a user-specified column family for isolation.
  *
+ * The namespace is passed in at construction time via {@link SimpleAccumuloConfig},
+ * and thus cannot be set dynamically (one namespace per running Fetch service instance).
+ * This is the only viable option until {@link FetchRequest} gets a namespace field.
+ *
  * @author travis
  */
 public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunicationService.Iface, AutoCloseable {
@@ -43,25 +48,30 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
   
   @Override
   public FetchResult fetch(FetchRequest fr) throws ServicesException, TException {
-    if (fr == null || fr.isSetCommunicationIds() || fr.getCommunicationIdsSize() == 0)
+    if (fr == null || !fr.isSetCommunicationIds() || fr.getCommunicationIdsSize() == 0)
       throw new ServicesException("no comm ids");
     
     int n = fr.getCommunicationIdsSize();
     FetchResult r = new FetchResult();
     r.setCommunications(new ArrayList<>(n));
 
-    Authorizations auths = new Authorizations(fr.getAuths());
+    Authorizations auths = new Authorizations();
+    if (fr.isSetAuths())
+      auths = new Authorizations(fr.getAuths());
 
     try {
       if (n == 1) {
         if (reader == null)
           reader = getConnector().createScanner(config.table, auths);
         reader.setRange(Range.exact(fr.getCommunicationIds().get(0)));
-        Entry<Key, Value> e = reader.iterator().next();
-        byte[] commBytes = e.getValue().get();
-        Communication c = new Communication();
-        commDeser.deserialize(c, commBytes);
-        r.addToCommunications(c);
+        reader.fetchColumn(new Text(config.namespace), COMM_COL_QUALIFIER);
+        for (Entry<Key, Value> e : reader) {
+          byte[] commBytes = e.getValue().get();
+          Communication c = new Communication();
+          commDeser.deserialize(c, commBytes);
+          r.addToCommunications(c);
+        }
+        // Note: can return more than one Communication if the id is not uniq!
       } else {
         if (readerB == null)
           readerB = getConnector().createBatchScanner(config.table, auths, numThreads);
@@ -69,6 +79,7 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
         for (String c : fr.getCommunicationIds())
           ids.add(Range.exact(c));
         readerB.setRanges(ids);
+        readerB.fetchColumn(new Text(config.namespace), COMM_COL_QUALIFIER);
         for (Entry<Key, Value> e : readerB) {
           byte[] bytes = e.getValue().get();
           Communication c = new Communication();

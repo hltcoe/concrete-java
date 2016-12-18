@@ -52,3 +52,15 @@ annotations `B` over the wire, this is not your tool.
 I believe these are orthogonal and non-trivial problems which should not be
 a part of simple accumulo, which serves a simple and common need:
 read and write communications by id.
+
+### What is ingested?
+This section is likely to go out of data quickly, but I'll make my best effort.
+
+Currently everything is in the `simple_accumulo_dev` table of the accumulo nodes running on r8.
+
+The column family/namespace `twolfe-cag1` contains all 8,739,092 Communications in
+`/export/projects/fferraro/cag-4.6.10/processing/from-marcc/20161012-083257/gigaword-merged/tgz`
+
+The column family/namespace `twolfe-cawiki-en1` contains ??? Communications in
+`/export/projects/fferraro/cag-4.6.10/processing/wiki/semafor-processing/wiki-merged-fixed/tgz/en-wiki-articles.tar.gz`
+

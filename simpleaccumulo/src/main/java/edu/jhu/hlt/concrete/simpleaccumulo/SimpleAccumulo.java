@@ -60,9 +60,10 @@ public class SimpleAccumulo {
    * @param username e.g. "reader"
    * @param password e.g. new PasswordToken("an accumulo reader")
    */
-  public void connect(String username, AuthenticationToken password) throws Exception {
+  public Connector connect(String username, AuthenticationToken password) throws Exception {
     System.out.println("connecting to=" + config + " with username=" + username);
     conn = config.connect(username, password);  
+    return conn;
   }
   
   public Connector getConnector() {
@@ -77,8 +78,13 @@ public class SimpleAccumulo {
   }
   public AutoCloseableIterator<Communication> scan(Range rows) throws TableNotFoundException {
     Scanner s = getConnector().createScanner(config.table, new Authorizations());
+
+    // Restrict to key-values matching the given namespace, only the comm bytes
+    s.fetchColumn(new Text(config.namespace), COMM_COL_QUALIFIER);
+
     if (rows != null)
       s.setRange(rows);
+
     return new AutoCloseableIterator<Communication>() {
       Iterator<Entry<Key, Value>> entries = s.iterator();
       @Override
