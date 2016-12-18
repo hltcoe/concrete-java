@@ -2,6 +2,8 @@ package edu.jhu.hlt.concrete.simpleaccumulo;
 
 import java.util.Properties;
 
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.MutationsRejectedException;
@@ -43,6 +45,11 @@ public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunic
 
   @Override
   public void store(Communication c) throws ServicesException, TException {
+    try {
+      createTableIfNotExists();
+    } catch (AccumuloException | AccumuloSecurityException e) {
+      throw new ServicesException(e.getMessage());
+    }
     if (writer == null) {
       // BatchWriterConfig has reasonable defaults
       BatchWriterConfig bwConfig = new BatchWriterConfig();

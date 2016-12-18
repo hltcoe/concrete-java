@@ -3,10 +3,14 @@ package edu.jhu.hlt.concrete.simpleaccumulo;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.client.security.tokens.AuthenticationToken;
+import org.apache.accumulo.core.client.TableExistsException;
+import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
@@ -120,5 +124,17 @@ public class SimpleAccumulo {
 
   public boolean alive() throws TException {
     return true;
+  }
+
+  public void createTableIfNotExists() throws AccumuloException, AccumuloSecurityException {
+    TableOperations tableOps = getConnector().tableOperations();
+    try {
+      if (! tableOps.exists(config.table)) {
+        tableOps.create(config.table);
+      }
+    } catch (TableExistsException e) {
+      logger.warn("table came into existence between calls: {}",
+        e.getMessage());
+    }
   }
 }
