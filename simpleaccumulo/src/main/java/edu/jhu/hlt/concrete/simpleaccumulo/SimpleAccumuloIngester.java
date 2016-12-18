@@ -16,12 +16,16 @@ import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 
 import edu.jhu.hlt.concrete.Communication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Ingests {@link Communication}s from tgz archives.
  *
  * @author travis
  */
 public class SimpleAccumuloIngester {
+  private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloIngester.class);
   
   public static AutoCloseableIterator<Communication> getCommunicationsToIngest(Properties config) {
     String glob = config.getProperty("communications.glob");
@@ -55,9 +59,9 @@ public class SimpleAccumuloIngester {
     double interval = 10;
     double rateAvgLocal = 50;
     SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);    
-    System.err.println("using " + saConf);
+    logger.info("using " + saConf);
     int nt = Integer.parseInt(config.getProperty("numThreads", "4"));
-    System.err.println("using numThreads=" + nt);
+    logger.info("using numThreads=" + nt);
     try (SimpleAccumuloStore ingester = new SimpleAccumuloStore(saConf, nt);
         AutoCloseableIterator<Communication> comms = getCommunicationsToIngest(config)) {
       ingester.connect(
@@ -74,12 +78,12 @@ public class SimpleAccumuloIngester {
           rateAvgLocal = k * rate + (1-k) * rateAvgLocal;
           double rateAvgGlobal = stored / tm.secondsSinceFirstMark();
           storedPrev = stored;
-          System.err.printf(
-              "storedComms=%d\tcurRow=%s\tmins=%.1f\trateEma=%.1f comm/sec\trateAvg=%.1f comm/sec\n",
+          logger.info(
+              "storedComms={}\tcurRow={}\tmins={}\trateEma={} comm/sec\trateAvg={} comm/sec",
               stored, c.getId(), mins, rateAvgLocal, rateAvgGlobal);
         }
       }
     }
-    System.err.println("done, stored=" + stored);
+    logger.info("done, stored=" + stored);
   }
 }

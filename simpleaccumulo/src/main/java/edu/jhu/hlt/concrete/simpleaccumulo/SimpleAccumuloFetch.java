@@ -26,6 +26,9 @@ import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Simple single-table {@link FetchCommunicationService} using a user-specified column family for isolation.
  *
@@ -36,6 +39,7 @@ import edu.jhu.hlt.concrete.services.ServicesException;
  * @author travis
  */
 public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunicationService.Iface, AutoCloseable {
+  private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloFetch.class);
 
   private Scanner reader;
   private BatchScanner readerB;
@@ -112,9 +116,9 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
     SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);
     int nt = Integer.parseInt(config.getProperty("numThreads", "4"));
     int port = Integer.parseInt(config.getProperty("port", "9090"));
-    System.err.println("listening on port=" + port);
-    System.err.println("using numThreads=" + nt);
-    System.err.println("using " + saConf);
+    logger.info("listening on port=" + port);
+    logger.info("using numThreads=" + nt);
+    logger.info("using " + saConf);
     try (SimpleAccumuloFetch serv = new SimpleAccumuloFetch(saConf, nt)) {
       serv.connect(
           config.getProperty("accumulo.user"),
@@ -127,7 +131,7 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
       // Use this for a multithreaded server
       // TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-      System.out.println("Starting the simple server...");
+      logger.info("Starting the simple server...");
       server.serve();
     }
   }

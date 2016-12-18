@@ -1,0 +1,62 @@
+{
+  "configuration": {
+
+    "appenders": {
+      "Console": {
+        "name": "STDERR",
+        "target": "SYSTEM_ERR",
+        "PatternLayout": {
+          "pattern": "%d %-5p %c{1.} [%t] %m%n"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "info",
+        "appender-ref": {
+          "ref": "STDERR"
+        }
+      },
+
+      "logger" : [
+        {
+          "name" : "com.hp.hpl",
+          "level": "warn",
+          "appender-ref": {
+            "ref": "STDERR"
+          }
+        },
+
+        {
+            "name" : "zookeeper",
+            "level": "warn",
+            "appender-ref": {
+                "ref": "STDERR"
+            }
+        },
+        {
+          "name" : "org.apache.zookeeper",
+          "level": "warn",
+          "appender-ref": {
+            "ref": "STDERR"
+          }
+        },
+
+        {
+          "name" : "edu.jhu.hlt.gigaword",
+          "level" : "info",
+          "appender-ref": {
+            "ref": "STDERR"
+          }
+        },
+        {
+          "name" : "org.apache.jena",
+          "level": "warn",
+          "appender-ref": {
+            "ref": "STDERR"
+          }
+        }
+      ]
+    }
+  }
+}

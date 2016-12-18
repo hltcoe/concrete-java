@@ -20,12 +20,16 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Super-class for this module's server implementations.
  *
  * @author travis
  */
 public class SimpleAccumulo {
+  private static final Logger logger = LoggerFactory.getLogger(SimpleAccumulo.class);
 
   // Rows are communication ids, column family is a user provided namespace,
   // and this column qualifier is the address of the comm bytes.
@@ -61,7 +65,7 @@ public class SimpleAccumulo {
    * @param password e.g. new PasswordToken("an accumulo reader")
    */
   public Connector connect(String username, AuthenticationToken password) throws Exception {
-    System.out.println("connecting to=" + config + " with username=" + username);
+    logger.info("connecting to=" + config + " with username=" + username);
     conn = config.connect(username, password);  
     return conn;
   }

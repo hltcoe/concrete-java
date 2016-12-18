@@ -20,12 +20,16 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.access.StoreCommunicationService;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Simple single-table {@link StoreCommunicationService} using a user-specified column family for isolation.
  *
  * @author travis
  */
 public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunicationService.Iface, AutoCloseable {
+  private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloStore.class);
 
   private BatchWriter writer;
   private Text colFam;
@@ -73,9 +77,9 @@ public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunic
     SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);    
     int nt = Integer.parseInt(config.getProperty("numThreads", "4"));
     int port = Integer.parseInt(config.getProperty("port", "9090"));
-    System.err.println("listening on port=" + port);
-    System.err.println("using numThreads=" + nt);
-    System.err.println("using " + saConf);
+    logger.info("listening on port=" + port);
+    logger.info("using numThreads=" + nt);
+    logger.info("using " + saConf);
     try (SimpleAccumuloStore serv = new SimpleAccumuloStore(saConf, nt)) {
       serv.connect(
           config.getProperty("accumulo.user"),
@@ -88,7 +92,7 @@ public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunic
       // Use this for a multithreaded server
       // TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-      System.out.println("Starting the simple server...");
+      logger.info("Starting the simple server...");
       server.serve();
     }
   }

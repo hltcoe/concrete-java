@@ -10,12 +10,16 @@ import org.apache.accumulo.core.client.Instance;
 import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.core.client.security.tokens.AuthenticationToken;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Specifies a location to put data.
  *
  * @author travis
  */
 public class SimpleAccumuloConfig implements Serializable {
+  private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloConfig.class);
   private static final long serialVersionUID = 6363692365193204723L;
 
   // TODO support dev/production split

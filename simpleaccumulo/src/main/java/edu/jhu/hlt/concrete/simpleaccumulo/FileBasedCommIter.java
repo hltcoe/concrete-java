@@ -8,23 +8,28 @@ import java.util.List;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.iterators.TarGzArchiveEntryCommunicationIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Iterates over tgz archives.
  */
 public class FileBasedCommIter implements AutoCloseableIterator<Communication> {
+  private static final Logger logger = LoggerFactory.getLogger(FileBasedCommIter.class);
+
   private ArrayDeque<File> inputCommTgzs;
   private TarGzArchiveEntryCommunicationIterator iter;
 
   public FileBasedCommIter(List<File> inputCommTgzs) {
     this.inputCommTgzs = new ArrayDeque<>();
     this.inputCommTgzs.addAll(inputCommTgzs);
-    System.err.println("numFiles=" + inputCommTgzs.size() + " first=" + this.inputCommTgzs.peek().getPath());
+    logger.info("numFiles=" + inputCommTgzs.size() + " first=" + this.inputCommTgzs.peek().getPath());
     advance();
   }
   
   private void advance() {
     File f = inputCommTgzs.pop();
-    System.err.println("reading " + f.getName());
+    logger.info("reading " + f.getName());
     try {
       iter = new TarGzArchiveEntryCommunicationIterator(new FileInputStream(f));
     } catch (Exception e) {
