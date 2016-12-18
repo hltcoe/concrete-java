@@ -70,4 +70,8 @@ public class SimpleAccumuloConfig implements Serializable {
         config.getProperty("accumulo.instance", DEFAULT_INSTANCE),
         config.getProperty("accumulo.zookeepers", DEFAULT_ZOOKEEPERS));
   }
+
+  public static Properties loadConfig() {
+	  return System.getProperties();
+  }
 }

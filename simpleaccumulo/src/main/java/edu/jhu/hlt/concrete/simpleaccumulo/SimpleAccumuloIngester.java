@@ -52,7 +52,7 @@ public class SimpleAccumuloIngester {
   }
 
   public static void main(String[] args) throws Exception {
-    Properties config = System.getProperties();
+    Properties config = SimpleAccumuloConfig.loadConfig();
     TimeMarker tm = new TimeMarker();
     int stored = 0;
     int storedPrev = 0;

@@ -112,7 +112,7 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
   }
   
   public static void main(String[] args) throws Exception {
-	Properties config = System.getProperties();
+    Properties config = SimpleAccumuloConfig.loadConfig();
     SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);
     int nt = Integer.parseInt(config.getProperty("numThreads", "4"));
     int port = Integer.parseInt(config.getProperty("port", "9090"));

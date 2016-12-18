@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
 public class SimpleAccumuloPrintIds {
   private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloPrintIds.class);
   public static void main(String[] args) throws Exception {
-    Properties properties = System.getProperties();
-    SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(properties);
+    Properties config = SimpleAccumuloConfig.loadConfig();
+    SimpleAccumuloConfig saConf = SimpleAccumuloConfig.fromConfig(config);
     SimpleAccumulo sa = new SimpleAccumulo(saConf);
     sa.connect(
-        properties.getProperty("accumulo.user"),
-        new PasswordToken(properties.getProperty("accumulo.password")));
+        config.getProperty("accumulo.user"),
+        new PasswordToken(config.getProperty("accumulo.password")));
     try (AutoCloseableIterator<Communication> it = sa.scan();) {
       while (it.hasNext()) {
         System.out.println(it.next().getId());
