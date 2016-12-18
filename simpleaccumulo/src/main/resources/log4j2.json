@@ -6,7 +6,7 @@
         "name": "STDERR",
         "target": "SYSTEM_ERR",
         "PatternLayout": {
-          "pattern": "%d %-5p %c{1.} [%t] %m%n"
+          "pattern": "%d %-5p %m%n"
         }
       }
     },

@@ -79,8 +79,8 @@ public class SimpleAccumuloIngester {
           double rateAvgGlobal = stored / tm.secondsSinceFirstMark();
           storedPrev = stored;
           logger.info(
-              "storedComms={}\tcurRow={}\tmins={}\trateEma={} comm/sec\trateAvg={} comm/sec",
-              stored, c.getId(), mins, rateAvgLocal, rateAvgGlobal);
+              "storedComms={}\tmins={}\trateEma={} comm/sec\trateAvg={} comm/sec\tcurRow={}",
+              stored, Math.round(mins), Math.round(rateAvgLocal), Math.round(rateAvgGlobal), c.getId());
         }
       }
     }
