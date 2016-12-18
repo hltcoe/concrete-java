@@ -1,6 +1,10 @@
 package edu.jhu.hlt.concrete.simpleaccumulo;
 
 import java.io.Serializable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 import org.apache.accumulo.core.client.AccumuloException;
@@ -71,7 +75,15 @@ public class SimpleAccumuloConfig implements Serializable {
         config.getProperty("accumulo.zookeepers", DEFAULT_ZOOKEEPERS));
   }
 
-  public static Properties loadConfig() {
-	  return System.getProperties();
+  public static Properties loadConfig() throws IOException, FileNotFoundException {
+	  Properties systemConfig = System.getProperties();
+    String configFilePath = systemConfig.getProperty("config.file");
+    if (configFilePath == null) {
+      return systemConfig;
+    } else {
+      Properties config = new Properties();
+      config.load(new FileInputStream(new File(configFilePath)));
+      return config;
+    }
   }
 }
