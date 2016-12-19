@@ -1,0 +1,5 @@
+accumulo.user=USER
+accumulo.password=PASSWORD
+accumulo.namespace=USER
+accumulo.instance=minigrid
+accumulo.zookeepers=r8n04.cm.cluster:2181,r8n05.cm.cluster:2181,r8n06.cm.cluster:2181
