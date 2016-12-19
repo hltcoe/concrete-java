@@ -133,12 +133,15 @@ Accumulo, or even 3 copies of twitter.
 Before adding a dataset, ask others what already exists; note Accumulo
 is fast but space-constrained.
 
+A note about space: Accumulo requires about 115% of the space used by gzipped
+communications.
+
 ## What's currently in Accumulo on the mini-grid
 
 The column family/namespace `twolfe-cag1` contains all 8,739,092 Communications in
 `/export/projects/fferraro/cag-4.6.10/processing/from-marcc/20161012-083257/gigaword-merged/tgz`
 
-The column family/namespace `twolfe-cawiki-en1` contains ??? Communications in
+The column family/namespace `twolfe-cawiki-en1` contains 5,059,644 Communications in
 `/export/projects/fferraro/cag-4.6.10/processing/wiki/semafor-processing/wiki-merged-fixed/tgz/en-wiki-articles.tar.gz`
 
 ## Running your own Accumulo cluster
