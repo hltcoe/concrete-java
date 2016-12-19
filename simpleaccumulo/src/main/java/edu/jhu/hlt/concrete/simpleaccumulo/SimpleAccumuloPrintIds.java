@@ -32,10 +32,13 @@ public class SimpleAccumuloPrintIds {
     sa.connect(
         config.getProperty("accumulo.user"),
         new PasswordToken(config.getProperty("accumulo.password")));
+    long numComms = 0;
     try (AutoCloseableIterator<Communication> it = sa.scan();) {
       while (it.hasNext()) {
         System.out.println(it.next().getId());
+        ++numComms;
       }
     }
+    logger.info("Scanned {} communications", numComms);
   }
 }
