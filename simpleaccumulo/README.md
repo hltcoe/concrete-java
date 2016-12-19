@@ -144,5 +144,5 @@ The column family/namespace `twolfe-cawiki-en1` contains ??? Communications in
 ## Running your own Accumulo cluster
 
 See
-[the scion server readme](https://gitlab.hltcoe.jhu.edu/concrete/scion/tree/master/server/README.md)
+[the scion server readme](https://gitlab.hltcoe.jhu.edu/concrete/scion/blob/master/server/README.md)
 for information about running your own Accumulo cluster.
