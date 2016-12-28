@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.stream.Stream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
@@ -234,9 +237,14 @@ public class CoNLLX {
   public static SimpleImmutableEntry<CoNLLX, Communication> readCommunication(String commId, File inputConll, String toolName, boolean showTiming) throws Exception {
     if (VERBOSE)
       System.out.println("reading conll from " + inputConll.getPath());
+    try (Stream<String> lines = Files.lines(inputConll.toPath())) {
+      return readCommunication(commId, lines.iterator(), toolName, showTiming);
+    }
+  }
+
+  public static SimpleImmutableEntry<CoNLLX, Communication> readCommunication(String commId, Iterator<String> inputConll, String toolName, boolean showTiming) throws Exception {
     Communication c = new Communication();
     c.setUuid(new UUID(java.util.UUID.randomUUID().toString()));
-//    c.setId(inputConll.getPath());
     c.setId(commId);
     c.setType("document");
     c.setMetadata(new AnnotationMetadata());
@@ -250,23 +258,22 @@ public class CoNLLX {
     List<String> cur = new ArrayList<>();
     List<Tokenization> sentences = new ArrayList<>();
     long start = System.currentTimeMillis();
-    try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(inputConll)))) {
-      for (String line = r.readLine(); line != null; line = r.readLine()) {
-        if (line.isEmpty()) {
-          // End of sentence
-          sent++;
-          Tokenization t = conll.convert(cur);
-          sentences.add(t);
-          cur.clear();
+    while (inputConll.hasNext()) {
+      String line = inputConll.next();
+      if (line.isEmpty()) {
+        // End of sentence
+        sent++;
+        Tokenization t = conll.convert(cur);
+        sentences.add(t);
+        cur.clear();
 
-          if (showTiming && sent % 1000 == 0) {
-            int sec = (int) ((System.currentTimeMillis() - start) / 1000);
-            System.err.println("read " + sent + " sentences and " + tok + " tokens in " + sec + " seconds");
-          }
-        } else {
-          tok++;
-          cur.add(line);
+        if (showTiming && sent % 1000 == 0) {
+          int sec = (int) ((System.currentTimeMillis() - start) / 1000);
+          System.err.println("read " + sent + " sentences and " + tok + " tokens in " + sec + " seconds");
         }
+      } else {
+        tok++;
+        cur.add(line);
       }
     }
     if (!cur.isEmpty()) {
@@ -306,7 +313,8 @@ public class CoNLLX {
   }
 
   /**
-   * @param c will be mutated in place
+   * @param c should have one section containing all the sentences
+   * (as you would expect from conll which doesn't have section structure). c will be mutated in place
    * @param sectionMetaInfo values be tab-separated [sectionKind, sectionLabel, sectionNumberList]
    */
   public void groupBySections(Communication c, List<String> sectionMetaInfo) {

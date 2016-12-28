@@ -72,11 +72,11 @@ import edu.jhu.hlt.utilt.AutoCloseableIterator;
  * @author travis
  */
 public class ConcreteToCoNLLX {
-  public static boolean VERBOSE = false;
 
   private static final CommunicationSerializer ser = new CompactCommunicationSerializer();
 
-  String outputPosToolname = null;  // null means just output words
+  private String outputPosToolname = null;  // null means just output words
+  public boolean verbose = false;
 
   private static void dirArg(File f) {
     if (f == null)
@@ -87,8 +87,15 @@ public class ConcreteToCoNLLX {
       f.mkdirs();
   }
 
+  /**
+   * Only dumps the words.
+   *
+   * @param communicationIn can be a .tgz, .tar.gz, or .comm file
+   * @param conllOut can be a directory (in which case commId.conll will be used) or a file
+   * @param sectionMetaInfoOut may be null, otherwise same rules as conllOut
+   */
   public void dump(File communicationIn, File conllOut, File sectionMetaInfoOut) throws Exception {
-    if (VERBOSE)
+    if (verbose)
       System.out.println("reading communication from " + communicationIn.getPath());
     String s = communicationIn.getName().toLowerCase();
     if (s.endsWith(".tgz") || s.endsWith(".tar.gz")) {
@@ -111,12 +118,14 @@ public class ConcreteToCoNLLX {
   }
 
   /**
+   * Only dumps the words.
+   *
    * @param commIn
-   * @param conllOut
-   * @param sectionMetaInfoOut may be null
+   * @param conllOut can be a directory (in which case commId.conll will be used) or a file
+   * @param sectionMetaInfoOut may be null, otherwise same rules as conllOut
    */
   public void dump(Communication commIn, File conllOut, File sectionMetaInfoOut) throws IOException {
-    if (VERBOSE)
+    if (verbose)
       System.out.println("writing conll to " + conllOut.getPath());
 
     String TAB_NIL = "\t_";
@@ -132,7 +141,7 @@ public class ConcreteToCoNLLX {
     List<String> metaBySent = new ArrayList<>();
     try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
       for (int sectionIdx = 0; sectionIdx < commIn.getSectionListSize(); sectionIdx++) {
-        if (VERBOSE)
+        if (verbose)
           System.out.println("section " + sectionIdx);
         Section section = commIn.getSectionList().get(sectionIdx);
         if (!section.isSetSentenceList() || section.getSentenceListSize() == 0)
@@ -163,7 +172,7 @@ public class ConcreteToCoNLLX {
           Tokenization toks = sentence.getTokenization();
           List<Token> tokens = toks.getTokenList().getTokenList();
 
-          if (VERBOSE)
+          if (verbose)
             System.out.println("sentence " + sentIdx++);
 
           if (outputPosToolname != null)
@@ -192,7 +201,7 @@ public class ConcreteToCoNLLX {
     }
 
     if (sectionMetaInfoOut != null) {
-      if (VERBOSE)
+      if (verbose)
         System.err.println("writing sentence-section meta information to " + sectionMetaInfoOut.getPath());
       try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(sectionMetaInfoOut)))) {
         for (String line : metaBySent) {
