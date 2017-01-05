@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
 PATH_TO_THRIFT_FILES=$1
 THRIFT_OUT_DIR='core/src/main/java'
 THRIFT_ARGS="-out $THRIFT_OUT_DIR --gen java:private-members,hashcode"

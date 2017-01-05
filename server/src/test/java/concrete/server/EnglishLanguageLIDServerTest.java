@@ -16,9 +16,9 @@ import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.LanguageIdentification;
 import edu.jhu.hlt.concrete.server.ConcreteServer;
-import edu.jhu.hlt.concrete.services.Annotator;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
-
+import edu.jhu.hlt.concrete.annotate.AnnotateCommunicationService;
+import edu.jhu.hlt.concrete.annotate.AnnotateCommunicationService.Iface;
 /**
  *
  */
@@ -26,7 +26,7 @@ public class EnglishLanguageLIDServerTest extends AbstractServiceTest {
 
   private static final Logger logger = LoggerFactory.getLogger(EnglishLanguageLIDServerTest.class);
 
-  private Annotator.Client localClient;
+  private AnnotateCommunicationService.Client localClient;
 
   /**
    * @throws java.lang.Exception
@@ -41,7 +41,7 @@ public class EnglishLanguageLIDServerTest extends AbstractServiceTest {
     logger.info("Server started.");
 
     this.initializeClientFields();
-    this.localClient = new Annotator.Client(this.protocol);
+    this.localClient = new AnnotateCommunicationService.Client(this.protocol);
     logger.info("client: {}", this.localClient.getInputProtocol().getScheme());
   }
 
