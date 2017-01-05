@@ -16,8 +16,8 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.jhu.hlt.concrete.services.Annotator;
-import edu.jhu.hlt.concrete.services.Annotator.Iface;
+import edu.jhu.hlt.concrete.annotate.AnnotateCommunicationService;
+import edu.jhu.hlt.concrete.annotate.AnnotateCommunicationService.Iface;
 
 /**
  * Sample class that provides an easily extendable
@@ -36,7 +36,7 @@ public class ConcreteServer implements AutoCloseable, Runnable {
   /**
    *
    */
-  public ConcreteServer(Annotator.Iface impl, int port) throws ServerException {
+  public ConcreteServer(AnnotateCommunicationService.Iface impl, int port) throws ServerException {
     try {
       this.serverXport = new TNonblockingServerSocket(port);
       // TODO: eval HaHs server?
@@ -46,7 +46,7 @@ public class ConcreteServer implements AutoCloseable, Runnable {
       final TFramedTransport.Factory transFactory = new TFramedTransport.Factory(Integer.MAX_VALUE);
       args.transportFactory(transFactory);
       // legitimately do not know type bound here - guessing Iface
-      Annotator.Processor<Iface> proc = new Annotator.Processor<>(impl);
+      AnnotateCommunicationService.Processor<Iface> proc = new AnnotateCommunicationService.Processor<>(impl);
       args.processorFactory(new TProcessorFactory(proc));
       args.maxReadBufferBytes = Long.MAX_VALUE;
 
@@ -79,7 +79,7 @@ public class ConcreteServer implements AutoCloseable, Runnable {
     this.serverXport.close();
   }
 
-  public static final void createServer(Annotator.Iface impl, int port) throws ServerException {
+  public static final void createServer(AnnotateCommunicationService.Iface impl, int port) throws ServerException {
     String implClassString = impl.getClass().toString();
     logger.info("Preparing to start {} on port {}.", implClassString, port);
     try (ConcreteServer srv = new ConcreteServer(impl, port);) {
