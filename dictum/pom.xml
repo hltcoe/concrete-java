@@ -88,6 +88,10 @@
     </dependency>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
       <scope>test</scope>
     </dependency>

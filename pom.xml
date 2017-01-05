@@ -1,19 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  
+  <!--  <parent>
+       <groupId>edu.jhu.hlt</groupId>
+       <artifactId>concrete-parent</artifactId>
+       <version>4.11</version>
+       </parent>-->
 
-  <parent>
-    <groupId>edu.jhu.hlt</groupId>
-    <artifactId>concrete-parent</artifactId>
-    <version>4.11</version>
-  </parent>
-
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    
+    <javac.version.src>1.8</javac.version.src>
+    <javac.version.target>1.8</javac.version.target>
+    <version.plugin.jar>2.6</version.plugin.jar>
+    <version.plugin.compiler>3.3</version.plugin.compiler>
+    <version.plugin.javadoc>2.10.3</version.plugin.javadoc>
+    <version.plugin.release>2.5.3</version.plugin.release>
+    <version.plugin.surefire>2.18.1</version.plugin.surefire>
+    <version.plugin.failsafe>2.18.1</version.plugin.failsafe>
+    <version.plugin.source>2.4</version.plugin.source>
+    <version.plugin.enforcer>1.4</version.plugin.enforcer>
+    <version.plugin.assembly>2.5.3</version.plugin.assembly>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <log4j.version>2.7</log4j.version>
+    <jackson.version>2.8.1</jackson.version>
+    <concrete.release.version>${project.version}</concrete.release.version>
+    <github.global.server>github</github.global.server>
+  </properties>  
+  
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
   <version>4.11.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>safe</module>
+    <module>core</module>
+    <module>safe</module>    
     <module>util</module>
     <module>server</module>
     <module>tift</module>
@@ -79,14 +103,6 @@
     </license>
   </licenses>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.7</log4j.version>
-    <jackson.version>2.8.1</jackson.version>
-    <concrete.release.version>${project.version}</concrete.release.version>
-    <github.global.server>github</github.global.server>
-  </properties>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -117,6 +133,18 @@
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <fork>true</fork>
+        </configuration>
+      </plugin>
+    
+<!--
+      <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>3.4</version>
         <dependencies>
@@ -133,23 +161,45 @@
         </dependencies>
         <configuration>
         </configuration>
-      </plugin>
+      </plugin>!-->
     </plugins>
   </build>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.21</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>edu.jhu.hlt</groupId>
-        <artifactId>concrete-safe</artifactId>
+        <artifactId>concrete-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-services</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-safe</artifactId>
+        <version>${project.version}</version>
+	</dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-util</artifactId>
         <version>${project.version}</version>
       </dependency>
+
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-validation</artifactId>
@@ -174,12 +224,13 @@
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-analytics-base</artifactId>
         <version>${project.version}</version>
-      </dependency>
+	</dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
         <version>2.2.0</version>
-      </dependency>
+	</dependency>
+
       <dependency>
         <groupId>org.codehaus.woodstox</groupId>
         <artifactId>woodstox-core-asl</artifactId>
@@ -271,6 +322,7 @@
     </dependencies>
   </dependencyManagement>
 
+  <!--
   <distributionManagement>
     <repository>
       <id>coe-mvn</id>
@@ -286,7 +338,7 @@
       <id>github-project-site</id>
       <name>Concrete-Java Github Pages</name>
       <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
-      <!-- <url>github:http://hltcoe.github.io/concrete-java/</url> -->
     </site>
-  </distributionManagement>
+    </distributionManagement>
+    -->
 </project>

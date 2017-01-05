@@ -8,65 +8,18 @@
     <version>4.11.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>concrete-server</artifactId>
-  <name>Server</name>
-  <description>Library containing implementations of Thrift servers for use with Concrete.</description>
-  <url>https://hltcoe.github.io/concrete-java/util/</url>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-filtered-java-source</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <outputDirectory>${project.build.directory}/filtered-java-src</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/java-filtered</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-filtered-java-source</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/filtered-java-src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <artifactId>concrete-core</artifactId>
+  <name>Core</name>
+  <description>Basic code generated directly from the Concrete Thrift specifications.</description>
+  <url>https://hltcoe.github.io/concrete-java/core/</url>
 
   <dependencies>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-safe</artifactId>
+     <dependency>
+      <groupId>org.apache.thrift</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>0.9.3</version>
     </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-util</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -120,10 +73,5 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>acute</artifactId>
     </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-core</artifactId>
-    </dependency>
-
   </dependencies>
 </project>
