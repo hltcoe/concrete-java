@@ -365,7 +365,8 @@ public class CoNLLX {
       prevMeta = meta;
     }
 
-    System.out.println("grouped " + sectionMetaInfo.size() + " sentences into " + ns.size() + " sections");
+    if (VERBOSE)
+      System.out.println("grouped " + sectionMetaInfo.size() + " sentences into " + ns.size() + " sections");
     c.setSectionList(new ArrayList<>(ns));
   }
 
