@@ -120,5 +120,10 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>acute</artifactId>
     </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-core</artifactId>
+    </dependency>
+
   </dependencies>
 </project>
