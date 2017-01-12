@@ -14,20 +14,21 @@ import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
 import org.apache.thrift.TException;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TServer.Args;
-import org.apache.thrift.server.TSimpleServer;
-import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.TProcessorFactory;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.server.TNonblockingServer;
+import org.apache.thrift.transport.TFramedTransport;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingServerTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.access.FetchCommunicationService;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService.Processor;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.services.ServicesException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Simple single-table {@link FetchCommunicationService} using a user-specified column family for isolation.
@@ -124,12 +125,16 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
           config.getProperty("accumulo.user"),
           new PasswordToken(config.getProperty("accumulo.password")));  // TODO better security
       
-      TServerTransport serverTransport = new TServerSocket(port);
-      TServer server = new TSimpleServer(new Args(serverTransport)
-          .processor(new FetchCommunicationService.Processor<>(serv)));
-
-      // Use this for a multithreaded server
-      // TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+      Processor<SimpleAccumuloFetch> proc = 
+          new FetchCommunicationService.Processor<>(serv);
+      
+      TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
+      TNonblockingServer.Args serverArgs = new TNonblockingServer.Args(transport);
+      serverArgs = serverArgs.processorFactory(new TProcessorFactory(proc));
+      serverArgs = serverArgs.protocolFactory(new TCompactProtocol.Factory());
+      serverArgs = serverArgs.transportFactory(new TFramedTransport.Factory(Integer.MAX_VALUE));
+      serverArgs.maxReadBufferBytes = Long.MAX_VALUE;
+      TNonblockingServer server = new TNonblockingServer(serverArgs);
 
       logger.info("Starting the simple server...");
       server.serve();
