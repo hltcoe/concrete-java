@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple single-table {@link FetchCommunicationService} using a user-specified column family for isolation.
- *
  * @author travis
  */
 public class SimpleAccumuloPrintIds {
