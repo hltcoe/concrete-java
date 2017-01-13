@@ -26,8 +26,9 @@
   
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.12.0-SNAPSHOT</version>
+  <version>4.11.4-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <modules>
     <module>core</module>
     <module>safe</module>    
@@ -52,6 +53,7 @@
     <module>analytics/base</module>
     <module>analytics/simple</module>
     <module>services</module>
+    <module>simpleaccumulo</module>
   </modules>
 
   <name>Concrete</name>
