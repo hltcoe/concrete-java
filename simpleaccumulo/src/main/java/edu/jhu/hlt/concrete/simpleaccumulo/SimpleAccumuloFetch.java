@@ -24,6 +24,7 @@ import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.services.ServicesException;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 
 /**
  * Simple single-table {@link FetchCommunicationService} using a user-specified column family for isolation.
@@ -40,7 +41,19 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
     super(config);
     this.numThreads = numThreads;
   }
-  
+
+  @Override
+  public long getCommunicationCount() throws NotImplementedException, TException {
+      long count = 0;
+      return count;
+  }
+
+  @Override
+  public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
+      List<String> ids = new ArrayList<String>();
+      return ids;
+  }
+
   @Override
   public FetchResult fetch(FetchRequest fr) throws ServicesException, TException {
     if (fr == null || fr.isSetCommunicationIds() || fr.getCommunicationIdsSize() == 0)
