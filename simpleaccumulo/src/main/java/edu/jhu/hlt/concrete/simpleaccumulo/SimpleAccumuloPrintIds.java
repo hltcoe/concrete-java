@@ -18,9 +18,7 @@ import edu.jhu.hlt.concrete.Communication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author travis
- */
+
 public class SimpleAccumuloPrintIds {
   private static final Logger logger = LoggerFactory.getLogger(SimpleAccumuloPrintIds.class);
   public static void main(String[] args) throws Exception {
