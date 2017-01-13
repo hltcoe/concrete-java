@@ -79,8 +79,12 @@
   </developers>
 
   <scm>
+    <connection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</connection>
+    <developerConnection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</developerConnection>
+    <!--
     <connection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</developerConnection>
+    -->
     <url>https://github.com/hltcoe/concrete-java/</url>
     <tag>HEAD</tag>
   </scm>
@@ -101,6 +105,15 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-release-plugin</artifactId>
+	  <version>2.5.3</version>
+	  <configuration>
+	    <autoVersionSubmodules>true</autoVersionSubmodules>
+	    <tagNameFormat>v@{project.version}</tagNameFormat>
+	  </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
@@ -364,11 +377,13 @@
       <name>coe-mvn-snapshots</name>
       <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-snapshot-local</url>
     </snapshotRepository>
+    <!--
     <site>
       <id>github-project-site</id>
       <name>Concrete-Java Github Pages</name>
       <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
     </site>
+    -->
   </distributionManagement>
 
 </project>
