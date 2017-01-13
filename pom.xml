@@ -79,8 +79,12 @@
   </developers>
 
   <scm>
+    <connection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</connection>
+    <developerConnection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</developerConnection>
+    <!--
     <connection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</developerConnection>
+    -->
     <url>https://github.com/hltcoe/concrete-java/</url>
     <tag>HEAD</tag>
   </scm>
