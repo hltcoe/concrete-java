@@ -54,14 +54,12 @@ public class SimpleAccumuloFetch extends SimpleAccumulo implements FetchCommunic
 
   @Override
   public long getCommunicationCount() throws NotImplementedException, TException {
-      long count = 0;
-      return count;
+    throw new NotImplementedException("simpleaccumulo does not work this way");
   }
 
   @Override
   public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
-      List<String> ids = new ArrayList<String>();
-      return ids;
+    throw new NotImplementedException("simpleaccumulo does not work this way");
   }
 
   @Override
