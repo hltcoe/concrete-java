@@ -15,11 +15,6 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TProcessorFactory;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.server.TNonblockingServer;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TServer.Args;
-import org.apache.thrift.server.TSimpleServer;
-import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TNonblockingServerTransport;
@@ -109,12 +104,6 @@ public class SimpleAccumuloStore extends SimpleAccumulo implements StoreCommunic
       serverArgs = serverArgs.transportFactory(new TFramedTransport.Factory(Integer.MAX_VALUE));
       serverArgs.maxReadBufferBytes = Long.MAX_VALUE;
       TNonblockingServer server = new TNonblockingServer(serverArgs);
-      
-      /*
-      TServerTransport serverTransport = new TServerSocket(port);
-      TServer server = new TSimpleServer(new Args(serverTransport)
-          .processor(new StoreCommunicationService.Processor<>(serv)));
-      */
 
       logger.info("Starting the simple server...");
       server.serve();
