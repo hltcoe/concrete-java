@@ -33,6 +33,10 @@
       <artifactId>concrete-util</artifactId>
     </dependency>
     <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-services</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
