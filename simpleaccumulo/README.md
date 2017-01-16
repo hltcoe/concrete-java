@@ -29,6 +29,18 @@ mvn clean compile assembly:single
 
 Note: command-line usage is subject to change.
 
+## Users/Accounts
+
+If you only need to read (e.g. use `SimpleAccumuloFetch`), please use the
+read-only user `reader` with the password `an accumulo reader`. 
+
+If you *must* write, you can use the user `simple_accumulo_writer` with the
+password `writeTHEdata?!`, but please be careful not to un-intentionally
+clobber others data. The simplest way to do this is to use your own namespace,
+which will avoid overwriting a `Communication` with the same id in another
+namespace. *DO NOT* use a common namespace like `twolfe-cag1` with anything
+which writes values, such as the `SimpleAccumuloStore` service.
+
 ### Configuration
 
 Java Properties are used for all configuration, including Accumulo
