@@ -5,6 +5,9 @@ Concrete Java
 ========
 Java libraries for the [Concrete](https://github.com/hltcoe/concrete) HLT data schema.
 
+JavaDoc API documentation is hosted on
+[javadoc.io](http://www.javadoc.io/doc/edu.jhu.hlt/concrete-core)
+
 ## How do I run the simple ingesters?
 Consult the [README.md](ingesters/simple/README.md) for the simple ingesters project.
 
