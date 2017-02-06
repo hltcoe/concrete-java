@@ -10,7 +10,7 @@
   <artifactId>miscommunication</artifactId>
   <name>MisCommunication</name>
   <description>Miscellaneous Concrete Communications interfaces and utilities.</description>
-  <url>https://hltcoe.github.io/concrete-java/util/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/miscommunication/</url>
 
   <build>
     <plugins>

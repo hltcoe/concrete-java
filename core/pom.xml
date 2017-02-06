@@ -10,7 +10,7 @@
   <artifactId>concrete-core</artifactId>
   <name>Core</name>
   <description>Basic code generated directly from the Concrete Thrift specifications.</description>
-  <url>https://hltcoe.github.io/concrete-java/core/</url>
+  <url>http://www.javadoc.io/doc/edu.jhu.hlt/concrete-core/</url>
 
   <dependencies>
      <dependency>

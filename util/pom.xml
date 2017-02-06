@@ -10,7 +10,7 @@
   <artifactId>concrete-util</artifactId>
   <name>Utility</name>
   <description>Utility library for use with Concrete-Java</description>
-  <url>https://hltcoe.github.io/concrete-java/util/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-util/</url>
 
   <build>
     <plugins>
