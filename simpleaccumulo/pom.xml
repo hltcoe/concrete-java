@@ -10,7 +10,7 @@
   <artifactId>concrete-simpleaccumulo</artifactId>
   <name>simpleaccumulo</name>
   <description>Store and Fetch Communications stored in accumulo</description>
-  <url>https://hltcoe.github.io/concrete-java/simpleaccumulo/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-simpleaccumulo/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

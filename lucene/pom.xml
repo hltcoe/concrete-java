@@ -10,7 +10,7 @@
   <artifactId>concrete-lucene</artifactId>
   <name>Lucene</name>
   <description>Lucene indexing for Concrete</description>
-  <url>https://hltcoe.github.io/concrete-java/lucene/</url>
+  <url>http://www.javadoc.io/doc/edu.jhu.hlt/concrete-lucene/</url>
 
   <build>
     <plugins>

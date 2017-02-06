@@ -10,7 +10,7 @@
   <artifactId>tift</artifactId>
   <name>Tift</name>
   <description>Tift is for Tokenization</description>
-  <url>http://hltcoe.github.io/concrete-java/tift</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/tift/</url>
 
   <dependencies>
     <dependency>

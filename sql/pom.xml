@@ -10,7 +10,7 @@
   <artifactId>concrete-sql</artifactId>
   <name>SQL</name>
   <description>SQL utilities for Concrete</description>
-  <url>https://hltcoe.github.io/concrete-java/sql/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-sql/</url>
 
   <build>
     <plugins>

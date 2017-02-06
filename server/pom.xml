@@ -10,7 +10,7 @@
   <artifactId>concrete-server</artifactId>
   <name>Server</name>
   <description>Library containing implementations of Thrift servers for use with Concrete.</description>
-  <url>https://hltcoe.github.io/concrete-java/util/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-server/</url>
 
   <build>
     <plugins>

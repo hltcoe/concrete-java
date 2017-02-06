@@ -11,7 +11,7 @@
   <artifactId>concrete-ontology</artifactId>
   <name>Concrete :: Ontology</name>
   <description>Concrete ontology and Java library.</description>
-  <url>https://hltcoe.github.io/concrete-java/ontology/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-ontology/</url>
 
   <licenses>
     <license>

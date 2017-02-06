@@ -10,7 +10,7 @@
   <artifactId>concrete-services</artifactId>
   <name>Services</name>
   <description>Code related to Concrete Services.</description>
-  <url>https://hltcoe.github.io/concrete-java/services/</url>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-services/</url>
 
   <dependencies>
     <dependency>
