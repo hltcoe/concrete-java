@@ -132,7 +132,7 @@ public class ConcreteToCoNLLX {
 
     if (conllOut.isDirectory())
       conllOut = new File(conllOut, commIn.getId() + ".conll");
-    if (sectionMetaInfoOut.isDirectory())
+    if (sectionMetaInfoOut != null && sectionMetaInfoOut.isDirectory())
       sectionMetaInfoOut = new File(sectionMetaInfoOut, commIn.getId() + ".section-info.aux");
 
     OutputStream os = new FileOutputStream(conllOut);
