@@ -15,7 +15,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.13.0</version>
+  <version>4.13.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
