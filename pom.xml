@@ -1,26 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>mvn-oss-parent</artifactId>
+    <version>3</version>
+  </parent>
   
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>    
-    <javac.version.src>1.8</javac.version.src>
-    <javac.version.target>1.8</javac.version.target>
-    <version.plugin.jar>2.6</version.plugin.jar>
-    <version.plugin.compiler>3.3</version.plugin.compiler>
-    <version.plugin.javadoc>2.10.3</version.plugin.javadoc>
-    <version.plugin.release>2.5.3</version.plugin.release>
-    <version.plugin.surefire>2.18.1</version.plugin.surefire>
-    <version.plugin.failsafe>2.18.1</version.plugin.failsafe>
-    <version.plugin.source>2.4</version.plugin.source>
-    <version.plugin.enforcer>1.4</version.plugin.enforcer>
-    <version.plugin.assembly>2.5.3</version.plugin.assembly>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <log4j.version>2.7</log4j.version>
     <jackson.version>2.8.1</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
-    <github.global.server>github</github.global.server>
   </properties>  
   
   <groupId>edu.jhu.hlt</groupId>
@@ -59,39 +49,14 @@
   <description>Parent for Concrete - Java libraries.</description>
   <url>http://www.javadoc.io/doc/edu.jhu.hlt/concrete-project/</url>
 
-  <organization>
-    <name>Johns Hopkins University HLTCOE</name>
-    <url>http://hltcoe.jhu.edu</url>
-  </organization>
-
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
-
   <developers>
     <developer>
-      <email>max.thomas@jhu.edu</email>
+      <email>max@maxthomas.io</email>
       <name>Max Thomas</name>
       <url>https://github.com/maxthomas</url>
       <id>maxthomas</id>
     </developer>
   </developers>
-
-  <scm>
-    <connection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</connection>
-    <developerConnection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/concrete/concrete-java.git</developerConnection>
-    <!--
-    <connection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:hltcoe/${project.artifactId}.git</developerConnection>
-    -->
-    <url>https://github.com/hltcoe/concrete-java/</url>
-    <tag>HEAD</tag>
-  </scm>
-
-  <issueManagement>
-    <url>https://github.com/hltcoe/concrete-java/issues</url>
-    <system>GitHub Issues</system>
-  </issueManagement>
 
   <licenses>
     <license>
@@ -105,15 +70,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-release-plugin</artifactId>
-	  <version>2.5.3</version>
-	  <configuration>
-	    <autoVersionSubmodules>true</autoVersionSubmodules>
-	    <tagNameFormat>v@{project.version}</tagNameFormat>
-	  </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
           <version>1.9</version>
@@ -122,97 +78,9 @@
             <tag>${project.artifactId}-${project.version}</tag>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.4</version>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>2.6.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>${version.plugin.jar}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.7</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.9.1</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>${version.plugin.assembly}</version>
-          <configuration>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- this is used for inheritance merges -->
-              <goals>
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>${version.plugin.surefire}</version>
-        </plugin>
       </plugins>
     </pluginManagement>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <fork>true</fork>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 
   <dependencyManagement>
@@ -364,25 +232,5 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <distributionManagement>
-    <repository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-releases</name>
-      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-release-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>coe-mvn</id>
-      <name>coe-mvn-snapshots</name>
-      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-snapshot-local</url>
-    </snapshotRepository>
-    <!--
-    <site>
-      <id>github-project-site</id>
-      <name>Concrete-Java Github Pages</name>
-      <url>git:ssh://git@github.com/hltcoe/concrete-java.git?gh-pages#</url>
-    </site>
-    -->
-  </distributionManagement>
 
 </project>
