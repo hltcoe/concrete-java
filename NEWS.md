@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.13.0 - 2017-07-28
+* Now includes `Summarization` structs and services
+
 ## Concrete-Java v4.11.2 - 2016-11-12
 * Adds some typedness to the `lid` package inside dictum.
 

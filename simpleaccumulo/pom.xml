@@ -4,7 +4,7 @@
   <parent>
     <groupId>edu.jhu.hlt</groupId>
     <artifactId>concrete-project</artifactId>
-    <version>4.12.1-SNAPSHOT</version>
+    <version>4.13.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>concrete-simpleaccumulo</artifactId>

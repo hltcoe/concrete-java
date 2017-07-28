@@ -12,7 +12,7 @@ fi
 
 PATH_TO_THRIFT_FILES=$1
 THRIFT_OUT_DIR='core/src/main/java'
-THRIFT_ARGS="-out $THRIFT_OUT_DIR --gen java:private-members,hashcode"
+THRIFT_ARGS="-out $THRIFT_OUT_DIR --gen java:private-members,hashcode,generated_annotations=undated"
 mkdir -p $THRIFT_OUT_DIR
 rm -rf $THRIFT_OUT_DIR/*
 for F in $PATH_TO_THRIFT_FILES/*.thrift; do
