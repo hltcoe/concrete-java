@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.13.1 - UNRELEASED
+* Folds in the `concrete-zip` submodule.
+
 ## Concrete-Java v4.13.0 - 2017-07-28
 * Now includes `Summarization` structs and services
 
