@@ -21,7 +21,7 @@ a Communication zip archive:
  Iterable<Communication> comms = ConcreteZipIO.read("/Users/tongfei/my/data/LDC2014E13filtered/test.zip")
  // Don't worry about memory leaks: the returned collection is lazy!
  
- Stream<Communication> ConcreteZipIO.readAsStream("/Users/tongfei/my/data/LDC2014E13filtered/test.zip")
+ Stream<Communication> stream = ConcreteZipIO.readAsStream("/Users/tongfei/my/data/LDC2014E13filtered/test.zip")
 ```
 
 * As a lazy map of Communication IDs to the actual corresponding Communications
