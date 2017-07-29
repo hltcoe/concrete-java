@@ -1,4 +1,4 @@
-### Concrete-zip **`4.12.1`**
+### Concrete-zip
 
 Concrete-zip provides IO routines and FetchCommunicationService utilities
 when working with zip archives.
