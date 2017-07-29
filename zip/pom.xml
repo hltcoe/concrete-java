@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>concrete-project</artifactId>
+    <version>4.13.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>concrete-zip</artifactId>
+  <name>Zip</name>
+  <description>
+    Concrete-zip provides IO routines and FetchCommunicationService utilities
+    when working with zip archives
+  </description>
+  <url>http://www.java.doc.io/doc/edu.jhu.hlt/concrete-zip/</url>
+
+  <developers>
+    <developer>
+      <id>ctongfei</id>
+      <name>Tongfei Chen</name>
+      <url>http://cs.jhu.edu/~tongfei</url>
+    </developer>
+  </developers>
+  
+  <dependencies>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-util</artifactId>
+    </dependency>
+  </dependencies>
+</project>

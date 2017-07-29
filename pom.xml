@@ -43,6 +43,7 @@
     <module>analytics/simple</module>
     <module>services</module>
     <module>simpleaccumulo</module>
+    <module>zip</module>
   </modules>
 
   <name>Concrete</name>
@@ -148,6 +149,11 @@
         <artifactId>acute</artifactId>
         <version>2.2.0</version>
 	</dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-zip</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.codehaus.woodstox</groupId>
