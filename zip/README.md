@@ -3,8 +3,16 @@
 Concrete-zip provides IO routines and FetchCommunicationService utilities
 when working with zip archives.
 
-A communication archive in zip format (rather than in tar.gz format) 
-supports random access of communications given their communication IDs.
+In order to support random access of Communications by their
+Communication IDs, Concrete-zip assumes that any Communication files
+in the zip archive:
+
+- follow the naming convention `[COMMUNICATION_ID].comm` or
+  `[COMMUNICATION_ID].concrete`
+- are in the root directory of the zip archive
+
+These naming conventions allow zip archives of Communications (unlike
+tar.gz archives) to support random access by Communication ID.
 This makes zip archives a suitable backend for file-backed
 FetchCommunicationService providers. (No need to do a linear sweep of
 communications to get one, as in tar.gz archives, and also ideal for 

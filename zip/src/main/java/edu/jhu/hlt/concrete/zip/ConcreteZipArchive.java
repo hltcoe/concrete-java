@@ -16,6 +16,12 @@ import java.util.stream.StreamSupport;
 
 /**
  * Casts a Concrete zip archive as a map that maps Communication IDs to the actual communications.
+ *
+ * In order to support random access of Communications by their
+ * Communication IDs, Concrete-zip assumes that any Communication
+ * files in the zip archive (1) follow the naming convention
+ * `[COMMUNICATION_ID].comm` or `[COMMUNICATION_ID].concrete` and (2)
+ * are in the root directory of the zip archive
  * @author Tongfei Chen
  * @since 4.12.0
  */ // @tongfei: Java collections suck
