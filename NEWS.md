@@ -1,5 +1,5 @@
 # News
-## Concrete-Java v4.13.1 - UNRELEASED
+## Concrete-Java v4.13.1 - 2017-07-31
 * Folds in the `concrete-zip` submodule.
 
 ## Concrete-Java v4.13.0 - 2017-07-28
