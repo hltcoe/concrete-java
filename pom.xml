@@ -44,6 +44,7 @@
     <module>services</module>
     <module>simpleaccumulo</module>
     <module>zip</module>
+    <module>ontology</module>
   </modules>
 
   <name>Concrete</name>
