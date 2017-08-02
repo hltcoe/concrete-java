@@ -1,4 +1,7 @@
 # News
+## Concrete-Java v4.13.2 - 2017-08-02
+* Added summarization service utility code to `services` submodule
+
 ## Concrete-Java v4.13.1 - 2017-07-31
 * Folds in the `concrete-zip` submodule.
 
