@@ -55,6 +55,7 @@ public class StoreTool extends AbstractAuthBasedThriftServiceClient {
    * @param c a {@link Communication} to send across the wire
    * @throws TException on thrift error
    *
+   * @see Sender.Iface#store(Communication)
    */
   public void store(Communication c) throws TException {
     this.client.store(c);
