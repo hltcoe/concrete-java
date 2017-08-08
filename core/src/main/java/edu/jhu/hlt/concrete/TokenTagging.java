@@ -82,7 +82,7 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
     /**
      * Information about where the annotation came from.
      * This should be used to tell between gold-standard annotations
-     * and automatically-generated theories about the data
+     * and automatically generated theories about the data
      */
     METADATA((short)2, "metadata"),
     /**
@@ -256,7 +256,7 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
   /**
    * Information about where the annotation came from.
    * This should be used to tell between gold-standard annotations
-   * and automatically-generated theories about the data
+   * and automatically generated theories about the data
    */
   public edu.jhu.hlt.concrete.AnnotationMetadata getMetadata() {
     return this.metadata;
@@ -265,7 +265,7 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
   /**
    * Information about where the annotation came from.
    * This should be used to tell between gold-standard annotations
-   * and automatically-generated theories about the data
+   * and automatically generated theories about the data
    */
   public TokenTagging setMetadata(edu.jhu.hlt.concrete.AnnotationMetadata metadata) {
     this.metadata = metadata;
@@ -701,14 +701,14 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
           case 3: // TAGGED_TOKEN_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list24 = iprot.readListBegin();
-                struct.taggedTokenList = new ArrayList<TaggedToken>(_list24.size);
-                TaggedToken _elem25;
-                for (int _i26 = 0; _i26 < _list24.size; ++_i26)
+                org.apache.thrift.protocol.TList _list32 = iprot.readListBegin();
+                struct.taggedTokenList = new ArrayList<TaggedToken>(_list32.size);
+                TaggedToken _elem33;
+                for (int _i34 = 0; _i34 < _list32.size; ++_i34)
                 {
-                  _elem25 = new TaggedToken();
-                  _elem25.read(iprot);
-                  struct.taggedTokenList.add(_elem25);
+                  _elem33 = new TaggedToken();
+                  _elem33.read(iprot);
+                  struct.taggedTokenList.add(_elem33);
                 }
                 iprot.readListEnd();
               }
@@ -754,9 +754,9 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
         oprot.writeFieldBegin(TAGGED_TOKEN_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.taggedTokenList.size()));
-          for (TaggedToken _iter27 : struct.taggedTokenList)
+          for (TaggedToken _iter35 : struct.taggedTokenList)
           {
-            _iter27.write(oprot);
+            _iter35.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -790,9 +790,9 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
       struct.metadata.write(oprot);
       {
         oprot.writeI32(struct.taggedTokenList.size());
-        for (TaggedToken _iter28 : struct.taggedTokenList)
+        for (TaggedToken _iter36 : struct.taggedTokenList)
         {
-          _iter28.write(oprot);
+          _iter36.write(oprot);
         }
       }
       BitSet optionals = new BitSet();
@@ -815,14 +815,14 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
       struct.metadata.read(iprot);
       struct.setMetadataIsSet(true);
       {
-        org.apache.thrift.protocol.TList _list29 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.taggedTokenList = new ArrayList<TaggedToken>(_list29.size);
-        TaggedToken _elem30;
-        for (int _i31 = 0; _i31 < _list29.size; ++_i31)
+        org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.taggedTokenList = new ArrayList<TaggedToken>(_list37.size);
+        TaggedToken _elem38;
+        for (int _i39 = 0; _i39 < _list37.size; ++_i39)
         {
-          _elem30 = new TaggedToken();
-          _elem30.read(iprot);
-          struct.taggedTokenList.add(_elem30);
+          _elem38 = new TaggedToken();
+          _elem38.read(iprot);
+          struct.taggedTokenList.add(_elem38);
         }
       }
       struct.setTaggedTokenListIsSet(true);

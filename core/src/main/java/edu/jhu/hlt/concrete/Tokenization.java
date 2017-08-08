@@ -1223,14 +1223,14 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           case 6: // TOKEN_TAGGING_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list80 = iprot.readListBegin();
-                struct.tokenTaggingList = new ArrayList<TokenTagging>(_list80.size);
-                TokenTagging _elem81;
-                for (int _i82 = 0; _i82 < _list80.size; ++_i82)
+                org.apache.thrift.protocol.TList _list88 = iprot.readListBegin();
+                struct.tokenTaggingList = new ArrayList<TokenTagging>(_list88.size);
+                TokenTagging _elem89;
+                for (int _i90 = 0; _i90 < _list88.size; ++_i90)
                 {
-                  _elem81 = new TokenTagging();
-                  _elem81.read(iprot);
-                  struct.tokenTaggingList.add(_elem81);
+                  _elem89 = new TokenTagging();
+                  _elem89.read(iprot);
+                  struct.tokenTaggingList.add(_elem89);
                 }
                 iprot.readListEnd();
               }
@@ -1242,14 +1242,14 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           case 7: // PARSE_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list83 = iprot.readListBegin();
-                struct.parseList = new ArrayList<Parse>(_list83.size);
-                Parse _elem84;
-                for (int _i85 = 0; _i85 < _list83.size; ++_i85)
+                org.apache.thrift.protocol.TList _list91 = iprot.readListBegin();
+                struct.parseList = new ArrayList<Parse>(_list91.size);
+                Parse _elem92;
+                for (int _i93 = 0; _i93 < _list91.size; ++_i93)
                 {
-                  _elem84 = new Parse();
-                  _elem84.read(iprot);
-                  struct.parseList.add(_elem84);
+                  _elem92 = new Parse();
+                  _elem92.read(iprot);
+                  struct.parseList.add(_elem92);
                 }
                 iprot.readListEnd();
               }
@@ -1261,14 +1261,14 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           case 8: // DEPENDENCY_PARSE_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list86 = iprot.readListBegin();
-                struct.dependencyParseList = new ArrayList<DependencyParse>(_list86.size);
-                DependencyParse _elem87;
-                for (int _i88 = 0; _i88 < _list86.size; ++_i88)
+                org.apache.thrift.protocol.TList _list94 = iprot.readListBegin();
+                struct.dependencyParseList = new ArrayList<DependencyParse>(_list94.size);
+                DependencyParse _elem95;
+                for (int _i96 = 0; _i96 < _list94.size; ++_i96)
                 {
-                  _elem87 = new DependencyParse();
-                  _elem87.read(iprot);
-                  struct.dependencyParseList.add(_elem87);
+                  _elem95 = new DependencyParse();
+                  _elem95.read(iprot);
+                  struct.dependencyParseList.add(_elem95);
                 }
                 iprot.readListEnd();
               }
@@ -1280,14 +1280,14 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           case 9: // SPAN_LINK_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list89 = iprot.readListBegin();
-                struct.spanLinkList = new ArrayList<SpanLink>(_list89.size);
-                SpanLink _elem90;
-                for (int _i91 = 0; _i91 < _list89.size; ++_i91)
+                org.apache.thrift.protocol.TList _list97 = iprot.readListBegin();
+                struct.spanLinkList = new ArrayList<SpanLink>(_list97.size);
+                SpanLink _elem98;
+                for (int _i99 = 0; _i99 < _list97.size; ++_i99)
                 {
-                  _elem90 = new SpanLink();
-                  _elem90.read(iprot);
-                  struct.spanLinkList.add(_elem90);
+                  _elem98 = new SpanLink();
+                  _elem98.read(iprot);
+                  struct.spanLinkList.add(_elem98);
                 }
                 iprot.readListEnd();
               }
@@ -1345,9 +1345,9 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           oprot.writeFieldBegin(TOKEN_TAGGING_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.tokenTaggingList.size()));
-            for (TokenTagging _iter92 : struct.tokenTaggingList)
+            for (TokenTagging _iter100 : struct.tokenTaggingList)
             {
-              _iter92.write(oprot);
+              _iter100.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -1359,9 +1359,9 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           oprot.writeFieldBegin(PARSE_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.parseList.size()));
-            for (Parse _iter93 : struct.parseList)
+            for (Parse _iter101 : struct.parseList)
             {
-              _iter93.write(oprot);
+              _iter101.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -1373,9 +1373,9 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           oprot.writeFieldBegin(DEPENDENCY_PARSE_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.dependencyParseList.size()));
-            for (DependencyParse _iter94 : struct.dependencyParseList)
+            for (DependencyParse _iter102 : struct.dependencyParseList)
             {
-              _iter94.write(oprot);
+              _iter102.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -1387,9 +1387,9 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
           oprot.writeFieldBegin(SPAN_LINK_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.spanLinkList.size()));
-            for (SpanLink _iter95 : struct.spanLinkList)
+            for (SpanLink _iter103 : struct.spanLinkList)
             {
-              _iter95.write(oprot);
+              _iter103.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -1445,36 +1445,36 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
       if (struct.isSetTokenTaggingList()) {
         {
           oprot.writeI32(struct.tokenTaggingList.size());
-          for (TokenTagging _iter96 : struct.tokenTaggingList)
+          for (TokenTagging _iter104 : struct.tokenTaggingList)
           {
-            _iter96.write(oprot);
+            _iter104.write(oprot);
           }
         }
       }
       if (struct.isSetParseList()) {
         {
           oprot.writeI32(struct.parseList.size());
-          for (Parse _iter97 : struct.parseList)
+          for (Parse _iter105 : struct.parseList)
           {
-            _iter97.write(oprot);
+            _iter105.write(oprot);
           }
         }
       }
       if (struct.isSetDependencyParseList()) {
         {
           oprot.writeI32(struct.dependencyParseList.size());
-          for (DependencyParse _iter98 : struct.dependencyParseList)
+          for (DependencyParse _iter106 : struct.dependencyParseList)
           {
-            _iter98.write(oprot);
+            _iter106.write(oprot);
           }
         }
       }
       if (struct.isSetSpanLinkList()) {
         {
           oprot.writeI32(struct.spanLinkList.size());
-          for (SpanLink _iter99 : struct.spanLinkList)
+          for (SpanLink _iter107 : struct.spanLinkList)
           {
-            _iter99.write(oprot);
+            _iter107.write(oprot);
           }
         }
       }
@@ -1504,56 +1504,56 @@ public class Tokenization implements org.apache.thrift.TBase<Tokenization, Token
       }
       if (incoming.get(2)) {
         {
-          org.apache.thrift.protocol.TList _list100 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.tokenTaggingList = new ArrayList<TokenTagging>(_list100.size);
-          TokenTagging _elem101;
-          for (int _i102 = 0; _i102 < _list100.size; ++_i102)
+          org.apache.thrift.protocol.TList _list108 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.tokenTaggingList = new ArrayList<TokenTagging>(_list108.size);
+          TokenTagging _elem109;
+          for (int _i110 = 0; _i110 < _list108.size; ++_i110)
           {
-            _elem101 = new TokenTagging();
-            _elem101.read(iprot);
-            struct.tokenTaggingList.add(_elem101);
+            _elem109 = new TokenTagging();
+            _elem109.read(iprot);
+            struct.tokenTaggingList.add(_elem109);
           }
         }
         struct.setTokenTaggingListIsSet(true);
       }
       if (incoming.get(3)) {
         {
-          org.apache.thrift.protocol.TList _list103 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.parseList = new ArrayList<Parse>(_list103.size);
-          Parse _elem104;
-          for (int _i105 = 0; _i105 < _list103.size; ++_i105)
+          org.apache.thrift.protocol.TList _list111 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.parseList = new ArrayList<Parse>(_list111.size);
+          Parse _elem112;
+          for (int _i113 = 0; _i113 < _list111.size; ++_i113)
           {
-            _elem104 = new Parse();
-            _elem104.read(iprot);
-            struct.parseList.add(_elem104);
+            _elem112 = new Parse();
+            _elem112.read(iprot);
+            struct.parseList.add(_elem112);
           }
         }
         struct.setParseListIsSet(true);
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TList _list106 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.dependencyParseList = new ArrayList<DependencyParse>(_list106.size);
-          DependencyParse _elem107;
-          for (int _i108 = 0; _i108 < _list106.size; ++_i108)
+          org.apache.thrift.protocol.TList _list114 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.dependencyParseList = new ArrayList<DependencyParse>(_list114.size);
+          DependencyParse _elem115;
+          for (int _i116 = 0; _i116 < _list114.size; ++_i116)
           {
-            _elem107 = new DependencyParse();
-            _elem107.read(iprot);
-            struct.dependencyParseList.add(_elem107);
+            _elem115 = new DependencyParse();
+            _elem115.read(iprot);
+            struct.dependencyParseList.add(_elem115);
           }
         }
         struct.setDependencyParseListIsSet(true);
       }
       if (incoming.get(5)) {
         {
-          org.apache.thrift.protocol.TList _list109 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.spanLinkList = new ArrayList<SpanLink>(_list109.size);
-          SpanLink _elem110;
-          for (int _i111 = 0; _i111 < _list109.size; ++_i111)
+          org.apache.thrift.protocol.TList _list117 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.spanLinkList = new ArrayList<SpanLink>(_list117.size);
+          SpanLink _elem118;
+          for (int _i119 = 0; _i119 < _list117.size; ++_i119)
           {
-            _elem110 = new SpanLink();
-            _elem110.read(iprot);
-            struct.spanLinkList.add(_elem110);
+            _elem118 = new SpanLink();
+            _elem118.read(iprot);
+            struct.spanLinkList.add(_elem118);
           }
         }
         struct.setSpanLinkListIsSet(true);
