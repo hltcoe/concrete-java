@@ -158,7 +158,7 @@ public class Conll2011Document {
     for (Conll2011Sentence s : sentences) {
       for (int pai = 0; pai < s.getNumPredicates(); pai++) {
         SituationMention sm = s.getPredArg(pai, g);
-        assert sm.getTokens() != null || sm.getConstituent() != null;
+        assert sm.getTokens() != null;
         propBankSrlSituationMentions.addToMentionList(sm);
       }
     }

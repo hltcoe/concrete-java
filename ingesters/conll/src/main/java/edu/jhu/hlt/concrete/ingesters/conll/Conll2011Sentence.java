@@ -216,7 +216,7 @@ public class Conll2011Sentence {
         sm.addToArgumentList(arg);
       }
     }
-    assert sm.getTokens() != null || sm.getConstituent() != null;
+    assert sm.getTokens() != null;
     return sm;
   }
 
