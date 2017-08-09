@@ -219,7 +219,7 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.AudioSpan.class)));
     tmpMap.put(_Fields.DEPENDENCIES, new org.apache.thrift.meta_data.FieldMetaData("dependencies", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Dependency"))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Dependency.class))));
     tmpMap.put(_Fields.CONSTITUENT, new org.apache.thrift.meta_data.FieldMetaData("constituent", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ConstituentRef.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -265,7 +265,7 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     if (other.isSetDependencies()) {
       List<Dependency> __this__dependencies = new ArrayList<Dependency>(other.dependencies.size());
       for (Dependency other_element : other.dependencies) {
-        __this__dependencies.add(other_element);
+        __this__dependencies.add(new Dependency(other_element));
       }
       this.dependencies = __this__dependencies;
     }
@@ -1125,13 +1125,13 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           case 1: // TOKEN_INDEX_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                struct.tokenIndexList = new ArrayList<Integer>(_list0.size);
-                int _elem1;
-                for (int _i2 = 0; _i2 < _list0.size; ++_i2)
+                org.apache.thrift.protocol.TList _list24 = iprot.readListBegin();
+                struct.tokenIndexList = new ArrayList<Integer>(_list24.size);
+                int _elem25;
+                for (int _i26 = 0; _i26 < _list24.size; ++_i26)
                 {
-                  _elem1 = iprot.readI32();
-                  struct.tokenIndexList.add(_elem1);
+                  _elem25 = iprot.readI32();
+                  struct.tokenIndexList.add(_elem25);
                 }
                 iprot.readListEnd();
               }
@@ -1187,14 +1187,14 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           case 7: // DEPENDENCIES
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list3 = iprot.readListBegin();
-                struct.dependencies = new ArrayList<Dependency>(_list3.size);
-                Dependency _elem4;
-                for (int _i5 = 0; _i5 < _list3.size; ++_i5)
+                org.apache.thrift.protocol.TList _list27 = iprot.readListBegin();
+                struct.dependencies = new ArrayList<Dependency>(_list27.size);
+                Dependency _elem28;
+                for (int _i29 = 0; _i29 < _list27.size; ++_i29)
                 {
-                  _elem4 = new Dependency();
-                  _elem4.read(iprot);
-                  struct.dependencies.add(_elem4);
+                  _elem28 = new Dependency();
+                  _elem28.read(iprot);
+                  struct.dependencies.add(_elem28);
                 }
                 iprot.readListEnd();
               }
@@ -1231,9 +1231,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         oprot.writeFieldBegin(TOKEN_INDEX_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.tokenIndexList.size()));
-          for (int _iter6 : struct.tokenIndexList)
+          for (int _iter30 : struct.tokenIndexList)
           {
-            oprot.writeI32(_iter6);
+            oprot.writeI32(_iter30);
           }
           oprot.writeListEnd();
         }
@@ -1275,9 +1275,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           oprot.writeFieldBegin(DEPENDENCIES_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.dependencies.size()));
-            for (Dependency _iter7 : struct.dependencies)
+            for (Dependency _iter31 : struct.dependencies)
             {
-              _iter7.write(oprot);
+              _iter31.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -1310,9 +1310,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       TTupleProtocol oprot = (TTupleProtocol) prot;
       {
         oprot.writeI32(struct.tokenIndexList.size());
-        for (int _iter8 : struct.tokenIndexList)
+        for (int _iter32 : struct.tokenIndexList)
         {
-          oprot.writeI32(_iter8);
+          oprot.writeI32(_iter32);
         }
       }
       struct.tokenizationId.write(oprot);
@@ -1351,9 +1351,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       if (struct.isSetDependencies()) {
         {
           oprot.writeI32(struct.dependencies.size());
-          for (Dependency _iter9 : struct.dependencies)
+          for (Dependency _iter33 : struct.dependencies)
           {
-            _iter9.write(oprot);
+            _iter33.write(oprot);
           }
         }
       }
@@ -1366,13 +1366,13 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     public void read(org.apache.thrift.protocol.TProtocol prot, TokenRefSequence struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       {
-        org.apache.thrift.protocol.TList _list10 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-        struct.tokenIndexList = new ArrayList<Integer>(_list10.size);
-        int _elem11;
-        for (int _i12 = 0; _i12 < _list10.size; ++_i12)
+        org.apache.thrift.protocol.TList _list34 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
+        struct.tokenIndexList = new ArrayList<Integer>(_list34.size);
+        int _elem35;
+        for (int _i36 = 0; _i36 < _list34.size; ++_i36)
         {
-          _elem11 = iprot.readI32();
-          struct.tokenIndexList.add(_elem11);
+          _elem35 = iprot.readI32();
+          struct.tokenIndexList.add(_elem35);
         }
       }
       struct.setTokenIndexListIsSet(true);
@@ -1401,14 +1401,14 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.dependencies = new ArrayList<Dependency>(_list13.size);
-          Dependency _elem14;
-          for (int _i15 = 0; _i15 < _list13.size; ++_i15)
+          org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.dependencies = new ArrayList<Dependency>(_list37.size);
+          Dependency _elem38;
+          for (int _i39 = 0; _i39 < _list37.size; ++_i39)
           {
-            _elem14 = new Dependency();
-            _elem14.read(iprot);
-            struct.dependencies.add(_elem14);
+            _elem38 = new Dependency();
+            _elem38.read(iprot);
+            struct.dependencies.add(_elem38);
           }
         }
         struct.setDependenciesIsSet(true);

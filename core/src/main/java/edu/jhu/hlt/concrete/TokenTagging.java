@@ -701,14 +701,14 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
           case 3: // TAGGED_TOKEN_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list32 = iprot.readListBegin();
-                struct.taggedTokenList = new ArrayList<TaggedToken>(_list32.size);
-                TaggedToken _elem33;
-                for (int _i34 = 0; _i34 < _list32.size; ++_i34)
+                org.apache.thrift.protocol.TList _list56 = iprot.readListBegin();
+                struct.taggedTokenList = new ArrayList<TaggedToken>(_list56.size);
+                TaggedToken _elem57;
+                for (int _i58 = 0; _i58 < _list56.size; ++_i58)
                 {
-                  _elem33 = new TaggedToken();
-                  _elem33.read(iprot);
-                  struct.taggedTokenList.add(_elem33);
+                  _elem57 = new TaggedToken();
+                  _elem57.read(iprot);
+                  struct.taggedTokenList.add(_elem57);
                 }
                 iprot.readListEnd();
               }
@@ -754,9 +754,9 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
         oprot.writeFieldBegin(TAGGED_TOKEN_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.taggedTokenList.size()));
-          for (TaggedToken _iter35 : struct.taggedTokenList)
+          for (TaggedToken _iter59 : struct.taggedTokenList)
           {
-            _iter35.write(oprot);
+            _iter59.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -790,9 +790,9 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
       struct.metadata.write(oprot);
       {
         oprot.writeI32(struct.taggedTokenList.size());
-        for (TaggedToken _iter36 : struct.taggedTokenList)
+        for (TaggedToken _iter60 : struct.taggedTokenList)
         {
-          _iter36.write(oprot);
+          _iter60.write(oprot);
         }
       }
       BitSet optionals = new BitSet();
@@ -815,14 +815,14 @@ public class TokenTagging implements org.apache.thrift.TBase<TokenTagging, Token
       struct.metadata.read(iprot);
       struct.setMetadataIsSet(true);
       {
-        org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.taggedTokenList = new ArrayList<TaggedToken>(_list37.size);
-        TaggedToken _elem38;
-        for (int _i39 = 0; _i39 < _list37.size; ++_i39)
+        org.apache.thrift.protocol.TList _list61 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.taggedTokenList = new ArrayList<TaggedToken>(_list61.size);
+        TaggedToken _elem62;
+        for (int _i63 = 0; _i63 < _list61.size; ++_i63)
         {
-          _elem38 = new TaggedToken();
-          _elem38.read(iprot);
-          struct.taggedTokenList.add(_elem38);
+          _elem62 = new TaggedToken();
+          _elem62.read(iprot);
+          struct.taggedTokenList.add(_elem62);
         }
       }
       struct.setTaggedTokenListIsSet(true);
