@@ -190,11 +190,12 @@ public class Ontonotes4 {
           continue;
         }
         sms.addToMentionList(sm);
-        sm.setTokens(getTrs(predBounds, sent));
+	TokenRefSequence smtrs = getTrs(predBounds, sent);
         if (!pred.isSplit()) {
           Constituent predC = findNode(pred, rootIndex, cmap);
-          sm.setConstituent(getRef(cons, predC));
+          smtrs.setConstituent(getRef(cons, predC));
         }
+        sm.setTokens(smtrs);
 
         // Add the arguments
         sm.setArgumentList(new ArrayList<>());
@@ -214,8 +215,9 @@ public class Ontonotes4 {
             MentionArgument arg = new MentionArgument();
             arg.setConfidence(1);
             arg.setRole(a.getLabel());
-            arg.setTokens(getTrs(acons.getStart(), acons.getEnding() - 1, sent));
-            arg.setConstituent(getRef(cons, acons));
+	    TokenRefSequence matrs = getTrs(acons.getStart(), acons.getEnding() - 1, sent);
+	    matrs.setConstituent(getRef(cons, acons));
+            arg.setTokens(matrs);
             sm.addToArgumentList(arg);
           }
         }

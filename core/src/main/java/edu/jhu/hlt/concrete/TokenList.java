@@ -357,14 +357,14 @@ public class TokenList implements org.apache.thrift.TBase<TokenList, TokenList._
           case 1: // TOKEN_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list72 = iprot.readListBegin();
-                struct.tokenList = new ArrayList<Token>(_list72.size);
-                Token _elem73;
-                for (int _i74 = 0; _i74 < _list72.size; ++_i74)
+                org.apache.thrift.protocol.TList _list80 = iprot.readListBegin();
+                struct.tokenList = new ArrayList<Token>(_list80.size);
+                Token _elem81;
+                for (int _i82 = 0; _i82 < _list80.size; ++_i82)
                 {
-                  _elem73 = new Token();
-                  _elem73.read(iprot);
-                  struct.tokenList.add(_elem73);
+                  _elem81 = new Token();
+                  _elem81.read(iprot);
+                  struct.tokenList.add(_elem81);
                 }
                 iprot.readListEnd();
               }
@@ -392,9 +392,9 @@ public class TokenList implements org.apache.thrift.TBase<TokenList, TokenList._
         oprot.writeFieldBegin(TOKEN_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.tokenList.size()));
-          for (Token _iter75 : struct.tokenList)
+          for (Token _iter83 : struct.tokenList)
           {
-            _iter75.write(oprot);
+            _iter83.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -419,9 +419,9 @@ public class TokenList implements org.apache.thrift.TBase<TokenList, TokenList._
       TTupleProtocol oprot = (TTupleProtocol) prot;
       {
         oprot.writeI32(struct.tokenList.size());
-        for (Token _iter76 : struct.tokenList)
+        for (Token _iter84 : struct.tokenList)
         {
-          _iter76.write(oprot);
+          _iter84.write(oprot);
         }
       }
     }
@@ -430,14 +430,14 @@ public class TokenList implements org.apache.thrift.TBase<TokenList, TokenList._
     public void read(org.apache.thrift.protocol.TProtocol prot, TokenList struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       {
-        org.apache.thrift.protocol.TList _list77 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.tokenList = new ArrayList<Token>(_list77.size);
-        Token _elem78;
-        for (int _i79 = 0; _i79 < _list77.size; ++_i79)
+        org.apache.thrift.protocol.TList _list85 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.tokenList = new ArrayList<Token>(_list85.size);
+        Token _elem86;
+        for (int _i87 = 0; _i87 < _list85.size; ++_i87)
         {
-          _elem78 = new Token();
-          _elem78.read(iprot);
-          struct.tokenList.add(_elem78);
+          _elem86 = new Token();
+          _elem86.read(iprot);
+          struct.tokenList.add(_elem86);
         }
       }
       struct.setTokenListIsSet(true);

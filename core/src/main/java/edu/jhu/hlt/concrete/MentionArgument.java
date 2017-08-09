@@ -46,7 +46,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
   private static final org.apache.thrift.protocol.TField ENTITY_MENTION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("entityMentionId", org.apache.thrift.protocol.TType.STRUCT, (short)2);
   private static final org.apache.thrift.protocol.TField SITUATION_MENTION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("situationMentionId", org.apache.thrift.protocol.TType.STRUCT, (short)3);
   private static final org.apache.thrift.protocol.TField TOKENS_FIELD_DESC = new org.apache.thrift.protocol.TField("tokens", org.apache.thrift.protocol.TType.STRUCT, (short)4);
-  private static final org.apache.thrift.protocol.TField CONSTITUENT_FIELD_DESC = new org.apache.thrift.protocol.TField("constituent", org.apache.thrift.protocol.TType.STRUCT, (short)7);
   private static final org.apache.thrift.protocol.TField CONFIDENCE_FIELD_DESC = new org.apache.thrift.protocol.TField("confidence", org.apache.thrift.protocol.TType.DOUBLE, (short)5);
   private static final org.apache.thrift.protocol.TField PROPERTY_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("propertyList", org.apache.thrift.protocol.TType.LIST, (short)6);
 
@@ -60,7 +59,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
   private edu.jhu.hlt.concrete.UUID entityMentionId; // optional
   private edu.jhu.hlt.concrete.UUID situationMentionId; // optional
   private edu.jhu.hlt.concrete.TokenRefSequence tokens; // optional
-  private edu.jhu.hlt.concrete.ConstituentRef constituent; // optional
   private double confidence; // optional
   private List<Property> propertyList; // optional
 
@@ -89,10 +87,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
      * types should be preferred and this field left as null.
      */
     TOKENS((short)4, "tokens"),
-    /**
-     * An alternative way to specify the same thing as tokens.
-     */
-    CONSTITUENT((short)7, "constituent"),
     /**
      * Confidence of this argument belonging to its SituationMention
      */
@@ -125,8 +119,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
           return SITUATION_MENTION_ID;
         case 4: // TOKENS
           return TOKENS;
-        case 7: // CONSTITUENT
-          return CONSTITUENT;
         case 5: // CONFIDENCE
           return CONFIDENCE;
         case 6: // PROPERTY_LIST
@@ -173,7 +165,7 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
   // isset id assignments
   private static final int __CONFIDENCE_ISSET_ID = 0;
   private byte __isset_bitfield = 0;
-  private static final _Fields optionals[] = {_Fields.ROLE,_Fields.ENTITY_MENTION_ID,_Fields.SITUATION_MENTION_ID,_Fields.TOKENS,_Fields.CONSTITUENT,_Fields.CONFIDENCE,_Fields.PROPERTY_LIST};
+  private static final _Fields optionals[] = {_Fields.ROLE,_Fields.ENTITY_MENTION_ID,_Fields.SITUATION_MENTION_ID,_Fields.TOKENS,_Fields.CONFIDENCE,_Fields.PROPERTY_LIST};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -185,8 +177,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.UUID.class)));
     tmpMap.put(_Fields.TOKENS, new org.apache.thrift.meta_data.FieldMetaData("tokens", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.TokenRefSequence.class)));
-    tmpMap.put(_Fields.CONSTITUENT, new org.apache.thrift.meta_data.FieldMetaData("constituent", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.ConstituentRef.class)));
     tmpMap.put(_Fields.CONFIDENCE, new org.apache.thrift.meta_data.FieldMetaData("confidence", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.PROPERTY_LIST, new org.apache.thrift.meta_data.FieldMetaData("propertyList", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
@@ -216,9 +206,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     if (other.isSetTokens()) {
       this.tokens = new edu.jhu.hlt.concrete.TokenRefSequence(other.tokens);
     }
-    if (other.isSetConstituent()) {
-      this.constituent = new edu.jhu.hlt.concrete.ConstituentRef(other.constituent);
-    }
     this.confidence = other.confidence;
     if (other.isSetPropertyList()) {
       List<Property> __this__propertyList = new ArrayList<Property>(other.propertyList.size());
@@ -239,7 +226,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     this.entityMentionId = null;
     this.situationMentionId = null;
     this.tokens = null;
-    this.constituent = null;
     setConfidenceIsSet(false);
     this.confidence = 0.0;
     this.propertyList = null;
@@ -380,36 +366,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
   }
 
   /**
-   * An alternative way to specify the same thing as tokens.
-   */
-  public edu.jhu.hlt.concrete.ConstituentRef getConstituent() {
-    return this.constituent;
-  }
-
-  /**
-   * An alternative way to specify the same thing as tokens.
-   */
-  public MentionArgument setConstituent(edu.jhu.hlt.concrete.ConstituentRef constituent) {
-    this.constituent = constituent;
-    return this;
-  }
-
-  public void unsetConstituent() {
-    this.constituent = null;
-  }
-
-  /** Returns true if field constituent is set (has been assigned a value) and false otherwise */
-  public boolean isSetConstituent() {
-    return this.constituent != null;
-  }
-
-  public void setConstituentIsSet(boolean value) {
-    if (!value) {
-      this.constituent = null;
-    }
-  }
-
-  /**
    * Confidence of this argument belonging to its SituationMention
    */
   public double getConfidence() {
@@ -521,14 +477,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
       }
       break;
 
-    case CONSTITUENT:
-      if (value == null) {
-        unsetConstituent();
-      } else {
-        setConstituent((edu.jhu.hlt.concrete.ConstituentRef)value);
-      }
-      break;
-
     case CONFIDENCE:
       if (value == null) {
         unsetConfidence();
@@ -562,9 +510,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     case TOKENS:
       return getTokens();
 
-    case CONSTITUENT:
-      return getConstituent();
-
     case CONFIDENCE:
       return getConfidence();
 
@@ -590,8 +535,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
       return isSetSituationMentionId();
     case TOKENS:
       return isSetTokens();
-    case CONSTITUENT:
-      return isSetConstituent();
     case CONFIDENCE:
       return isSetConfidence();
     case PROPERTY_LIST:
@@ -649,15 +592,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
         return false;
     }
 
-    boolean this_present_constituent = true && this.isSetConstituent();
-    boolean that_present_constituent = true && that.isSetConstituent();
-    if (this_present_constituent || that_present_constituent) {
-      if (!(this_present_constituent && that_present_constituent))
-        return false;
-      if (!this.constituent.equals(that.constituent))
-        return false;
-    }
-
     boolean this_present_confidence = true && this.isSetConfidence();
     boolean that_present_confidence = true && that.isSetConfidence();
     if (this_present_confidence || that_present_confidence) {
@@ -702,11 +636,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     list.add(present_tokens);
     if (present_tokens)
       list.add(tokens);
-
-    boolean present_constituent = true && (isSetConstituent());
-    list.add(present_constituent);
-    if (present_constituent)
-      list.add(constituent);
 
     boolean present_confidence = true && (isSetConfidence());
     list.add(present_confidence);
@@ -765,16 +694,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     }
     if (isSetTokens()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tokens, other.tokens);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetConstituent()).compareTo(other.isSetConstituent());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetConstituent()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.constituent, other.constituent);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -858,16 +777,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
       }
       first = false;
     }
-    if (isSetConstituent()) {
-      if (!first) sb.append(", ");
-      sb.append("constituent:");
-      if (this.constituent == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.constituent);
-      }
-      first = false;
-    }
     if (isSetConfidence()) {
       if (!first) sb.append(", ");
       sb.append("confidence:");
@@ -899,9 +808,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     }
     if (tokens != null) {
       tokens.validate();
-    }
-    if (constituent != null) {
-      constituent.validate();
     }
   }
 
@@ -972,15 +878,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
               struct.tokens = new edu.jhu.hlt.concrete.TokenRefSequence();
               struct.tokens.read(iprot);
               struct.setTokensIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 7: // CONSTITUENT
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.constituent = new edu.jhu.hlt.concrete.ConstituentRef();
-              struct.constituent.read(iprot);
-              struct.setConstituentIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -1074,13 +971,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
           oprot.writeFieldEnd();
         }
       }
-      if (struct.constituent != null) {
-        if (struct.isSetConstituent()) {
-          oprot.writeFieldBegin(CONSTITUENT_FIELD_DESC);
-          struct.constituent.write(oprot);
-          oprot.writeFieldEnd();
-        }
-      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1111,16 +1001,13 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
       if (struct.isSetTokens()) {
         optionals.set(3);
       }
-      if (struct.isSetConstituent()) {
+      if (struct.isSetConfidence()) {
         optionals.set(4);
       }
-      if (struct.isSetConfidence()) {
+      if (struct.isSetPropertyList()) {
         optionals.set(5);
       }
-      if (struct.isSetPropertyList()) {
-        optionals.set(6);
-      }
-      oprot.writeBitSet(optionals, 7);
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetRole()) {
         oprot.writeString(struct.role);
       }
@@ -1132,9 +1019,6 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
       }
       if (struct.isSetTokens()) {
         struct.tokens.write(oprot);
-      }
-      if (struct.isSetConstituent()) {
-        struct.constituent.write(oprot);
       }
       if (struct.isSetConfidence()) {
         oprot.writeDouble(struct.confidence);
@@ -1153,7 +1037,7 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, MentionArgument struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.role = iprot.readString();
         struct.setRoleIsSet(true);
@@ -1174,15 +1058,10 @@ public class MentionArgument implements org.apache.thrift.TBase<MentionArgument,
         struct.setTokensIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.constituent = new edu.jhu.hlt.concrete.ConstituentRef();
-        struct.constituent.read(iprot);
-        struct.setConstituentIsSet(true);
-      }
-      if (incoming.get(5)) {
         struct.confidence = iprot.readDouble();
         struct.setConfidenceIsSet(true);
       }
-      if (incoming.get(6)) {
+      if (incoming.get(5)) {
         {
           org.apache.thrift.protocol.TList _list61 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
           struct.propertyList = new ArrayList<Property>(_list61.size);

@@ -1,4 +1,10 @@
 # News
+## Concrete-Java v4.14.0
+* Updated for Concrete schema 4.14
+  * Removed `constituent` field from `MentionArgument` and
+  `SituationMention`.
+  * Added `dependencies` and `constituent` fields to `TokenRefSequence`
+
 ## Concrete-Java v4.13.2 - 2017-08-02
 * Added summarization service utility code to `services` submodule
 

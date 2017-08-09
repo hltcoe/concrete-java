@@ -637,14 +637,14 @@ public class DependencyParse implements org.apache.thrift.TBase<DependencyParse,
           case 3: // DEPENDENCY_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list32 = iprot.readListBegin();
-                struct.dependencyList = new ArrayList<Dependency>(_list32.size);
-                Dependency _elem33;
-                for (int _i34 = 0; _i34 < _list32.size; ++_i34)
+                org.apache.thrift.protocol.TList _list16 = iprot.readListBegin();
+                struct.dependencyList = new ArrayList<Dependency>(_list16.size);
+                Dependency _elem17;
+                for (int _i18 = 0; _i18 < _list16.size; ++_i18)
                 {
-                  _elem33 = new Dependency();
-                  _elem33.read(iprot);
-                  struct.dependencyList.add(_elem33);
+                  _elem17 = new Dependency();
+                  _elem17.read(iprot);
+                  struct.dependencyList.add(_elem17);
                 }
                 iprot.readListEnd();
               }
@@ -691,9 +691,9 @@ public class DependencyParse implements org.apache.thrift.TBase<DependencyParse,
         oprot.writeFieldBegin(DEPENDENCY_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.dependencyList.size()));
-          for (Dependency _iter35 : struct.dependencyList)
+          for (Dependency _iter19 : struct.dependencyList)
           {
-            _iter35.write(oprot);
+            _iter19.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -727,9 +727,9 @@ public class DependencyParse implements org.apache.thrift.TBase<DependencyParse,
       struct.metadata.write(oprot);
       {
         oprot.writeI32(struct.dependencyList.size());
-        for (Dependency _iter36 : struct.dependencyList)
+        for (Dependency _iter20 : struct.dependencyList)
         {
-          _iter36.write(oprot);
+          _iter20.write(oprot);
         }
       }
       BitSet optionals = new BitSet();
@@ -752,14 +752,14 @@ public class DependencyParse implements org.apache.thrift.TBase<DependencyParse,
       struct.metadata.read(iprot);
       struct.setMetadataIsSet(true);
       {
-        org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.dependencyList = new ArrayList<Dependency>(_list37.size);
-        Dependency _elem38;
-        for (int _i39 = 0; _i39 < _list37.size; ++_i39)
+        org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.dependencyList = new ArrayList<Dependency>(_list21.size);
+        Dependency _elem22;
+        for (int _i23 = 0; _i23 < _list21.size; ++_i23)
         {
-          _elem38 = new Dependency();
-          _elem38.read(iprot);
-          struct.dependencyList.add(_elem38);
+          _elem22 = new Dependency();
+          _elem22.read(iprot);
+          struct.dependencyList.add(_elem22);
         }
       }
       struct.setDependencyListIsSet(true);

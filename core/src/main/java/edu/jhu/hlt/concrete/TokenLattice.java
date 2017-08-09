@@ -643,14 +643,14 @@ public class TokenLattice implements org.apache.thrift.TBase<TokenLattice, Token
           case 3: // ARC_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list64 = iprot.readListBegin();
-                struct.arcList = new ArrayList<Arc>(_list64.size);
-                Arc _elem65;
-                for (int _i66 = 0; _i66 < _list64.size; ++_i66)
+                org.apache.thrift.protocol.TList _list72 = iprot.readListBegin();
+                struct.arcList = new ArrayList<Arc>(_list72.size);
+                Arc _elem73;
+                for (int _i74 = 0; _i74 < _list72.size; ++_i74)
                 {
-                  _elem65 = new Arc();
-                  _elem65.read(iprot);
-                  struct.arcList.add(_elem65);
+                  _elem73 = new Arc();
+                  _elem73.read(iprot);
+                  struct.arcList.add(_elem73);
                 }
                 iprot.readListEnd();
               }
@@ -697,9 +697,9 @@ public class TokenLattice implements org.apache.thrift.TBase<TokenLattice, Token
         oprot.writeFieldBegin(ARC_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.arcList.size()));
-          for (Arc _iter67 : struct.arcList)
+          for (Arc _iter75 : struct.arcList)
           {
-            _iter67.write(oprot);
+            _iter75.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -731,9 +731,9 @@ public class TokenLattice implements org.apache.thrift.TBase<TokenLattice, Token
       TTupleProtocol oprot = (TTupleProtocol) prot;
       {
         oprot.writeI32(struct.arcList.size());
-        for (Arc _iter68 : struct.arcList)
+        for (Arc _iter76 : struct.arcList)
         {
-          _iter68.write(oprot);
+          _iter76.write(oprot);
         }
       }
       BitSet optionals = new BitSet();
@@ -762,14 +762,14 @@ public class TokenLattice implements org.apache.thrift.TBase<TokenLattice, Token
     public void read(org.apache.thrift.protocol.TProtocol prot, TokenLattice struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       {
-        org.apache.thrift.protocol.TList _list69 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.arcList = new ArrayList<Arc>(_list69.size);
-        Arc _elem70;
-        for (int _i71 = 0; _i71 < _list69.size; ++_i71)
+        org.apache.thrift.protocol.TList _list77 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.arcList = new ArrayList<Arc>(_list77.size);
+        Arc _elem78;
+        for (int _i79 = 0; _i79 < _list77.size; ++_i79)
         {
-          _elem70 = new Arc();
-          _elem70.read(iprot);
-          struct.arcList.add(_elem70);
+          _elem78 = new Arc();
+          _elem78.read(iprot);
+          struct.arcList.add(_elem78);
         }
       }
       struct.setArcListIsSet(true);

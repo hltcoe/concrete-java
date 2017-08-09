@@ -788,13 +788,13 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
           case 4: // TAG_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
-                struct.tagList = new ArrayList<String>(_list8.size);
-                String _elem9;
-                for (int _i10 = 0; _i10 < _list8.size; ++_i10)
+                org.apache.thrift.protocol.TList _list40 = iprot.readListBegin();
+                struct.tagList = new ArrayList<String>(_list40.size);
+                String _elem41;
+                for (int _i42 = 0; _i42 < _list40.size; ++_i42)
                 {
-                  _elem9 = iprot.readString();
-                  struct.tagList.add(_elem9);
+                  _elem41 = iprot.readString();
+                  struct.tagList.add(_elem41);
                 }
                 iprot.readListEnd();
               }
@@ -806,13 +806,13 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
           case 5: // CONFIDENCE_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list11 = iprot.readListBegin();
-                struct.confidenceList = new ArrayList<Double>(_list11.size);
-                double _elem12;
-                for (int _i13 = 0; _i13 < _list11.size; ++_i13)
+                org.apache.thrift.protocol.TList _list43 = iprot.readListBegin();
+                struct.confidenceList = new ArrayList<Double>(_list43.size);
+                double _elem44;
+                for (int _i45 = 0; _i45 < _list43.size; ++_i45)
                 {
-                  _elem12 = iprot.readDouble();
-                  struct.confidenceList.add(_elem12);
+                  _elem44 = iprot.readDouble();
+                  struct.confidenceList.add(_elem44);
                 }
                 iprot.readListEnd();
               }
@@ -858,9 +858,9 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
           oprot.writeFieldBegin(TAG_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.tagList.size()));
-            for (String _iter14 : struct.tagList)
+            for (String _iter46 : struct.tagList)
             {
-              oprot.writeString(_iter14);
+              oprot.writeString(_iter46);
             }
             oprot.writeListEnd();
           }
@@ -872,9 +872,9 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
           oprot.writeFieldBegin(CONFIDENCE_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.DOUBLE, struct.confidenceList.size()));
-            for (double _iter15 : struct.confidenceList)
+            for (double _iter47 : struct.confidenceList)
             {
-              oprot.writeDouble(_iter15);
+              oprot.writeDouble(_iter47);
             }
             oprot.writeListEnd();
           }
@@ -927,18 +927,18 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
       if (struct.isSetTagList()) {
         {
           oprot.writeI32(struct.tagList.size());
-          for (String _iter16 : struct.tagList)
+          for (String _iter48 : struct.tagList)
           {
-            oprot.writeString(_iter16);
+            oprot.writeString(_iter48);
           }
         }
       }
       if (struct.isSetConfidenceList()) {
         {
           oprot.writeI32(struct.confidenceList.size());
-          for (double _iter17 : struct.confidenceList)
+          for (double _iter49 : struct.confidenceList)
           {
-            oprot.writeDouble(_iter17);
+            oprot.writeDouble(_iter49);
           }
         }
       }
@@ -962,26 +962,26 @@ public class TaggedToken implements org.apache.thrift.TBase<TaggedToken, TaggedT
       }
       if (incoming.get(3)) {
         {
-          org.apache.thrift.protocol.TList _list18 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.tagList = new ArrayList<String>(_list18.size);
-          String _elem19;
-          for (int _i20 = 0; _i20 < _list18.size; ++_i20)
+          org.apache.thrift.protocol.TList _list50 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.tagList = new ArrayList<String>(_list50.size);
+          String _elem51;
+          for (int _i52 = 0; _i52 < _list50.size; ++_i52)
           {
-            _elem19 = iprot.readString();
-            struct.tagList.add(_elem19);
+            _elem51 = iprot.readString();
+            struct.tagList.add(_elem51);
           }
         }
         struct.setTagListIsSet(true);
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
-          struct.confidenceList = new ArrayList<Double>(_list21.size);
-          double _elem22;
-          for (int _i23 = 0; _i23 < _list21.size; ++_i23)
+          org.apache.thrift.protocol.TList _list53 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+          struct.confidenceList = new ArrayList<Double>(_list53.size);
+          double _elem54;
+          for (int _i55 = 0; _i55 < _list53.size; ++_i55)
           {
-            _elem22 = iprot.readDouble();
-            struct.confidenceList.add(_elem22);
+            _elem54 = iprot.readDouble();
+            struct.confidenceList.add(_elem54);
           }
         }
         struct.setConfidenceListIsSet(true);

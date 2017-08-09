@@ -558,14 +558,14 @@ public class Parse implements org.apache.thrift.TBase<Parse, Parse._Fields>, jav
           case 3: // CONSTITUENT_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list48 = iprot.readListBegin();
-                struct.constituentList = new ArrayList<Constituent>(_list48.size);
-                Constituent _elem49;
-                for (int _i50 = 0; _i50 < _list48.size; ++_i50)
+                org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
+                struct.constituentList = new ArrayList<Constituent>(_list8.size);
+                Constituent _elem9;
+                for (int _i10 = 0; _i10 < _list8.size; ++_i10)
                 {
-                  _elem49 = new Constituent();
-                  _elem49.read(iprot);
-                  struct.constituentList.add(_elem49);
+                  _elem9 = new Constituent();
+                  _elem9.read(iprot);
+                  struct.constituentList.add(_elem9);
                 }
                 iprot.readListEnd();
               }
@@ -603,9 +603,9 @@ public class Parse implements org.apache.thrift.TBase<Parse, Parse._Fields>, jav
         oprot.writeFieldBegin(CONSTITUENT_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.constituentList.size()));
-          for (Constituent _iter51 : struct.constituentList)
+          for (Constituent _iter11 : struct.constituentList)
           {
-            _iter51.write(oprot);
+            _iter11.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -632,9 +632,9 @@ public class Parse implements org.apache.thrift.TBase<Parse, Parse._Fields>, jav
       struct.metadata.write(oprot);
       {
         oprot.writeI32(struct.constituentList.size());
-        for (Constituent _iter52 : struct.constituentList)
+        for (Constituent _iter12 : struct.constituentList)
         {
-          _iter52.write(oprot);
+          _iter12.write(oprot);
         }
       }
     }
@@ -649,14 +649,14 @@ public class Parse implements org.apache.thrift.TBase<Parse, Parse._Fields>, jav
       struct.metadata.read(iprot);
       struct.setMetadataIsSet(true);
       {
-        org.apache.thrift.protocol.TList _list53 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.constituentList = new ArrayList<Constituent>(_list53.size);
-        Constituent _elem54;
-        for (int _i55 = 0; _i55 < _list53.size; ++_i55)
+        org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.constituentList = new ArrayList<Constituent>(_list13.size);
+        Constituent _elem14;
+        for (int _i15 = 0; _i15 < _list13.size; ++_i15)
         {
-          _elem54 = new Constituent();
-          _elem54.read(iprot);
-          struct.constituentList.add(_elem54);
+          _elem14 = new Constituent();
+          _elem14.read(iprot);
+          struct.constituentList.add(_elem14);
         }
       }
       struct.setConstituentListIsSet(true);

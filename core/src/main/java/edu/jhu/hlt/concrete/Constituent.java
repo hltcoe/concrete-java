@@ -841,13 +841,13 @@ public class Constituent implements org.apache.thrift.TBase<Constituent, Constit
           case 3: // CHILD_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list40 = iprot.readListBegin();
-                struct.childList = new ArrayList<Integer>(_list40.size);
-                int _elem41;
-                for (int _i42 = 0; _i42 < _list40.size; ++_i42)
+                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                struct.childList = new ArrayList<Integer>(_list0.size);
+                int _elem1;
+                for (int _i2 = 0; _i2 < _list0.size; ++_i2)
                 {
-                  _elem41 = iprot.readI32();
-                  struct.childList.add(_elem41);
+                  _elem1 = iprot.readI32();
+                  struct.childList.add(_elem1);
                 }
                 iprot.readListEnd();
               }
@@ -912,9 +912,9 @@ public class Constituent implements org.apache.thrift.TBase<Constituent, Constit
         oprot.writeFieldBegin(CHILD_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.childList.size()));
-          for (int _iter43 : struct.childList)
+          for (int _iter3 : struct.childList)
           {
-            oprot.writeI32(_iter43);
+            oprot.writeI32(_iter3);
           }
           oprot.writeListEnd();
         }
@@ -955,9 +955,9 @@ public class Constituent implements org.apache.thrift.TBase<Constituent, Constit
       oprot.writeI32(struct.id);
       {
         oprot.writeI32(struct.childList.size());
-        for (int _iter44 : struct.childList)
+        for (int _iter4 : struct.childList)
         {
-          oprot.writeI32(_iter44);
+          oprot.writeI32(_iter4);
         }
       }
       BitSet optionals = new BitSet();
@@ -994,13 +994,13 @@ public class Constituent implements org.apache.thrift.TBase<Constituent, Constit
       struct.id = iprot.readI32();
       struct.setIdIsSet(true);
       {
-        org.apache.thrift.protocol.TList _list45 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-        struct.childList = new ArrayList<Integer>(_list45.size);
-        int _elem46;
-        for (int _i47 = 0; _i47 < _list45.size; ++_i47)
+        org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
+        struct.childList = new ArrayList<Integer>(_list5.size);
+        int _elem6;
+        for (int _i7 = 0; _i7 < _list5.size; ++_i7)
         {
-          _elem46 = iprot.readI32();
-          struct.childList.add(_elem46);
+          _elem6 = iprot.readI32();
+          struct.childList.add(_elem6);
         }
       }
       struct.setChildListIsSet(true);

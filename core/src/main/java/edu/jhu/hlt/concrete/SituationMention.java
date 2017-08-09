@@ -57,7 +57,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
   private static final org.apache.thrift.protocol.TField INTENSITY_FIELD_DESC = new org.apache.thrift.protocol.TField("intensity", org.apache.thrift.protocol.TType.DOUBLE, (short)100);
   private static final org.apache.thrift.protocol.TField POLARITY_FIELD_DESC = new org.apache.thrift.protocol.TField("polarity", org.apache.thrift.protocol.TType.STRING, (short)101);
   private static final org.apache.thrift.protocol.TField TOKENS_FIELD_DESC = new org.apache.thrift.protocol.TField("tokens", org.apache.thrift.protocol.TType.STRUCT, (short)150);
-  private static final org.apache.thrift.protocol.TField CONSTITUENT_FIELD_DESC = new org.apache.thrift.protocol.TField("constituent", org.apache.thrift.protocol.TType.STRUCT, (short)151);
   private static final org.apache.thrift.protocol.TField CONFIDENCE_FIELD_DESC = new org.apache.thrift.protocol.TField("confidence", org.apache.thrift.protocol.TType.DOUBLE, (short)200);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -74,7 +73,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
   private double intensity; // optional
   private String polarity; // optional
   private edu.jhu.hlt.concrete.TokenRefSequence tokens; // optional
-  private edu.jhu.hlt.concrete.ConstituentRef constituent; // optional
   private double confidence; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -140,10 +138,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
      */
     TOKENS((short)150, "tokens"),
     /**
-     * An alternative way to specify the same thing as tokens.
-     */
-    CONSTITUENT((short)151, "constituent"),
-    /**
      * A confidence score for this individual situation mention. You
      * can also set a confidence score for an entire SituationMentionSet
      * using the SituationMentionSet's metadata.
@@ -179,8 +173,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
           return POLARITY;
         case 150: // TOKENS
           return TOKENS;
-        case 151: // CONSTITUENT
-          return CONSTITUENT;
         case 200: // CONFIDENCE
           return CONFIDENCE;
         default:
@@ -226,7 +218,7 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
   private static final int __INTENSITY_ISSET_ID = 0;
   private static final int __CONFIDENCE_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
-  private static final _Fields optionals[] = {_Fields.TEXT,_Fields.SITUATION_TYPE,_Fields.SITUATION_KIND,_Fields.INTENSITY,_Fields.POLARITY,_Fields.TOKENS,_Fields.CONSTITUENT,_Fields.CONFIDENCE};
+  private static final _Fields optionals[] = {_Fields.TEXT,_Fields.SITUATION_TYPE,_Fields.SITUATION_KIND,_Fields.INTENSITY,_Fields.POLARITY,_Fields.TOKENS,_Fields.CONFIDENCE};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -247,8 +239,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.TOKENS, new org.apache.thrift.meta_data.FieldMetaData("tokens", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.TokenRefSequence.class)));
-    tmpMap.put(_Fields.CONSTITUENT, new org.apache.thrift.meta_data.FieldMetaData("constituent", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.ConstituentRef.class)));
     tmpMap.put(_Fields.CONFIDENCE, new org.apache.thrift.meta_data.FieldMetaData("confidence", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -298,9 +288,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     if (other.isSetTokens()) {
       this.tokens = new edu.jhu.hlt.concrete.TokenRefSequence(other.tokens);
     }
-    if (other.isSetConstituent()) {
-      this.constituent = new edu.jhu.hlt.concrete.ConstituentRef(other.constituent);
-    }
     this.confidence = other.confidence;
   }
 
@@ -319,7 +306,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     this.intensity = 0.0;
     this.polarity = null;
     this.tokens = null;
-    this.constituent = null;
     setConfidenceIsSet(false);
     this.confidence = 0.0;
   }
@@ -635,36 +621,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
   }
 
   /**
-   * An alternative way to specify the same thing as tokens.
-   */
-  public edu.jhu.hlt.concrete.ConstituentRef getConstituent() {
-    return this.constituent;
-  }
-
-  /**
-   * An alternative way to specify the same thing as tokens.
-   */
-  public SituationMention setConstituent(edu.jhu.hlt.concrete.ConstituentRef constituent) {
-    this.constituent = constituent;
-    return this;
-  }
-
-  public void unsetConstituent() {
-    this.constituent = null;
-  }
-
-  /** Returns true if field constituent is set (has been assigned a value) and false otherwise */
-  public boolean isSetConstituent() {
-    return this.constituent != null;
-  }
-
-  public void setConstituentIsSet(boolean value) {
-    if (!value) {
-      this.constituent = null;
-    }
-  }
-
-  /**
    * A confidence score for this individual situation mention. You
    * can also set a confidence score for an entire SituationMentionSet
    * using the SituationMentionSet's metadata.
@@ -763,14 +719,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
       }
       break;
 
-    case CONSTITUENT:
-      if (value == null) {
-        unsetConstituent();
-      } else {
-        setConstituent((edu.jhu.hlt.concrete.ConstituentRef)value);
-      }
-      break;
-
     case CONFIDENCE:
       if (value == null) {
         unsetConfidence();
@@ -808,9 +756,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     case TOKENS:
       return getTokens();
 
-    case CONSTITUENT:
-      return getConstituent();
-
     case CONFIDENCE:
       return getConfidence();
 
@@ -841,8 +786,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
       return isSetPolarity();
     case TOKENS:
       return isSetTokens();
-    case CONSTITUENT:
-      return isSetConstituent();
     case CONFIDENCE:
       return isSetConfidence();
     }
@@ -934,15 +877,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
         return false;
     }
 
-    boolean this_present_constituent = true && this.isSetConstituent();
-    boolean that_present_constituent = true && that.isSetConstituent();
-    if (this_present_constituent || that_present_constituent) {
-      if (!(this_present_constituent && that_present_constituent))
-        return false;
-      if (!this.constituent.equals(that.constituent))
-        return false;
-    }
-
     boolean this_present_confidence = true && this.isSetConfidence();
     boolean that_present_confidence = true && that.isSetConfidence();
     if (this_present_confidence || that_present_confidence) {
@@ -998,11 +932,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     list.add(present_tokens);
     if (present_tokens)
       list.add(tokens);
-
-    boolean present_constituent = true && (isSetConstituent());
-    list.add(present_constituent);
-    if (present_constituent)
-      list.add(constituent);
 
     boolean present_confidence = true && (isSetConfidence());
     list.add(present_confidence);
@@ -1096,16 +1025,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     }
     if (isSetTokens()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tokens, other.tokens);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetConstituent()).compareTo(other.isSetConstituent());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetConstituent()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.constituent, other.constituent);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -1211,16 +1130,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
       }
       first = false;
     }
-    if (isSetConstituent()) {
-      if (!first) sb.append(", ");
-      sb.append("constituent:");
-      if (this.constituent == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.constituent);
-      }
-      first = false;
-    }
     if (isSetConfidence()) {
       if (!first) sb.append(", ");
       sb.append("confidence:");
@@ -1245,9 +1154,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
     }
     if (tokens != null) {
       tokens.validate();
-    }
-    if (constituent != null) {
-      constituent.validate();
     }
   }
 
@@ -1364,15 +1270,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 151: // CONSTITUENT
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.constituent = new edu.jhu.hlt.concrete.ConstituentRef();
-              struct.constituent.read(iprot);
-              struct.setConstituentIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
           case 200: // CONFIDENCE
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.confidence = iprot.readDouble();
@@ -1453,13 +1350,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
           oprot.writeFieldEnd();
         }
       }
-      if (struct.constituent != null) {
-        if (struct.isSetConstituent()) {
-          oprot.writeFieldBegin(CONSTITUENT_FIELD_DESC);
-          struct.constituent.write(oprot);
-          oprot.writeFieldEnd();
-        }
-      }
       if (struct.isSetConfidence()) {
         oprot.writeFieldBegin(CONFIDENCE_FIELD_DESC);
         oprot.writeDouble(struct.confidence);
@@ -1509,13 +1399,10 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
       if (struct.isSetTokens()) {
         optionals.set(5);
       }
-      if (struct.isSetConstituent()) {
+      if (struct.isSetConfidence()) {
         optionals.set(6);
       }
-      if (struct.isSetConfidence()) {
-        optionals.set(7);
-      }
-      oprot.writeBitSet(optionals, 8);
+      oprot.writeBitSet(optionals, 7);
       if (struct.isSetText()) {
         oprot.writeString(struct.text);
       }
@@ -1533,9 +1420,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
       }
       if (struct.isSetTokens()) {
         struct.tokens.write(oprot);
-      }
-      if (struct.isSetConstituent()) {
-        struct.constituent.write(oprot);
       }
       if (struct.isSetConfidence()) {
         oprot.writeDouble(struct.confidence);
@@ -1560,7 +1444,7 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
         }
       }
       struct.setArgumentListIsSet(true);
-      BitSet incoming = iprot.readBitSet(8);
+      BitSet incoming = iprot.readBitSet(7);
       if (incoming.get(0)) {
         struct.text = iprot.readString();
         struct.setTextIsSet(true);
@@ -1587,11 +1471,6 @@ public class SituationMention implements org.apache.thrift.TBase<SituationMentio
         struct.setTokensIsSet(true);
       }
       if (incoming.get(6)) {
-        struct.constituent = new edu.jhu.hlt.concrete.ConstituentRef();
-        struct.constituent.read(iprot);
-        struct.setConstituentIsSet(true);
-      }
-      if (incoming.get(7)) {
         struct.confidence = iprot.readDouble();
         struct.setConfidenceIsSet(true);
       }

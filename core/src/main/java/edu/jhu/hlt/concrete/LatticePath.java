@@ -444,14 +444,14 @@ public class LatticePath implements org.apache.thrift.TBase<LatticePath, Lattice
           case 2: // TOKEN_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list56 = iprot.readListBegin();
-                struct.tokenList = new ArrayList<Token>(_list56.size);
-                Token _elem57;
-                for (int _i58 = 0; _i58 < _list56.size; ++_i58)
+                org.apache.thrift.protocol.TList _list64 = iprot.readListBegin();
+                struct.tokenList = new ArrayList<Token>(_list64.size);
+                Token _elem65;
+                for (int _i66 = 0; _i66 < _list64.size; ++_i66)
                 {
-                  _elem57 = new Token();
-                  _elem57.read(iprot);
-                  struct.tokenList.add(_elem57);
+                  _elem65 = new Token();
+                  _elem65.read(iprot);
+                  struct.tokenList.add(_elem65);
                 }
                 iprot.readListEnd();
               }
@@ -484,9 +484,9 @@ public class LatticePath implements org.apache.thrift.TBase<LatticePath, Lattice
         oprot.writeFieldBegin(TOKEN_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.tokenList.size()));
-          for (Token _iter59 : struct.tokenList)
+          for (Token _iter67 : struct.tokenList)
           {
-            _iter59.write(oprot);
+            _iter67.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -511,9 +511,9 @@ public class LatticePath implements org.apache.thrift.TBase<LatticePath, Lattice
       TTupleProtocol oprot = (TTupleProtocol) prot;
       {
         oprot.writeI32(struct.tokenList.size());
-        for (Token _iter60 : struct.tokenList)
+        for (Token _iter68 : struct.tokenList)
         {
-          _iter60.write(oprot);
+          _iter68.write(oprot);
         }
       }
       BitSet optionals = new BitSet();
@@ -530,14 +530,14 @@ public class LatticePath implements org.apache.thrift.TBase<LatticePath, Lattice
     public void read(org.apache.thrift.protocol.TProtocol prot, LatticePath struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       {
-        org.apache.thrift.protocol.TList _list61 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-        struct.tokenList = new ArrayList<Token>(_list61.size);
-        Token _elem62;
-        for (int _i63 = 0; _i63 < _list61.size; ++_i63)
+        org.apache.thrift.protocol.TList _list69 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+        struct.tokenList = new ArrayList<Token>(_list69.size);
+        Token _elem70;
+        for (int _i71 = 0; _i71 < _list69.size; ++_i71)
         {
-          _elem62 = new Token();
-          _elem62.read(iprot);
-          struct.tokenList.add(_elem62);
+          _elem70 = new Token();
+          _elem70.read(iprot);
+          struct.tokenList.add(_elem70);
         }
       }
       struct.setTokenListIsSet(true);

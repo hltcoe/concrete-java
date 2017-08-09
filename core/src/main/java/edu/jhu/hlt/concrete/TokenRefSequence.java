@@ -48,6 +48,8 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
   private static final org.apache.thrift.protocol.TField TEXT_SPAN_FIELD_DESC = new org.apache.thrift.protocol.TField("textSpan", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField RAW_TEXT_SPAN_FIELD_DESC = new org.apache.thrift.protocol.TField("rawTextSpan", org.apache.thrift.protocol.TType.STRUCT, (short)5);
   private static final org.apache.thrift.protocol.TField AUDIO_SPAN_FIELD_DESC = new org.apache.thrift.protocol.TField("audioSpan", org.apache.thrift.protocol.TType.STRUCT, (short)6);
+  private static final org.apache.thrift.protocol.TField DEPENDENCIES_FIELD_DESC = new org.apache.thrift.protocol.TField("dependencies", org.apache.thrift.protocol.TType.LIST, (short)7);
+  private static final org.apache.thrift.protocol.TField CONSTITUENT_FIELD_DESC = new org.apache.thrift.protocol.TField("constituent", org.apache.thrift.protocol.TType.STRUCT, (short)8);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -61,6 +63,8 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
   private edu.jhu.hlt.concrete.TextSpan textSpan; // optional
   private edu.jhu.hlt.concrete.TextSpan rawTextSpan; // optional
   private edu.jhu.hlt.concrete.AudioSpan audioSpan; // optional
+  private List<Dependency> dependencies; // optional
+  private ConstituentRef constituent; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -113,7 +117,17 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
      * text of the original document, but is the annotation's best
      * effort at such a representation.
      */
-    AUDIO_SPAN((short)6, "audioSpan");
+    AUDIO_SPAN((short)6, "audioSpan"),
+    /**
+     * Use this field to reference a dependency tree fragment
+     * such as a shortest path or all the dependents in a constituent.
+     */
+    DEPENDENCIES((short)7, "dependencies"),
+    /**
+     * Use this field to specify an entire constituent in a parse tree.
+     * Prefer textSpan over this field unless a node in a tree is needed.
+     */
+    CONSTITUENT((short)8, "constituent");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -140,6 +154,10 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           return RAW_TEXT_SPAN;
         case 6: // AUDIO_SPAN
           return AUDIO_SPAN;
+        case 7: // DEPENDENCIES
+          return DEPENDENCIES;
+        case 8: // CONSTITUENT
+          return CONSTITUENT;
         default:
           return null;
       }
@@ -182,7 +200,7 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
   // isset id assignments
   private static final int __ANCHORTOKENINDEX_ISSET_ID = 0;
   private byte __isset_bitfield = 0;
-  private static final _Fields optionals[] = {_Fields.ANCHOR_TOKEN_INDEX,_Fields.TEXT_SPAN,_Fields.RAW_TEXT_SPAN,_Fields.AUDIO_SPAN};
+  private static final _Fields optionals[] = {_Fields.ANCHOR_TOKEN_INDEX,_Fields.TEXT_SPAN,_Fields.RAW_TEXT_SPAN,_Fields.AUDIO_SPAN,_Fields.DEPENDENCIES,_Fields.CONSTITUENT};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -199,6 +217,11 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.TextSpan.class)));
     tmpMap.put(_Fields.AUDIO_SPAN, new org.apache.thrift.meta_data.FieldMetaData("audioSpan", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, edu.jhu.hlt.concrete.AudioSpan.class)));
+    tmpMap.put(_Fields.DEPENDENCIES, new org.apache.thrift.meta_data.FieldMetaData("dependencies", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Dependency.class))));
+    tmpMap.put(_Fields.CONSTITUENT, new org.apache.thrift.meta_data.FieldMetaData("constituent", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ConstituentRef.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(TokenRefSequence.class, metaDataMap);
   }
@@ -239,6 +262,16 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     if (other.isSetAudioSpan()) {
       this.audioSpan = new edu.jhu.hlt.concrete.AudioSpan(other.audioSpan);
     }
+    if (other.isSetDependencies()) {
+      List<Dependency> __this__dependencies = new ArrayList<Dependency>(other.dependencies.size());
+      for (Dependency other_element : other.dependencies) {
+        __this__dependencies.add(new Dependency(other_element));
+      }
+      this.dependencies = __this__dependencies;
+    }
+    if (other.isSetConstituent()) {
+      this.constituent = new ConstituentRef(other.constituent);
+    }
   }
 
   public TokenRefSequence deepCopy() {
@@ -254,6 +287,8 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     this.textSpan = null;
     this.rawTextSpan = null;
     this.audioSpan = null;
+    this.dependencies = null;
+    this.constituent = null;
   }
 
   public int getTokenIndexListSize() {
@@ -502,6 +537,85 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     }
   }
 
+  public int getDependenciesSize() {
+    return (this.dependencies == null) ? 0 : this.dependencies.size();
+  }
+
+  public java.util.Iterator<Dependency> getDependenciesIterator() {
+    return (this.dependencies == null) ? null : this.dependencies.iterator();
+  }
+
+  public void addToDependencies(Dependency elem) {
+    if (this.dependencies == null) {
+      this.dependencies = new ArrayList<Dependency>();
+    }
+    this.dependencies.add(elem);
+  }
+
+  /**
+   * Use this field to reference a dependency tree fragment
+   * such as a shortest path or all the dependents in a constituent.
+   */
+  public List<Dependency> getDependencies() {
+    return this.dependencies;
+  }
+
+  /**
+   * Use this field to reference a dependency tree fragment
+   * such as a shortest path or all the dependents in a constituent.
+   */
+  public TokenRefSequence setDependencies(List<Dependency> dependencies) {
+    this.dependencies = dependencies;
+    return this;
+  }
+
+  public void unsetDependencies() {
+    this.dependencies = null;
+  }
+
+  /** Returns true if field dependencies is set (has been assigned a value) and false otherwise */
+  public boolean isSetDependencies() {
+    return this.dependencies != null;
+  }
+
+  public void setDependenciesIsSet(boolean value) {
+    if (!value) {
+      this.dependencies = null;
+    }
+  }
+
+  /**
+   * Use this field to specify an entire constituent in a parse tree.
+   * Prefer textSpan over this field unless a node in a tree is needed.
+   */
+  public ConstituentRef getConstituent() {
+    return this.constituent;
+  }
+
+  /**
+   * Use this field to specify an entire constituent in a parse tree.
+   * Prefer textSpan over this field unless a node in a tree is needed.
+   */
+  public TokenRefSequence setConstituent(ConstituentRef constituent) {
+    this.constituent = constituent;
+    return this;
+  }
+
+  public void unsetConstituent() {
+    this.constituent = null;
+  }
+
+  /** Returns true if field constituent is set (has been assigned a value) and false otherwise */
+  public boolean isSetConstituent() {
+    return this.constituent != null;
+  }
+
+  public void setConstituentIsSet(boolean value) {
+    if (!value) {
+      this.constituent = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case TOKEN_INDEX_LIST:
@@ -552,6 +666,22 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       }
       break;
 
+    case DEPENDENCIES:
+      if (value == null) {
+        unsetDependencies();
+      } else {
+        setDependencies((List<Dependency>)value);
+      }
+      break;
+
+    case CONSTITUENT:
+      if (value == null) {
+        unsetConstituent();
+      } else {
+        setConstituent((ConstituentRef)value);
+      }
+      break;
+
     }
   }
 
@@ -574,6 +704,12 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
 
     case AUDIO_SPAN:
       return getAudioSpan();
+
+    case DEPENDENCIES:
+      return getDependencies();
+
+    case CONSTITUENT:
+      return getConstituent();
 
     }
     throw new IllegalStateException();
@@ -598,6 +734,10 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       return isSetRawTextSpan();
     case AUDIO_SPAN:
       return isSetAudioSpan();
+    case DEPENDENCIES:
+      return isSetDependencies();
+    case CONSTITUENT:
+      return isSetConstituent();
     }
     throw new IllegalStateException();
   }
@@ -669,6 +809,24 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         return false;
     }
 
+    boolean this_present_dependencies = true && this.isSetDependencies();
+    boolean that_present_dependencies = true && that.isSetDependencies();
+    if (this_present_dependencies || that_present_dependencies) {
+      if (!(this_present_dependencies && that_present_dependencies))
+        return false;
+      if (!this.dependencies.equals(that.dependencies))
+        return false;
+    }
+
+    boolean this_present_constituent = true && this.isSetConstituent();
+    boolean that_present_constituent = true && that.isSetConstituent();
+    if (this_present_constituent || that_present_constituent) {
+      if (!(this_present_constituent && that_present_constituent))
+        return false;
+      if (!this.constituent.equals(that.constituent))
+        return false;
+    }
+
     return true;
   }
 
@@ -705,6 +863,16 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     list.add(present_audioSpan);
     if (present_audioSpan)
       list.add(audioSpan);
+
+    boolean present_dependencies = true && (isSetDependencies());
+    list.add(present_dependencies);
+    if (present_dependencies)
+      list.add(dependencies);
+
+    boolean present_constituent = true && (isSetConstituent());
+    list.add(present_constituent);
+    if (present_constituent)
+      list.add(constituent);
 
     return list.hashCode();
   }
@@ -773,6 +941,26 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     }
     if (isSetAudioSpan()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.audioSpan, other.audioSpan);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetDependencies()).compareTo(other.isSetDependencies());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetDependencies()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.dependencies, other.dependencies);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetConstituent()).compareTo(other.isSetConstituent());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetConstituent()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.constituent, other.constituent);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -848,6 +1036,26 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       }
       first = false;
     }
+    if (isSetDependencies()) {
+      if (!first) sb.append(", ");
+      sb.append("dependencies:");
+      if (this.dependencies == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.dependencies);
+      }
+      first = false;
+    }
+    if (isSetConstituent()) {
+      if (!first) sb.append(", ");
+      sb.append("constituent:");
+      if (this.constituent == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.constituent);
+      }
+      first = false;
+    }
     sb.append(")");
     return sb.toString();
   }
@@ -872,6 +1080,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
     }
     if (audioSpan != null) {
       audioSpan.validate();
+    }
+    if (constituent != null) {
+      constituent.validate();
     }
   }
 
@@ -914,13 +1125,13 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           case 1: // TOKEN_INDEX_LIST
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                struct.tokenIndexList = new ArrayList<Integer>(_list0.size);
-                int _elem1;
-                for (int _i2 = 0; _i2 < _list0.size; ++_i2)
+                org.apache.thrift.protocol.TList _list24 = iprot.readListBegin();
+                struct.tokenIndexList = new ArrayList<Integer>(_list24.size);
+                int _elem25;
+                for (int _i26 = 0; _i26 < _list24.size; ++_i26)
                 {
-                  _elem1 = iprot.readI32();
-                  struct.tokenIndexList.add(_elem1);
+                  _elem25 = iprot.readI32();
+                  struct.tokenIndexList.add(_elem25);
                 }
                 iprot.readListEnd();
               }
@@ -973,6 +1184,34 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 7: // DEPENDENCIES
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+              {
+                org.apache.thrift.protocol.TList _list27 = iprot.readListBegin();
+                struct.dependencies = new ArrayList<Dependency>(_list27.size);
+                Dependency _elem28;
+                for (int _i29 = 0; _i29 < _list27.size; ++_i29)
+                {
+                  _elem28 = new Dependency();
+                  _elem28.read(iprot);
+                  struct.dependencies.add(_elem28);
+                }
+                iprot.readListEnd();
+              }
+              struct.setDependenciesIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 8: // CONSTITUENT
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.constituent = new ConstituentRef();
+              struct.constituent.read(iprot);
+              struct.setConstituentIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -992,9 +1231,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         oprot.writeFieldBegin(TOKEN_INDEX_LIST_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.tokenIndexList.size()));
-          for (int _iter3 : struct.tokenIndexList)
+          for (int _iter30 : struct.tokenIndexList)
           {
-            oprot.writeI32(_iter3);
+            oprot.writeI32(_iter30);
           }
           oprot.writeListEnd();
         }
@@ -1031,6 +1270,27 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
           oprot.writeFieldEnd();
         }
       }
+      if (struct.dependencies != null) {
+        if (struct.isSetDependencies()) {
+          oprot.writeFieldBegin(DEPENDENCIES_FIELD_DESC);
+          {
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.dependencies.size()));
+            for (Dependency _iter31 : struct.dependencies)
+            {
+              _iter31.write(oprot);
+            }
+            oprot.writeListEnd();
+          }
+          oprot.writeFieldEnd();
+        }
+      }
+      if (struct.constituent != null) {
+        if (struct.isSetConstituent()) {
+          oprot.writeFieldBegin(CONSTITUENT_FIELD_DESC);
+          struct.constituent.write(oprot);
+          oprot.writeFieldEnd();
+        }
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1050,9 +1310,9 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       TTupleProtocol oprot = (TTupleProtocol) prot;
       {
         oprot.writeI32(struct.tokenIndexList.size());
-        for (int _iter4 : struct.tokenIndexList)
+        for (int _iter32 : struct.tokenIndexList)
         {
-          oprot.writeI32(_iter4);
+          oprot.writeI32(_iter32);
         }
       }
       struct.tokenizationId.write(oprot);
@@ -1069,7 +1329,13 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       if (struct.isSetAudioSpan()) {
         optionals.set(3);
       }
-      oprot.writeBitSet(optionals, 4);
+      if (struct.isSetDependencies()) {
+        optionals.set(4);
+      }
+      if (struct.isSetConstituent()) {
+        optionals.set(5);
+      }
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetAnchorTokenIndex()) {
         oprot.writeI32(struct.anchorTokenIndex);
       }
@@ -1082,26 +1348,38 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
       if (struct.isSetAudioSpan()) {
         struct.audioSpan.write(oprot);
       }
+      if (struct.isSetDependencies()) {
+        {
+          oprot.writeI32(struct.dependencies.size());
+          for (Dependency _iter33 : struct.dependencies)
+          {
+            _iter33.write(oprot);
+          }
+        }
+      }
+      if (struct.isSetConstituent()) {
+        struct.constituent.write(oprot);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, TokenRefSequence struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       {
-        org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-        struct.tokenIndexList = new ArrayList<Integer>(_list5.size);
-        int _elem6;
-        for (int _i7 = 0; _i7 < _list5.size; ++_i7)
+        org.apache.thrift.protocol.TList _list34 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
+        struct.tokenIndexList = new ArrayList<Integer>(_list34.size);
+        int _elem35;
+        for (int _i36 = 0; _i36 < _list34.size; ++_i36)
         {
-          _elem6 = iprot.readI32();
-          struct.tokenIndexList.add(_elem6);
+          _elem35 = iprot.readI32();
+          struct.tokenIndexList.add(_elem35);
         }
       }
       struct.setTokenIndexListIsSet(true);
       struct.tokenizationId = new edu.jhu.hlt.concrete.UUID();
       struct.tokenizationId.read(iprot);
       struct.setTokenizationIdIsSet(true);
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.anchorTokenIndex = iprot.readI32();
         struct.setAnchorTokenIndexIsSet(true);
@@ -1120,6 +1398,25 @@ public class TokenRefSequence implements org.apache.thrift.TBase<TokenRefSequenc
         struct.audioSpan = new edu.jhu.hlt.concrete.AudioSpan();
         struct.audioSpan.read(iprot);
         struct.setAudioSpanIsSet(true);
+      }
+      if (incoming.get(4)) {
+        {
+          org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.dependencies = new ArrayList<Dependency>(_list37.size);
+          Dependency _elem38;
+          for (int _i39 = 0; _i39 < _list37.size; ++_i39)
+          {
+            _elem38 = new Dependency();
+            _elem38.read(iprot);
+            struct.dependencies.add(_elem38);
+          }
+        }
+        struct.setDependenciesIsSet(true);
+      }
+      if (incoming.get(5)) {
+        struct.constituent = new ConstituentRef();
+        struct.constituent.read(iprot);
+        struct.setConstituentIsSet(true);
       }
     }
   }
