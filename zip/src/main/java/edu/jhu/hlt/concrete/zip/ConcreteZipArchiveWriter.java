@@ -1,16 +1,17 @@
 package edu.jhu.hlt.concrete.zip;
 
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteException;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+
+import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * A writer than supports writing Concrete communications to a zip archive.
