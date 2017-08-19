@@ -1,8 +1,8 @@
 package edu.jhu.hlt.concrete.zip;
 
-import org.apache.thrift.TException;
-
 import java.nio.file.Paths;
+
+import org.apache.thrift.TException;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;

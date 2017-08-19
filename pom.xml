@@ -22,6 +22,7 @@
     <module>core</module>
     <module>safe</module>
     <module>util</module>
+    <module>zip</module>
     <module>server</module>
     <module>tift</module>
     <module>dictum</module>
@@ -43,7 +44,6 @@
     <module>analytics/simple</module>
     <module>services</module>
     <module>simpleaccumulo</module>
-    <module>zip</module>
     <module>ontology</module>
   </modules>
 

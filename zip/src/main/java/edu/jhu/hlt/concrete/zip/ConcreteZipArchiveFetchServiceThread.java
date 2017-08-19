@@ -1,6 +1,5 @@
 package edu.jhu.hlt.concrete.zip;
 
-import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessorFactory;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -9,6 +8,8 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TNonblockingServerTransport;
+
+import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 
 class ConcreteZipArchiveFetchServiceThread implements AutoCloseable, Runnable {
 

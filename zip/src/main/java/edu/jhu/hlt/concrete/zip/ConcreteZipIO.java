@@ -1,13 +1,13 @@
 package edu.jhu.hlt.concrete.zip;
 
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.util.ConcreteException;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
-import java.io.IOError;
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
+import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * Utility class to process Concrete zip archives.
