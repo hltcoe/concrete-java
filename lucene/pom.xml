@@ -142,5 +142,10 @@
       <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>tift</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
