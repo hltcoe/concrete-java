@@ -59,6 +59,21 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>6.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>6.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queryparser</artifactId>
+      <version>6.1.0</version>
+    </dependency>
+    <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>miscommunication</artifactId>
     </dependency>
@@ -67,27 +82,29 @@
       <artifactId>concrete-util</artifactId>
     </dependency>
     <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
+      <groupId>org.inferred</groupId>
+      <artifactId>freebuilder</artifactId>
+      <optional>true</optional>
     </dependency>
+    <!-- Guava is an optional dependency of FreeBuilder-->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- Command line tools dependencies-->
     <dependency>
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
     </dependency>
     <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>acute</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <scope>test</scope>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -97,11 +114,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -119,38 +131,21 @@
       <artifactId>jackson-annotations</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>redis.clients</groupId>
-      <artifactId>jedis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.inferred</groupId>
-      <artifactId>freebuilder</artifactId>
-      <optional>true</optional>
-    </dependency>
 
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <version>6.1.0</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-analyzers-common</artifactId>
-      <version>6.1.0</version>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-queryparser</artifactId>
-      <version>6.1.0</version>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>tift</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

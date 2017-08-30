@@ -42,10 +42,14 @@ public class ConcreteLuceneSearcher implements AutoCloseable {
   private Analyzer analyzer;
 
   public ConcreteLuceneSearcher(Path p) throws IOException {
+    this(p, new StandardAnalyzer());
+  }
+
+  public ConcreteLuceneSearcher(Path p, Analyzer analyzer) throws IOException {
     this.dir = FSDirectory.open(p);
     this.idxr = DirectoryReader.open(this.dir);
     this.search = new IndexSearcher(this.idxr);
-    this.analyzer = new StandardAnalyzer();
+    this.analyzer = analyzer;
   }
 
   public TopDocs search(String query, int maxDocs) throws ParseException, IOException {
@@ -76,7 +80,7 @@ public class ConcreteLuceneSearcher implements AutoCloseable {
   }
 
   private Query createLuceneQuery(String queryText) throws ParseException {
-    QueryParser queryParser = new QueryParser("text", analyzer);
+    QueryParser queryParser = new QueryParser(ConcreteLuceneConstants.TEXT_FIELD, analyzer);
     return queryParser.parse(queryText);
   }
 

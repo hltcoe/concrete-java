@@ -5,9 +5,7 @@ import java.util.Optional;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
 import org.inferred.freebuilder.FreeBuilder;
 
 import edu.jhu.hlt.concrete.Sentence;
@@ -16,7 +14,7 @@ import edu.jhu.hlt.concrete.miscommunication.MiscTextSpan;
 
 /**
  * Implementation of {@link LuceneDocumentable} that represents
- * a Concrete {@link Sentence} objects.
+ * a Concrete {@link Sentence} object but does not use tokenization.
  *
  * @see MiscSentence
  */
@@ -25,13 +23,6 @@ public abstract class DocumentableSentence implements MiscSentence, LuceneDocume
 
   public abstract MiscSentence getSentence();
   public abstract Optional<Long> getAuthorId();
-
-  final FieldType getContentFieldType() {
-    FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-    ft.setStoreTermVectors(true);
-    ft.setStoreTermVectorOffsets(true);
-    return ft;
-  }
 
   /*
    * (non-Javadoc)
@@ -44,12 +35,13 @@ public abstract class DocumentableSentence implements MiscSentence, LuceneDocume
     d.add(ConcreteLuceneConstants.getCommunicationIDField(this.getCommunicationID()));
 
     this.getAuthorId().ifPresent(aid -> {
-      d.add(new StringField("author-id", aid.toString(), Store.NO));
+      d.add(new StringField(ConcreteLuceneConstants.AUTHOR_ID_FIELD, aid.toString(), Store.NO));
     });
 
     this.getTextSpan()
         .map(MiscTextSpan::getText)
-        .ifPresent(txt -> d.add(new Field("text", txt.getContent(), this.getContentFieldType())));
+        .ifPresent(txt -> d.add(new Field(ConcreteLuceneConstants.TEXT_FIELD,
+            txt.getContent(), ConcreteLuceneConstants.getContentFieldType())));
     return d;
   }
 
