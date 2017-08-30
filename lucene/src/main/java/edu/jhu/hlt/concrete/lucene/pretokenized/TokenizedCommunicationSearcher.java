@@ -33,10 +33,14 @@ public class TokenizedCommunicationSearcher implements AutoCloseable {
   private Analyzer analyzer;
 
   public TokenizedCommunicationSearcher(Path path) throws IOException {
+    this(path, new SearchAnalyzer());
+  }
+
+  public TokenizedCommunicationSearcher(Path path, Analyzer analyzer) throws IOException {
     this.luceneDir = FSDirectory.open(path);
     this.idxr = DirectoryReader.open(this.luceneDir);
     this.search = new IndexSearcher(this.idxr);
-    this.analyzer = new SearchAnalyzer();
+    this.analyzer = analyzer;
   }
 
   public TopDocs search(String query, int maxDocs) throws ParseException, IOException {

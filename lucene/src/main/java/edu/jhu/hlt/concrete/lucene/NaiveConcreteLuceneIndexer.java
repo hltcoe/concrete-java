@@ -51,16 +51,18 @@ public class NaiveConcreteLuceneIndexer implements AutoCloseable, LuceneCommunic
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NaiveConcreteLuceneIndexer.class);
 
-  private final Path p;
   private final Directory luceneDir;
   private final Analyzer analyzer;
   private final IndexWriter writer;
 
   public NaiveConcreteLuceneIndexer(Path p) throws IOException {
-    this.p = p;
+    this(p, new StandardAnalyzer());
+  }
+
+  public NaiveConcreteLuceneIndexer(Path p, Analyzer analyzer) throws IOException {
     LOGGER.debug("Creating directory object.");
-    this.luceneDir = FSDirectory.open(this.p);
-    this.analyzer = new StandardAnalyzer();
+    this.luceneDir = FSDirectory.open(p);
+    this.analyzer = analyzer;
     IndexWriterConfig icfg = new IndexWriterConfig(this.analyzer);
     icfg.setOpenMode(OpenMode.CREATE_OR_APPEND);
     this.writer = new IndexWriter(luceneDir, icfg);

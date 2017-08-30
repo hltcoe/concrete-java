@@ -21,6 +21,21 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.lucene.LuceneCommunicationIndexer;
 import edu.jhu.hlt.concrete.miscommunication.MiscCommunication;
 
+/**
+ * This class builds a Lucene index based on Concrete {@link Sentence} objects.
+ * It uses the tokenization in the {@link Sentence} objects rather than
+ * Lucene tokenizing the text.
+ * <br>
+ * Necessarily, this class requires communication objects with the following:
+ * <ul>
+ * <li>communications with the <code>text</code> field set</li>
+ * <li>sections</li>
+ * <li>sentences with valid text spans and tokenization</li>
+ * </ul>
+ * <br><br>
+ *
+ * @see LuceneCommunicationIndexer
+ */
 public class TokenizedCommunicationIndexer implements LuceneCommunicationIndexer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TokenizedCommunicationIndexer.class);
@@ -30,11 +45,15 @@ public class TokenizedCommunicationIndexer implements LuceneCommunicationIndexer
   private final IndexWriter writer;
 
   public TokenizedCommunicationIndexer(Path path) throws IOException {
+    this(path, new IndexAnalyzer());
+  }
+
+  public TokenizedCommunicationIndexer(Path path, Analyzer analyzer) throws IOException {
     LOGGER.debug("Creating directory object for " + path.toString());
     this.luceneDir = FSDirectory.open(path);
-    this.analyzer = new IndexAnalyzer();
+    this.analyzer = analyzer;
     IndexWriterConfig icfg = new IndexWriterConfig(this.analyzer);
-    icfg.setOpenMode(OpenMode.CREATE);
+    icfg.setOpenMode(OpenMode.CREATE_OR_APPEND);
     this.writer = new IndexWriter(luceneDir, icfg);
   }
 

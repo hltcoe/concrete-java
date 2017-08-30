@@ -14,7 +14,7 @@ import edu.jhu.hlt.concrete.miscommunication.MiscTextSpan;
 
 /**
  * Implementation of {@link LuceneDocumentable} that represents
- * a Concrete {@link Sentence} objects.
+ * a Concrete {@link Sentence} object but does not use tokenization.
  *
  * @see MiscSentence
  */

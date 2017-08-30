@@ -29,4 +29,5 @@ public class IndexAnalyzer extends TokenizedAnalyzerBase {
     tok = new StopFilter(tok, stopwords);
     return new TokenStreamComponents(src, tok);
   }
+
 }

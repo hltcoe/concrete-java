@@ -5,6 +5,9 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.analysis.util.StopwordAnalyzerBase;
 
@@ -48,4 +51,5 @@ public abstract class TokenizedAnalyzerBase extends StopwordAnalyzerBase {
   public TokenizedAnalyzerBase(Reader stopwords) throws IOException {
     this(loadStopwordSet(stopwords));
   }
+
 }
