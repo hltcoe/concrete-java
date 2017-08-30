@@ -22,9 +22,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import edu.jhu.hlt.concrete.lucene.ConcreteLuceneConstants;
+import edu.jhu.hlt.concrete.lucene.LuceneCommunicationSearcher;
 
 
-public class TokenizedCommunicationSearcher implements AutoCloseable {
+public class TokenizedCommunicationSearcher implements LuceneCommunicationSearcher {
   private static final Logger LOGGER = LoggerFactory.getLogger(TokenizedCommunicationSearcher.class);
 
   private Directory luceneDir;
@@ -43,13 +44,14 @@ public class TokenizedCommunicationSearcher implements AutoCloseable {
     this.analyzer = analyzer;
   }
 
-  public TopDocs search(String query, int maxDocs) throws ParseException, IOException {
+  protected TopDocs search(String query, int maxDocs) throws ParseException, IOException {
     Query q = this.createLuceneQuery(query);
     LOGGER.debug("Got query: {}", q.toString());
     TopDocs topDocs = this.search.search(q, maxDocs);
     return topDocs;
   }
 
+  @Override
   public List<Document> searchDocuments(String query, int maxDocs) throws ParseException, IOException {
     TopDocs td = this.search(query, maxDocs);
     ImmutableList.Builder<Document> db = new ImmutableList.Builder<>();
@@ -59,8 +61,9 @@ public class TokenizedCommunicationSearcher implements AutoCloseable {
     return db.build();
   }
 
-  public Document get(int docId) throws IOException {
-    return this.search.doc(docId);
+  @Override
+  public List<Document> searchDocuments(String query, long authorId, int maxDocs) throws ParseException, IOException {
+    throw new UnsupportedOperationException("Pre-tokenized indexes do not support twitter author id yet.");
   }
 
   private Query createLuceneQuery(String queryText) throws ParseException {
@@ -74,4 +77,5 @@ public class TokenizedCommunicationSearcher implements AutoCloseable {
     this.idxr.close();
     this.luceneDir.close();
   }
+
 }

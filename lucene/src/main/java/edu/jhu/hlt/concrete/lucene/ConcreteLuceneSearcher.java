@@ -32,7 +32,7 @@ import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 /**
  * A utility class that allows searching over a pre-built Lucene index.
  */
-public class ConcreteLuceneSearcher implements AutoCloseable {
+public class ConcreteLuceneSearcher implements LuceneCommunicationSearcher {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ConcreteLuceneSearcher.class);
 
@@ -59,6 +59,7 @@ public class ConcreteLuceneSearcher implements AutoCloseable {
     return topDocs;
   }
 
+  @Override
   public List<Document> searchDocuments(String query, int maxDocs) throws ParseException, IOException {
     TopDocs td = this.search(query, maxDocs);
     ImmutableList.Builder<Document> db = new ImmutableList.Builder<>();
@@ -67,8 +68,9 @@ public class ConcreteLuceneSearcher implements AutoCloseable {
     return db.build();
   }
 
-  public List<Document> searchDocuments(String terms, long authorId, int maxDocs) throws ParseException, IOException {
-    String fullQ = new StringBuilder(terms)
+  @Override
+  public List<Document> searchDocuments(String query, long authorId, int maxDocs) throws ParseException, IOException {
+    String fullQ = new StringBuilder(query)
         .append(" AND author-id:")
         .append(authorId)
         .toString();
