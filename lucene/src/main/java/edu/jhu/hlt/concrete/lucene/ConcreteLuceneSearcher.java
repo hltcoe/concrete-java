@@ -76,7 +76,7 @@ public class ConcreteLuceneSearcher implements AutoCloseable {
   }
 
   private Query createLuceneQuery(String queryText) throws ParseException {
-    QueryParser queryParser = new QueryParser("text", analyzer);
+    QueryParser queryParser = new QueryParser(ConcreteLuceneConstants.TEXT_FIELD, analyzer);
     return queryParser.parse(queryText);
   }
 

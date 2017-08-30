@@ -88,6 +88,7 @@ public class NaiveConcreteLuceneIndexer implements AutoCloseable, LuceneCommunic
   @Override
   public void close() throws IOException {
     this.writer.close();
+    this.analyzer.close();
     this.luceneDir.close();
   }
 
