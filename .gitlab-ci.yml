@@ -14,17 +14,6 @@ compile:
   tags:
     - docker
 
-docker-build:
-  stage: build-unit-test
-  before_script:
-    - docker info
-  script:
-    - docker build .
-  tags:
-    - shell
-  only:
-    - master
-
 deploy:
   stage: deploy
   image: r8n01:5000/coe-maven-centos:latest
