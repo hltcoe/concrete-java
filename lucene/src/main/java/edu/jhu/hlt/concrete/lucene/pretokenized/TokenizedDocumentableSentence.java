@@ -47,10 +47,6 @@ public class TokenizedDocumentableSentence implements LuceneDocumentable {
     for (String token : tokens) {
       d.add(new Field("text", token, ConcreteLuceneConstants.getContentFieldType()));
     }
-    d.add(new Field("text", "漢字", ConcreteLuceneConstants.getContentFieldType()));
-    d.add(new Field("text", "磨", ConcreteLuceneConstants.getContentFieldType()));
-    d.add(new Field("text", "hello nurse", ConcreteLuceneConstants.getContentFieldType()));
-
 
     return d;
   }
