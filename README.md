@@ -25,7 +25,7 @@ the command would be (in the same directory)
 ./generate.sh concrete/thrift
 ```
 
-Be aware that you'll need Thrift `0.9.3` installed
+Be aware that you'll need Thrift `0.10.0` installed
 and in your `$PATH`.
 
 ## How do I run the simple ingesters?
