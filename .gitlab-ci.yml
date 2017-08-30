@@ -22,6 +22,8 @@ docker-build:
     - docker build .
   tags:
     - shell
+  only:
+    - master
 
 deploy:
   stage: deploy
