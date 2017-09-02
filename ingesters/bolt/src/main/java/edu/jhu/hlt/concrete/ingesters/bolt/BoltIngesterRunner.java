@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -75,7 +76,8 @@ public class BoltIngesterRunner {
       try (OutputStream os = Files.newOutputStream(outWithExt);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
-        for (Path p : run.delegate.findFilesInPaths()) {
+        List<Path> paths = run.delegate.findFilesInPaths();
+        for (Path p : paths) {
           LOGGER.debug("Running on file: {}", p);
           new ExistingNonDirectoryFile(p);
           try {
@@ -85,6 +87,8 @@ public class BoltIngesterRunner {
             LOGGER.error("Error processing file: " + p, e);
           }
         }
+
+        LOGGER.info("Ingested {} discussion forum posts", paths.size());
       }
     } catch (NotFileException | IOException e) {
       LOGGER.error("Caught exception processing.", e);
