@@ -31,6 +31,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +72,11 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
   public static final String LINK_LOCAL_NAME = "a";
 
   private final XMLInputFactory inF;
+
+  // parsing 'datetimes'
+  // max: i don't know if these are actually UTC.
+  // TODO: read the readme
+  private final DateTimeFormatter dtfmt = ISODateTimeFormat.dateTimeParser().withZoneUTC();
 
   /**
    *
@@ -152,10 +160,11 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
       final String hlText = content.substring(charOff, charOffPlusLen);
       SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
       ts = new TextSpan(charOff + pads.getKey(), charOffPlusLen - pads.getValue());
-    } else {
+    } else
       ts = new TextSpan(charOff, charOffPlusLen);
-    }
-    assert ts.getStart() <= ts.getEnding() : "ts=" + ts;
+
+    if (ts.getStart() > ts.getEnding())
+      throw new IllegalArgumentException("invalid TS: " + ts.toString());
 
     Section s = new Section();
     s.setKind("headline");
@@ -351,27 +360,40 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
 
             //region
             // Add sections for authors and datetimes for each bolt post
-            // by Tongfei Chen
             Attribute attrAuthor = se.getAttributeByName(QName.valueOf("author"));
             Attribute attrDateTime = se.getAttributeByName(QName.valueOf("datetime"));
 
             if (attrAuthor != null && attrDateTime != null) {
-
               int loc = attrAuthor.getLocation().getCharacterOffset();
-
+              LOGGER.debug("Author offset: {}", loc);
               int sectAuthorBeginningOffset = loc + "<post author=\"".length();
+              LOGGER.debug("With tag off: {}", sectAuthorBeginningOffset);
 
               Section sectAuthor = sf.fromTextSpan(new TextSpan(
                       sectAuthorBeginningOffset, sectAuthorBeginningOffset + attrAuthor.getValue().length()
               ), "author");
               c.addToSectionList(sectAuthor);
 
-              int sectDateTimeBeginningOffset = sectAuthorBeginningOffset + attrAuthor.getValue().length() + " datetime=".length();
+              int sectDateTimeBeginningOffset = sectAuthorBeginningOffset
+                  + attrAuthor.getValue().length()
+                  + "\" datetime=\"".length();
 
               Section sectDateTime = sf.fromTextSpan(new TextSpan(
                       sectDateTimeBeginningOffset, sectDateTimeBeginningOffset + attrDateTime.getValue().length()
               ), "datetime");
               c.addToSectionList(sectDateTime);
+
+              // attempt to parse this datetime
+              final String dtStr = attrDateTime.getValue();
+              if (!dtStr.isEmpty()) {
+                LOGGER.debug("Trying to parse datetime: {}", dtStr);
+                try {
+                  final DateTime dt = this.dtfmt.parseDateTime(dtStr);
+                  c.setStartTime(dt.getMillis() / 1000);
+                } catch (IllegalArgumentException e) {
+                  LOGGER.info("Failed to parse datetime: {}", dtStr);
+                }
+              }
             }
             //endregion
 
@@ -395,7 +417,6 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               String fpContent = chars.getData();
               LOGGER.debug("Character offset: {}", coff);
               LOGGER.debug("Character based data: {}", fpContent);
-              // LOGGER.debug("Character data via offset diff: {}", content.substring(coff - fpContent.length(), coff));
 
               SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();

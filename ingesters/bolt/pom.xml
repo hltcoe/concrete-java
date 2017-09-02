@@ -32,8 +32,8 @@
       <artifactId>concrete-ingesters-base</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>woodstox-core-asl</artifactId>
+      <groupId>com.fasterxml.woodstox</groupId>
+      <artifactId>woodstox-core</artifactId>
     </dependency>
   </dependencies>
 </project>
