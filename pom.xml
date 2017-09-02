@@ -40,6 +40,7 @@
     <module>ingesters/conll</module>
     <module>ingesters/bolt</module>
     <module>ingesters/webposts</module>
+    <module>ingesters/kbp2015</module>
     <module>analytics/base</module>
     <module>analytics/simple</module>
     <module>services</module>
@@ -211,7 +212,7 @@
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>19.0</version>
+        <version>23.0</version>
       </dependency>
       <dependency>
         <groupId>redis.clients</groupId>
