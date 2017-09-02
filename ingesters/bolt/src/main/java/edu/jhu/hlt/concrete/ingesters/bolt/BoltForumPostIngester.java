@@ -384,14 +384,18 @@ public class BoltForumPostIngester implements SafeTooledAnnotationMetadata, UTF8
               c.addToSectionList(sectDateTime);
 
               // attempt to parse this datetime
-              final String dtStr = attrDateTime.getValue();
-              if (!dtStr.isEmpty()) {
-                LOGGER.debug("Trying to parse datetime: {}", dtStr);
-                try {
-                  final DateTime dt = this.dtfmt.parseDateTime(dtStr);
-                  c.setStartTime(dt.getMillis() / 1000);
-                } catch (IllegalArgumentException e) {
-                  LOGGER.info("Failed to parse datetime: {}", dtStr);
+              // actually only want the first one
+              // or the first obtainable one ... ?
+              if (!c.isSetStartTime()) {
+                final String dtStr = attrDateTime.getValue();
+                if (!dtStr.isEmpty()) {
+                  LOGGER.debug("Trying to parse datetime: {}", dtStr);
+                  try {
+                    final DateTime dt = this.dtfmt.parseDateTime(dtStr);
+                    c.setStartTime(dt.getMillis() / 1000);
+                  } catch (IllegalArgumentException e) {
+                    LOGGER.info("Failed to parse datetime: {}", dtStr);
+                  }
                 }
               }
             }
