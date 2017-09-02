@@ -11,11 +11,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,9 +51,8 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenera
  * needed), then add a {@link SituationMention} for every row in the assessment
  * file where both the relation and query entity providence are deemed correct.
  *
- * @see data/LDC2015E100/LDC2015E100_TAC_KBP_2015_English_Cold_Start_Evaluation_Assessment_Results_V3.1/README.txt
- *
- * @author travis
+ * See <code>data/LDC2015E100/LDC2015E100_TAC_KBP_2015_English_Cold_Start_Evaluation_Assessment_Results_V3.1/README.txt</code>
+ * for data and more info
  */
 public class SlotFillStandoffData {
 
@@ -208,6 +205,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
     /**
      * returns a set of indices (i,j) such that queryEntityProvidence[i] and
      * slotFillerProvidence[j] appear in the same document.
+     *
+     * @return a map of integer pairs representing offsets
      */
     public List<Pair<Integer, Integer>> commonDocumentProvidence() {
       List<Pair<Integer, Integer>> lp = new ArrayList<>();
@@ -272,7 +271,6 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       c.addToSituationMentionSetList(situations);
 
       if (includeNer) {
-        outer:
         for (SituationMention m : situations.getMentionList()) {
           assert m.getArgumentListSize() == 2;
 
@@ -417,7 +415,6 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
       throw new IllegalArgumentException("not a file: " + assessmentFile.getPath());
     succ = fail = 0;
     annoLinesIncorrectProv = annoLinesIncorrectFill = annoLinesKept = 0;
-    uniqAnno = new HashSet<>();
     try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(assessmentFile)))) {
       for (String line = r.readLine(); line != null; line = r.readLine())
         addAnnotations(line, dryRun);
@@ -435,14 +432,14 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
   private int annoLinesIncorrectFill = 0;
   private int annoLinesDup = 0;
   private int succ = 0, fail = 0;
-  private Set<String> uniqAnno;
 
   /**
    * Finds query and slot evidence which are in the same document and adds them
    * to the corresponding {@link Communication} (provided at construction) as
    * a new {@link SituationMention}.
    *
-   * @param dryRun if true, then just add a docId -> null mapping into id2comm
+   * @param line the line to annotate
+   * @param dryRun if true, then just add a docId to null mapping into id2comm
    * and don't actually build any situations.
    */
   public void addAnnotations(String line, boolean dryRun) {
