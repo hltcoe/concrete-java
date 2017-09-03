@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights reserved.
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
  * See LICENSE in the project root directory.
  */
 package edu.jhu.hlt.concrete.ingesters.webposts;
@@ -30,8 +30,8 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
@@ -210,7 +210,7 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     final int endTextOffset = charOff + clen;
     final String hlText = content.substring(charOff, endTextOffset);
 
-    SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
+    SimpleImmutableEntry<Integer, Integer> pads = Util.trimSpacing(hlText);
     TextSpan ts = new TextSpan(charOff + pads.getKey(), endTextOffset - pads.getValue());
 
     Section s = new Section();
@@ -220,14 +220,6 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     intList.add(0);
     s.setNumberList(intList);
     return s;
-  }
-
-  private static SimpleImmutableEntry<Integer, Integer> trimSpacing(final String str) {
-    final int leftPadding = getLeftSpacesPaddingCount(str);
-    LOGGER.trace("Left padding: {}", leftPadding);
-    final int rightPadding = getRightSpacesPaddingCount(str);
-    LOGGER.trace("Right padding: {}", rightPadding);
-    return new SimpleImmutableEntry<Integer, Integer>(leftPadding, rightPadding);
   }
 
   /*
@@ -316,7 +308,7 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
               LOGGER.debug("Character offset: {}", currOff);
               LOGGER.debug("Character based data: {}", fpContent);
 
-              SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(fpContent);
+              SimpleImmutableEntry<Integer, Integer> pads = Util.trimSpacing(fpContent);
               final int tsb = currOff + pads.getKey();
 
               final int tse = currOff +
@@ -383,32 +375,6 @@ public class WebPostIngester implements SafeTooledAnnotationMetadata, UTF8FileIn
     } catch (IOException e) {
       throw new IngestException(e);
     }
-  }
-
-  private static int getLeftSpacesPaddingCount(final String str) {
-    final int len = str.length();
-    for (int i = 0; i < len; i++) {
-      Character c = str.charAt(i);
-      if (!isSpaceOrUnixNewline(c))
-        return i;
-    }
-
-    return len;
-  }
-
-  private static boolean isSpaceOrUnixNewline(final Character c) {
-    return c.equals(' ') || c.equals('\n');
-  }
-
-  private static int getRightSpacesPaddingCount(final String str) {
-    final int lenIdx = str.length() - 1;
-    for (int i = 0; i < lenIdx; i++) {
-      Character c = str.charAt(lenIdx - i);
-      if (!isSpaceOrUnixNewline(c))
-        return i;
-    }
-
-    return lenIdx + 1;
   }
 
   public static void main(String... args) {

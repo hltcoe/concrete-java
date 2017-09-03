@@ -21,11 +21,9 @@ import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
  * @author Tongfei Chen
  */
 public class WebPostSgmlIngester {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(WebPostGzIngester.class);
 
   public static void main(String[] args) throws Exception {
-
     WebPostIngester wpi = new WebPostIngester();
 
     CompactCommunicationSerializer ser = new CompactCommunicationSerializer();

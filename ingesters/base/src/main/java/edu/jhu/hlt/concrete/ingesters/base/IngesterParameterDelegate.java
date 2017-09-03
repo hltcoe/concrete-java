@@ -39,6 +39,9 @@ public class IngesterParameterDelegate {
   @Parameter(description = "path/to/file1 /path/to/file2/ ...")
   public List<String> paths = new ArrayList<>();
 
+  @Parameter(description = "The name of the output file")
+  public String filename = "comms.tar.gz";
+
   /**
    *
    */
@@ -49,8 +52,8 @@ public class IngesterParameterDelegate {
   /**
    * Finds all (regular) files under any file or directory added to the path.
    */
-  public ArrayList<Path> findFilesInPaths() {
-    ArrayList<Path> output = new ArrayList<>();
+  public List<Path> findFilesInPaths() {
+    List<Path> output = new ArrayList<>();
     try {
       for (String pstr : paths) {
         Path p = Paths.get(pstr);
