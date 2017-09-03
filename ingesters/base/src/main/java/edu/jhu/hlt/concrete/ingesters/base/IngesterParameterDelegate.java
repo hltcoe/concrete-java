@@ -39,7 +39,7 @@ public class IngesterParameterDelegate {
   @Parameter(description = "path/to/file1 /path/to/file2/ ...")
   public List<String> paths = new ArrayList<>();
 
-  @Parameter(description = "The name of the output file")
+  @Parameter(description = "The name of the output file", names ="--filename")
   public String filename = "comms.tar.gz";
 
   /**
