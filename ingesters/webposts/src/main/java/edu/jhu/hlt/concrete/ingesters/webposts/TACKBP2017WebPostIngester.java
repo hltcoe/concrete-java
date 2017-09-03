@@ -4,31 +4,23 @@
  */
 package edu.jhu.hlt.concrete.ingesters.webposts;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -129,48 +121,10 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     return "newswire";
   }
 
-  private Section handleHeadline(XMLEventReader rdr, Communication ptr) throws XMLStreamException {
-    if (!ptr.isSetText())
-      throw new IllegalArgumentException("need comm with text set.");
-
-    // Headline begin.
-    XMLEvent hl = rdr.nextEvent();
-    StartElement hlse = hl.asStartElement();
-    QName hlqn = hlse.getName();
-    final String hlPart = hlqn.getLocalPart();
-    LOGGER.debug("QN: {}", hlPart);
-
-    // Headline text.
-    Characters hlChars = rdr.nextEvent().asCharacters();
-    final int charOff = hlChars.getLocation().getCharacterOffset();
-    final int clen = hlChars.getData().length();
-
-    // Construct section, text span, etc.
-    final int endTextOffset = charOff + clen;
-    final String hlText = ptr.getText().substring(charOff, endTextOffset);
-
-    SimpleImmutableEntry<Integer, Integer> pads = Util.trimSpacing(hlText);
-    TextSpan ts = new TextSpan(charOff + pads.getKey(), endTextOffset - pads.getValue());
-
-    Section s = new Section();
-    s.setKind("headline");
-    s.setTextSpan(ts);
-    s.addToNumberList(0);
-    return s;
-  }
-
-  private Section handleBeginning(final XMLEventReader rdr, final String content, final Communication cptr)
+  private Section handleBeginning(final XMLEventReader rdr, final Communication cptr)
       throws XMLStreamException, ConcreteException {
-    // "zero" block
-    rdr.nextEvent();
-    // document block
-    XMLEvent docEvent  = rdr.nextEvent();
-
-    // id attr
-    Attribute docIDAttr = docEvent.asStartElement().getAttributeByName(QName.valueOf("id"));
-    final String docid = docIDAttr.getValue();
-    if (!docid.isEmpty())
-      cptr.setId(docid);
+    // moves from beginning of doc to the document start element
+    Util.handleDocumentStartWithDocIDBlock(rdr, cptr);
 
     // log with the document ID
     try(CloseableThreadContext.Instance ctc = CloseableThreadContext.put("id", "docid");) {
@@ -198,7 +152,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
       rdr.nextEvent();
 
       // headline start
-      final Section s = handleHeadline(rdr, cptr);
+      final Section s = Util.handleHeadline(rdr, cptr);
       return s;
     }
   }
@@ -230,11 +184,10 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
       throw new IngestException(path.toString() + " is not a file, or is a directory.");
     }
 
-    String content;
-    try (InputStream is = Files.newInputStream(path);
-        BufferedInputStream bin = new BufferedInputStream(is, 1024 * 8);) {
-      content = IOUtils.toString(bin, StandardCharsets.UTF_8);
-      c.setText(content);
+    try {
+      // this call mutates the passed in comm by setting its text field to the contents
+      // of the path object
+      Util.setCommunicationTextToPathContents(path, c);
     } catch (IOException e) {
       throw new IngestException(e);
     }
@@ -246,7 +199,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
 
         // Below method moves the reader
         // to the headline end element.
-        Section headline = this.handleBeginning(rdr, content, c);
+        Section headline = this.handleBeginning(rdr, c);
         headline.setUuid(g.next());
         c.addToSectionList(headline);
         TextSpan sts = headline.getTextSpan();
