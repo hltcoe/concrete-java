@@ -88,7 +88,7 @@ public class IngesterParameterDelegate {
     } else {
       // Exists but is not directory - stop.
       if (!Files.isDirectory(outputPath)) {
-        LOGGER.error("{} exists and is not a directory. Not continuing.");
+        LOGGER.error("{} exists and is not a directory. Not continuing.", outputPath.toString());
         return;
       }
     }

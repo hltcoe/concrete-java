@@ -15,6 +15,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.xml.namespace.QName;
@@ -340,7 +341,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
     TACKBP2017WebPostIngester run = new TACKBP2017WebPostIngester();
     JCommander jc = new JCommander(run, args);
-    jc.setProgramName(WebPostIngesterRunner.class.getSimpleName());
+    jc.setProgramName(TACKBP2017WebPostIngester.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
       return;
@@ -363,8 +364,10 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
       try (OutputStream os = Files.newOutputStream(outWithExt);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
-        for (Path p : run.delegate.findFilesInPaths()) {
-          LOGGER.debug("Running on file: {}", p.toAbsolutePath().toString());
+        List<Path> paths = run.delegate.findFilesInPaths();
+        LOGGER.info("Preparing to run over {} paths.", paths.size());
+        for (Path p : paths) {
+          LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
           new ExistingNonDirectoryFile(p);
           try {
             Communication next = run.fromCharacterBasedFile(p);

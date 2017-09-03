@@ -56,6 +56,7 @@ public class BoltIngesterRunner {
     jc.setProgramName(BoltIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
+      return;
     }
 
     try {
