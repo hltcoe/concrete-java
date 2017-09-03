@@ -2,9 +2,12 @@ package edu.jhu.hlt.concrete.ingesters.webposts;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -12,6 +15,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,17 +23,25 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.JCommander;
+
+import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
+import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.concrete.util.ProjectConstants;
 import edu.jhu.hlt.concrete.util.Timing;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
 import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator;
+import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
+import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
+import edu.jhu.hlt.utilt.io.NotFileException;
 
 public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata, UTF8FileIngester {
 
@@ -181,6 +193,52 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
       }
     } catch (IOException e) {
       throw new IngestException(e);
+    }
+  }
+
+  public static void main(String... args) {
+    Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
+    Opts run = new Opts();
+    JCommander jc = new JCommander(run, args);
+    jc.setProgramName(TACKBP2017NewsWireIngester.class.getSimpleName());
+    if (run.delegate.help) {
+      jc.usage();
+      return;
+    }
+
+    try {
+      Path outpath = Paths.get(run.delegate.outputPath);
+      IngesterParameterDelegate.prepare(outpath);
+      Path outWithExt = outpath.resolve(run.delegate.filename);
+
+      if (Files.exists(outWithExt)) {
+        if (!run.delegate.overwrite) {
+          LOGGER.info("File: {} exists and overwrite disabled. Not running.", outWithExt.toString());
+          return;
+        } else {
+          Files.delete(outWithExt);
+        }
+      }
+
+      TACKBP2017NewsWireIngester ing = new TACKBP2017NewsWireIngester();
+      try (OutputStream os = Files.newOutputStream(outWithExt);
+          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
+          TarArchiver arch = new TarArchiver(gout)) {
+        List<Path> paths = run.delegate.findFilesInPaths();
+        LOGGER.info("Preparing to run over {} paths.", paths.size());
+        for (Path p : paths) {
+          LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
+          new ExistingNonDirectoryFile(p);
+          try {
+            Communication next = ing.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + p.toString(), e);
+          }
+        }
+      }
+    } catch (NotFileException | IOException e) {
+      LOGGER.error("Caught exception processing.", e);
     }
   }
 }
