@@ -349,7 +349,6 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     try {
       Path outpath = Paths.get(run.delegate.outputPath);
       IngesterParameterDelegate.prepare(outpath);
-      WebPostIngester ing = new WebPostIngester();
       Path outWithExt = outpath.resolve(run.delegate.filename);
 
       if (Files.exists(outWithExt)) {
@@ -368,7 +367,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
           LOGGER.debug("Running on file: {}", p.toAbsolutePath().toString());
           new ExistingNonDirectoryFile(p);
           try {
-            Communication next = ing.fromCharacterBasedFile(p);
+            Communication next = run.fromCharacterBasedFile(p);
             arch.addEntry(new ArchivableCommunication(next));
           } catch (IngestException e) {
             LOGGER.error("Error processing file: " + p.toString(), e);
