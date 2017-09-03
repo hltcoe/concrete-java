@@ -343,6 +343,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     jc.setProgramName(WebPostIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
+      return;
     }
 
     try {
