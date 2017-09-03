@@ -292,7 +292,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
         try (Scanner sc = new Scanner(subtext);) {
           while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            LOGGER.info("Got line: {}", line);
+            LOGGER.debug("Got line: {}", line);
             if (!line.isEmpty()) {
               final int endOffset = currentOffset + line.length();
 
@@ -334,12 +334,14 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     }
   }
 
-  @ParametersDelegate
-  private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
+  private static class Opts {
+    @ParametersDelegate
+    private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
+  }
 
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    TACKBP2017WebPostIngester run = new TACKBP2017WebPostIngester();
+    Opts run = new Opts();
     JCommander jc = new JCommander(run, args);
     jc.setProgramName(TACKBP2017WebPostIngester.class.getSimpleName());
     if (run.delegate.help) {
@@ -361,16 +363,17 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
         }
       }
 
+      TACKBP2017WebPostIngester ing = new TACKBP2017WebPostIngester();
       try (OutputStream os = Files.newOutputStream(outWithExt);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
         List<Path> paths = run.delegate.findFilesInPaths();
         LOGGER.info("Preparing to run over {} paths.", paths.size());
         for (Path p : paths) {
-          LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
+          LOGGER.debug("Running on file: {}", p.toAbsolutePath().toString());
           new ExistingNonDirectoryFile(p);
           try {
-            Communication next = run.fromCharacterBasedFile(p);
+            Communication next = ing.fromCharacterBasedFile(p);
             arch.addEntry(new ArchivableCommunication(next));
           } catch (IngestException e) {
             LOGGER.error("Error processing file: " + p.toString(), e);
