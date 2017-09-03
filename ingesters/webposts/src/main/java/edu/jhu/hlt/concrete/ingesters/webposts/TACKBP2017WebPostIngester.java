@@ -252,25 +252,28 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
         TextSpan sts = headline.getTextSpan();
         LOGGER.debug("headline text: {}", c.getText().substring(sts.getStart(), sts.getEnding()));
 
-        // headline end, ws, author start
+        // headline end, ws, author
         rdr.nextEvent();
         rdr.nextEvent();
         rdr.nextEvent();
-
+        // only run if there's an author
         // author string + section setup
         XMLEvent authorEvent = rdr.nextEvent();
-        String author = authorEvent.asCharacters().getData();
-        final int authorOff = authorEvent.getLocation().getCharacterOffset();
-        TextSpan authorTS = new TextSpan(authorOff, authorOff + author.length());
-        Section authorS = new Section();
-        authorS.setUuid(g.next());
-        authorS.addToNumberList(1);
-        authorS.setKind("author");
-        authorS.setTextSpan(authorTS);
-        c.addToSectionList(authorS);
+        if (authorEvent.isCharacters()) {
+          String author = authorEvent.asCharacters().getData();
+          final int authorOff = authorEvent.getLocation().getCharacterOffset();
+          TextSpan authorTS = new TextSpan(authorOff, authorOff + author.length());
+          Section authorS = new Section();
+          authorS.setUuid(g.next());
+          authorS.addToNumberList(1);
+          authorS.setKind("author");
+          authorS.setTextSpan(authorTS);
+          c.addToSectionList(authorS);
 
-        // author end
-        rdr.nextEvent();
+          // author end
+          rdr.nextEvent();
+        }
+          
         // ws
         rdr.nextEvent();
         // text start
@@ -318,7 +321,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
         }
 
         return c;
-      } catch (XMLStreamException | ConcreteException | StringIndexOutOfBoundsException | ClassCastException x) {
+      } catch (XMLStreamException | ConcreteException | StringIndexOutOfBoundsException x) {
         throw new IngestException(x);
       } finally {
         if (rdr != null)
@@ -370,7 +373,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
         List<Path> paths = run.delegate.findFilesInPaths();
         LOGGER.info("Preparing to run over {} paths.", paths.size());
         for (Path p : paths) {
-          LOGGER.debug("Running on file: {}", p.toAbsolutePath().toString());
+          LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
           new ExistingNonDirectoryFile(p);
           try {
             Communication next = ing.fromCharacterBasedFile(p);
