@@ -568,7 +568,8 @@ awk -F"\t" '$6 == "C" && $7 == "C" {print $5}' $f | awk -F":" '{print NF}' | sor
 
   public static void main(String[] args) throws Exception {
     Args a = new Args();
-    new JCommander(a, args);
+    JCommander jc = JCommander.newBuilder().addObject(a).build();
+    jc.parse(args);
     SlotFillStandoffData sfsd = new SlotFillStandoffData(a);
     sfsd.addAnnotations(new File(a.inputAssessmentFile), true);
     sfsd.readRawCommunications(new File(a.inputCommunicationFile));
