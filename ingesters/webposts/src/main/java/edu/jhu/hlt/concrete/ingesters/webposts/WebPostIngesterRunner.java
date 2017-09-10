@@ -45,7 +45,8 @@ public class WebPostIngesterRunner {
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
     WebPostIngesterRunner run = new WebPostIngesterRunner();
-    JCommander jc = new JCommander(run, args);
+    JCommander jc = JCommander.newBuilder().addCommand(run).build();
+    jc.parse(args);
     jc.setProgramName(WebPostIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();

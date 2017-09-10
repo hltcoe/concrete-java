@@ -225,7 +225,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
           // author end
           rdr.nextEvent();
         }
-          
+
         // ws
         rdr.nextEvent();
         // text start
@@ -292,7 +292,8 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
     Opts run = new Opts();
-    JCommander jc = new JCommander(run, args);
+    JCommander jc = JCommander.newBuilder().addCommand(run).build();
+    jc.parse(args);
     jc.setProgramName(TACKBP2017WebPostIngester.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();

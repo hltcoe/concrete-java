@@ -199,7 +199,8 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
     Opts run = new Opts();
-    JCommander jc = new JCommander(run, args);
+    JCommander jc = JCommander.newBuilder().addObject(run).build();
+    jc.parse(args);
     jc.setProgramName(TACKBP2017NewsWireIngester.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
