@@ -97,9 +97,16 @@ class Util {
     // Construct section, text span, etc.
     final int endTextOffset = charOff + clen;
     final String hlText = ptr.getText().substring(charOff, endTextOffset);
-
-    SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
-    TextSpan ts = new TextSpan(charOff + pads.getKey(), endTextOffset - pads.getValue());
+    LOGGER.debug("Got headline text: startOff={}, len={}, endText={}, txt={}",
+        charOff, clen, endTextOffset, hlText);
+    String trimmed = hlText.trim();
+    TextSpan ts;
+    if (trimmed.isEmpty()) {
+      ts = new TextSpan(charOff, endTextOffset);
+    } else {
+      SimpleImmutableEntry<Integer, Integer> pads = trimSpacing(hlText);
+      ts = new TextSpan(charOff + pads.getKey(), endTextOffset - pads.getValue());
+    }
 
     Section s = new Section();
     s.setKind("headline");
