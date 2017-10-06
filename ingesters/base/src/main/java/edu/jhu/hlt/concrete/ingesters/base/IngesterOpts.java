@@ -10,10 +10,16 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 
 public class IngesterOpts {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(IngesterOpts.class);
+
   @ParametersDelegate
   public IngesterParameterDelegate delegate = new IngesterParameterDelegate();
 
@@ -28,14 +34,16 @@ public class IngesterOpts {
    */
   public static List<Path> findFiles(Path p) throws IOException {
     List<Path> output = new ArrayList<>();
-    if (Files.isRegularFile(p)) {
-      output.add(p);
+    if (Files.isRegularFile(p) && !Files.isDirectory(p)) {
+      output.add(p.toAbsolutePath());
     } else {
       Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-          if (Files.isRegularFile(path))
-            output.add(path);
+          if (Files.isRegularFile(path) && !attrs.isDirectory()) {
+            LOGGER.debug("Adding file: {}", path.toString());
+            output.add(path.toAbsolutePath());
+          }
           return FileVisitResult.CONTINUE;
         }
         @Override

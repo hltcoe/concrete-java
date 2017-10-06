@@ -1,48 +1,70 @@
 package edu.jhu.hlt.concrete.ingesters.kbp2017.concrete;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
+import com.google.common.collect.ImmutableSet;
 
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
+import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 
 class TACKBP2017Opts {
 
+  @Parameter(names = { "--help", "-h" }, help = true, description="Print usage information and exit.")
+  public boolean help;
+
   @ParametersDelegate
-  public IngesterParameterDelegate delegate = new IngesterParameterDelegate();
+  LDC2017E25Opts delegate2017 = new LDC2017E25Opts();
 
-  @Parameter(description = "/path/to/LDC2017E25/data/lang", required = true)
-  public List<String> paths = new ArrayList<>();
+  @Parameter(names = {"--output-eng"},
+      description = "Output file for English Communications")
+  Path engOutput = Paths.get("eng.tar.gz");
 
-  public boolean validate() {
-    if (paths.isEmpty())
-      return false;
-    Path root = this.toPath();
-    if (!Files.exists(root) || !Files.isDirectory(root))
-      return false;
-    Path df = this.getDiscussionForumPath();
-    if (!Files.exists(df) || !Files.isDirectory(df))
-      return false;
-    Path nw = this.getNewswirePath();
-    if (!Files.exists(nw) || !Files.isDirectory(nw))
-      return false;
-    return true;
+  @Parameter(names = {"--output-zho"},
+      description = "Output file for Chinese Communications")
+  Path zhoOutput = Paths.get("zho.tar.gz");
+
+  @Parameter(names = {"--output-spa"},
+      description = "Output file for Spanish Communications")
+  Path spaOutput = Paths.get("spa.tar.gz");
+
+  static TarArchiver getArchiver(Path p) throws IOException {
+    OutputStream os = Files.newOutputStream(p);
+    BufferedOutputStream bout = new BufferedOutputStream(os);
+    GzipCompressorOutputStream gout = new GzipCompressorOutputStream(bout);
+    return new TarArchiver(gout);
   }
 
-  public Path toPath() {
-    return Paths.get(paths.get(0));
+  TarArchiver spaArchiver() throws IOException {
+    return getArchiver(spaOutput);
   }
 
-  public Path getDiscussionForumPath() {
-    return this.toPath().resolve("df");
+  TarArchiver engArchiver() throws IOException {
+    return getArchiver(engOutput);
   }
 
-  public Path getNewswirePath() {
-    return this.toPath().resolve("nw");
+  TarArchiver zhoArchiver() throws IOException {
+    return getArchiver(zhoOutput);
+  }
+
+  boolean validate() {
+    Set<Path> paths = ImmutableSet.of(engOutput, zhoOutput, spaOutput);
+    if (paths.size() != 3)
+      return false;
+    boolean nonExistent = true;
+    Iterator<Path> piter = paths.iterator();
+    while (piter.hasNext() && nonExistent) {
+      nonExistent = !Files.exists(piter.next());
+    }
+    return nonExistent;
   }
 }

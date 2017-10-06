@@ -1,6 +1,7 @@
 package edu.jhu.hlt.concrete.ingesters.kbp2017;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,10 +17,13 @@ class StringProcessingRoutine implements Routine {
 
   private final Map<String, StringEntity> eMap;
   private final ReceiveChannel<String[]> lines;
+  private final ReceiveChannel<UUID> uuids;
 
-  public StringProcessingRoutine(Map<String, StringEntity> eMap, ReceiveChannel<String[]> lines) {
+  public StringProcessingRoutine(Map<String, StringEntity> eMap, ReceiveChannel<String[]> lines,
+      ReceiveChannel<UUID> uuids) {
     this.eMap = eMap;
     this.lines = lines;
+    this.uuids = uuids;
   }
 
   @Override
@@ -61,7 +65,12 @@ class StringProcessingRoutine implements Routine {
         MentionType mt = MentionType.create(colTwo);
         Provenance p = Util.splitSingleColonLine(line[3]);
         String txt = line[2].substring(1, line[2].length() - 1);
-        Mention m = new Mention.Builder().setText(txt).setType(mt).setProvenance(p).build();
+        Mention m = new Mention.Builder()
+            .setText(txt)
+            .setType(mt)
+            .setProvenance(p)
+            .setUUID(uuids.receive())
+            .build();
 
         bldr.addMentions(m);
       }

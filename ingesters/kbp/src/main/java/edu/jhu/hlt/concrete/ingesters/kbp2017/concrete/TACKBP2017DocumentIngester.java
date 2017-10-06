@@ -30,19 +30,23 @@ public class TACKBP2017DocumentIngester {
     JCommander jc = JCommander.newBuilder().addObject(run).build();
     jc.parse(args);
     jc.setProgramName(TACKBP2017DocumentIngester.class.getSimpleName());
-    if (run.delegate.help) {
+    if (run.help) {
       jc.usage();
       return;
     }
 
     try {
-      if (!run.validate()) {
-        System.out.println("Input is not a LDC2017E25/data/lang directory");
+      if (!run.delegate2017.validate()) {
+        System.out.println("Input is not a LDC2017E25/data directory");
         System.exit(2);
       }
-      LOGGER.info("Path is OK");
+      LOGGER.info("LDC2017E25 path is OK");
 
-      run.delegate.prepare();
+      if (!run.validate()) {
+        System.out.println("Invalid parameters. Either the files already exist or some were duplicates.");
+        System.exit(4);
+      }
+      LOGGER.info("Output paths OK");
 
       // this is for NYT_ docs
       TACKBP2017NewsWireIngester ing = new TACKBP2017NewsWireIngester();
@@ -52,10 +56,13 @@ public class TACKBP2017DocumentIngester {
       // discussion forum ingester
       BoltForumPostIngester dfIngester = new BoltForumPostIngester();
 
-      try (TarArchiver arch = run.delegate.getArchiver();) {
-        Path nwp = run.getNewswirePath();
-        LOGGER.info("Running over newswire: {}", nwp.toString());
-        for (Path p : IngesterOpts.findFiles(nwp)) {
+      // for ENGLISH, want to find anything in
+      // LDC2015E77 and the eng dir in 2017E25
+      try (TarArchiver arch = run.engArchiver();) {
+        // start with newswire
+        Path nw2017Eng = run.delegate2017.englishNW();
+        LOGGER.info("Running over newswire: {}", nw2017Eng.toString());
+        for (Path p : IngesterOpts.findFiles(nw2017Eng)) {
           LOGGER.debug("Running on file: {}", p.toString());
           String fn = new ExistingNonDirectoryFile(p).getName();
           try {
@@ -70,10 +77,10 @@ public class TACKBP2017DocumentIngester {
           }
         }
 
-        Path dfp = run.getDiscussionForumPath();
+        // now do all english DF
+        Path dfp = run.delegate2017.englishDF();
         LOGGER.info("Running over discussion forum posts: {}", dfp.toString());
         for (Path p : IngesterOpts.findFiles(dfp)) {
-          LOGGER.debug("Running on file: {}", p);
           new ExistingNonDirectoryFile(p);
           try {
             Communication next = dfIngester.fromCharacterBasedFile(p);
@@ -83,6 +90,57 @@ public class TACKBP2017DocumentIngester {
           }
         }
       }
+      // now chinese NW + DF
+      try (TarArchiver arch = run.zhoArchiver();) {
+        Path nwp = run.delegate2017.chineseNW();
+        LOGGER.info("Running over newswire: {}", nwp.toString());
+        for (Path p : IngesterOpts.findFiles(nwp)) {
+          try {
+            Communication next = otherING.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + p.toString(), e);
+          }
+        }
+
+        Path dfp = run.delegate2017.chineseDF();
+        LOGGER.info("Running over discussion forum posts: {}", dfp.toString());
+        for (Path p : IngesterOpts.findFiles(dfp)) {
+          new ExistingNonDirectoryFile(p);
+          try {
+            Communication next = dfIngester.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + p.toString(), e);
+          }
+        }
+      }
+      // now spanish NW + DF
+      try (TarArchiver arch = run.spaArchiver();) {
+        Path nwp = run.delegate2017.spanishNW();
+        LOGGER.info("Running over newswire: {}", nwp.toString());
+        for (Path p : IngesterOpts.findFiles(nwp)) {
+          try {
+            Communication next = otherING.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + p.toString(), e);
+          }
+        }
+
+        Path dfp = run.delegate2017.spanishDF();
+        LOGGER.info("Running over discussion forum posts: {}", dfp.toString());
+        for (Path p : IngesterOpts.findFiles(dfp)) {
+          new ExistingNonDirectoryFile(p);
+          try {
+            Communication next = dfIngester.fromCharacterBasedFile(p);
+            arch.addEntry(new ArchivableCommunication(next));
+          } catch (IngestException e) {
+            LOGGER.error("Error processing file: " + p.toString(), e);
+          }
+        }
+      }
+
     } catch (NotFileException | IOException e) {
       LOGGER.error("Caught exception processing.", e);
     }

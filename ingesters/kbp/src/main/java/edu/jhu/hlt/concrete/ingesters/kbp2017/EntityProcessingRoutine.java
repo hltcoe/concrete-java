@@ -2,6 +2,7 @@ package edu.jhu.hlt.concrete.ingesters.kbp2017;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,10 +18,13 @@ class EntityProcessingRoutine implements Routine {
 
   private final Map<String, Entity> eMap;
   private final ReceiveChannel<String[]> lines;
+  private final ReceiveChannel<UUID> uuids;
 
-  public EntityProcessingRoutine(Map<String, Entity> eMap, ReceiveChannel<String[]> lines) {
+  public EntityProcessingRoutine(Map<String, Entity> eMap, ReceiveChannel<String[]> lines,
+      ReceiveChannel<UUID> uuids) {
     this.eMap = eMap;
     this.lines = lines;
+    this.uuids = uuids;
   }
 
   @Override
@@ -28,6 +32,7 @@ class EntityProcessingRoutine implements Routine {
     String previousEntityID = "";
     Entity.Builder bldr = new Entity.Builder();
     try {
+      bldr.setUUID(this.uuids.receive());
       while (lines.isOpen()) {
         String[] line = lines.receive();
         if (line.length == 0)
@@ -44,6 +49,7 @@ class EntityProcessingRoutine implements Routine {
             LOGGER.debug("Adding entity: {}", e.getID());
             this.eMap.put(e.getID(), e);
             bldr = new Entity.Builder();
+            bldr.setUUID(this.uuids.receive());
           }
 
           bldr.setID(id);
@@ -69,7 +75,12 @@ class EntityProcessingRoutine implements Routine {
             String txt = line[2];
             txt = txt.substring(1, txt.length() - 1);
             Provenance p = Util.splitSingleColonLine(line[3]);
-            Mention m = new Mention.Builder().setText(txt).setType(mt).setProvenance(p).build();
+            Mention m = new Mention.Builder()
+                .setText(txt)
+                .setType(mt)
+                .setProvenance(p)
+                .setUUID(uuids.receive())
+                .build();
             bldr.addMentions(m);
           } catch (IllegalArgumentException e) {
             LOGGER.warn("can't handle mention type: {}", colTwo);

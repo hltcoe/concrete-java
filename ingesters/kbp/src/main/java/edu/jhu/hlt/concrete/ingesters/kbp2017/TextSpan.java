@@ -15,6 +15,10 @@ public abstract class TextSpan {
     return create(ts.getStart(), ts.getEnding());
   }
 
+  public final edu.jhu.hlt.concrete.TextSpan toConcrete() {
+    return new edu.jhu.hlt.concrete.TextSpan(this.getStart(), this.getEnd());
+  }
+
   public static TextSpan create(int start, int end) {
     return new Builder()
         .setStart(start)
@@ -22,8 +26,17 @@ public abstract class TextSpan {
         .build();
   }
 
-  static class Builder extends TextSpan_Builder {
-    Builder() {
+  public boolean within(int offset) {
+    return offset >= this.getStart() && offset < this.getEnd();
+  }
+
+  public boolean overlaps(TextSpan other) {
+    return other.getStart() >= this.getStart()
+        && other.getEnd() <= this.getEnd();
+  }
+
+  public static class Builder extends TextSpan_Builder {
+    public Builder() {
 
     }
   }

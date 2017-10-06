@@ -27,11 +27,11 @@ public class IngesterParameterDelegate {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IngesterParameterDelegate.class);
 
-  @Parameter(names="--output-path", description="The path to place output files.",
+  @Parameter(names= { "--output-path", "-out" }, description="The path to place output files.",
       converter = PathConverter.class)
   public Path outputPath = Paths.get("./comms.tar.gz");
 
-  @Parameter(names = "--help", help = true, description="Print usage information and exit.")
+  @Parameter(names = { "--help", "-h" }, help = true, description="Print usage information and exit.")
   public boolean help;
 
   @Parameter(names = "--overwrite", description="Overwrite files?")

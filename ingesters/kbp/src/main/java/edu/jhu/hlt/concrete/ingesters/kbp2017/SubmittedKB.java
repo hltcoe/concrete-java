@@ -12,6 +12,7 @@ public abstract class SubmittedKB {
 
   public abstract Map<String, Entity> getEntityMap();
   public abstract Map<String, StringEntity> getStringEntityMap();
+  public abstract Map<String, Event> getEventMap();
   public abstract String getKBName();
 
   static class Builder extends SubmittedKB_Builder {
