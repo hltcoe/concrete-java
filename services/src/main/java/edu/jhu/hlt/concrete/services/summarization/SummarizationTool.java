@@ -1,7 +1,9 @@
 package edu.jhu.hlt.concrete.services.summarization;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
@@ -39,6 +41,9 @@ public class SummarizationTool extends AbstractThriftServiceClient {
   static class Opts {
     @Parameter(description = "Summarization query", required = true)
     List<String> queryList;
+
+    @Parameter(description = "UUIDs to be used", names = { "-ids", "--uuids" })
+    List<String> entityUUIDList = new ArrayList<>();
 
     @Parameter(names = { "--max-chars", "-mc" }, description = "Max number of characters to return in summary")
     int maxChars = 1000;
@@ -86,9 +91,12 @@ public class SummarizationTool extends AbstractThriftServiceClient {
     sr.setMaximumCharacters(opts.maxChars);
     sr.setMaximumTokens(opts.maxTokens);
     sr.setSourceType(st);
+    for (String id : opts.entityUUIDList)
+      sr.addToSourceIds(new edu.jhu.hlt.concrete.UUID(UUID.fromString(id).toString()));
 
     try (SummarizationTool tool = new ConcreteServicesSummarizationConfig().getSummarizationTool();) {
       Summary s = tool.summarize(sr);
+      LOGGER.debug("Retrieved summary: {}", s.toString());
       if (s.isSetConcepts() && s.getConceptsSize() > 0) {
         System.out.println("Concepts");
         System.out.println("Concept\tTokens\tConfidence\tUtility");
@@ -103,16 +111,17 @@ public class SummarizationTool extends AbstractThriftServiceClient {
           System.out.println();
           System.out.println();
         }
-
-        if (s.isSetSummaryCommunication()) {
-          Communication sc = s.getSummaryCommunication();
-          if (sc.isSetText()) {
-            System.out.println("Summary");
-            System.out.println(sc.getText());
-          }
-        }
       } else
-        System.out.println("Service returned null results or no results.");
+        System.out.println("Service returned no concepts.");
+
+      if (s.isSetSummaryCommunication()) {
+        Communication sc = s.getSummaryCommunication();
+        if (sc.isSetText()) {
+          System.out.println("-----------------");
+          System.out.println("Summary");
+          System.out.println(sc.getText());
+        }
+      }
 
     } catch (TException e) {
       LOGGER.error("Failed to get search result: {}", e.getMessage());
