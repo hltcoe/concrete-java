@@ -22,28 +22,37 @@ public class IngesterOpts {
 
   /**
    * Finds all (regular) files under any file or directory added to the path.
+   *
+   * @param p a {@link Path} to begin with
+   * @return a {@link List} of {@link Path}s under the input path
    */
+  public static List<Path> findFiles(Path p) throws IOException {
+    List<Path> output = new ArrayList<>();
+    if (Files.isRegularFile(p)) {
+      output.add(p);
+    } else {
+      Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+          if (Files.isRegularFile(path))
+            output.add(path);
+          return FileVisitResult.CONTINUE;
+        }
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+          return FileVisitResult.CONTINUE;
+        }
+      });
+    }
+    return output;
+  }
+
   public List<Path> findFilesInPaths() {
     List<Path> output = new ArrayList<>();
     try {
       for (String pstr : paths) {
         Path p = Paths.get(pstr);
-        if (Files.isRegularFile(p)) {
-          output.add(p);
-        } else {
-          Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-              if (Files.isRegularFile(path))
-                output.add(path);
-              return FileVisitResult.CONTINUE;
-            }
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-              return FileVisitResult.CONTINUE;
-            }
-          });
-        }
+        output.addAll(findFiles(p));
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -21,7 +21,6 @@ import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
 import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
@@ -57,8 +56,8 @@ public class ALNCIngesterRunner {
     }
 
     try {
-      Path outpath = Paths.get(run.delegate.outputPath);
-      IngesterParameterDelegate.prepare(outpath);
+      run.delegate.prepare();
+      Path outpath = run.delegate.outputPath;
 
       for (String pstr : run.paths) {
         LOGGER.debug("Running on file: {}", pstr);

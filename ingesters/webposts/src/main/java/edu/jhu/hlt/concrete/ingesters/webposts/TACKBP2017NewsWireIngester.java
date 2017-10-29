@@ -82,6 +82,8 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
   final long inferStartTimeFromID(String id) throws IngestException {
     // the ID format is sth like
     // NYT_ENG_20131231.0085
+    // or
+    // ENG_NW_001278_20130101_F00011WOZ
     String[] byUnderscore = id.split("_");
     // take 3rd element of _ split
     String[] byDot = byUnderscore[2].split("\\.");
@@ -209,17 +211,24 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
       run.delegate.prepare();
       Path outpath = run.delegate.outputPath;
 
+      // this is for NYT_ docs
       TACKBP2017NewsWireIngester ing = new TACKBP2017NewsWireIngester();
+      // TODO this needs fixing
+      TACKBP2017WebPostIngester otherING = new TACKBP2017WebPostIngester();
       try (OutputStream os = Files.newOutputStream(outpath);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
         List<Path> paths = run.findFilesInPaths();
         LOGGER.info("Preparing to run over {} paths.", paths.size());
         for (Path p : paths) {
-          LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
-          new ExistingNonDirectoryFile(p);
+          LOGGER.debug("Running on file: {}", p.toAbsolutePath().toString());
+          String fn = new ExistingNonDirectoryFile(p).getName();
           try {
-            Communication next = ing.fromCharacterBasedFile(p);
+            Communication next;
+            if (fn.startsWith("NYT_"))
+              next = ing.fromCharacterBasedFile(p);
+            else
+              next = otherING.fromCharacterBasedFile(p);
             arch.addEntry(new ArchivableCommunication(next));
           } catch (IngestException e) {
             LOGGER.error("Error processing file: " + p.toString(), e);

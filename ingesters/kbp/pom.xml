@@ -12,15 +12,6 @@
   <name>TAC KBP Ingesters</name>
   <description>Library providing ingesters and utilities for converting the TAC KBP data to Concrete.</description>
 
-  <developers>
-    <developer>
-      <id>twolfe</id>
-      <name>Travis Wolfe</name>
-      <email>travis@cs.jhu.edu</email>
-      <organization>JHU HLTCOE</organization>
-    </developer>
-  </developers>
-
   <build>
     <plugins>
       <plugin>
@@ -36,7 +27,7 @@
             <configuration>
               <shadedArtifactAttached>false</shadedArtifactAttached>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <finalName>${project.artifactId}-uberjar-${project.version}</finalName>
+              <finalName>${project.artifactId}-${project.version}-uberjar</finalName>
             </configuration>
           </execution>
         </executions>
@@ -48,6 +39,14 @@
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-ingesters-webposts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>concrete-ingesters-bolt</artifactId>
     </dependency>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
@@ -74,17 +73,14 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>

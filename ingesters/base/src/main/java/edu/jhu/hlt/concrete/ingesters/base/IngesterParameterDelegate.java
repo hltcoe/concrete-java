@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -17,6 +19,8 @@ import com.beust.jcommander.Parameter;
  *
  */
 public class IngesterParameterDelegate {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(IngesterParameterDelegate.class);
 
   @Parameter(names="--output-path", description="The path to place output files.",
       converter = PathConverter.class)
@@ -37,24 +41,28 @@ public class IngesterParameterDelegate {
 
   public void prepare() throws IOException {
     boolean fileExists = IngesterParameterDelegate.prepare(this.outputPath);
-    if (fileExists && !this.overwrite) {
-      System.out.println(this.outputPath.toString() + " exists and overwrite disabled");
-      System.exit(2);
-    } else {
-      Files.delete(this.outputPath);
+    LOGGER.info("File already exists: {}", fileExists);
+    if (fileExists) {
+      if (!this.overwrite) {
+        throw new IOException(this.outputPath.toString() + " exists and overwrite disabled");
+      } else {
+        Files.delete(this.outputPath);
+      }
     }
   }
 
   public static boolean prepare(Path outputPath) throws IOException {
-    Iterator<Path> paths = outputPath.iterator();
-    Path n = outputPath;
-    while (paths.hasNext()) {
-      n = paths.next();
+    Path n = outputPath.toAbsolutePath();
+    int nPaths = n.getNameCount();
+    for (int i = 0; i < nPaths - 1; i++) {
+      n = outputPath.getName(i);
+      LOGGER.debug("On path: {}", n.toString());
       // is there another element left? if so, on a directory
-      if (paths.hasNext()) {
+      if (i + 1 < nPaths) {
         // does it exist?
         if (!Files.exists(n)) {
           // no - create intermediate directory
+          LOGGER.info("Creating directory: {}", n.toString());
           Files.createDirectory(n);
         } else {
           // file exists - is it a directory?
@@ -66,7 +74,7 @@ public class IngesterParameterDelegate {
     }
 
     // now on the file itself, so exit iteration
-    return !Files.exists(n);
+    return Files.exists(n);
   }
 
   public static void main(String... args) {

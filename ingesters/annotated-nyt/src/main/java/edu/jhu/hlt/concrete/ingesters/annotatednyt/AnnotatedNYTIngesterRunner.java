@@ -24,7 +24,6 @@ import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
 import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
@@ -53,8 +52,8 @@ public class AnnotatedNYTIngesterRunner {
     }
 
     try {
-      Path outpath = Paths.get(run.delegate.outputPath);
-      IngesterParameterDelegate.prepare(outpath);
+      run.delegate.prepare();
+      Path outpath = run.delegate.outputPath;
 
       NYTCorpusDocumentParser parser = new NYTCorpusDocumentParser();
       for (String pstr : run.paths) {
