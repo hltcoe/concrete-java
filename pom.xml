@@ -8,8 +8,8 @@
   </parent>
 
   <properties>
-    <log4j.version>2.8.2</log4j.version>
-    <jackson.version>2.9.0</jackson.version>
+    <log4j.version>2.9.1</log4j.version>
+    <jackson.version>2.9.2</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
@@ -126,7 +126,7 @@
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-safe</artifactId>
         <version>${project.version}</version>
-	</dependency>
+      </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>concrete-util</artifactId>
@@ -212,7 +212,7 @@
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>23.0</version>
+        <version>23.2-jre</version>
       </dependency>
       <dependency>
         <groupId>redis.clients</groupId>
@@ -222,7 +222,7 @@
       <dependency>
         <groupId>org.inferred</groupId>
         <artifactId>freebuilder</artifactId>
-        <version>1.14.4</version>
+        <version>1.14.6</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
