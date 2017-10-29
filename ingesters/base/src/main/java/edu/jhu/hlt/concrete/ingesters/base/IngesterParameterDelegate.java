@@ -96,7 +96,8 @@ public class IngesterParameterDelegate {
 
   public static void main(String... args) {
     IngesterParameterDelegate run = new IngesterParameterDelegate();
-    JCommander jc = new JCommander(run, args);
+    JCommander jc = JCommander.newBuilder().addObject(run).build();
+    jc.parse(args);
     jc.setProgramName(IngesterParameterDelegate.class.getSimpleName());
     if (run.help) {
       jc.usage();
