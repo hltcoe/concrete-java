@@ -16,11 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParametersDelegate;
 
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
 import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
@@ -36,9 +36,6 @@ public class ALNCIngesterRunner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ALNCIngesterRunner.class);
 
-  @ParametersDelegate
-  private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
-
   /**
    *
    */
@@ -51,8 +48,9 @@ public class ALNCIngesterRunner {
    */
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    ALNCIngesterRunner run = new ALNCIngesterRunner();
-    JCommander jc = new JCommander(run, args);
+    IngesterOpts run = new IngesterOpts();
+    JCommander jc = JCommander.newBuilder().addObject(run).build();
+    jc.parse(args);
     jc.setProgramName(ALNCIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
@@ -62,7 +60,7 @@ public class ALNCIngesterRunner {
       Path outpath = Paths.get(run.delegate.outputPath);
       IngesterParameterDelegate.prepare(outpath);
 
-      for (String pstr : run.delegate.paths) {
+      for (String pstr : run.paths) {
         LOGGER.debug("Running on file: {}", pstr);
         Path p = Paths.get(pstr);
         new ExistingNonDirectoryFile(p);

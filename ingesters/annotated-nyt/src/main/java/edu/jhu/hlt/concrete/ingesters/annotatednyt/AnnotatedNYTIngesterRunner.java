@@ -18,12 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParametersDelegate;
 import com.nytlabs.corpus.NYTCorpusDocumentParser;
 
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.acute.iterators.tar.TarGzArchiveEntryByteIterator;
 import edu.jhu.hlt.annotatednyt.AnnotatedNYTDocument;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
 import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
@@ -39,16 +39,14 @@ public class AnnotatedNYTIngesterRunner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatedNYTIngesterRunner.class);
 
-  @ParametersDelegate
-  private IngesterParameterDelegate delegate = new IngesterParameterDelegate();
-
   /**
    * @param args
    */
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    AnnotatedNYTIngesterRunner run = new AnnotatedNYTIngesterRunner();
-    JCommander jc = new JCommander(run, args);
+    IngesterOpts run = new IngesterOpts();
+    JCommander jc = JCommander.newBuilder().addObject(run).build();
+    jc.parse(args);
     jc.setProgramName(AnnotatedNYTIngesterRunner.class.getSimpleName());
     if (run.delegate.help) {
       jc.usage();
@@ -59,7 +57,7 @@ public class AnnotatedNYTIngesterRunner {
       IngesterParameterDelegate.prepare(outpath);
 
       NYTCorpusDocumentParser parser = new NYTCorpusDocumentParser();
-      for (String pstr : run.delegate.paths) {
+      for (String pstr : run.paths) {
         LOGGER.debug("Running on file: {}", pstr);
         Path p = Paths.get(pstr);
         new ExistingNonDirectoryFile(p);

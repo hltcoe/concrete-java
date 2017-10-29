@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
@@ -30,7 +29,6 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
@@ -208,24 +206,14 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
     }
 
     try {
-      Path outpath = Paths.get(run.delegate.outputPath);
-      IngesterParameterDelegate.prepare(outpath);
-      Path outWithExt = outpath.resolve(run.delegate.filename);
-
-      if (Files.exists(outWithExt)) {
-        if (!run.delegate.overwrite) {
-          LOGGER.info("File: {} exists and overwrite disabled. Not running.", outWithExt.toString());
-          return;
-        } else {
-          Files.delete(outWithExt);
-        }
-      }
+      run.delegate.prepare();
+      Path outpath = run.delegate.outputPath;
 
       TACKBP2017NewsWireIngester ing = new TACKBP2017NewsWireIngester();
-      try (OutputStream os = Files.newOutputStream(outWithExt);
+      try (OutputStream os = Files.newOutputStream(outpath);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
-        List<Path> paths = run.delegate.findFilesInPaths();
+        List<Path> paths = run.findFilesInPaths();
         LOGGER.info("Preparing to run over {} paths.", paths.size());
         for (Path p : paths) {
           LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());

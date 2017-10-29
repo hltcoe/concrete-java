@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,7 +34,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
@@ -291,8 +290,8 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
 
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    Opts run = new Opts();
-    JCommander jc = JCommander.newBuilder().addCommand(run).build();
+    IngesterOpts run = new IngesterOpts();
+    JCommander jc = JCommander.newBuilder().addObject(run).build();
     jc.parse(args);
     jc.setProgramName(TACKBP2017WebPostIngester.class.getSimpleName());
     if (run.delegate.help) {
@@ -301,25 +300,20 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
     }
 
     try {
-      Path outpath = Paths.get(run.delegate.outputPath);
-      IngesterParameterDelegate.prepare(outpath);
-      Path outWithExt = outpath.resolve(run.delegate.filename);
+      run.delegate.prepare();
+      Path outpath = run.delegate.outputPath;
 
-      if (Files.exists(outWithExt)) {
-        if (!run.delegate.overwrite) {
-          LOGGER.info("File: {} exists and overwrite disabled. Not running.", outWithExt.toString());
-          return;
-        } else {
-          Files.delete(outWithExt);
-        }
+      if (run.findFilesInPaths().isEmpty()) {
+        System.out.println("At least one file is required.");
+        System.exit(1);
       }
 
       TACKBP2017WebPostIngester ing = new TACKBP2017WebPostIngester();
-      try (OutputStream os = Files.newOutputStream(outWithExt);
+      try (OutputStream os = Files.newOutputStream(outpath);
           GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
           TarArchiver arch = new TarArchiver(gout)) {
-        List<Path> paths = run.delegate.findFilesInPaths();
-        LOGGER.info("Preparing to run over {} paths.", paths.size());
+        List<Path> paths = run.findFilesInPaths();
+        LOGGER.info("Preparing to run over {} path(s).", paths.size());
         for (Path p : paths) {
           LOGGER.info("Running on file: {}", p.toAbsolutePath().toString());
           new ExistingNonDirectoryFile(p);
@@ -327,7 +321,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
             Communication next = ing.fromCharacterBasedFile(p);
             arch.addEntry(new ArchivableCommunication(next));
           } catch (IngestException e) {
-            LOGGER.error("Error processing file: " + p.toString(), e);
+            LOGGER.error("Error processing file: {}", p.toString(), e);
           }
         }
       }

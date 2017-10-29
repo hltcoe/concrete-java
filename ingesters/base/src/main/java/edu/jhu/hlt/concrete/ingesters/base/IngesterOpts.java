@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.ingesters.webposts;
+package edu.jhu.hlt.concrete.ingesters.base;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -13,13 +13,11 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 
-import edu.jhu.hlt.concrete.ingesters.base.IngesterParameterDelegate;
-
-class Opts {
+public class IngesterOpts {
   @ParametersDelegate
-  IngesterParameterDelegate delegate = new IngesterParameterDelegate();
+  public IngesterParameterDelegate delegate = new IngesterParameterDelegate();
 
-  @Parameter(description = "path/to/file1 /path/to/file2/ ...")
+  @Parameter(description = "path/to/folder1 /path/to/file2 ...")
   public List<String> paths = new ArrayList<>();
 
   /**
