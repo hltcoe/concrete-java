@@ -6,7 +6,6 @@ package edu.jhu.hlt.concrete.ingesters.webposts;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -19,7 +18,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -301,7 +299,6 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
 
     try {
       run.delegate.prepare();
-      Path outpath = run.delegate.outputPath;
 
       if (run.findFilesInPaths().isEmpty()) {
         System.out.println("At least one file is required.");
@@ -309,9 +306,7 @@ public class TACKBP2017WebPostIngester implements SafeTooledAnnotationMetadata, 
       }
 
       TACKBP2017WebPostIngester ing = new TACKBP2017WebPostIngester();
-      try (OutputStream os = Files.newOutputStream(outpath);
-          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(os);
-          TarArchiver arch = new TarArchiver(gout)) {
+      try (TarArchiver arch = run.delegate.getArchiver();) {
         List<Path> paths = run.findFilesInPaths();
         LOGGER.info("Preparing to run over {} path(s).", paths.size());
         for (Path p : paths) {

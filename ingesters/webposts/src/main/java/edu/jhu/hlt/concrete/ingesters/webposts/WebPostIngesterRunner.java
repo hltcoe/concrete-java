@@ -4,14 +4,10 @@
  */
 package edu.jhu.hlt.concrete.ingesters.webposts;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,13 +47,9 @@ public class WebPostIngesterRunner {
 
     try {
       run.delegate.prepare();
-      Path outpath = run.delegate.outputPath;
       WebPostIngester ing = new WebPostIngester();
 
-      try (OutputStream os = Files.newOutputStream(outpath);
-          BufferedOutputStream bout = new BufferedOutputStream(os);
-          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(bout);
-          TarArchiver arch = new TarArchiver(gout)) {
+      try (TarArchiver arch = run.delegate.getArchiver();) {
         for (String pstr : run.paths) {
           LOGGER.debug("Running on file: {}", pstr);
           Path p = Paths.get(pstr);
