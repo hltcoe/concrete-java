@@ -29,6 +29,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
 import edu.jhu.hlt.concrete.ingesters.base.UTF8FileIngester;
 import edu.jhu.hlt.concrete.metadata.tools.SafeTooledAnnotationMetadata;
 import edu.jhu.hlt.concrete.metadata.tools.TooledMetadataConverter;
@@ -198,7 +199,7 @@ public class TACKBP2017NewsWireIngester implements SafeTooledAnnotationMetadata,
 
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    Opts run = new Opts();
+    IngesterOpts run = new IngesterOpts();
     JCommander jc = JCommander.newBuilder().addObject(run).build();
     jc.parse(args);
     jc.setProgramName(TACKBP2017NewsWireIngester.class.getSimpleName());

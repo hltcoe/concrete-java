@@ -20,6 +20,7 @@ import com.beust.jcommander.JCommander;
 import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.ingesters.base.IngestException;
+import edu.jhu.hlt.concrete.ingesters.base.IngesterOpts;
 import edu.jhu.hlt.concrete.serialization.archiver.ArchivableCommunication;
 import edu.jhu.hlt.utilt.ex.LoggedUncaughtExceptionHandler;
 import edu.jhu.hlt.utilt.io.ExistingNonDirectoryFile;
@@ -40,7 +41,7 @@ public class WebPostIngesterRunner {
    */
   public static void main(String... args) {
     Thread.setDefaultUncaughtExceptionHandler(new LoggedUncaughtExceptionHandler());
-    Opts run = new Opts();
+    IngesterOpts run = new IngesterOpts();
     JCommander jc = JCommander.newBuilder().addCommand(run).build();
     jc.parse(args);
     jc.setProgramName(WebPostIngesterRunner.class.getSimpleName());
