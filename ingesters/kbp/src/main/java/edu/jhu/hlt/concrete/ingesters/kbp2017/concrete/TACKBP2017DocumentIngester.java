@@ -1,12 +1,8 @@
 package edu.jhu.hlt.concrete.ingesters.kbp2017.concrete;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +43,6 @@ public class TACKBP2017DocumentIngester {
       LOGGER.info("Path is OK");
 
       run.delegate.prepare();
-      Path outpath = run.delegate.outputPath;
 
       // this is for NYT_ docs
       TACKBP2017NewsWireIngester ing = new TACKBP2017NewsWireIngester();
@@ -57,10 +52,7 @@ public class TACKBP2017DocumentIngester {
       // discussion forum ingester
       BoltForumPostIngester dfIngester = new BoltForumPostIngester();
 
-      try (OutputStream os = Files.newOutputStream(outpath);
-          BufferedOutputStream bout = new BufferedOutputStream(os);
-          GzipCompressorOutputStream gout = new GzipCompressorOutputStream(bout);
-          TarArchiver arch = new TarArchiver(gout)) {
+      try (TarArchiver arch = run.delegate.getArchiver();) {
         Path nwp = run.getNewswirePath();
         LOGGER.info("Running over newswire: {}", nwp.toString());
         for (Path p : IngesterOpts.findFiles(nwp)) {
