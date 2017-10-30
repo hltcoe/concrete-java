@@ -4,16 +4,21 @@
  */
 package edu.jhu.hlt.concrete.ingesters.base;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+
+import edu.jhu.hlt.acute.archivers.tar.TarArchiver;
 
 /**
  *
@@ -39,6 +44,13 @@ public class IngesterParameterDelegate {
     // TODO Auto-generated constructor stub
   }
 
+  public TarArchiver getArchiver() throws IOException {
+    OutputStream os = Files.newOutputStream(this.outputPath);
+    BufferedOutputStream bout = new BufferedOutputStream(os);
+    GzipCompressorOutputStream gout = new GzipCompressorOutputStream(bout);
+    return new TarArchiver(gout);
+  }
+
   public void prepare() throws IOException {
     boolean fileExists = IngesterParameterDelegate.prepare(this.outputPath);
     LOGGER.info("File already exists: {}", fileExists);
@@ -52,29 +64,20 @@ public class IngesterParameterDelegate {
   }
 
   public static boolean prepare(Path outputPath) throws IOException {
-    Path n = outputPath.toAbsolutePath();
-    int nPaths = n.getNameCount();
-    for (int i = 0; i < nPaths - 1; i++) {
-      n = outputPath.getName(i);
-      LOGGER.debug("On path: {}", n.toString());
-      // is there another element left? if so, on a directory
-      if (i + 1 < nPaths) {
-        // does it exist?
-        if (!Files.exists(n)) {
-          // no - create intermediate directory
-          LOGGER.info("Creating directory: {}", n.toString());
-          Files.createDirectory(n);
-        } else {
-          // file exists - is it a directory?
-          if (!Files.isDirectory(n)) {
-            throw new IOException(outputPath.toString() + " exists and is not a directory");
-          }
-        }
-      }
+    // want to extract out the last part from the directories
+    final int nPaths = outputPath.getNameCount();
+    LOGGER.debug("{} paths detected", nPaths);
+    // if > 1 path, make sure directories exist
+    if (nPaths > 1) {
+      // get everything before last
+      Path folders = outputPath.getName(nPaths - 2);
+      // try to make the directories if needed
+      LOGGER.info("Optionally creating intermediate directories: {}", folders.toString());
+      Files.createDirectories(folders);
     }
 
     // now on the file itself, so exit iteration
-    return Files.exists(n);
+    return Files.exists(outputPath);
   }
 
   public static void main(String... args) {
