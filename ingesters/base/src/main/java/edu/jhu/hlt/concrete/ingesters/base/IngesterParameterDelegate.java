@@ -64,15 +64,19 @@ public class IngesterParameterDelegate {
   }
 
   public static boolean prepare(Path outputPath) throws IOException {
+    LOGGER.debug("Passed path: {}", outputPath.toString());
     // want to extract out the last part from the directories
     final int nPaths = outputPath.getNameCount();
     LOGGER.debug("{} paths detected", nPaths);
     // if > 1 path, make sure directories exist
     if (nPaths > 1) {
       // get everything before last
-      Path folders = outputPath.getName(nPaths - 2);
+      Path abs = outputPath.toAbsolutePath();
+      LOGGER.debug("Abs: {}", abs.toString());
+      Path folders = abs.getParent();
+      LOGGER.debug("Parent: {}", folders.toString());
       // try to make the directories if needed
-      LOGGER.info("Optionally creating intermediate directories: {}", folders.toString());
+      LOGGER.debug("Optionally creating intermediate directories: {}", folders.toString());
       Files.createDirectories(folders);
     }
 
