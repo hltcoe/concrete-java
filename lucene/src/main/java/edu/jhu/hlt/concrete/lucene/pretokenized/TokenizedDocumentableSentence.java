@@ -40,12 +40,13 @@ public class TokenizedDocumentableSentence implements LuceneDocumentable {
   @Override
   public Document getDocument() {
     final Document d = new Document();
-    d.add(ConcreteLuceneConstants.getUUIDField(commUUID));
+    d.add(ConcreteLuceneConstants.getCommunicationUUIDField(commUUID));
     d.add(ConcreteLuceneConstants.getCommunicationIDField(commID));
     d.add(ConcreteLuceneConstants.getSentenceUUIDField(sentUUID));
 
     for (String token : tokens) {
-      d.add(new Field("text", token, ConcreteLuceneConstants.getContentFieldType()));
+      d.add(new Field(ConcreteLuceneConstants.TEXT_FIELD,
+          token, ConcreteLuceneConstants.getContentFieldType()));
     }
 
     return d;

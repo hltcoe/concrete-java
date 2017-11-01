@@ -31,8 +31,9 @@ public abstract class DocumentableSentence implements MiscSentence, LuceneDocume
   @Override
   public final Document getDocument() {
     final Document d = new Document();
-    d.add(ConcreteLuceneConstants.getUUIDField(this.getUUID()));
+    d.add(ConcreteLuceneConstants.getCommunicationUUIDField(this.getUUID()));
     d.add(ConcreteLuceneConstants.getCommunicationIDField(this.getCommunicationID()));
+    d.add(ConcreteLuceneConstants.getSentenceUUIDField(this.getSentence().getUUID()));
 
     this.getAuthorId().ifPresent(aid -> {
       d.add(new StringField(ConcreteLuceneConstants.AUTHOR_ID_FIELD, aid.toString(), Store.NO));

@@ -9,6 +9,7 @@ import org.apache.lucene.document.TextField;
 import edu.jhu.hlt.concrete.miscommunication.NonEmptyString;
 
 public class ConcreteLuceneConstants {
+  // @deprecated Use COMM_UUID_FIELD instead
   public static final String UUID_FIELD = "uuid";
 
   public static final String COMM_ID_FIELD = "comm-id";
@@ -17,6 +18,7 @@ public class ConcreteLuceneConstants {
   public static final String TEXT_FIELD = "text";
   public static final String AUTHOR_ID_FIELD = "author-id";
 
+  // @deprecated Use getCommunicationUUIDField instead
   public static final StoredField getUUIDField(UUID uuid) {
     return new StoredField(UUID_FIELD, uuid.toString());
   }
