@@ -77,6 +77,11 @@ public class IngesterParameterDelegate {
       LOGGER.debug("Parent: {}", folders.toString());
       // try to make the directories if needed
       LOGGER.debug("Optionally creating intermediate directories: {}", folders.toString());
+      // is folders a symlink?
+      while (Files.isSymbolicLink(folders)) {
+        // update to its target
+        folders = Files.readSymbolicLink(folders);
+      }
       Files.createDirectories(folders);
     }
 
