@@ -15,7 +15,7 @@
 
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-project</artifactId>
-  <version>4.14.2</version>
+  <version>4.14.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -73,7 +73,7 @@
     <connection>scm:git:git@github.com:hltcoe/concrete-java.git</connection>
     <developerConnection>scm:git:git@github.com:hltcoe/concrete-java.git</developerConnection>
     <url>https://github.com/hltcoe/concrete-java/</url>
-    <tag>v4.14.2</tag>
+    <tag>v4.14.1</tag>
   </scm>
 
   <issueManagement>
