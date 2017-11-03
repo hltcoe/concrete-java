@@ -33,6 +33,20 @@ public class IngesterParameterDelegateTest {
   }
 
   @Test
+  public void symlink() throws IOException {
+    Path target = Paths.get("target/tests");
+    Files.createDirectories(target);
+    Path symlink = Paths.get("target/linked");
+    Files.createSymbolicLink(symlink, target);
+    Path missing = symlink.resolve("notexistent").toAbsolutePath();
+    assertFalse("file should not exist", Files.exists(missing));
+    LOGGER.info("Testing missing path: {}", missing.toString());
+    assertFalse("file should not exist", IngesterParameterDelegate.prepare(missing));
+    Files.delete(symlink);
+    Files.delete(target);
+  }
+
+  @Test
   public void file() throws IOException {
     Path filePath = tf.newFile("foo").toPath().toAbsolutePath();
     assertTrue("file should exist", Files.exists(filePath));
