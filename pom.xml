@@ -31,16 +31,6 @@
     <module>redis</module>
     <module>sql</module>
     <module>lucene</module>
-    <module>ingesters/base</module>
-    <module>ingesters/simple</module>
-    <module>ingesters/alnc</module>
-    <module>ingesters/acere</module>
-    <module>ingesters/gigaword</module>
-    <module>ingesters/annotated-nyt</module>
-    <module>ingesters/conll</module>
-    <module>ingesters/bolt</module>
-    <module>ingesters/webposts</module>
-    <module>ingesters/kbp</module>
     <module>analytics/base</module>
     <module>analytics/simple</module>
     <module>services</module>
