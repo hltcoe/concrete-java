@@ -1,5 +1,5 @@
-Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights
-reserved. See LICENSE in the project root directory.
+Copyright 2012-2017 Johns Hopkins University HLTCOE.
+All rights reserved. See LICENSE in the project root directory.
 
 Concrete Java
 ========
@@ -28,12 +28,6 @@ the command would be (in the same directory)
 Be aware that you'll need Thrift `0.10.0` installed
 and in your `$PATH`.
 
-## How do I run the simple ingesters?
-Consult the [README.md](ingesters/simple/README.md) for the simple ingesters project.
-
-## Building
-Ensure that you run maven commands with 'clean', otherwise things may fail.
-
 Maven Dependencies
 ----------
 
@@ -59,30 +53,6 @@ See subprojects for latest versions.
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
   <artifactId>concrete-validation</artifactId>
-  <version>x.y.z</version>
-</dependency>
-```
-
-```xml
-<dependency>
-  <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete-ingesters-simple</artifactId>
-  <version>x.y.z</version>
-</dependency>
-```
-
-```xml
-<dependency>
-  <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete-ingesters-gigaword</artifactId>
-  <version>x.y.z</version>
-</dependency>
-```
-
-```xml
-<dependency>
-  <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete-ingesters-alnc</artifactId>
   <version>x.y.z</version>
 </dependency>
 ```
