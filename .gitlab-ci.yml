@@ -8,7 +8,7 @@ variables:
 
 compile:
   stage: build-unit-test
-  image: r8n01:5000/coe-maven-centos:latest
+  image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
     - mvn $MAVEN_CLI_OPTS clean test
   tags:
@@ -16,7 +16,7 @@ compile:
 
 deploy:
   stage: deploy
-  image: r8n01:5000/coe-maven-centos:latest
+  image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
     - mvn $MAVEN_CLI_OPTS clean javadoc:javadoc deploy -Pcoe
   tags:
