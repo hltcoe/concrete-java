@@ -39,7 +39,7 @@ See the pom.xml file for the current version.
 ```xml
 <dependency>
   <groupId>edu.jhu.hlt</groupId>
-  <artifactId>concrete</artifactId>
+  <artifactId>concrete-core</artifactId>
   <version>x.y.z</version>
 </dependency>
 ```
