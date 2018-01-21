@@ -11,6 +11,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.Sentence;
+import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.miscommunication.MiscommunicationException;
 import edu.jhu.hlt.concrete.miscommunication.tokenized.CachedTokenizationCommunication;
@@ -70,5 +71,10 @@ public class CachedEntityMentionedCommunication implements EntityMentionedCommun
   @Override
   public List<EntityMention> getEntityMentions() {
     return new ArrayList<>(this.emsList);
+  }
+
+  @Override
+  public List<Token> getTokens() {
+    return this.ctc.getTokens();
   }
 }
