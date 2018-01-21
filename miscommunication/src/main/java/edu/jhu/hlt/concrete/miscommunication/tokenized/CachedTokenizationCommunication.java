@@ -5,10 +5,13 @@
 package edu.jhu.hlt.concrete.miscommunication.tokenized;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.ImmutableList;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
@@ -130,5 +133,16 @@ public class CachedTokenizationCommunication implements MappedTokenizedCommunica
   @Override
   public Map<UUID, Map<Integer, Token>> getUuidToTokenIdxToTokenMap() {
     return new LinkedHashMap<>(this.tokenizationIdToTokenIdxToTokenMap);
+  }
+
+  @Override
+  public List<Token> getTokens() {
+    ImmutableList.Builder<Token> bldr = ImmutableList.builder();
+    Map<UUID, Map<Integer, Token>> initMap = this.getUuidToTokenIdxToTokenMap();
+    Collection<Map<Integer, Token>> idxToTokenMaps = initMap.values();
+    for (Map<Integer, Token> tm : idxToTokenMaps) {
+      bldr.addAll(tm.values());
+    }
+    return bldr.build();
   }
 }

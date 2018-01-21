@@ -6,6 +6,7 @@ package edu.jhu.hlt.concrete.miscommunication.tokenized;
 
 import java.util.List;
 
+import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.miscommunication.sentenced.SentencedCommunication;
 
@@ -14,4 +15,8 @@ import edu.jhu.hlt.concrete.miscommunication.sentenced.SentencedCommunication;
  */
 public interface TokenizedCommunication extends SentencedCommunication {
   public List<Tokenization> getTokenizations();
+  /**
+   * @return a {@link List} of all {@link Token}s in this TokenizedCommunication
+   */
+  public List<Token> getTokens();
 }
