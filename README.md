@@ -32,6 +32,12 @@ To install the jars into your local maven repository, run:
 mvn clean install
 ```
 
+Using an IDE
+--------------
+If you are using an IDE such as Eclipse or IntelliJ, you are likely getting
+many build errors because some modules use FreeBuilder.
+See the [FreeBuilder readme](https://github.com/google/FreeBuilder#build-tools-and-ides) for instructions on configuring your IDE.
+
 Maven Dependencies
 ----------
 See the pom.xml file for the current version.
