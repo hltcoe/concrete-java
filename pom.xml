@@ -211,7 +211,7 @@
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>23.2-jre</version>
+        <version>24.1-jre</version>
       </dependency>
       <dependency>
         <groupId>redis.clients</groupId>
@@ -221,7 +221,7 @@
       <dependency>
         <groupId>org.inferred</groupId>
         <artifactId>freebuilder</artifactId>
-        <version>1.14.6</version>
+        <version>1.14.8</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
