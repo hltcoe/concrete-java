@@ -1,5 +1,6 @@
 stages:
   - build-unit-test
+  - jars
   - deploy
 
 variables:
@@ -11,6 +12,19 @@ compile:
   image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
     - mvn $MAVEN_CLI_OPTS clean test
+  tags:
+    - docker
+
+install:
+  stage: jars
+  image: $CI_REGISTRY/research/coe-maven-centos:latest
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - artifacts/
+  script:
+    - mvn $MAVEN_CLI_OPTS install
+    - find storers/executables/target -name "*uberjar*" -exec cp '{}' 'artifacts/store-uberjar.jar' \;
   tags:
     - docker
 
