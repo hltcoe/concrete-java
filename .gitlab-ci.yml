@@ -2,7 +2,6 @@ stages:
   - build-unit-test
   - jars
   - deploy
-  - docker-deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
@@ -42,7 +41,7 @@ deploy:
     - master
 
 docker-storer-printer:
-  stage: docker-deploy
+  stage: deploy
   image: docker:stable-git
   artifacts:
     paths:
