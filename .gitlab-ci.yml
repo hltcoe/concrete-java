@@ -23,7 +23,8 @@ install:
     paths:
       - artifacts/
   script:
-    - mvn $MAVEN_CLI_OPTS install
+    - mkdir artifacts
+    - mvn $MAVEN_CLI_OPTS install -DskipTests
     - find storers/executables/target -name "*uberjar*" -exec cp '{}' 'artifacts/store-uberjar.jar' \;
   tags:
     - docker
