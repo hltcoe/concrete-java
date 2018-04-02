@@ -34,6 +34,8 @@
     <module>analytics/base</module>
     <module>analytics/simple</module>
     <module>services</module>
+    <module>storers/implementations</module>
+    <module>storers/executables</module>
     <module>simpleaccumulo</module>
     <module>ontology</module>
   </modules>
@@ -135,6 +137,12 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>tift</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-store-implementations</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -241,7 +249,7 @@
       <dependency>
         <groupId>com.typesafe</groupId>
         <artifactId>config</artifactId>
-        <version>1.3.1</version>
+        <version>1.3.3</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
