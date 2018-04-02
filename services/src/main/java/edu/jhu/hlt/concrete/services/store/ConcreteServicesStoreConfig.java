@@ -32,14 +32,21 @@ public class ConcreteServicesStoreConfig extends AbstractHostPortOptionalAuthsCo
     this(ConfigFactory.load());
   }
 
+  public ConcreteServicesStoreConfig(Config cfg) {
+    this(cfg, CONFIG_STRING);
+  }
+
   /**
    * Instantiate a {@link ConcreteServicesStoreConfig} from a provided {@link Config}.
    *
    * @param cfg a {@link Config} object containing a 'store' key with proper configuration values
    * @see #ConcreteServicesStoreConfig()
    */
-  public ConcreteServicesStoreConfig(Config cfg) {
-    this(new ConcreteServicesConfig(cfg));
+  public ConcreteServicesStoreConfig(Config cfg, String key) {
+    super(cfg.getConfig(key));
+    cfg.checkValid(ConfigFactory.defaultReference(), key);
+    this.cfg = cfg;
+    LOGGER.debug("Running with config: {}", this.cfg.toString());
   }
 
   /**
@@ -60,28 +67,7 @@ public class ConcreteServicesStoreConfig extends AbstractHostPortOptionalAuthsCo
    * @see #ConcreteServicesStoreConfig(Config)
    */
   public ConcreteServicesStoreConfig(ConcreteServicesConfig cfg) {
-    this(cfg, CONFIG_STRING);
-  }
-
-  /**
-   * Load a store configuration from a non-standard configuration key.
-   *
-   * Most clients should prefer {@link #ConcreteServicesStoreConfig(Config)} if
-   * bringing a {@link Config} object, or {@link #ConcreteServicesStoreConfig()}
-   * if the defaults are tolerable.
-   *
-   * @param cfg
-   *          a {@link ConcreteServicesConfig} to use
-   * @param key
-   *          a {@link String} representing the configuration key (e.g.
-   *          'output-store')
-   */
-  public ConcreteServicesStoreConfig(ConcreteServicesConfig cfg, String key) {
-    super(cfg.get().getConfig(key));
-    Config store = cfg.get().getConfig(key);
-    store.checkValid(ConfigFactory.defaultReference(), key);
-    this.cfg = store;
-    LOGGER.debug("Running with config: {}", this.cfg.toString());
+    this(cfg.get(), CONFIG_STRING);
   }
 
   public StoreServiceWrapper createWrapper(StoreCommunicationService.Iface impl) throws TException {
