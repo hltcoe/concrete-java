@@ -50,7 +50,6 @@ docker-storer-printer:
     - cp artifacts/store-uberjar.jar storers/executables/build/docker
     - cd storers/executables/build/docker
     - docker build -t $REGISTRY_RELEASE_IMAGE -f printer.Dockerfile .
-    - docker run --rm $REGISTRY_RELEASE_IMAGE ls -lvah /
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker push $REGISTRY_RELEASE_IMAGE
   tags:
