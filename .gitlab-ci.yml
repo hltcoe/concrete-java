@@ -2,10 +2,12 @@ stages:
   - build-unit-test
   - jars
   - deploy
+  - docker-deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  REGISTRY_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:$CI_BUILD_REF_NAME
 
 compile:
   stage: build-unit-test
@@ -38,3 +40,22 @@ deploy:
     - docker
   only:
     - master
+
+docker-storer-printer:
+  stage: docker-deploy
+  image: docker:stable-git
+  artifacts:
+    paths:
+      - artifacts/store-uberjar.jar
+  script:
+    - cd storers/executables/build/docker
+    - cp artifacts/store-uberjar.jar .
+    - docker build -t $REGISTRY_RELEASE_IMAGE -f printer.Dockerfile .
+    - docker run --rm $REGISTRY_RELEASE_IMAGE ls -lvah /
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $REGISTRY_RELEASE_IMAGE
+  tags:
+    - shell
+  only:
+    - master
+    - tags
