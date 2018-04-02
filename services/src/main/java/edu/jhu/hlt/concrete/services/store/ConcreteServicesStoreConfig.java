@@ -1,6 +1,7 @@
 package edu.jhu.hlt.concrete.services.store;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,5 +38,9 @@ public class ConcreteServicesStoreConfig extends AbstractHostPortOptionalAuthsCo
 
   public StoreServiceWrapper createWrapper(StoreCommunicationService.Iface impl) throws TException {
     return new StoreServiceWrapper(impl, this.getPort());
+  }
+
+  public StoreTool storeTool() throws TTransportException {
+    return new StoreTool(this.getHost(), this.getPort(), this.getAuths());
   }
 }
