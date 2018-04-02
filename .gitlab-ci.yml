@@ -42,13 +42,13 @@ deploy:
 
 docker-storer-printer:
   stage: deploy
-  image: docker:stable-git
   artifacts:
     paths:
       - artifacts/store-uberjar.jar
   script:
+    - ls -lvah
+    - cp artifacts/store-uberjar.jar storers/executables/build/docker
     - cd storers/executables/build/docker
-    - cp artifacts/store-uberjar.jar .
     - docker build -t $REGISTRY_RELEASE_IMAGE -f printer.Dockerfile .
     - docker run --rm $REGISTRY_RELEASE_IMAGE ls -lvah /
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
