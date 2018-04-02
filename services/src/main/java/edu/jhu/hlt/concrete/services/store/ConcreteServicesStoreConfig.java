@@ -22,7 +22,7 @@ public class ConcreteServicesStoreConfig extends AbstractHostPortOptionalAuthsCo
 
   /**
    * Instantiate a {@link ConcreteServicesStoreConfig} with reasonable defaults.
-   * <br/><br/>
+   * <br><br>
    * Users bringing a {@link Config} object (e.g. from a config file that includes
    * a store configuration) should prefer {@link #ConcreteServicesStoreConfig(Config)}.
    *
@@ -44,12 +44,11 @@ public class ConcreteServicesStoreConfig extends AbstractHostPortOptionalAuthsCo
 
   /**
    * Attempt to load a configuration based off of key 'store' in the config file.
-   * <br/><br/>
+   * <br><br>
    * Most clients should prefer {@link #ConcreteServicesStoreConfig(Config)} if
    * bringing a {@link Config} object, or {@link #ConcreteServicesStoreConfig()} if
    * the defaults are tolerable.
-   *
-   * <br/><br/>
+   * <br><br>
    * See the project's default in
    * <code>src/main/resources/reference.conf</code>
    * for an example.
