@@ -61,7 +61,7 @@ public class SummarizationTool extends AbstractThriftServiceClient {
   public static void main(String... args) {
     Opts opts = new Opts();
     JCommander jc = new JCommander(opts);
-    jc.setProgramName("./search.sh");
+    jc.setProgramName("SummarizationTool");
     try {
       jc.parse(args);
     } catch (ParameterException e) {
@@ -122,7 +122,6 @@ public class SummarizationTool extends AbstractThriftServiceClient {
           System.out.println(sc.getText());
         }
       }
-
     } catch (TException e) {
       LOGGER.error("Failed to get search result: {}", e.getMessage());
       System.exit(-1);
