@@ -40,7 +40,8 @@ public class SummarizationTool extends AbstractThriftServiceClient {
   }
 
   static class Opts {
-    @Parameter(description = "Send a simple communication along with the SummarizationRequest")
+    @Parameter(description = "Send a simple communication along with the SummarizationRequest",
+        names = { "--with-communication" })
     boolean withCommunication = false;
 
     @Parameter(description = "Summarization query", required = true)
