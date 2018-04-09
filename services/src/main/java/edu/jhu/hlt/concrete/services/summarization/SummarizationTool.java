@@ -96,7 +96,7 @@ public class SummarizationTool extends AbstractThriftServiceClient {
     }
 
     SummarizationRequest sr = new SummarizationRequest();
-    if (!opts.queryList.isEmpty())
+    if (opts.queryList != null && !opts.queryList.isEmpty())
       sr.setQueryTerms(opts.queryList);
     sr.setMaximumCharacters(opts.maxChars);
     sr.setMaximumTokens(opts.maxTokens);
