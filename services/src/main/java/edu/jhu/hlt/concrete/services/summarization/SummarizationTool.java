@@ -15,6 +15,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.communications.ExampleCommunication;
 import edu.jhu.hlt.concrete.services.AbstractThriftServiceClient;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.summarization.SummarizationRequest;
@@ -39,6 +40,9 @@ public class SummarizationTool extends AbstractThriftServiceClient {
   }
 
   static class Opts {
+    @Parameter(description = "Send a simple communication along with the SummarizationRequest")
+    boolean withCommunication = false;
+
     @Parameter(description = "Summarization query", required = true)
     List<String> queryList;
 
@@ -58,6 +62,12 @@ public class SummarizationTool extends AbstractThriftServiceClient {
     boolean help;
   }
 
+  private static void printSummarizationTypes() {
+    System.out.println("Supported Summarization types: ");
+    for (SummarySourceType st : SummarySourceType.values())
+      System.out.println(st.toString());
+  }
+
   public static void main(String... args) {
     Opts opts = new Opts();
     JCommander jc = new JCommander(opts);
@@ -66,15 +76,13 @@ public class SummarizationTool extends AbstractThriftServiceClient {
       jc.parse(args);
     } catch (ParameterException e) {
       jc.usage();
-      System.out.println("Supported Summarization types: ");
-      for (SummarySourceType st : SummarySourceType.values())
-        System.out.println(st.toString());
-
+      printSummarizationTypes();
       System.exit(-1);
     }
 
     if (opts.help) {
       jc.usage();
+      printSummarizationTypes();
       return;
     }
 
@@ -91,6 +99,11 @@ public class SummarizationTool extends AbstractThriftServiceClient {
     sr.setMaximumCharacters(opts.maxChars);
     sr.setMaximumTokens(opts.maxTokens);
     sr.setSourceType(st);
+    if (opts.withCommunication) {
+      ExampleCommunication ex = new ExampleCommunication();
+      sr.setSourceCommunication(ex.tokenized());
+    }
+
     for (String id : opts.entityUUIDList)
       sr.addToSourceIds(new edu.jhu.hlt.concrete.UUID(UUID.fromString(id).toString()));
 
