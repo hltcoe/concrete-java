@@ -44,7 +44,7 @@ public class SummarizationTool extends AbstractThriftServiceClient {
         names = { "--with-communication" })
     boolean withCommunication = false;
 
-    @Parameter(description = "Summarization query", required = true)
+    @Parameter(description = "Summarization query. Empty indicates summarize all material")
     List<String> queryList;
 
     @Parameter(description = "UUIDs to be used", names = { "-ids", "--uuids" })
@@ -96,7 +96,8 @@ public class SummarizationTool extends AbstractThriftServiceClient {
     }
 
     SummarizationRequest sr = new SummarizationRequest();
-    sr.setQueryTerms(opts.queryList);
+    if (!opts.queryList.isEmpty())
+      sr.setQueryTerms(opts.queryList);
     sr.setMaximumCharacters(opts.maxChars);
     sr.setMaximumTokens(opts.maxTokens);
     sr.setSourceType(st);
