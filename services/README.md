@@ -28,6 +28,15 @@ wise) in the program. Those familiar with java classpaths can include
 the `application.conf` file anywhere on the classpath when launching
 the program.
 
+Alternatively, environment variables can be set to override anything
+inside the configuration files. Example:
+
+``` shell
+CONCRETE_SERVICE_SUMMARIZATION_HOST='172.17.0.3' CONCRETE_SERVICE_SUMMARIZATION_PORT=44422 ./summarize.sh --with-communication --type DOCUMENT
+```
+
+to target a summarization server on host `172.17.0.3:44422`
+
 #### Build
 
 You need [maven](https://maven.apache.org/).
