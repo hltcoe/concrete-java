@@ -172,6 +172,11 @@
       </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
+        <artifactId>concrete-analytics-simple</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
         <version>2.2.0</version>
       </dependency>
