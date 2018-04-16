@@ -62,10 +62,18 @@ public class AnalyticUUIDGeneratorFactory {
    * Constructor for an existing {@link Communication}, e.g.
    * obtained from a previously annotated communication from
    * disk.
+   *
    * @param comm a previously created {@link Communication} object
    */
   public AnalyticUUIDGeneratorFactory(Communication comm) {
-    this.localID = java.util.UUID.fromString(comm.getUuid().getUuidString());
+    this(java.util.UUID.fromString(comm.getUuid().getUuidString()));
+  }
+
+  /**
+   * @param uuid a {@link java.util.UUID} to base this generator off of
+   */
+  public AnalyticUUIDGeneratorFactory(java.util.UUID uuid) {
+    this.localID = uuid;
   }
 
   /**
