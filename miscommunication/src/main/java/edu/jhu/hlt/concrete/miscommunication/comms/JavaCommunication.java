@@ -9,6 +9,7 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.miscommunication.NonEmptyString;
+import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
 /**
  * type-safe wrapper around {@link Communication} with only required fields
@@ -29,9 +30,24 @@ public abstract class JavaCommunication {
         .build();
   }
 
+  public static JavaCommunication create(UUID uuid, String id, String type) {
+    return new Builder()
+        .setID(id)
+        .setType(type)
+        .setUUID(uuid)
+        .build();
+  }
+
+  public Communication partial() {
+    Communication c = new Communication();
+    c.setUuid(UUIDFactory.fromJavaUUID(this.getUUID()));
+    c.setId(this.getID());
+    c.setType(this.getType());
+    return c;
+  }
+
   static class Builder extends JavaCommunication_Builder {
     Builder() {
-
     }
 
     @Override
