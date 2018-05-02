@@ -37,4 +37,9 @@ public class ConcreteServicesSummarizationConfig extends AbstractHostPortConfig 
   public SummarizationTool getSummarizationTool() throws TTransportException {
     return new SummarizationTool(this.getHost(), this.getPort());
   }
+
+  @Override
+  public String toString() {
+    return this.cfg.toString();
+  }
 }
