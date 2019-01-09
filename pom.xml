@@ -9,7 +9,7 @@
 
   <properties>
     <log4j.version>2.9.1</log4j.version>
-    <jackson.version>2.9.2</jackson.version>
+    <jackson.version>2.9.5</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
@@ -178,7 +178,7 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>acute</artifactId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
       </dependency>
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
