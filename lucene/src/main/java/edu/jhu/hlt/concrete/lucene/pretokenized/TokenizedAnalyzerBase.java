@@ -5,8 +5,8 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.analysis.util.StopwordAnalyzerBase;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.StopwordAnalyzerBase;
 
 public abstract class TokenizedAnalyzerBase extends StopwordAnalyzerBase {
   /** An unmodifiable set containing some common English words that are not usually useful
