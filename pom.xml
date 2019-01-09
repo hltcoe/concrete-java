@@ -9,7 +9,7 @@
 
   <properties>
     <log4j.version>2.9.1</log4j.version>
-    <jackson.version>2.9.5</jackson.version>
+    <jackson.version>2.9.8</jackson.version>
     <concrete.release.version>${project.version}</concrete.release.version>
   </properties>
 
