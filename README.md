@@ -1,5 +1,5 @@
-Copyright 2012-2017 Johns Hopkins University HLTCOE.
-All rights reserved. See LICENSE in the project root directory.
+Copyright 2012-2019 Johns Hopkins University HLTCOE.  All rights
+reserved. See LICENSE in the project root directory.
 
 Concrete Java
 =============
@@ -35,8 +35,9 @@ mvn clean install
 Using an IDE
 --------------
 If you are using an IDE such as Eclipse or IntelliJ, you are likely getting
-many build errors because some modules use FreeBuilder.
-See the [FreeBuilder readme](https://github.com/google/FreeBuilder#build-tools-and-ides) for instructions on configuring your IDE.
+many build errors because some modules use FreeBuilder. See the
+[FreeBuilder readme](https://github.com/google/FreeBuilder#build-tools-and-ides)
+for instructions on configuring your IDE.
 
 Maven Dependencies
 ----------

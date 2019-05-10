@@ -1,4 +1,8 @@
 # News
+
+## Concrete-Java v4.15.0
+* Adds `Context` structure and `AnnotateWithContextService`.
+
 ## Concrete-Java v4.14.1
 * Ingesters for `kbp2015` have been moved into the `ingesters/kbp` module
 * Added code for mapping TAC KBP 2017 knowledge bases into Java objects
