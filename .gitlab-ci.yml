@@ -1,7 +1,7 @@
 stages:
   - build-unit-test
   - jars
-  - deploy
+#  - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
@@ -10,7 +10,7 @@ variables:
 
 compile:
   stage: build-unit-test
-  image: $CI_REGISTRY/research/coe-maven-centos:latest
+  image: maven:3-jdk-8
   script:
     - mvn $MAVEN_CLI_OPTS clean test
   tags:
@@ -18,7 +18,7 @@ compile:
 
 install:
   stage: jars
-  image: $CI_REGISTRY/research/coe-maven-centos:latest
+  image: maven:3-jdk-8
   artifacts:
     expire_in: 1 day
     paths:
@@ -30,12 +30,12 @@ install:
   tags:
     - docker
 
-deploy:
-  stage: deploy
-  image: $CI_REGISTRY/research/coe-maven-centos:latest
-  script:
-    - mvn $MAVEN_CLI_OPTS clean javadoc:javadoc deploy -Pcoe
-  tags:
-    - docker
-  only:
-    - master
+# deploy:
+#   stage: deploy
+#   image: maven:3-jdk-8
+#   script:
+#     - mvn $MAVEN_CLI_OPTS clean javadoc:javadoc deploy -Pcoe
+#   tags:
+#     - docker
+#   only:
+#     - master
